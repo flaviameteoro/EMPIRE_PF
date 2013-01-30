@@ -33,7 +33,7 @@ To build be model:
 
 Copy xhxrc, user simon in the umui on puma and change the user details
 and then submit. There is an extra mod file
-/home/n02/n02/simon/pf/test/pf_coupling.mod
+/home/n02/n02/simon/pf/coupler/pf_coupling.mf77
 where all of the changes required for the filter are set up. To make
 futher changes copy this mod and update the umui to use your new version.
 
