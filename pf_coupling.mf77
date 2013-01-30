@@ -1,0 +1,301 @@
+*ID PFCOUPLING
+*/Mod to add extra routines to enable comms with pf coupler
+*DECLARE U_MODEL1
+*I GPB5F403.95
+            CALL FROMCOUPLER (
+*CALL ARGSIZE
+*CALL ARTD1 
+*CALL ARTDUMA 
+*CALL ARTDUMO
+*CALL ARTDUMW 
+*CALL ARTCONA
+*CALL ARTPTRA 
+*CALL ARTSTS 
+*CALL ARGPPX 
+     &          ICODE,CMESSAGE)
+
+*I U_MODEL1.122
+            CALL TOCOUPLER (
+*CALL ARGSIZE
+*CALL ARTD1 
+*CALL ARTDUMA 
+*CALL ARTDUMO
+*CALL ARTDUMW 
+*CALL ARTCONA
+*CALL ARTPTRA 
+*CALL ARTSTS 
+*CALL ARGPPX 
+     &          ICODE,CMESSAGE)
+
+
+*DECLARE UMSHELL1
+*I GSS1F305.867
+      INTEGER MY_MPI_COMMUNICATOR ! Local MPI Communicator
+      INTEGER GLOBAL_MPI_COMMUNICATOR  ! Global MPI Communicator
+      integer couple_mpi_communicator,couple_myrank,couple_nproc,
+     $     couple_root
+      common/pf_couple/COUPLE_MPI_COMMUNICATOR,couple_myRank,
+     $       couple_nProc,couple_root
+      integer mype_id,mycolour,e_um_npes,info,int_log,couple_colour
+      integer MPL_UNDEFINED, MPL_INTEGER8,MPL_MAX
+      character*180 stdout_basename1
+      include "mpif.h"
+      MPL_UNDEFINED=mpi_undefined
+      MPL_INTEGER8=MPI_INTEGER8
+      MPL_MAX=MPI_MAX
+*D GPB0F402.396
+c      CALL GC_INIT(parexe_env,mype,nproc_max)
+      e_um_npes=32
+      CALL GC_INIT_INTRO(GLOBAL_MPI_COMMUNICATOR)
+      CALL MPL_COMM_RANK(GLOBAL_MPI_COMMUNICATOR,mype_id,err)
+      mycolour = mype_id / e_um_npes      
+      CALL MPL_COMM_SPLIT(GLOBAL_MPI_COMMUNICATOR,mycolour, 
+     &     mype_id,MY_MPI_COMMUNICATOR,err)
+      CALL GC_INIT_FINAL(mype,nproc_max,MY_MPI_COMMUNICATOR)
+      write(6,"(a,i2,i2,i2)") 'hello1',mype_id,mycolour,mype
+
+
+        if (mype.eq.0) then
+           couple_colour=9999
+        else
+           couple_colour=MPL_UNDEFINED
+        endif
+
+        CALL MPL_COMM_SPLIT(GLOBAL_MPI_COMMUNICATOR,couple_colour, 
+     $       mype_id,COUPLE_MPI_COMMUNICATOR,err)
+
+        if (mype.eq.0) then 
+         call MPl_Comm_Rank (COUPLE_MPI_COMMUNICATOR,couple_myRank,err)
+         call MPl_Comm_Size (COUPLE_MPI_COMMUNICATOR,couple_nProc,err)
+
+         couple_root=0
+         call MPL_allreduce(0,couple_root,1,MPL_INTEGER8,MPL_MAX,
+     $        COUPLE_MPI_COMMUNICATOR,err)
+           write(6,"(a,i2,i2,i2,i2,i2,i2)") 'hello2',
+     $          mype_id,mycolour,mype,couple_myRank,
+     $        couple_nProc,couple_root
+        else
+           couple_myRank=-1
+           couple_nProc=-1
+           couple_root=-1
+        endif
+
+
+        int_log=mype_id
+        CALL GC_IMAX(1,e_um_npes,info,int_log)
+        write(6,"(a,i2,i2,i2,i2)") 'hello3',mype_id,mycolour,mype,
+     $       int_log
+
+*I APB1F402.312
+        IF (mycolour .LT. 10) THEN
+          WRITE(stdout_basename1,'(A,I1)')
+     &      stdout_basename(1:len_basename),mycolour
+        ELSEIF (mycolour .LT. 100) THEN
+          WRITE(stdout_basename1,'(A,I2)')
+     &      stdout_basename(1:len_basename),mycolour
+        ELSEIF (mycolour .LT. 1000) THEN
+          WRITE(stdout_basename1,'(A,I3)')
+     &      stdout_basename(1:len_basename),mycolour
+        ELSE
+          WRITE(stdout_basename1,'(A,I4)')
+     &      stdout_basename(1:len_basename),mycolour
+        ENDIF
+        stdout_basename=stdout_basename1
+        len_basename=GET_CHAR_LEN(stdout_basename)
+        stdout_basename=stdout_basename(1:len_basename)//'.'
+
+
+        len_basename=GET_CHAR_LEN(stdout_basename)
+
+*DECK TOCOUPLER
+      SUBROUTINE TOCOUPLER ( 
+*CALL ARGSIZE 
+*CALL ARGD1
+*CALL ARGDUMA
+*CALL ARGDUMO  
+*CALL ARGDUMW 
+*CALL ARGCONA  
+*CALL ARGPTRA  
+*CALL ARGSTS 
+*CALL ARGPPX 
+     &           ICODE,CMESSAGE)
+
+      IMPLICIT NONE
+*CALL CMAXSIZE  
+*CALL CSUBMODL  
+*CALL TYPSIZE  
+*CALL NSTYPES
+*CALL TYPD1    
+*CALL TYPDUMA
+*CALL TYPDUMO 
+*CALL TYPDUMW  
+*CALL TYPCONA 
+*CALL TYPPTRA  
+*CALL TYPSTS  
+*CALL PPXLOOK
+*CALL PARVARS
+*CALL GCCOM
+
+      INTEGER ICODE            ! OUT - Error return code
+      CHARACTER*80 CMESSAGE
+
+      integer num_fields
+
+      num_fields=p_levels*2
+
+      CALL TOCOUPLER_WORK (
+*CALL ARGSIZE
+     & glsize(1)*glsize(2),
+     &  D1(JU(1)),D1(JV(1)),
+     & num_fields)
+
+      RETURN
+      END
+
+      SUBROUTINE TOCOUPLER_WORK (
+*CALL ARGSIZE
+     & WORK_FLD_SIZE,
+     &  U_LOCAL,V_LOCAL,
+     & num_fields)
+
+      IMPLICIT NONE
+*CALL CMAXSIZE  
+*CALL CSUBMODL  
+*CALL TYPSIZE  
+*CALL PARVARS
+*CALL GCCOM
+
+      integer num_fields
+
+      REAL 
+     & U_LOCAL(U_FIELD,P_LEVELS),
+     & V_LOCAL(U_FIELD,P_LEVELS)
+
+      REAL 
+     & U_TEMP(U_FIELD),
+     & V_TEMP(U_FIELD)
+
+
+      INTEGER WORK_FLD_SIZE,info,level,i,j
+
+      REAL
+     & WORK_GLOBAL(WORK_FLD_SIZE,num_fields),
+     & WORK_GLOBAL1(WORK_FLD_SIZE,num_fields)
+
+      integer MPL_REAL8
+      include "mpif.h"
+      
+      integer couple_mpi_communicator,couple_myrank,couple_nproc,
+     $     couple_root
+      common/pf_couple/COUPLE_MPI_COMMUNICATOR,couple_myRank,
+     $       couple_nProc,couple_root
+
+      integer err,status(MPI_STATUS_SIZE)
+      MPL_REAL8=MPI_REAL8
+
+      if (mype.eq.0) then
+         do j=1,num_fields
+            do i=1,WORK_FLD_SIZE
+               WORK_GLOBAL(i,j)=0.0
+               WORK_GLOBAL1(i,j)=0.0
+            enddo
+         enddo
+      endif
+
+       do level=1,p_levels
+
+        DO I=1,U_FIELD
+          U_TEMP(I)=U_LOCAL(I,LEVEL)
+          V_TEMP(I)=V_LOCAL(I,LEVEL)
+	ENDDO
+
+        CALL GATHER_FIELD(U_TEMP,WORK_GLOBAL(1,LEVEL),
+     &                  lasize(1),lasize(2),
+     &                  glsize(1),glsize(2)-1,
+     &                  0,GCG_ALL,
+     &                  info)
+
+        CALL GATHER_FIELD(V_TEMP,WORK_GLOBAL(1,LEVEL+p_levels),
+     &                  lasize(1),lasize(2),
+     &                  glsize(1),glsize(2)-1,
+     &                  0,GCG_ALL,
+     &                  info)
+
+        if (mype.eq.0) then
+           write(6,*)'ihello',level,work_global(100,LEVEL),
+     $         work_global(100,LEVEL+p_levels) 
+        endif
+      enddo
+
+        if (mype.eq.0) then
+           call MPL_Send(WORK_GLOBAL,WORK_FLD_SIZE*num_fields,
+     $     MPL_REAL8,couple_root,0,couple_mpi_communicator,err)
+           write(6,*)'shello',WORK_FLD_SIZE*P_LEVELS,couple_root
+           call flush(6)
+      endif
+
+        if (mype.eq.0) then
+           call MPL_Recv(WORK_GLOBAL1,WORK_FLD_SIZE*num_fields,
+     $     MPL_REAL8,couple_root,1,couple_mpi_communicator,status,err)
+      endif
+
+      do level=1,p_levels
+        CALL SCATTER_FIELD(U_TEMP,WORK_GLOBAL1(1,LEVEL),
+     &                  lasize(1),lasize(2),
+     &                  glsize(1),glsize(2)-1,
+     &                  0,GCG_ALL,
+     &                  info)
+
+        CALL SCATTER_FIELD(V_TEMP,WORK_GLOBAL1(1,LEVEL+p_levels),
+     &                  lasize(1),lasize(2),
+     &                  glsize(1),glsize(2)-1,
+     &                  0,GCG_ALL,
+     &                  info)
+
+        if (mype.eq.0) then
+           write(6,*)'ihello1',level,work_global1(100,LEVEL),
+     $         work_global1(100,LEVEL+p_levels) 
+        endif
+
+        DO I=1,U_FIELD
+          U_LOCAL(I,LEVEL)=U_TEMP(I)
+          V_LOCAL(I,LEVEL)=V_TEMP(I)
+	ENDDO
+	
+       enddo
+
+      RETURN
+      END
+
+
+*DECK FROMCOUPLER
+      SUBROUTINE FROMCOUPLER ( 
+*CALL ARGSIZE 
+*CALL ARGD1
+*CALL ARGDUMA
+*CALL ARGDUMO  
+*CALL ARGDUMW 
+*CALL ARGCONA  
+*CALL ARGPTRA  
+*CALL ARGSTS 
+*CALL ARGPPX 
+     &           ICODE,CMESSAGE) 
+      IMPLICIT NONE
+*CALL CMAXSIZE  
+*CALL CSUBMODL  
+*CALL TYPSIZE  
+*CALL NSTYPES
+*CALL TYPD1    
+*CALL TYPDUMA
+*CALL TYPDUMO 
+*CALL TYPDUMW  
+*CALL TYPCONA 
+*CALL TYPPTRA  
+*CALL TYPSTS  
+*CALL PPXLOOK
+
+      INTEGER ICODE            ! OUT - Error return code
+      CHARACTER*80 CMESSAGE
+
+      RETURN
+      END

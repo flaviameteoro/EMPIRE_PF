@@ -1,0 +1,89 @@
+program couple
+!use mpi
+implicit none
+include 'mpif.h'
+     integer dummycolour,myRank,nProc,mpi_err, mpi_status(MPI_STATUS_SIZE)
+     integer MY_MPI_COMMUNICATOR,mype_id,dummype_id
+     integer DUMMY_MPI_COMMUNICATOR,couple_colour
+     integer COUPLE_MPI_COMMUNICATOR,couple_mype_id,couple_root
+     integer*8 rtmp,ctmp
+
+     integer i,j,n
+
+     integer xsize,ysize,zsize,nens,ntimesteps
+ real, dimension(:,:,:), Allocatable  :: psidummy
+ real, dimension(:), Allocatable  :: psisingle
+ integer, dimension(:), Allocatable  :: requests
+ !real psisingle(96*73*19)
+
+     xsize=96
+     ysize=73
+     zsize=19
+     nens=7
+     ntimesteps=48
+     dummycolour=10000
+
+allocate( psidummy(xsize*ysize,zsize ,nEns))
+allocate( psisingle(xsize*ysize*zsize))
+allocate( requests(nens))
+
+     call MPI_Init (mpi_err)
+        CALL MPi_COMM_RANK(MPI_COMM_WORLD,mype_id,mpi_err)
+        CALL MPi_COMM_SPLIT(MPI_COMM_WORLD,dummycolour, &
+                           mype_id,DUMMY_MPI_COMMUNICATOR,mpi_err)
+
+
+!     call MPI_Comm_Rank (DUMMY_MPI_COMMUNICATOR, myRank, mpi_err)
+!     call MPI_Comm_Size (DUMMY_MPI_COMMUNICATOR, nProc, mpi_err)
+
+couple_colour=9999
+
+        CALL MPi_COMM_SPLIT(MPI_COMM_WORLD,couple_colour, &
+                           mype_id,COUPLE_MPI_COMMUNICATOR,mpi_err)
+
+     call MPI_Comm_Rank (COUPLE_MPI_COMMUNICATOR, myRank, mpi_err)
+     call MPI_Comm_Size (COUPLE_MPI_COMMUNICATOR, nProc, mpi_err)
+
+     rtmp=myrank
+     call MPi_allreduce(rtmp,ctmp,1,MPi_INTeger8,MPi_MAX,&
+          COUPLE_MPI_COMMUNICATOR, mpi_err)
+
+     couple_root=ctmp
+     write(6,*)'chello',mype_id,myrank,nproc,couple_root
+
+!Gather
+     do i=1,ntimesteps
+        n=1
+        do j=0,nens
+           if (j.ne.myrank) then
+              write(6,*)'ohello1',j,n
+              call MPI_IRecv(psidummy(:,:,n), xsize*ysize*zsize, MPI_DOUBLE, &
+                   j, MPI_ANY_TAG, COUPLE_MPI_COMMUNICATOR,&
+                   requests(n), mpi_err)
+              write(6,*)'ohello2',i,j,n,psidummy(100,1,n)
+              call flush(6)
+              n=n+1
+           endif
+        enddo
+        call mpi_waitall(nens,requests,mpi_status, mpi_err)
+
+!Scatter
+        n=1
+        do j=0,nens
+           if (j.ne.myrank) then
+              call MPI_ISend(psidummy(:,:,n), xsize*ysize*zsize, MPI_DOUBLE, &
+                   j, 1, COUPLE_MPI_COMMUNICATOR,&
+                   requests(n), mpi_err)
+              n=n+1
+           endif
+        enddo
+        call mpi_waitall(nens,requests,mpi_status, mpi_err)
+     enddo
+
+
+     deallocate(psidummy)
+     deallocate(psisingle)
+     deallocate(requests)
+     call MPI_Finalize(mpi_err)
+
+end program
