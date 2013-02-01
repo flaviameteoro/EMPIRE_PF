@@ -4,7 +4,8 @@ Subroutine SeedRandom (seed)
 
   integer seed
   
-  call g05cbf (seed)
+  !pab 01.02.13
+  !call g05cbf (seed)
   
 End Subroutine SeedRandom
 
@@ -33,7 +34,8 @@ Subroutine UniformRandomNumbers2D (minval, maxval, phi)
 
   nx = Size (phi, 1)
   ny = Size (phi, 2)
-  call g05faf (minval, maxval, nx*ny, phi)
+  !pab 01.02.13
+  !call g05faf (minval, maxval, nx*ny, phi)
 
 End Subroutine UniformRandomNumbers2D
 
@@ -65,7 +67,8 @@ Subroutine NormalRandomNumbers2D (mean, stdev, phi)
   nx = Size (phi, 1)
   ny = Size (phi, 2)
 
-  call g05fdf (mean, stdev, nx*ny, phi)
+  !pab 01.02.13
+  !call g05fdf (mean, stdev, nx*ny, phi)
 
 End Subroutine NormalRandomNumbers2D
 
@@ -96,7 +99,8 @@ Subroutine ComplexFFT2D (xr, xi)
   allocate (trign(2 * ny),     Stat = status)
   if (status /= 0) stop "Allocation of trign in ComplexFFT2D failed"
 
-  call c06fuf (nx, ny, xr, xi, 'i', trigm, trign, work, ifail)
+  !pab 01.02.13
+  !call c06fuf (nx, ny, xr, xi, 'i', trigm, trign, work, ifail)
 
   deallocate (trigm, trign, work)
 
@@ -138,8 +142,9 @@ Subroutine SolveWithSVD (B, A, x)
   if (status /= 0) stop " Allocation of sv in SolveWithSVD failed"
               
 ! Perform a Singular Value Decomposition of a real matrix
-  call f02wef (dim, dim, A, dim, ncolb, B, dim, .true.,      &
-               q, 1, sv, .true., pT, dim, work, ifail)
+  !pab 01.02.13
+  !call f02wef (dim, dim, A, dim, ncolb, B, dim, .true.,      &
+  !             q, 1, sv, .true., pT, dim, work, ifail)
 
 ! Set tolerance tt to be the smallest allowed singular value 
   tt = sv(1) * sv(1) * 1.e-6
