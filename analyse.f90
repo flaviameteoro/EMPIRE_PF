@@ -14,78 +14,79 @@ Subroutine Analyse (time)
 
   IMPLICIT NONE
 
-  Interface
-    Subroutine NormalRandomNumbers1D (mean, stdev, phi)
-       implicit none
-       real, intent(in) :: mean, stdev
-       real, intent(out), dimension(:) :: phi
-    End Subroutine NormalRandomNumbers1D
-    Subroutine UniformRandomNumbers1D(minval, maxval, phi)
-       implicit none
-       real, intent(in)::minval,maxval
-       real, intent(out), dimension(:) :: phi
-    End Subroutine UniformRandomNumbers1D
-  End Interface
+!!$  Interface
+!!$    Subroutine NormalRandomNumbers1D (mean, stdev, phi)
+!!$       implicit none
+!!$       real, intent(in) :: mean, stdev
+!!$       real, intent(out), dimension(:) :: phi
+!!$    End Subroutine NormalRandomNumbers1D
+!!$    Subroutine UniformRandomNumbers1D(minval, maxval, phi)
+!!$       implicit none
+!!$       real, intent(in)::minval,maxval
+!!$       real, intent(out), dimension(:) :: phi
+!!$    End Subroutine UniformRandomNumbers1D
+!!$  End Interface
 
-  integer    time         ! time is measured in timesteps since the beginning
-  integer    i, j,  nData, iolen, status, k, z, talCount
-  integer    nmax, ii, maxq(1),n2,count,nmax1, n1, num, ifail,nnmax,nxrandom,mbest,n3
-  integer    nrobs(nxx,nyy)
-  integer    lEnKF(nGrand)
-  integer    ndim, nnmin, nn
-  integer    clevel,index
-    
+  integer :: time         ! time is measured in timesteps since the beginning
+  integer :: i, j,  nData, iolen, status, k, z, talCount
+  integer :: nmax, ii, maxq(1),n2,count,nmax1, n1, num, ifail,nnmax,nxrandom,mbest,n3
+  integer :: nrobs(nxx,nyy)
+  integer :: lEnKF(nGrand)
+  integer :: ndim, nnmin, nn
+  integer :: clevel,index
+  integer, parameter :: rk = kind(1.0D0)
+  
   character  filename*20, timeString*6
+  
+  real(kind=rk) :: dataMean, lpsiMeanMean
+  real(kind=rk) :: alpha, gamma,bh
+  real(kind=rk) :: r2, dist2,sb, d2, d22, erange, dmin
+  real(kind=rk) :: mindist,var
+  real(kind=rk) :: hulp1,hulp2,xnum(1) 
+  real(kind=rk) :: xxmin, priorxmin
+  real(kind=rk) :: MI
+  real(kind=rk) :: ccmax,qinv,qninv,aaa,bbb,bmin,qq,dy2,dy1
+  real(kind=rk) :: storeVal
+  real(kind=rk) :: qWeight
 
-  real       dataMean, lpsiMeanMean
-  real       alpha, gamma,bh
-  real       r2, dist2,sb, d2, d22, erange, dmin
-  real       mindist,var
-  real       hulp1,hulp2,xnum(1) 
-  real       xxmin, priorxmin
-  real       MI
-  real       ccmax,qinv,qninv,aaa,bbb,bmin,qq,dy2,dy1
-  real       storeVal
-  real       qWeight
-
-  real, dimension(:),   Allocatable :: data  ! Size nData
-  real, dimension(:),   Allocatable :: lpsiMean         ! Size nData
-  real, dimension(:,:), Allocatable :: lpsi, dlpsi      ! Size nGrand * nObs
-  real, dimension(:), Allocatable :: b
-  real, dimension(:), Allocatable :: bnew
-  real, dimension(:), Allocatable :: xmin
+  real(kind=rk), dimension(:),   Allocatable :: data  ! Size nData
+  real(kind=rk), dimension(:),   Allocatable :: lpsiMean         ! Size nData
+  real(kind=rk), dimension(:,:), Allocatable :: lpsi, dlpsi      ! Size nGrand * nObs
+  real(kind=rk), dimension(:), Allocatable :: b
+  real(kind=rk), dimension(:), Allocatable :: bnew
+  real(kind=rk), dimension(:), Allocatable :: xmin
   integer, dimension(:), Allocatable ::  irank                
-  real, dimension(:,:), Allocatable ::  psisuper             
-  real, dimension(:,:,:), Allocatable ::  psinew                ! Size nGrand 
-  real, dimension(:), Allocatable ::  cc 
-  real, dimension(:), Allocatable ::  weights
-  real, dimension(:,:), Allocatable ::  qobs
-  real, dimension(:,:), Allocatable :: vortobs ! height of bottom.
+  real(kind=rk), dimension(:,:), Allocatable ::  psisuper             
+  real(kind=rk), dimension(:,:,:), Allocatable ::  psinew                ! Size nGrand 
+  real(kind=rk), dimension(:), Allocatable ::  cc 
+  real(kind=rk), dimension(:), Allocatable ::  weights
+  real(kind=rk), dimension(:,:), Allocatable ::  qobs
+  real(kind=rk), dimension(:,:), Allocatable :: vortobs ! height of bottom.
 
   !Mel-25|08|11-added to allow calculation of weight distribution
-  real, dimension(:,:), Allocatable :: barWeights
+  real(kind=rk), dimension(:,:), Allocatable :: barWeights
 
   !Mel-10|01|12-added to allow calculation of strength of aew movement
-  real, dimension(:), allocatable :: aewStrength
+  real(kind=rk), dimension(:), allocatable :: aewStrength
 
   !Mel-07|06|12-added to allow comp C-minC to aew movement
-  real,dimension(:,:),allocatable :: cDiff
+  real(kind=rk),dimension(:,:),allocatable :: cDiff
 
   !Mel-05|09|11 - added for use with full Q vector
-  real, dimension(:,:), Allocatable :: xVector !for storing nObs size vector (d-H(f(x^{n-1})))
-  real, dimension(:), Allocatable :: exVector !for storing full vector (x^n-f(x^{n-1})) or H^T(HQH^T+R)^{-1}*xVector
-  real, dimension(:,:), Allocatable :: QRxVector !for storing (HQH^T+R)^{-1}*xVector
-  real, dimension(:), Allocatable :: hTemp  !for storing HQH^T(HQH^T+R)^{-1}*xVector
-  real, dimension(:), Allocatable :: qTemp  !for storing QH^T(HQH^T+R)^{-1}*xVector
+  real(kind=rk), dimension(:,:), Allocatable :: xVector !for storing nObs size vector (d-H(f(x^{n-1})))
+  real(kind=rk), dimension(:), Allocatable :: exVector !for storing full vector (x^n-f(x^{n-1})) or H^T(HQH^T+R)^{-1}*xVector
+  real(kind=rk), dimension(:,:), Allocatable :: QRxVector !for storing (HQH^T+R)^{-1}*xVector
+  real(kind=rk), dimension(:), Allocatable :: hTemp  !for storing HQH^T(HQH^T+R)^{-1}*xVector
+  real(kind=rk), dimension(:), Allocatable :: qTemp  !for storing QH^T(HQH^T+R)^{-1}*xVector
  
  !Mel-14|11|11-added for sampling from a mixture density
-  real       eFac, uFac, nFac, help
-  real, dimension(:), Allocatable :: randomVec
-  real, dimension(:), Allocatable :: corrRandom
-  real, dimension(:), Allocatable :: proposalWeight
-  real, dimension(:,:), Allocatable :: perbWeights !for storing (H^T(HQH^T+R)^{-1}*exVector+corrRandom)
-  real, dimension(:), allocatable :: psiVector
-  real, dimension(:), allocatable :: psiSin
+  real(kind=rk) :: eFac, uFac, nFac, help
+  real(kind=rk), dimension(:), Allocatable :: randomVec
+  real(kind=rk), dimension(:), Allocatable :: corrRandom
+  real(kind=rk), dimension(:), Allocatable :: proposalWeight
+  real(kind=rk), dimension(:,:), Allocatable :: perbWeights !for storing (H^T(HQH^T+R)^{-1}*exVector+corrRandom)
+  real(kind=rk), dimension(:), allocatable :: psiVector
+  real(kind=rk), dimension(:), allocatable :: psiSin
 
   write(*,*)'analyse', time
 
@@ -394,11 +395,11 @@ Subroutine Analyse (time)
  do n3=1,nGrand
 
     !Mel-14|11|11-added for mixture density randomness
-    call UniformRandomNumbers1D(0.,1.,xnum)
+    call UniformRandomNumbers1D(0.,1.,size(xnum),xnum)
  
     !Uniform error
     if (xnum(1) .gt. eFac) then
-        call UniformRandomNumbers1D(-uFac,uFac,randomVec)
+        call UniformRandomNumbers1D(-uFac,uFac,nxn*nyn,randomVec)
         call MultiplySqrtQ(randomVec,corrRandom)
         do i=1,nxx
            do j=1,nyy
@@ -411,7 +412,7 @@ Subroutine Analyse (time)
 
     !Normal error
     else
-       call NormalRandomNumbers1D(0.,1.,randomVec)
+       call NormalRandomNumbers1D(0.,1.,nxn*nyn,randomVec)
        call MultiplySqrtQ(randomVec,corrRandom)
        do i=1,nxx
            do j=1,nyy

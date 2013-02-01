@@ -1,28 +1,28 @@
 module comms
   use hadcm3_config
   use hadcm3_data
-  integer, dimension(:), Allocatable  :: requests
-  integer:: nens
+  integer, dimension(:), Allocatable :: requests
+  integer :: nens
   integer, parameter :: num_fields=(2*levels)
-  integer COUPLE_MPI_COMMUNICATOR,mype_id,myRank,nProc
+  integer :: COUPLE_MPI_COMMUNICATOR,mype_id,myRank,nProc
 contains
-
+  
   subroutine allocate_data
-! Enough room for U and V 
+    ! Enough room for U and V 
     use GrandField
     implicit none
     allocate( psiGrand(nxn*nyn,num_fields ,nEns))
-
-! U and V have one fewer point NS
+    
+    ! U and V have one fewer point NS
     allocate( u(nxn*(nyn-1),levels ,nEns))
     allocate( v(nxn*(nyn-1),levels ,nEns))
     allocate( thetal(nxn*nyn,levels ,nEns))
     allocate( qt(nxn*nyn,levels ,nEns))
     allocate( pstar(nxn*nyn,nEns))
-
+    
     allocate( requests(nens))  
   end subroutine allocate_data
-
+  
   subroutine deallocate_data
     use GrandField
     implicit none
@@ -34,14 +34,14 @@ contains
     deallocate(thetal)
     deallocate(qt)
   end subroutine deallocate_data
-
+  
   subroutine initialise_mpi
     implicit none
     include 'mpif.h'
     
-    integer dummy_colour,mpi_err
-    integer DUMMY_MPI_COMMUNICATOR,couple_colour
-    integer couple_mype_id,couple_root
+    integer :: dummy_colour,mpi_err
+    integer :: DUMMY_MPI_COMMUNICATOR,couple_colour
+    integer :: couple_mype_id,couple_root
     integer*8 rtmp,ctmp
     
     couple_colour=9999
@@ -78,9 +78,9 @@ contains
     include 'mpif.h'
     
     
-    integer i,j,k,n
-    integer mpi_status(MPI_STATUS_SIZE)
-    integer mpi_err
+    integer :: i,j,k,n
+    integer :: mpi_status(MPI_STATUS_SIZE)
+    integer :: mpi_err
     
     
     !Gather
@@ -119,9 +119,9 @@ contains
     include 'mpif.h'
     
     
-    integer i,j,k,n
-    integer mpi_status(MPI_STATUS_SIZE)
-    integer mpi_err
+    integer :: i,j,k,n
+    integer :: mpi_status(MPI_STATUS_SIZE)
+    integer :: mpi_err
     
     
     !Scatter

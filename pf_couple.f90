@@ -3,14 +3,14 @@ program couple_pf
 
   implicit none
 
-  integer i
-  integer mpi_err
+  integer :: i
+  integer :: mpi_err
 
   call initialise_mpi
 
   call allocate_data
   
-  open(20,file='out_pf',action='write')
+  open(20,file='out_pf',action='write',status='replace')
   write(20,*) 'Starting couple_pf. MyRank = ',myRank,'nProc = ',nProc
 
   do i=1,ntimesteps

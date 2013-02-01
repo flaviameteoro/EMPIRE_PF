@@ -7,11 +7,11 @@
 
 
 Module Sizes
-
+  
   integer        :: nxx, nyy, nEns, nGrand, nxn, nyn
-  real           :: h, pi, dt, dx, d, tau0, dy, aa, ld, gac, f0, beta, rd 
-  real, dimension(:), Allocatable :: f
-  real, dimension(:,:), Allocatable :: tau
+  real(kind=kind(1.0D0)) :: h, pi, dt, dx, d, tau0, dy, aa, ld, gac, f0, beta, rd 
+  real(kind=kind(1.0D0)), dimension(:), Allocatable :: f
+  real(kind=kind(1.0D0)), dimension(:,:), Allocatable :: tau
 
 Contains
 
@@ -21,7 +21,7 @@ Contains
 
     IMPLICIT NONE
 
-    integer      :: j,j0, ncorio, ntau, status
+    integer :: j,j0, ncorio, ntau, status
 
 !    open  (99, file="ProblemSizes")
 !    read  (99, *) nxn, nyn,  nEns
@@ -40,8 +40,8 @@ Contains
 ! U and V
     nxx = nxn*nyn*2
     nyy = 1
-    print *, " nxx =  ", nxx
-    print *, " nyy =  ", nyy
+!    print*, " nxx =  ", nxx
+!    print*, " nyy =  ", nyy
     
     !pi = 3.14159265359
     pi = 3.1415927
@@ -85,7 +85,7 @@ End Module Sizes
 Module SizesOfRandomField
 
   use Sizes
-  integer    :: nxr, nyr
+  integer :: nxr, nyr
 
 Contains
 
@@ -103,7 +103,7 @@ End Module SizesOfRandomField
 
 Module TimeInfo
 
-  integer  :: time, time_to_start, time_to_stop, time_increment, &
+  integer :: time, time_to_start, time_to_stop, time_increment, &
               time_to_analyse, time_between_analyses
 
 Contains
@@ -133,9 +133,9 @@ End Module TimeInfo
 
 Module ErrorsAndVariances
 
-  real                            :: qo,qrel, nudgeFac
-  real, dimension(:), Allocatable :: qv, sqrtQv, qd
-  real, dimension(:,:), Allocatable :: fftQ, sqrtfftQ
+  real(kind=kind(1.0D0)) :: qo,qrel, nudgeFac
+  real(kind=kind(1.0D0)), dimension(:), Allocatable :: qv, sqrtQv, qd
+  real(kind=kind(1.0D0)), dimension(:,:), Allocatable :: fftQ, sqrtfftQ
   integer :: qSigma
 
 Contains
@@ -146,10 +146,10 @@ Contains
 
     IMPLICIT NONE
 
-    integer   :: status, ifail=0, i, j, p, q
-    real :: qq, totalWave, help, qdu, qdv, qde                          !scaling of covariance matrix Q to allow for timestepping
+    integer :: status, ifail=0, i, j, p, q
+    real(kind=kind(1.0D0)) :: qq, totalWave, help, qdu, qdv, qde                          !scaling of covariance matrix Q to allow for timestepping
     integer :: SOAR
-    real, dimension(nxn*nyn) :: waveValues
+    real(kind=kind(1.0D0)), dimension(nxn*nyn) :: waveValues
     
     read  (99, *) qo, qrel, qdu, qdv,qde, qSigma, SOAR, nudgeFac
 
@@ -212,21 +212,21 @@ End Module ErrorsAndVariances
 
 Module EnsembleOfFields
 
-  real, dimension(:,:,:), Allocatable  :: psiEns   ! An ensemble of 2d-fields
+  real(kind=kind(1.0D0)), dimension(:,:,:), Allocatable  :: psiEns   ! An ensemble of 2d-fields
 
 End Module EnsembleOfFields
 
 
 Module GrandField
 
-  real, dimension(:,:,:), Allocatable  :: psiGrand ! A lot of 2d-fields
+  real(kind=kind(1.0D0)), dimension(:,:,:), Allocatable  :: psiGrand ! A lot of 2d-fields
 
 End Module GrandField
 
 
 Module RandomFilter
 
-  real, dimension(:,:),   Allocatable  :: xr         ! For random fields
+  real(kind=kind(1.0D0)), dimension(:,:),   Allocatable  :: xr         ! For random fields
 
 End Module RandomFilter
 
@@ -234,7 +234,7 @@ End Module RandomFilter
 Module ObservationField
 
    integer, dimension(:), Allocatable :: pseudoH !Specifies which elements of the array are observed
-   real, dimension(:), Allocatable :: qdData !Contains only the variances from observed data
+   real(kind=kind(1.0D0)), dimension(:), Allocatable :: qdData !Contains only the variances from observed data
    integer :: nObs, redObs, HStatus
 
  Contains
@@ -375,8 +375,8 @@ End Module ObservationField
 
 Module Output
 
-  integer        :: talaTruth, talaObs, pdf, fullMovie, indTraj, weightDiv, relaxDiv
-  real, dimension(:,:), allocatable :: relaxStrength
+  integer :: talaTruth, talaObs, pdf, fullMovie, indTraj, weightDiv, relaxDiv
+  real(kind=kind(1.0D0)), dimension(:,:), allocatable :: relaxStrength
 
 Contains
 

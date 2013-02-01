@@ -6,6 +6,6 @@ module hadcm3_config
 end module hadcm3_config
 
 module hadcm3_data
-  real, allocatable, dimension(:,:,:)   :: u,v,qt,thetal
-  real, allocatable, dimension(:,:)   :: pstar
+  real(kind=kind(1.0D0)), allocatable, dimension(:,:,:)   :: u,v,qt,thetal
+  real(kind=kind(1.0D0)), allocatable, dimension(:,:)   :: pstar
 end module hadcm3_data

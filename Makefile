@@ -7,7 +7,7 @@ FCOPTS=  -r8 -O2 -Kieee -fastsse
 LOAD=mpif90
 LOADOPTS=
 
-OBJS= pf_couple.o hadcm3_config.o nudge_data.o comms.o nag90.o extra.o statistics.o fullQ.o analyse.o minresModule.o minresDataModule.o enssmm.o 
+OBJS= pf_couple.o hadcm3_config.o nudge_data.o comms.o gen_rand.o random_d.o extra.o statistics.o fullQ.o analyse.o minresModule.o minresDataModule.o enssmm.o 
 
 #nag90_nagVersion.o
 
@@ -26,11 +26,14 @@ enssmm.o: enssmm.f90 extra.o
 nudge_data.o: nudge_data.f90
 	$(FC) $(FCOPTS) -c nudge_data.f90 
 
+random_d.o: random_d.f90
+	$(FC) $(FCOPTS) -c random_d.f90 
+
 #nag90_nagVersion.o: nag90_nagVersion.f90
 #	$(FC) $(FCOPTS) -c nag90_nagVersion.f90 
 
-nag90.o: nag90.f90
-	$(FC) $(FCOPTS) -c nag90.f90 
+#nag90.o: nag90.f90
+#	$(FC) $(FCOPTS) -c nag90.f90 
 
 analyse.o: analyse.f90 fullQ.o extra.o
 	$(FC) $(FCOPTS) -c analyse.f90 
@@ -44,11 +47,15 @@ minresModule.o: minresModule.f90 minresDataModule.o
 minresDataModule.o: minresDataModule.f90
 	$(FC) $(FCOPTS) -c minresDataModule.f90
 
-statistics.o: statistics.f90 nag90.o extra.o
+statistics.o: statistics.f90 extra.o
 	$(FC) $(FCOPTS) -c statistics.f90 
 
 pf_couple.o: pf_couple.f90 comms.o
 	$(FC) $(FCOPTS) -c pf_couple.f90 
+
+gen_rand.o: gen_rand.f90 random_d.o
+	$(FC) $(FCOPTS) -c gen_rand.f90
+
 
 pf_couple: $(OBJS) 
 	$(FC) $(FCOPTS) $(LOADOPTS) -o pf_couple $(OBJS)
