@@ -1,38 +1,43 @@
+!program to run the particle filter on the model HadCM3.
+!this shall hopefully have minimal changes specific to the model.
+!Simon Wilson and Philip Browne 2013
+!----------------------------------------------------------------
+
 program couple_pf
   use comms
-
+  use pf_control
   implicit none
-
-  integer :: i
+  
+  integer :: i,j
   integer :: mpi_err
-
+  
   call initialise_mpi
-
+  
   call allocate_data
   
-  open(20,file='out_pf',action='write',status='replace')
-  write(20,*) 'Starting couple_pf. MyRank = ',myRank,'nProc = ',nProc
+  call set_pf_controls
 
-  do i=1,ntimesteps
+  call allocate_pf
+  
+  do j=1,pf%time_obs
 
-     call gather_data
+     do i = 1,pf%time_bwn_obs-1
+        pf%timestep = pf%timestep + 1
+        call proposal_filter
+     end do
+           
+     pf%timestep = pf%timestep + 1
+     call equal_weight_filter
 
-!    call Statistics(i)
-!    call Analyse(i)
-!    call Statistics(i) 
-
-     call nudge_data
-
-     call scatter_data
-     write(20,*) 'finished timestep ',i,' of ',ntimesteps
   enddo
 
   
   call deallocate_data
-  write(20,*) 'Finishing couple_pf. MyRank = ',myRank,'nProc = ',nProc
-  close(20)
+  
   call MPI_Finalize(mpi_err)
   
+  write(*,*) 'Program couple_pf terminated successfully.'
+
 end program couple_pf
 
 

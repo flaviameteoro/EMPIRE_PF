@@ -170,7 +170,8 @@ Subroutine Statistics (time)
      do i=1,nxx,3*qSigma+1
         do j=1,nyy,3*qSigma+1
            if (pseudoH((i-1)*nxx+j) .eq. 1) then
-              call g05fdf(0.0, 1.0, nGrand, randomVec)
+!!$              call g05fdf(0.0,1.0, nGrand, randomVec)
+              call NormalRandomNumbers1D(0.0,1.0,nGrand,randomVec)
               perturbVals(:) = psiGrand(i,j,:) + qd(:)*randomVec(:)
               call talagrand(perturbVals(:),qTruth(i,j),storeVal)
               talValues(k)=storeVal
@@ -235,9 +236,11 @@ Subroutine talagrand(ensemble,truth,res)
   allocate( irank(nGrand), STAT=status)
   if (status /= 0) stop " Allocation of irank failed" 
 
-  call M01DAF(ensemble,1,nGrand,'A',irank,ifail)
+!!$  call M01DAF(ensemble,1,nGrand,'A',irank,ifail)
   sortedE=ensemble
-  call M01EAF(sortedE,1,nGrand,irank,ifail)
+!!$  call M01EAF(sortedE,1,nGrand,irank,ifail)
+
+  CALL KB05AD(sortedE,nGrand)
 
   test=0
   i=1

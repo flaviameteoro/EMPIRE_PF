@@ -1,0 +1,6 @@
+7				ngrand
+2				time_obs
+48				time_bwn_obs
+0.02				nudgefac
+.true.				gen_data
+

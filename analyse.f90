@@ -1,4 +1,4 @@
-Subroutine Analyse (time)
+Subroutine equal_weight_filter (time)
 
 ! In this routine the analysis is calculated
 ! Requires - a file with data
@@ -11,21 +11,7 @@ Subroutine Analyse (time)
   use ObservationField
   use Output
   use FullQ
-
   IMPLICIT NONE
-
-!!$  Interface
-!!$    Subroutine NormalRandomNumbers1D (mean, stdev, phi)
-!!$       implicit none
-!!$       real, intent(in) :: mean, stdev
-!!$       real, intent(out), dimension(:) :: phi
-!!$    End Subroutine NormalRandomNumbers1D
-!!$    Subroutine UniformRandomNumbers1D(minval, maxval, phi)
-!!$       implicit none
-!!$       real, intent(in)::minval,maxval
-!!$       real, intent(out), dimension(:) :: phi
-!!$    End Subroutine UniformRandomNumbers1D
-!!$  End Interface
 
   integer :: time         ! time is measured in timesteps since the beginning
   integer :: i, j,  nData, iolen, status, k, z, talCount
@@ -202,21 +188,21 @@ Subroutine Analyse (time)
 
 ! Block with print statements for getting an idea of what is happening
 ! Mel-11|08|11-whole block changed to allow calculations with reduced observations
-  dataMean = sum(data(:)) / nObs
-  print *, " rms of data     = ", sqrt(sum ((data(:) - dataMean) * (data(:) - dataMean)) /nObs),  &
-           ", mean of data     = ", dataMean 
-  lpsiMeanMean = sum(lpsiMean) / nData
-  print *, " rms of lpsiMean = ", sqrt(sum ((lpsiMean - lpsiMeanMean) * (lpsiMean - lpsiMeanMean)) /nData),&
-           ", mean of lpsiMean = ", lpsiMeanMean   
-  print *, " Quality of ensemble before analysis:"
-  var=0.
-  do n3 = 1, nGrand
-    print *, " n3= ", n3,  &
-             " rms(data-lpsi) = ", sqrt(sum((data(:)-lpsi(n3,:)) * (data(:)-lpsi(n3,:))) / nObs),  &
-             " mean(data-lpsi) = ", sum(data-lpsi(n3,:)) / nObs      
-    var = var + sum((data-lpsi(n3,:))*(data-lpsi(n3,:)))
-  enddo
-  write(*,*)' var prior is ',var
+!!$  dataMean = sum(data(:)) / nObs
+!!$  print *, " rms of data     = ", sqrt(sum ((data(:) - dataMean) * (data(:) - dataMean)) /nObs),  &
+!!$           ", mean of data     = ", dataMean 
+!!$  lpsiMeanMean = sum(lpsiMean) / nData
+!!$  print *, " rms of lpsiMean = ", sqrt(sum ((lpsiMean - lpsiMeanMean) * (lpsiMean - lpsiMeanMean)) /nData),&
+!!$           ", mean of lpsiMean = ", lpsiMeanMean   
+!!$  print *, " Quality of ensemble before analysis:"
+!!$  var=0.
+!!$  do n3 = 1, nGrand
+!!$    print *, " n3= ", n3,  &
+!!$             " rms(data-lpsi) = ", sqrt(sum((data(:)-lpsi(n3,:)) * (data(:)-lpsi(n3,:))) / nObs),  &
+!!$             " mean(data-lpsi) = ", sum(data-lpsi(n3,:)) / nObs      
+!!$    var = var + sum((data-lpsi(n3,:))*(data-lpsi(n3,:)))
+!!$  enddo
+!!$  write(*,*)' var prior is ',var
 
 ! Calculate weights of ensemble members
 
@@ -227,13 +213,6 @@ Subroutine Analyse (time)
        xVector(n3,:)=(data(:)-lpsi(n3,:))
        call SolveQR(xVector(n3,:),QRxVector(n3,:))
        
-       !Mel-07|09|11-test that inverse is correct
-       write(*,*)'Checking result of HQH+R inverse calculation'
-       hTemp(:)=0.0;
-       call checkQRinverse(QRxVector(n3,:),hTemp)
-
-       write(*,*) 'Check of SolveQR'
-       write(*,*) xVector(n3,5), hTemp(5)
    enddo
 
    weights(:) = psiGrand(nxx+1,1,:)
@@ -248,11 +227,13 @@ Subroutine Analyse (time)
    enddo
 
    write(*,*)'weights b before equal weights',b
-   call M01DAF(b,1,nGrand,'A',irank,ifail)
-   cc=b
-   call M01EAF(cc,1,nGrand,irank,ifail)
-   write(*,*)'Ranked weights',cc
-   ccmax=cc(clevel*nGrand/10)
+!!$   call M01DAF(b,1,nGrand,'A',irank,ifail)
+!!$   cc=b
+!!$   call M01EAF(cc,1,nGrand,irank,ifail)
+!!$   write(*,*)'Ranked weights',cc
+!!$   ccmax=cc(clevel*nGrand/10)
+   !added PAB as I think all they are doing is finding the largest (negative) weight?
+   ccmax = maxval(b)
    write(*,*)'ccmax is ',ccmax
 
    psinew(:,:,:)=psiGrand(1:nxx,:,:)    ! Note that psinew is now f(psi^{n-1})
@@ -268,8 +249,8 @@ Subroutine Analyse (time)
 
       if (b(n3).lt. ccmax) then
         write(*,*)'high weights n is ',n3
-        dy1=0
-        dy2=0
+        dy1=0.0
+        dy2=0.0
         do ii=1,nObs
             dy1 = dy1 + xVector(n3,ii)*hTemp(ii)/(qdData(ii)*qdData(ii))
             dy2 = dy2 + dlpsi(n3,ii)/(qdData(ii)*qdData(ii))
@@ -601,6 +582,6 @@ deallocate (perbWeights)
 deallocate (psiVector)
 deallocate (psiSin)
 
-End Subroutine Analyse
+End Subroutine equal_weight_filter
 
 

@@ -9,7 +9,8 @@
 Module Sizes
   
   integer        :: nxx, nyy, nEns, nGrand, nxn, nyn
-  real(kind=kind(1.0D0)) :: h, pi, dt, dx, d, tau0, dy, aa, ld, gac, f0, beta, rd 
+  integer :: obs_dim,state_dim
+  real(kind=kind(1.0D0)) :: pi, dt, dx, d, tau0, dy, aa, ld, gac, f0, beta, rd !h
   real(kind=kind(1.0D0)), dimension(:), Allocatable :: f
   real(kind=kind(1.0D0)), dimension(:,:), Allocatable :: tau
 
@@ -49,11 +50,11 @@ Contains
     aa = dt/dx
     ld = d * dt/(dx*dx)
     
-    h = 500.
+    !h = 500.
     gac = 0.002 * 9.81
     f0 = 1.e-4
     beta = 1.e-10
-    rd = sqrt(gac * h) / abs(f0)
+    !rd = sqrt(gac * h) / abs(f0)
 
     allocate( f(nyn), STAT = status)
     if (status /= 0) stop " Allocation of f failed"
@@ -376,7 +377,6 @@ End Module ObservationField
 Module Output
 
   integer :: talaTruth, talaObs, pdf, fullMovie, indTraj, weightDiv, relaxDiv
-  real(kind=kind(1.0D0)), dimension(:,:), allocatable :: relaxStrength
 
 Contains
 
@@ -434,18 +434,14 @@ Contains
     if (relaxDiv .eq. 1) then
        obNum = time_to_stop/time_between_analyses
 
-       allocate( relaxStrength(3,obNum), STAT=status)
-       if (status /= 0) stop 'Allocation of relaxStrength failed'
-    endif
+     endif
  
   End Subroutine GetOutput
 
   Subroutine ClearOutput
 
   IMPLICIT NONE
-
-  if (allocated(relaxStrength)) deallocate (relaxStrength)
-
+ 
   End Subroutine ClearOutput
 
 

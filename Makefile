@@ -1,18 +1,46 @@
 #module swap PrgEnv-cray PrgEnv-pgi; module load xt-libnagfl
 all: pf_couple
 
+#detect the programming environment and set the compiler options accordingly
+ProEnv = $(shell `eval `/opt/modules/3.2.6.6/bin/modulecmd bash list`` 2>&1 | grep 'PrgEnv' | cut -d - -f2 | cut -d / -f1)
+
+ifeq ($(ProEnv),cray)
+FCOPTS = -d I -m 0 -R b -h omp
+else
+ifeq ($(ProEnv),pgi)
+FCOPTS=  -r8 -O2 -Kieee -fastsse -Mbounds -traceback -Ktrap=fp 
+else
+ifeq ($(ProEnv),gnu)
+FCOPTS = -fimplicit-none -Wall -fbounds-check #-fopenmp 
+else
+$(error Programming environment not correct. Detected as: $(ProEnv))
+endif
+endif
+endif
+
+
+
 FC=ftn
-FCOPTS=  -r8 -O2 -Kieee -fastsse
+#FCOPTS=  -r8 -O2 -Kieee -fastsse
 #FCOPTS= -r8 -I ../PrimitiveEquationPF 
 LOAD=mpif90
 LOADOPTS=
 
-OBJS= pf_couple.o hadcm3_config.o nudge_data.o comms.o gen_rand.o random_d.o extra.o statistics.o fullQ.o analyse.o minresModule.o minresDataModule.o enssmm.o 
+OBJS= pf_couple.o hadcm3_config.o nudge_data.o equal_weight_filter.o kb05d.o comms.o gen_rand.o random_d.o extra.o statistics.o fullQ.o minresModule.o minresDataModule.o enssmm.o proposal_filter.o pf_control.o data_io.o
 
 #nag90_nagVersion.o
 
 hadcm3_config.o: hadcm3_config.f90 
 	$(FC) $(FCOPTS) -c hadcm3_config.f90 
+
+pf_control.o: pf_control.f90
+	$(FC) $(FCOPTS) -c pf_control.f90
+
+data_io.o: data_io.f90
+	$(FC) $(FCOPTS) -c data_io.f90
+
+proposal_filter.o: proposal_filter.f90 fullQ.o random_d.o
+	$(FC) $(FCOPTS) -c proposal_filter.f90
 
 extra.o: extra.f90 hadcm3_config.o
 	$(FC) $(FCOPTS) -c extra.f90 
@@ -22,6 +50,9 @@ comms.o: comms.f90 extra.o
 
 enssmm.o: enssmm.f90 extra.o
 	$(FC) $(FCOPTS) -c enssmm.f90 
+
+equal_weight_filter.o: equal_weight_filter.f90 fullQ.o random_d.o
+	$(FC) $(FCOPTS) -c equal_weight_filter.f90 
 
 nudge_data.o: nudge_data.f90
 	$(FC) $(FCOPTS) -c nudge_data.f90 
@@ -50,11 +81,15 @@ minresDataModule.o: minresDataModule.f90
 statistics.o: statistics.f90 extra.o
 	$(FC) $(FCOPTS) -c statistics.f90 
 
-pf_couple.o: pf_couple.f90 comms.o
+pf_couple.o: pf_couple.f90 comms.o pf_control.o
 	$(FC) $(FCOPTS) -c pf_couple.f90 
 
 gen_rand.o: gen_rand.f90 random_d.o
 	$(FC) $(FCOPTS) -c gen_rand.f90
+
+kb05d.o: /home/n02/n02/pbrowne/hsl/kb05/kb05d-1.0.0/kb05d.f
+	$(FC) $(FCOPTS) -c /home/n02/n02/pbrowne/hsl/kb05/kb05d-1.0.0/kb05d.f
+
 
 
 pf_couple: $(OBJS) 
