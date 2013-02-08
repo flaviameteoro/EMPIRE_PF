@@ -9,7 +9,6 @@ subroutine proposal_filter
   !--------------------------------------------------------------------------
   use pf_control
   use Sizes
-  use FullQ
 
   IMPLICIT NONE
 

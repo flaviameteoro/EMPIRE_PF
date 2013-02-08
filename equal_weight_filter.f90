@@ -1,7 +1,6 @@
 subroutine equal_weight_filter
   use pf_control
   use sizes
-  use FullQ
   use random
   implicit none
   integer, parameter :: rk = kind(1.0D0)

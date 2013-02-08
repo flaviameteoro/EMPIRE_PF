@@ -26,12 +26,18 @@ FC=ftn
 LOAD=mpif90
 LOADOPTS=
 
-OBJS= pf_couple.o hadcm3_config.o nudge_data.o equal_weight_filter.o kb05d.o comms.o gen_rand.o random_d.o extra.o statistics.o fullQ.o minresModule.o minresDataModule.o enssmm.o proposal_filter.o pf_control.o data_io.o
+OBJS= pf_couple.o hadcm3_config.o nudge_data.o equal_weight_filter.o kb05d.o comms.o gen_rand.o random_d.o extra.o proposal_filter.o pf_control.o data_io.o model_specific.o operator_wrappers.o
 
 #nag90_nagVersion.o
 
 hadcm3_config.o: hadcm3_config.f90 
 	$(FC) $(FCOPTS) -c hadcm3_config.f90 
+
+model_specific.o: model_specific.f90 
+	$(FC) $(FCOPTS) -c model_specific.f90 
+
+operator_wrappers.o: operator_wrappers.f90 
+	$(FC) $(FCOPTS) -c operator_wrappers.f90 
 
 pf_control.o: pf_control.f90
 	$(FC) $(FCOPTS) -c pf_control.f90
@@ -39,7 +45,7 @@ pf_control.o: pf_control.f90
 data_io.o: data_io.f90
 	$(FC) $(FCOPTS) -c data_io.f90
 
-proposal_filter.o: proposal_filter.f90 fullQ.o random_d.o
+proposal_filter.o: proposal_filter.f90 random_d.o
 	$(FC) $(FCOPTS) -c proposal_filter.f90
 
 extra.o: extra.f90 hadcm3_config.o
@@ -51,7 +57,7 @@ comms.o: comms.f90 extra.o
 enssmm.o: enssmm.f90 extra.o
 	$(FC) $(FCOPTS) -c enssmm.f90 
 
-equal_weight_filter.o: equal_weight_filter.f90 fullQ.o random_d.o
+equal_weight_filter.o: equal_weight_filter.f90 random_d.o
 	$(FC) $(FCOPTS) -c equal_weight_filter.f90 
 
 nudge_data.o: nudge_data.f90
@@ -66,11 +72,11 @@ random_d.o: random_d.f90
 #nag90.o: nag90.f90
 #	$(FC) $(FCOPTS) -c nag90.f90 
 
-analyse.o: analyse.f90 fullQ.o extra.o
+analyse.o: analyse.f90 extra.o
 	$(FC) $(FCOPTS) -c analyse.f90 
 
-fullQ.o: fullQ.f90 extra.o minresModule.o
-	$(FC) $(FCOPTS) -c fullQ.f90 
+#fullQ.o: fullQ.f90 extra.o minresModule.o
+#	$(FC) $(FCOPTS) -c fullQ.f90 
 
 minresModule.o: minresModule.f90 minresDataModule.o
 	$(FC) $(FCOPTS) -c minresModule.f90
