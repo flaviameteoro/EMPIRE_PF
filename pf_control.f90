@@ -37,9 +37,12 @@ module pf_control
     end subroutine set_pf_controls
 
     subroutine allocate_pf
+      use sizes
       type(pf_control_type) :: pf
       integer :: st
       allocate(pf%weight(pf%ngrand),stat=st)
+      if(st .eq. 0) stop 'Error in allocating pf%weight'
+      allocate(pf%psi(state_dim,pf%ngrand),stat=st)
       if(st .eq. 0) stop 'Error in allocating pf%weight'
     end subroutine allocate_pf
 

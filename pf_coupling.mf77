@@ -141,12 +141,12 @@ c      CALL GC_INIT(parexe_env,mype,nproc_max)
 
       integer num_fields
 
-      num_fields=p_levels*2
+      num_fields=p_levels*4+1
 
       CALL TOCOUPLER_WORK (
 *CALL ARGSIZE
      & glsize(1)*glsize(2),
-     &  D1(JU(1)),D1(JV(1)),
+     &  D1(JPSTAR(1)),D1(JU(1)),D1(JV(1)),D1(JTHETA(1)),D1(JQ(1)),
      & num_fields)
 
       RETURN
@@ -155,7 +155,7 @@ c      CALL GC_INIT(parexe_env,mype,nproc_max)
       SUBROUTINE TOCOUPLER_WORK (
 *CALL ARGSIZE
      & WORK_FLD_SIZE,
-     &  U_LOCAL,V_LOCAL,
+     &  PSTAR_LOCAL,U_LOCAL,V_LOCAL,THETA_LOACL,Q_LOCAL
      & num_fields)
 
       IMPLICIT NONE
@@ -168,12 +168,12 @@ c      CALL GC_INIT(parexe_env,mype,nproc_max)
       integer num_fields
 
       REAL 
+     & PSTAR_LOCAL(P_FIELD)
      & U_LOCAL(U_FIELD,P_LEVELS),
      & V_LOCAL(U_FIELD,P_LEVELS)
+     & THETA_LOCAL(P_FIELD,P_LEVELS),
+     & Q_LOCAL(P_FIELD,P_LEVELS)
 
-      REAL 
-     & U_TEMP(U_FIELD),
-     & V_TEMP(U_FIELD)
 
 
       INTEGER WORK_FLD_SIZE,info,level,i,j
@@ -202,67 +202,118 @@ c      CALL GC_INIT(parexe_env,mype,nproc_max)
          enddo
       endif
 
-       do level=1,p_levels
-
-        DO I=1,U_FIELD
-          U_TEMP(I)=U_LOCAL(I,LEVEL)
-          V_TEMP(I)=V_LOCAL(I,LEVEL)
-	ENDDO
-
-        CALL GATHER_FIELD(U_TEMP,WORK_GLOBAL(1,LEVEL),
+        CALL GATHER_FIELD(PSTAR_LOCAL(1),WORK_GLOBAL(1,1),
      &                  lasize(1),lasize(2),
      &                  glsize(1),glsize(2)-1,
      &                  0,GCG_ALL,
      &                  info)
 
-        CALL GATHER_FIELD(V_TEMP,WORK_GLOBAL(1,LEVEL+p_levels),
+
+      do level=1,p_levels
+
+        CALL GATHER_FIELD(U_LOCAL(1,LEVEL),
+     &                  WORK_GLOBAL(1,1+LEVEL),
      &                  lasize(1),lasize(2),
      &                  glsize(1),glsize(2)-1,
      &                  0,GCG_ALL,
      &                  info)
+      enddo
+      do level=1,p_levels
 
-        if (mype.eq.0) then
-           write(6,*)'ihello',level,work_global(100,LEVEL),
-     $         work_global(100,LEVEL+p_levels) 
-        endif
+        CALL GATHER_FIELD(V_LOCAL(1,LEVEL),
+     &                  WORK_GLOBAL(1,1+P_lEVELS+LEVEL),
+     &                  lasize(1),lasize(2),
+     &                  glsize(1),glsize(2)-1,
+     &                  0,GCG_ALL,
+     &                  info)
+      enddo
+      do level=1,p_levels
+
+        CALL GATHER_FIELD(THETA_LOCAL(1,LEVEL),
+     &                  WORK_GLOBAL(1,1+2*P_LEVELS+LEVEL),
+     &                  lasize(1),lasize(2),
+     &                  glsize(1),glsize(2)-1,
+     &                  0,GCG_ALL,
+     &                  info)
+      enddo
+      do level=1,p_levels
+
+        CALL GATHER_FIELD(Q_LOCAL(1,LEVEL),
+     &                  WORK_GLOBAL(1,1+3*P_LEVELS+LEVEL),
+     &                  lasize(1),lasize(2),
+     &                  glsize(1),glsize(2)-1,
+     &                  0,GCG_ALL,
+     &                  info)
       enddo
 
-        if (mype.eq.0) then
+
+c      if (mype.eq.0) then
+c           write(6,*)'ihello',level,work_global(100,LEVEL),
+c     $         work_global(100,LEVEL+p_levels) 
+c        endif
+
+      if (mype.eq.0) then
            call MPL_Send(WORK_GLOBAL,WORK_FLD_SIZE*num_fields,
      $     MPL_REAL8,couple_root,0,couple_mpi_communicator,err)
            write(6,*)'shello',WORK_FLD_SIZE*P_LEVELS,couple_root
            call flush(6)
       endif
 
+
+
         if (mype.eq.0) then
            call MPL_Recv(WORK_GLOBAL1,WORK_FLD_SIZE*num_fields,
      $     MPL_REAL8,couple_root,1,couple_mpi_communicator,status,err)
       endif
 
+        CALL SCATTER_FIELD(PSTAR_LOCAL(1),WORK_GLOBAL(1,1),
+     &                  lasize(1),lasize(2),
+     &                  glsize(1),glsize(2)-1,
+     &                  0,GCG_ALL,
+     &                  info)
+
+
       do level=1,p_levels
-        CALL SCATTER_FIELD(U_TEMP,WORK_GLOBAL1(1,LEVEL),
+
+        CALL SCATTER_FIELD(U_LOCAL(1,LEVEL),
+     &                  WORK_GLOBAL(1,1+LEVEL),
      &                  lasize(1),lasize(2),
      &                  glsize(1),glsize(2)-1,
      &                  0,GCG_ALL,
      &                  info)
+      enddo
+      do level=1,p_levels
 
-        CALL SCATTER_FIELD(V_TEMP,WORK_GLOBAL1(1,LEVEL+p_levels),
+        CALL SCATTER_FIELD(V_LOCAL(1,LEVEL),
+     &                  WORK_GLOBAL(1,1+P_lEVELS+LEVEL),
      &                  lasize(1),lasize(2),
      &                  glsize(1),glsize(2)-1,
      &                  0,GCG_ALL,
      &                  info)
+      enddo
+      do level=1,p_levels
 
-        if (mype.eq.0) then
-           write(6,*)'ihello1',level,work_global1(100,LEVEL),
-     $         work_global1(100,LEVEL+p_levels) 
-        endif
+        CALL SCATTER_FIELD(THETA_LOCAL(1,LEVEL),
+     &                  WORK_GLOBAL(1,1+2*P_LEVELS+LEVEL),
+     &                  lasize(1),lasize(2),
+     &                  glsize(1),glsize(2)-1,
+     &                  0,GCG_ALL,
+     &                  info)
+      enddo
+      do level=1,p_levels
 
-        DO I=1,U_FIELD
-          U_LOCAL(I,LEVEL)=U_TEMP(I)
-          V_LOCAL(I,LEVEL)=V_TEMP(I)
-	ENDDO
+        CALL SCATTER_FIELD(Q_LOCAL(1,LEVEL),
+     &                  WORK_GLOBAL(1,1+3*P_LEVELS+LEVEL),
+     &                  lasize(1),lasize(2),
+     &                  glsize(1),glsize(2)-1,
+     &                  0,GCG_ALL,
+     &                  info)
+      enddo
 	
-       enddo
+c        if (mype.eq.0) then
+c           write(6,*)'ihello1',level,work_global1(100,LEVEL),
+c     $         work_global1(100,LEVEL+p_levels) 
+c        endif
 
       RETURN
       END

@@ -1,38 +1,41 @@
 module comms
   use hadcm3_config
   use hadcm3_data
-  integer, dimension(:), Allocatable :: requests
-  integer :: nens
-  integer, parameter :: num_fields=(2*levels)
+
   integer :: COUPLE_MPI_COMMUNICATOR,mype_id,myRank,nProc
 contains
   
   subroutine allocate_data
     ! Enough room for U and V 
-    use GrandField
     implicit none
-    allocate( psiGrand(nxn*nyn,num_fields ,nEns))
     
-    ! U and V have one fewer point NS
-    allocate( u(nxn*(nyn-1),levels ,nEns))
-    allocate( v(nxn*(nyn-1),levels ,nEns))
-    allocate( thetal(nxn*nyn,levels ,nEns))
-    allocate( qt(nxn*nyn,levels ,nEns))
-    allocate( pstar(nxn*nyn,nEns))
+!    ! U and V have one fewer point NS
+!    allocate( u(a_nxn*(a_nyn-1),a_levels ,nEns))
+!    allocate( v(a_nxn*(a_nyn-1),a_levels ,nEns))
+
+!    allocate( u(a_nxn,a_nyn,a_levels ,nEns))
+!    allocate( v(a_nxn,a_nyn,a_levels ,nEns))
+!    allocate( thetal(a_nxn,a_nyn,a_levels ,nEns))
+!    allocate( qt(a_nxn,a_nyn,a_levels ,nEns))
+!    allocate( pstar(a_nxn,a_nyn,nEns))
     
-    allocate( requests(nens))  
+!Ocean
+!    allocate( b_u(o_nxn,o_nyn,o_levels ,nEns))
+!    allocate( b_v(o_nxn,o_nyn,o_levels ,nEns))
+!    allocate( t_o(o_nxn,o_nyn,o_levels ,nEns))
+!    allocate( sal(o_nxn,o_nyn,o_levels ,nEns))
+!    allocate( mld(o_nxn,o_nyn,nEns))
+
+
   end subroutine allocate_data
   
   subroutine deallocate_data
-    use GrandField
     implicit none
-    deallocate(psiGrand)
-    deallocate(requests)
-    deallocate(pstar)
-    deallocate(u)
-    deallocate(v)
-    deallocate(thetal)
-    deallocate(qt)
+!    deallocate(pstar)
+!    deallocate(u)
+!    deallocate(v)
+!    deallocate(thetal)
+!    deallocate(qt)
   end subroutine deallocate_data
   
   subroutine initialise_mpi
@@ -62,80 +65,61 @@ contains
     call MPi_allreduce(rtmp,ctmp,1,MPi_INTeger8,MPi_MAX,&
          COUPLE_MPI_COMMUNICATOR, mpi_err)
     
-    nens=nproc-1
+!    nens=nproc-1
 
     couple_root=ctmp
     write(6,*)'chello',mype_id,myrank,nproc,couple_root
 
   end subroutine initialise_mpi
 
-  subroutine gather_data
+  subroutine recieve_from_model(mdata,particle)
 
     use hadcm3_config
-    use GrandField
+    use sizes
 
     implicit none
     include 'mpif.h'
     
-    
-    integer :: i,j,k,n
+    real(kind=kind(1.0D+0)), INTENT(OUT)     ::mdata(state_dim)
+    integer, INTENT(IN) :: particle
+
     integer :: mpi_status(MPI_STATUS_SIZE)
     integer :: mpi_err
     
     
-    !Gather
-    n=1
-    do j=0,nens
-       if (j.ne.myrank) then
-          write(6,*)'ohello1',j,n,nens,nxn*nyn*levels
-          call MPI_IRecv(psiGrand(:,:,n), nxn*nyn*num_fields, MPI_DOUBLE, &
-               j, MPI_ANY_TAG, COUPLE_MPI_COMMUNICATOR,&
-               requests(n), mpi_err)
-          write(6,*)'ohello2',i,j,n,psiGrand(100,1,n), &
-               psiGrand(100,1+levels,n)
-          call flush(6)
-          n=n+1
-       endif
-    enddo
-    call mpi_waitall(nens,requests,mpi_status, mpi_err)
+!          write(6,*)'ohello1',j,n,nens,a_nxn*a_nyn*a_levels
+          call MPI_Recv(mdata, state_dim, MPI_DOUBLE, &
+               particle-1, MPI_ANY_TAG, COUPLE_MPI_COMMUNICATOR,&
+               mpi_status, mpi_err)
     
-    do n=1,nens
-       do j=1,levels
-          do i=1,nxn*(nyn-1)
-             u(i,j,n)=psiGrand(i,j,n)
-             v(i,j,n)=psiGrand(i,j+levels,n)
-          enddo
-       enddo
-    enddo
+!    do n=1,nens
+!       do j=1,a_levels
+!          do i=1,a_nxn*(a_nyn-1)
+!             u(i,j,n)=psiGrand(i,j,n)
+!             v(i,j,n)=psiGrand(i,j+levels,n)
+!          enddo
+!       enddo
+!    enddo
     
     
-  end subroutine gather_data
+  end subroutine recieve_from_model
   
   
-  subroutine scatter_data
+  subroutine send_to_model(mdata,particle)
     use hadcm3_config
-    use GrandField
+    use sizes
     implicit none
     include 'mpif.h'
     
-    
-    integer :: i,j,k,n
+    integer, INTENT(IN) :: particle
+    real(kind=kind(1.0D+0)), INTENT(IN)     ::mdata(state_dim)
+
     integer :: mpi_status(MPI_STATUS_SIZE)
     integer :: mpi_err
     
-    
-    !Scatter
-    n=1
-    do j=0,nens
-       if (j.ne.myrank) then
-          call MPI_ISend(psiGrand(:,:,n), nxn*nyn*num_fields, MPI_DOUBLE, &
-               j, 1, COUPLE_MPI_COMMUNICATOR,&
-               requests(n), mpi_err)
-          n=n+1
-       endif
-    enddo
-    call mpi_waitall(nens,requests,mpi_status, mpi_err)
+    call MPI_Send(mdata, state_dim , MPI_DOUBLE, &
+         particle-1, 1, COUPLE_MPI_COMMUNICATOR, mpi_err)
     
     
-  end subroutine scatter_data
+  end subroutine send_to_model
 end module comms

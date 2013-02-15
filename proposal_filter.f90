@@ -9,6 +9,7 @@ subroutine proposal_filter
   !--------------------------------------------------------------------------
   use pf_control
   use Sizes
+  use comms
 
   IMPLICIT NONE
 
@@ -32,6 +33,13 @@ subroutine proposal_filter
 
   call get_observation_data(y)
 
+! 1st call to model to get psi
+  do particle =1,pf%ngrand
+     call recieve_from_model(pf%psi(:,particle),particle)
+  enddo
+
+
+
   !put stuff from psi vector into a nice form to work with it
   !$omp parallel do
   do particle =1,pf%ngrand
@@ -54,6 +62,9 @@ subroutine proposal_filter
      !%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
      !$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
      !||||||||||||||||||||||||||||||||||||||||||||
+     call send_to_model(pf%psi(:,particle),particle)
+
+     call recieve_from_model(fpsi,particle)
 
      call K(y_Hpsin1,kgain)
 

@@ -1,3 +1,22 @@
+subroutine configure_model
+!Set up internal variables for HadCM3
+  use hadcm3_config
+  use hadcm3_data
+  use sizes
+  integer, parameter :: a_num_points= &
+       4*a_nxn*a_nyn*a_levels+a_nxn*a_nyn
+!       2*(a_nxn*(a_nyn-1))*a_levels+2*a_nxn*a_nyn*a_levels+a_nxn*a_nyn
+  integer, parameter :: o_num_points= &
+       4*o_nxn*o_nyn*o_levels+o_nxn*o_nyn
+  integer, parameter :: num_points=a_num_points+o_num_points
+
+  !Atmosphere only for now
+  state_dim=a_num_points
+
+end subroutine configure_model
+
+
+
 subroutine solve_r(y,v)
   !subroutine to take an observation vector y and return v
   !in observation space.

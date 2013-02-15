@@ -13,8 +13,10 @@ program couple_pf
   
   call initialise_mpi
   
-  call allocate_data
-  
+!  call allocate_data
+ 
+  call configure_model
+ 
   call set_pf_controls
 
   call allocate_pf
