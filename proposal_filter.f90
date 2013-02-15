@@ -31,12 +31,8 @@ subroutine proposal_filter
   
   integer :: particle
 
-  call get_observation_data(y)
+!!  call get_observation_data(y)
 
-! 1st call to model to get psi
-  do particle =1,pf%ngrand
-     call recieve_from_model(pf%psi(:,particle),particle)
-  enddo
 
 
 
@@ -44,9 +40,9 @@ subroutine proposal_filter
   !$omp parallel do
   do particle =1,pf%ngrand
 
-     call H(pf%psi(:,particle),Hpsi)
+!!     call H(pf%psi(:,particle),Hpsi)
 
-     y_Hpsin1 = y - Hpsi
+!!     y_Hpsin1 = y - Hpsi
 
 
      !call the model now to make one timestep.....
@@ -66,21 +62,23 @@ subroutine proposal_filter
 
      call recieve_from_model(fpsi,particle)
 
-     call K(y_Hpsin1,kgain)
+     pf%psi(:,particle) = fpsi
+
+!!     call K(y_Hpsin1,kgain)
 
      !Mel-20|12|11-changed to allow random error correlated by sqrt Q
-     call NormalRandomNumbers1D(0.0,1.0,state_dim,normaln)
+!!     call NormalRandomNumbers1D(0.0,1.0,state_dim,normaln)
      call Qhalf(normaln,betan)
 
-     pf%psi(:,particle) = fpsi + kgain + betan
+!!     pf%psi(:,particle) = fpsi + kgain + betan
 
-     prop_diff = kgain + betan
+!!     prop_diff = kgain + betan
 
-     call innerQ_1(prop_diff,pWeight)
+!!     call innerQ_1(prop_diff,pWeight)
 
-     call innerQ_1(betan,qWeight)
+!!     call innerQ_1(betan,qWeight)
 
-     pf%weight(particle) = pf%weight(particle) + 0.5*pWeight - 0.5*qWeight
+!!     pf%weight(particle) = pf%weight(particle) + 0.5*pWeight - 0.5*qWeight
 
   end do
   !$omp end parallel do

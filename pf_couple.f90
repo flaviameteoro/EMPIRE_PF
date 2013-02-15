@@ -8,7 +8,7 @@ program couple_pf
   use pf_control
   implicit none
   
-  integer :: i,j
+  integer :: i,j,particle
   integer :: mpi_err
   
   call initialise_mpi
@@ -21,6 +21,11 @@ program couple_pf
 
   call allocate_pf
   
+! 1st call to model to get psi
+  do particle =1,pf%ngrand
+     call recieve_from_model(pf%psi(:,particle),particle)
+  enddo
+
   do j=1,pf%time_obs
 
      do i = 1,pf%time_bwn_obs-1

@@ -87,10 +87,10 @@ contains
     integer :: mpi_err
     
     
-!          write(6,*)'ohello1',j,n,nens,a_nxn*a_nyn*a_levels
           call MPI_Recv(mdata, state_dim, MPI_DOUBLE, &
-               particle-1, MPI_ANY_TAG, COUPLE_MPI_COMMUNICATOR,&
+               particle-1, 1, COUPLE_MPI_COMMUNICATOR,&
                mpi_status, mpi_err)
+     write(6,*)'phellor1',particle,state_dim,mdata(100)
     
 !    do n=1,nens
 !       do j=1,a_levels
@@ -117,8 +117,9 @@ contains
     integer :: mpi_status(MPI_STATUS_SIZE)
     integer :: mpi_err
     
-    call MPI_Send(mdata, state_dim , MPI_DOUBLE, &
+     call MPI_Send(mdata, state_dim , MPI_DOUBLE, &
          particle-1, 1, COUPLE_MPI_COMMUNICATOR, mpi_err)
+     write(6,*)'phellos1',particle,state_dim,mdata(100)
     
     
   end subroutine send_to_model

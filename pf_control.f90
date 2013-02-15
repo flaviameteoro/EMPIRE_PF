@@ -16,7 +16,6 @@ module pf_control
   type(pf_control_type) :: pf
   contains
     subroutine set_pf_controls
-      type(pf_control_type) :: pf
       integer, parameter :: rk=kind(1.0D0)
       integer :: ios
       write(6,'(A)') 'Opening pf_parameters.dat'
@@ -28,8 +27,8 @@ module pf_control
       read(32,*) pf%time_bwn_obs
       read(32,*) pf%nudgefac
       read(32,*) pf%gen_data
-      read(32,*) pf%nfac
-      read(32,*) pf%ufac
+!      read(32,*) pf%nfac
+!      read(32,*) pf%ufac
       close(32)
       pf%efac = 0.001/pf%ngrand
       write(6,'(A)') 'pf_parameters.dat successfully read to control pf code.'
@@ -38,16 +37,14 @@ module pf_control
 
     subroutine allocate_pf
       use sizes
-      type(pf_control_type) :: pf
       integer :: st
       allocate(pf%weight(pf%ngrand),stat=st)
-      if(st .eq. 0) stop 'Error in allocating pf%weight'
+      if(st .ne. 0) stop 'Error in allocating pf%weight'
       allocate(pf%psi(state_dim,pf%ngrand),stat=st)
-      if(st .eq. 0) stop 'Error in allocating pf%weight'
+      if(st .ne. 0) stop 'Error in allocating pf%weight'
     end subroutine allocate_pf
 
     subroutine deallocate_pf
-      type(pf_control_type) :: pf
       deallocate(pf%weight)
     end subroutine deallocate_pf
 

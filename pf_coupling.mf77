@@ -146,7 +146,7 @@ c      CALL GC_INIT(parexe_env,mype,nproc_max)
       CALL TOCOUPLER_WORK (
 *CALL ARGSIZE
      & glsize(1)*glsize(2),
-     &  D1(JPSTAR(1)),D1(JU(1)),D1(JV(1)),D1(JTHETA(1)),D1(JQ(1)),
+     &  D1(JPSTAR),D1(JU(1)),D1(JV(1)),D1(JTHETA(1)),D1(JQ(1)),
      & num_fields)
 
       RETURN
@@ -155,7 +155,7 @@ c      CALL GC_INIT(parexe_env,mype,nproc_max)
       SUBROUTINE TOCOUPLER_WORK (
 *CALL ARGSIZE
      & WORK_FLD_SIZE,
-     &  PSTAR_LOCAL,U_LOCAL,V_LOCAL,THETA_LOACL,Q_LOCAL
+     &  PSTAR_LOCAL,U_LOCAL,V_LOCAL,THETA_LOCAL,Q_LOCAL
      & num_fields)
 
       IMPLICIT NONE
@@ -168,9 +168,9 @@ c      CALL GC_INIT(parexe_env,mype,nproc_max)
       integer num_fields
 
       REAL 
-     & PSTAR_LOCAL(P_FIELD)
+     & PSTAR_LOCAL(P_FIELD),
      & U_LOCAL(U_FIELD,P_LEVELS),
-     & V_LOCAL(U_FIELD,P_LEVELS)
+     & V_LOCAL(U_FIELD,P_LEVELS),
      & THETA_LOCAL(P_FIELD,P_LEVELS),
      & Q_LOCAL(P_FIELD,P_LEVELS)
 
@@ -254,7 +254,7 @@ c        endif
 
       if (mype.eq.0) then
            call MPL_Send(WORK_GLOBAL,WORK_FLD_SIZE*num_fields,
-     $     MPL_REAL8,couple_root,0,couple_mpi_communicator,err)
+     $     MPL_REAL8,couple_root,1,couple_mpi_communicator,err)
            write(6,*)'shello',WORK_FLD_SIZE*P_LEVELS,couple_root
            call flush(6)
       endif
