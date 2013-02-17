@@ -59,7 +59,8 @@ subroutine proposal_filter
      !$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
      !||||||||||||||||||||||||||||||||||||||||||||
      call send_to_model(pf%psi(:,particle),particle)
-
+  enddo
+  do particle =1,pf%ngrand
      call recieve_from_model(fpsi,particle)
 
      pf%psi(:,particle) = fpsi
