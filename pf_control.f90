@@ -27,8 +27,8 @@ module pf_control
       read(32,*) pf%time_bwn_obs
       read(32,*) pf%nudgefac
       read(32,*) pf%gen_data
-!      read(32,*) pf%nfac
-!      read(32,*) pf%ufac
+      read(32,*) pf%nfac
+      read(32,*) pf%ufac
       close(32)
       pf%efac = 0.001/pf%ngrand
       write(6,'(A)') 'pf_parameters.dat successfully read to control pf code.'

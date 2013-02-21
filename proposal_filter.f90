@@ -4,9 +4,6 @@
 !PAB 04-02-2013
 
 subroutine proposal_filter
-  !--------------------------------------------------------------------------
-  !  Integrate the system from time-step nbegin to time-step nend 
-  !--------------------------------------------------------------------------
   use pf_control
   use Sizes
   use comms
@@ -47,27 +44,18 @@ subroutine proposal_filter
         kgain = 0.0_rk
      end if
         
-     !call the model now to make one timestep.....
-     !............................................
-     !HELP PLEASE SIMON! HOW DO I CALL THE MODEL HERE?!
-     !I would like to give the model the current particle
-     !which is at psi(:,i) and return the variable fpsi
-     !============================================
-     !~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     !############################################
-     !@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-     !&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-     !%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-     !$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-     !||||||||||||||||||||||||||||||||||||||||||||
      call send_to_model(pf%psi(:,particle),particle)
+
   enddo
+  !$omp end parallel do 
+
+  !$omp parallel do 
   do particle =1,pf%ngrand
      call recieve_from_model(fpsi,particle)
 
      pf%psi(:,particle) = fpsi
 
-!!     call K(y_Hpsin1,kgain)
+     call K(y_Hpsin1,kgain)
 
      !Mel-20|12|11-changed to allow random error correlated by sqrt Q
      call NormalRandomNumbers1D(0.0,1.0,state_dim,normaln)

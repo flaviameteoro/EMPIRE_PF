@@ -2,6 +2,7 @@ subroutine equal_weight_filter
   use pf_control
   use sizes
   use random
+  use comms
   implicit none
   integer, parameter :: rk = kind(1.0D0)
   real(kind=rk), dimension(pf%ngrand) :: a,b,c,alpha
@@ -30,20 +31,15 @@ subroutine equal_weight_filter
         call H(pf%psi(:,particle),Hpsi)
      
         y_Hpsin1 = y - Hpsi
+        
+        call send_to_model(pf%psi(:,particle),particle)
 
-        !call the model now to make one timestep.....
-        !............................................
-        !HELP PLEASE SIMON! HOW DO I CALL THE MODEL HERE?!
-        !I would like to give the model the current particle
-        !which is at psi(:,i) and return the variable fpsi
-        !============================================
-        !~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        !############################################
-        !@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-        !&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-        !%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        !$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-        !||||||||||||||||||||||||||||||||||||||||||||
+     enddo
+     !$omp end parallel do 
+     
+     !$omp parallel do 
+     do particle =1,pf%ngrand
+        call recieve_from_model(fpsi,particle)
         
         !c(particle) = pf%weight(particle) + 0.5*(y-Hf(x_i^n-1))^T (HQH^T + R)^(-1) (y-Hf(x_i^n-1))
         call innerHQHt_plus_R_1(y_Hpsin1,w)

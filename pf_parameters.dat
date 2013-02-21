@@ -3,4 +3,5 @@
 48				time_bwn_obs
 0.02				nudgefac
 .true.				gen_data
-
+1.0D-5				nfac
+1.0D-5				ufac
