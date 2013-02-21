@@ -30,17 +30,22 @@ subroutine proposal_filter
   
   integer :: particle
 
-  call get_observation_data(y)
+  if(.not. pf%gen_data) call get_observation_data(y)
 
   !put stuff from psi vector into a nice form to work with it
   !$omp parallel do
   do particle =1,pf%ngrand
 
-     call H(pf%psi(:,particle),Hpsi)
-
-     y_Hpsin1 = y - Hpsi
-
-
+     if(.not. pf%gen_data) then
+        call H(pf%psi(:,particle),Hpsi)
+        
+        y_Hpsin1 = y - Hpsi
+        
+        call K(y_Hpsin1,kgain)
+     else
+        kgain = 0.0_rk
+     end if
+        
      !call the model now to make one timestep.....
      !............................................
      !HELP PLEASE SIMON! HOW DO I CALL THE MODEL HERE?!
@@ -54,8 +59,6 @@ subroutine proposal_filter
      !%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
      !$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
      !||||||||||||||||||||||||||||||||||||||||||||
-
-     call K(y_Hpsin1,kgain)
 
      !Mel-20|12|11-changed to allow random error correlated by sqrt Q
      call NormalRandomNumbers1D(0.0,1.0,state_dim,normaln)

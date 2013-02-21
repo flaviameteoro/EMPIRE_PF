@@ -19,58 +19,67 @@ subroutine equal_weight_filter
 
   real(kind=rk) :: w,uu
 
+  if(.not. pf%gen_data) then
+     call get_observation_data(y)
+     
 
-  call get_observation_data(y)
-
-  !$omp parallel do
-  do particle =1,pf%ngrand
+     !$omp parallel do
+     do particle =1,pf%ngrand
 
 
-     call H(pf%psi(:,particle),Hpsi)
+        call H(pf%psi(:,particle),Hpsi)
+     
+        y_Hpsin1 = y - Hpsi
 
-     y_Hpsin1 = y - Hpsi
+        !call the model now to make one timestep.....
+        !............................................
+        !HELP PLEASE SIMON! HOW DO I CALL THE MODEL HERE?!
+        !I would like to give the model the current particle
+        !which is at psi(:,i) and return the variable fpsi
+        !============================================
+        !~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        !############################################
+        !@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+        !&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
+        !%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        !$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+        !||||||||||||||||||||||||||||||||||||||||||||
+        
+        !c(particle) = pf%weight(particle) + 0.5*(y-Hf(x_i^n-1))^T (HQH^T + R)^(-1) (y-Hf(x_i^n-1))
+        call innerHQHt_plus_R_1(y_Hpsin1,w)
+        c(particle) = pf%weight(particle) + 0.5*w
+        
+     end do
+     !$omp end parallel do
+     
+     !here we can pick somehow the 80% level etc...
+     cmax = maxval(c)
+  end if
 
-     !call the model now to make one timestep.....
-     !............................................
-     !HELP PLEASE SIMON! HOW DO I CALL THE MODEL HERE?!
-     !I would like to give the model the current particle
-     !which is at psi(:,i) and return the variable fpsi
-     !============================================
-     !~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     !############################################
-     !@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-     !&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
-     !%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-     !$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-     !||||||||||||||||||||||||||||||||||||||||||||
-
-     !c(particle) = pf%weight(particle) + 0.5*(y-Hf(x_i^n-1))^T (HQH^T + R)^(-1) (y-Hf(x_i^n-1))
-     call innerHQHt_plus_R_1(y_Hpsin1,w)
-     c(particle) = pf%weight(particle) + 0.5*w
-
-  end do
-  !$omp end parallel do
-
-  !here we can pick somehow the 80% level etc...
-  cmax = maxval(c)
 
   !$omp parallel do
   do particle = 1,pf%ngrand
-     !a(particle) = 0.5* (y-Hf(x_i^n-1))^T R^(-1) (HQH^T) (HQH^T + R)^(-1) (y-Hf(x_i^n-1))
-     call K(y_Hpsin1,kgain)
-     call H(kgain,obsv)
-     call solve_r(obsv,obsvv)
-     w = sum(obsv*y_Hpsin1)
-     a(particle) = 0.5*w
+     if(.not. pf%gen_data) then
+        !a(particle) = 0.5* (y-Hf(x_i^n-1))^T R^(-1) (HQH^T) (HQH^T + R)^(-1) (y-Hf(x_i^n-1))
+        call K(y_Hpsin1,kgain)
+        call H(kgain,obsv)
+        call solve_r(obsv,obsvv)
+        w = sum(obsv*y_Hpsin1)
+        a(particle) = 0.5*w
+        
+        !b(particle) = 0.5* (y-Hf(x_i^n-1))^T R^(-1) (y-Hf(x_i^n-1)) - cmax - pf%weight(i)
+        call innerR_1(y_Hpsin1,w)
+        b(particle) = 0.5*w - cmax - pf%weight(particle)
 
-     !b(particle) = 0.5* (y-Hf(x_i^n-1))^T R^(-1) (y-Hf(x_i^n-1)) - cmax - pf%weight(i)
-     call innerR_1(y_Hpsin1,w)
-     b(particle) = 0.5*w - cmax - pf%weight(particle)
 
 
-
-     !note the plus sign in the below equation. See Ades & van Leeuwen 2012.
-     alpha(particle) = 1.0 + sqrt(1.0 - b(particle)/a(particle) + 1.0D-10) 
+        !note the plus sign in the below equation. See Ades & van Leeuwen 2012.
+        alpha(particle) = 1.0 + sqrt(1.0 - b(particle)/a(particle) + 1.0D-10) 
+     else
+        kgain = 0.0_rk
+        alpha(particle) = 0.0_rk
+        y_Hpsin1 = 0.0_rk
+     end if
 
      !generate beta from a mixture density
      call MixtureRandomNumbers1D(0.0D0,pf%nfac,pf%ufac,pf%efac,state_dim,statev)
@@ -98,5 +107,10 @@ subroutine equal_weight_filter
   pf%weight = pf%weight/sum(pf%weight)
   pf%weight = -log(pf%weight)
 
+  if(pf%gen_data) then
+     call H(pf%psi(:,1),y)
+     call save_observation_data(y)
+  end if
+  
 
 end subroutine equal_weight_filter
