@@ -43,10 +43,16 @@ program couple_pf
      call flush(6)
 
   enddo
+  write(6,*) 'PF: finished the loop - now to tidy up'
+  call flush(6)
 
   
   call deallocate_data
-  
+
+  write(6,*) 'PF: finished deallocate_data - off to mpi_finalize'
+  call flush(6)
+
+
   call MPI_Finalize(mpi_err)
   
   write(*,*) 'Program couple_pf terminated successfully.'

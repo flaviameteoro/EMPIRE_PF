@@ -22,7 +22,6 @@ module pf_control
       open(32,file='pf_parameters.dat',iostat=ios,action='read',status='old')
       if(ios .ne. 0) stop 'Cannot open pf_parameters.dat'
 
-      read(32,*) pf%ngrand
       read(32,*) pf%time_obs
       read(32,*) pf%time_bwn_obs
       read(32,*) pf%nudgefac

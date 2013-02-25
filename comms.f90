@@ -39,6 +39,7 @@ contains
   end subroutine deallocate_data
   
   subroutine initialise_mpi
+    use pf_control
     implicit none
     include 'mpif.h'
     
@@ -66,6 +67,8 @@ contains
          COUPLE_MPI_COMMUNICATOR, mpi_err)
     
 !    nens=nproc-1
+    pf%ngrand=nproc-1
+
 
     couple_root=ctmp
     write(6,*)'chello',mype_id,myrank,nproc,couple_root

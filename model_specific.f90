@@ -33,7 +33,7 @@ subroutine solve_q(x,v)
   !subroutine to take a full state vector x and return v
   !in state space.
   use sizes
-  implicit none
+ implicit none
   integer, parameter :: rk=kind(1.0D+0)
   real(kind=rk), dimension(state_dim), intent(in) :: x
   real(kind=rk), dimension(state_dim), intent(out) :: v
@@ -62,7 +62,7 @@ subroutine Qhalf(x,Qx)
   real(kind=rk), dimension(state_dim), intent(in) :: x
   real(kind=rk), dimension(state_dim), intent(out) :: qx
 
-  qx = sqrt(x)
+  qx = sqrt(abs(x))
 end subroutine QHALF
 
 subroutine Q(x,Qx)

@@ -17,7 +17,8 @@ subroutine get_observation_data(y)
      write(*,*) 'Check it exists. I need a lie down.'
      stop
   end if
-  read(76) y
+  read(67) y
+  close(67)
 end subroutine get_observation_data
 
 subroutine save_observation_data(y)
@@ -39,5 +40,6 @@ subroutine save_observation_data(y)
      write(*,*) 'Very strange that I couldn''t open it. I''m going to stop now.'
      stop
   end if
-  write(76) y
+  write(67) y
+  close(67)
 end subroutine save_observation_data
