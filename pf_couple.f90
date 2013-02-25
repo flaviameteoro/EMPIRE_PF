@@ -53,7 +53,7 @@ program couple_pf
   call flush(6)
 
 
-  call MPI_Finalize(mpi_err)
+!  call MPI_Finalize(mpi_err)
   
   write(*,*) 'Program couple_pf terminated successfully.'
 

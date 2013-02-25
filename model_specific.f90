@@ -12,6 +12,7 @@ subroutine configure_model
 
   !Atmosphere only for now
   state_dim=a_num_points
+  obs_dim = 100
 
 end subroutine configure_model
 
