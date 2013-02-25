@@ -19,6 +19,7 @@ subroutine equal_weight_filter
   real(kind=rk), dimension(obs_dim) :: obsv,obsvv      !temporary  obs  space vector
 
   real(kind=rk) :: w,uu
+  print*,'PF : in equal weights'
 
   if(.not. pf%gen_data) then
      call get_observation_data(y)
@@ -50,7 +51,21 @@ subroutine equal_weight_filter
      
      !here we can pick somehow the 80% level etc...
      cmax = maxval(c)
+  else
+     !$omp parallel do 
+     do particle =1,pf%ngrand
+        call send_to_model(pf%psi(:,particle),particle)
+     enddo
+     !$omp end parallel do
+     !$omp parallel do 
+     do particle =1,pf%ngrand
+        call recieve_from_model(fpsi,particle)
+     end do
+     !$omp end parallel do
+     
   end if
+
+
 
 
   !$omp parallel do

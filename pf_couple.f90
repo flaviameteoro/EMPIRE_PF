@@ -46,6 +46,11 @@ program couple_pf
   write(6,*) 'PF: finished the loop - now to tidy up'
   call flush(6)
 
+
+  do particle =1,pf%ngrand
+     call send_to_model(pf%psi(:,particle),particle)
+  enddo
+
   
   call deallocate_data
 
