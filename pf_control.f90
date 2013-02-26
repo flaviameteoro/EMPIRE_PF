@@ -12,6 +12,7 @@ module pf_control
      real(kind=kind(1.0D0)) :: nfac                !standard deviation of normal distribution in mixture density
      real(kind=kind(1.0D0)) :: ufac                !half width of the uniform distribution in mixture density
      real(kind=kind(1.0D0)) :: efac
+     integer :: couple_root
   end type pf_control_type
   type(pf_control_type) :: pf
   contains

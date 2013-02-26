@@ -71,6 +71,7 @@ contains
 
 
     couple_root=ctmp
+    pf%couple_root = couple_root
     write(6,*)'chello',mype_id,myrank,nproc,couple_root
 
   end subroutine initialise_mpi
