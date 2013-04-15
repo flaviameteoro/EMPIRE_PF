@@ -12,8 +12,6 @@ logical :: placed
 
 if(pf%use_talagrand) then
 
-   variable=1
-
    do particle = 1,pf%ngrand
       call H(pf%psi(:,particle),Hpsi)
       bin_marker(particle) = Hpsi(pf%tala_obs_num)
