@@ -21,45 +21,47 @@ subroutine proposal_filter
 
   real(kind=rk), dimension(obs_dim) :: y             !y, the observations
   real(kind=rk), dimension(obs_dim) :: Hpsi          !H(psi^(n-1))
-  real(kind=rk), dimension(obs_dim) :: y_Hpsin1      !y-H(psi^(n-1))
+  real(kind=rk), dimension(obs_dim,pf%ngrand) :: y_Hpsin1      !y-H(psi^(n-1))
   real(kind=rk), dimension(state_dim) :: fpsi        !f(psi^(n-1))
   real(kind=rk), dimension(state_dim) :: kgain       !QH^T(HQH^T+R)^(-1)(y-H(psi^(n-1)))
   real(kind=rk), dimension(state_dim) :: prop_diff   !psi^n -f(psi^(n-1))
-  
+!  real(kind=rk) :: dnrm2
   integer :: particle
 
   if(.not. pf%gen_data) call get_observation_data(y)
 
   !put stuff from psi vector into a nice form to work with it
-  !$omp parallel do
+  
   do particle =1,pf%ngrand
 
      if(.not. pf%gen_data) then
         call H(pf%psi(:,particle),Hpsi)
         
-        y_Hpsin1 = y - Hpsi
+        y_Hpsin1(:,particle) = y - Hpsi
         
-        call K(y_Hpsin1,kgain)
      else
-        kgain = 0.0_rk
+        y_Hpsin1(:,particle) = 0.0_rk
      end if
-        
+
      call send_to_model(pf%psi(:,particle),particle)
 
   enddo
-  !$omp end parallel do 
 
-  !$omp parallel do 
+   
   do particle =1,pf%ngrand
      call recieve_from_model(fpsi,particle)
 
-     pf%psi(:,particle) = fpsi
+     call B(y_Hpsin1(:,particle),kgain)
 
-     call K(y_Hpsin1,kgain)
+!     print*,'kgain',kgain
 
-     !Mel-20|12|11-changed to allow random error correlated by sqrt Q
-     call NormalRandomNumbers1D(0.0,1.0,state_dim,normaln)
-     call Qhalf(normaln,betan)
+     call NormalRandomNumbers1D(0.0D0,1.0D0,state_dim,normaln)
+     call Q(normaln,betan)
+
+     betan = 5.0_rk*betan
+
+!     print*,dnrm2(state_dim,fpsi-pf%psi(:,particle),1),dnrm2(state_dim,kgain,1)&
+!          &,dnrm2(state_dim,betan,1)
 
      pf%psi(:,particle) = fpsi + kgain + betan
 
@@ -68,11 +70,16 @@ subroutine proposal_filter
      call innerQ_1(prop_diff,pWeight)
 
      call innerQ_1(betan,qWeight)
-
+!     print*,'pW =',pWeight,'qw = ',qWeight
      pf%weight(particle) = pf%weight(particle) + 0.5*pWeight - 0.5*qWeight
-
+    
   end do
-  !$omp end parallel do
-
+  
+!  print*,'pf%weight:',pf%weight
+  pf%weight = exp(-pf%weight)
+  pf%weight = pf%weight/sum(pf%weight)
+  pf%weight = -log(pf%weight)
+!  print*,'pf%weight:',pf%weight
+  if(pf%gen_data) call save_truth(pf%psi(:,1))
 
 end subroutine proposal_filter
