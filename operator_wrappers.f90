@@ -10,19 +10,12 @@ subroutine K(y,x)
 
   real(kind=rk), dimension(obs_dim) :: v
   real(kind=rk), dimension(state_dim) :: vv
-  real(kind=rk) :: temp
 
   call solve_hqht_plus_r(y,v)
 
   call HT(v,vv)
 
   call Q(vv,x)
-
-  !now apply the scaling of the K operator
-
-  temp = pf%nudgeFac*real(modulo(pf%timestep,pf%time_bwn_obs),rk)/real(pf%time_bwn_obs,rk)
-
-  x = temp*x
 
 end subroutine K
 
@@ -73,3 +66,37 @@ subroutine innerHQHt_plus_R_1(y,w)
   w = sum(y*v)
 
 end subroutine innerHQHt_plus_R_1
+
+
+subroutine B(y,x)
+use pf_control
+use sizes
+implicit none
+integer, parameter :: rk = kind(1.0D0)
+real(kind=rk), dimension(obs_dim), intent(in) :: y
+real(kind=rk), dimension(state_dim), intent(out) :: x
+real(kind=rk), dimension(obs_dim) :: R_1y
+real(kind=rk), dimension(state_dim) :: HtR_1y,QHtR_1y
+real(kind=rk) :: freetime,p,tau
+
+freetime = 0.6_rk
+
+tau = real(modulo(pf%timestep,pf%time_bwn_obs),rk)/real(pf&
+     &%time_bwn_obs,rk)
+
+if(tau .lt. freetime) then
+   x = 0.0_rk
+else
+   
+   call solve_rhalf(y,R_1y)
+   
+   call HT(R_1y,HtR_1y)
+   
+   call Qhalf(HtR_1y,QHtR_1y)
+
+   p = pf%nudgefac*(tau-freetime)/(1.0_rk-freetime)
+
+   x = p*QHtR_1y
+end if
+
+end subroutine B
