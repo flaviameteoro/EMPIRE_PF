@@ -1,6 +1,11 @@
 1				time_obs
 48				time_bwn_obs
-0.02				nudgefac
-.true.				gen_data
+0.05				nudgefac
+.false.				gen_data
 1.0D-5				nfac
 1.0D-5				ufac
+0.95D0				keep
+.true.				human_readable
+.true.				use_talagrand
+.true.				use_weak
+1				tala_obs_num
