@@ -30,6 +30,18 @@ subroutine solve_r(y,v)
   v = y
 end subroutine solve_r
 
+subroutine solve_rhalf(y,v)
+  !subroutine to take an observation vector y and return v
+  !in observation space.
+  use sizes
+  implicit none
+  integer, parameter :: rk=kind(1.0D+0)
+  real(kind=rk), dimension(obs_dim), intent(in) :: y
+  real(kind=rk), dimension(obs_dim), intent(out) :: v
+             
+  v = y
+end subroutine solve_rhalf
+
 subroutine solve_q(x,v)
   !subroutine to take a full state vector x and return v
   !in state space.
