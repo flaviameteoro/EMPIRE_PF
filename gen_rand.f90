@@ -27,20 +27,23 @@ end do
 
 End Subroutine NormalRandomNumbers1D
 
-subroutine MixtureRandomNumbers1D(mean,stdev,ufac,epsi,n,phi)
+subroutine MixtureRandomNumbers1D(mean,stdev,ufac,epsi,n,phi,uniform)
 use random
 implicit none
 real(kind=kind(1.0D0)), intent(in) :: mean,stdev,ufac,epsi
 integer, intent(in) :: n
 real(kind=kind(1.0D0)), dimension(n), intent(out) :: phi
+logical, intent(out) :: uniform
 real(kind=kind(1.0D0)) :: draw
 
 call random_number(draw)
 
 if(draw .gt. epsi) then
    call UniformRandomNumbers1D(mean-ufac,mean+ufac, n,phi)
+   uniform = .true.
 else
    call NormalRandomNumbers1D(mean,stdev,n,phi)
+   uniform = .false.
 end if
 
 end subroutine MixtureRandomNumbers1D
