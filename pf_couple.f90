@@ -10,7 +10,7 @@ program couple_pf
   
   integer :: i,j,particle
   integer :: mpi_err
-  real(kind=kind(1.0D0)),dimension(3) :: rdom
+
   write(6,'(A)') 'PF: Starting PF code'
   call flush(6)
   call initialise_mpi
@@ -28,8 +28,7 @@ program couple_pf
      call recieve_from_model(pf%psi(:,particle),particle)
 
      !lets add some random noise to the initial conditions
-     call NormalRandomNumbers1D(0.0D0,sqrt(2.0D0),3,rdom)
-     pf%psi(:,particle) = pf%psi(:,particle) + rdom
+     call perturb_particle(pf%psi(:,particle))
 
   enddo
   write(6,*) 'PF: All models recieved in pf couple' 

@@ -27,7 +27,7 @@ LOAD=mpif90
 LOADOPTS=
 
 #OBJS= pf_couple.o hadcm3_config.o nudge_data.o equal_weight_filter.o kb05d.o comms.o gen_rand.o random_d.o extra.o proposal_filter.o pf_control.o data_io.o model_specific.o operator_wrappers.o
-OBJS= pf_couple.o hadcm3_config.o equal_weight_filter.o comms.o gen_rand.o random_d.o extra.o proposal_filter.o pf_control.o data_io.o model_specific.o operator_wrappers.o kb05d.o resample.o diagnostics.o
+OBJS= pf_couple.o hadcm3_config.o equal_weight_filter.o comms.o gen_rand.o random_d.o extra.o proposal_filter.o pf_control.o data_io.o model_specific.o operator_wrappers.o kb05d.o resample.o diagnostics.o perturb_particle.o
 
 #nag90_nagVersion.o
 
@@ -42,6 +42,9 @@ operator_wrappers.o: operator_wrappers.f90 pf_control.o extra.o
 
 pf_control.o: pf_control.f90 extra.o
 	$(FC) $(FCOPTS) -c pf_control.f90
+
+perturb_particle.o: perturb_particle.f90 extra.o
+	$(FC) $(FCOPTS) -c perturb_particle.f90
 
 data_io.o: data_io.f90 pf_control.o extra.o
 	$(FC) $(FCOPTS) -c data_io.f90
