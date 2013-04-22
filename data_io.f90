@@ -104,24 +104,25 @@ subroutine output_from_pf
   call flush(68)
   if(pf%timestep .eq. pf%time_obs*pf%time_bwn_obs) close(68)
 
-  if(pf%timestep .eq. 0) then
-     open(61,file='pf_mean',iostat=ios,action='write',status='replace')
-     if(ios .ne. 0)  then
-        write(*,*) 'PARTICLE FILTER DATA ERROR!!!!! Cannot open file pf_mean'
-        write(*,*) 'Very strange that I couldn''t open it. I''m going &
-             &to &          
-             &stop now.'
-        stop
+  if(pf%use_mean) then
+     if(pf%timestep .eq. 0) then
+        open(61,file='pf_mean',iostat=ios,action='write',status='replace')
+        if(ios .ne. 0)  then
+           write(*,*) 'PARTICLE FILTER DATA ERROR!!!!! Cannot open file pf_mean'
+           write(*,*) 'Very strange that I couldn''t open it. I''m going &
+                &to &          
+                &stop now.'
+           stop
+        end if
      end if
+     mean = 0.0D0
+     do particle = 1,pf%ngrand
+        mean(:) = mean(:) + pf%psi(:,particle)*exp(-pf%weight(particle))
+     end do
+     write(61,*) mean(:)
+     call flush(61)
+     if(pf%timestep .eq. pf%time_obs*pf%time_bwn_obs) close(61)
   end if
-  mean = 0.0D0
-  do particle = 1,pf%ngrand
-     mean(:) = mean(:) + pf%psi(:,particle)*exp(-pf%weight(particle))
-  end do
-  write(61,*) mean(:)
-  call flush(61)
-  if(pf%timestep .eq. pf%time_obs*pf%time_bwn_obs) close(61)
-
 
   if(pf%use_weak) then
      if(pf%timestep .eq. 0) then

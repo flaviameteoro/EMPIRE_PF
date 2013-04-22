@@ -14,7 +14,7 @@ module pf_control
      real(kind=kind(1.0D0)) :: efac
      real(kind=kind(1.0D0)) :: keep
      integer :: couple_root
-     logical :: use_talagrand,use_weak
+     logical :: use_talagrand,use_weak,use_mean
      integer, dimension(:,:), allocatable :: talagrand
      integer :: tala_obs_num
   end type pf_control_type
@@ -37,6 +37,7 @@ module pf_control
       read(32,*) pf%use_talagrand
       read(32,*) pf%use_weak
       read(32,*) pf%tala_obs_num
+      read(32,*) pf%use_mean
       close(32)
       pf%efac = 0.001/pf%ngrand
       write(6,'(A)') 'pf_parameters.dat successfully read to control pf code.'
