@@ -7,11 +7,13 @@ subroutine configure_model
        4*a_nxn*a_nyn*a_levels+a_nxn*a_nyn
 !       2*(a_nxn*(a_nyn-1))*a_levels+2*a_nxn*a_nyn*a_levels+a_nxn*a_nyn
   integer, parameter :: o_num_points= &
-       4*o_nxn*o_nyn*o_levels+o_nxn*o_nyn
+       4*o_nxn*o_nyn*o_levels
+!       4*o_nxn*o_nyn*o_levels+o_nxn*o_nyn
   integer, parameter :: num_points=a_num_points+o_num_points
 
-  !Atmosphere only for now
-  state_dim=a_num_points
+!  !Atmosphere only for now
+!  state_dim=a_num_points
+  state_dim=num_points
   obs_dim = 100
 
 end subroutine configure_model

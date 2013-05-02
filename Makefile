@@ -5,7 +5,7 @@ all: pf_couple
 ProEnv = $(shell `eval `/opt/modules/3.2.6.6/bin/modulecmd bash list`` 2>&1 | grep 'PrgEnv' | cut -d - -f2 | cut -d / -f1)
 
 ifeq ($(ProEnv),cray)
-FCOPTS = -d I -m 0 -R b -h omp
+FCOPTS = -s real64
 else
 ifeq ($(ProEnv),pgi)
 FCOPTS=  -r8 -O2 -Kieee -fastsse -Mbounds -traceback -Ktrap=fp 

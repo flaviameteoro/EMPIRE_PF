@@ -37,7 +37,7 @@ subroutine save_observation_data(y)
   open(67,file=filename,iostat=ios,action='write',status='replace',form='unformatted')
   if(ios .ne. 0)  then
      write(*,*) 'PARTICLE FILTER DATA ERROR!!!!! Cannot open file ',filename
-     write(*,*) 'Very strange that I couldn''t open it. I''m going to stop now.'
+     write(*,*) 'Very strange that I couldnt open it. Im going to stop now.'
      stop
   end if
   write(67) y
@@ -47,9 +47,7 @@ subroutine save_observation_data(y)
      open(64,file='pf_data',action='write',position='append')
      if(ios .ne. 0)  then
         write(*,*) 'PARTICLE FILTER DATA ERROR!!!!! Cannot open file pf_data'
-        write(*,*) 'Very strange that I couldn''t open it. I''m goin&
-             &g to &
-             &stop now.'
+        write(*,*) 'Very strange that I couldnt open it. Im going to stop now.'
         stop
      end if
      write(64,*) pf%timestep,y
@@ -69,9 +67,7 @@ subroutine save_truth(x)
      open(62,file='pf_truth',iostat=ios,action='write',status='replace')
      if(ios .ne. 0)  then
         write(*,*) 'PARTICLE FILTER DATA ERROR!!!!! Cannot open file pf_truth'
-        write(*,*) 'Very strange that I couldn''t open it. I''m going &
-             &to &          
-             &stop now.'
+        write(*,*) 'Very strange that I couldnt open it. Im going to stop now.'
         stop
      end if
   end if
@@ -94,8 +90,7 @@ subroutine output_from_pf
      open(68,file='pf_out',iostat=ios,action='write',status='replace')
      if(ios .ne. 0)  then
         write(*,*) 'PARTICLE FILTER DATA ERROR!!!!! Cannot open file pf_out'
-        write(*,*) 'Very strange that I couldn''t open it. I''m going to &
-             &stop now.'
+        write(*,*) 'Very strange that I couldnt open it. Im going to stop now.'
         stop
      end if
   end if
@@ -109,9 +104,7 @@ subroutine output_from_pf
         open(61,file='pf_mean',iostat=ios,action='write',status='replace')
         if(ios .ne. 0)  then
            write(*,*) 'PARTICLE FILTER DATA ERROR!!!!! Cannot open file pf_mean'
-           write(*,*) 'Very strange that I couldn''t open it. I''m going &
-                &to &          
-                &stop now.'
+           write(*,*) 'Very strange that I couldnt open it. Im going to stop now.'
            stop
         end if
      end if
@@ -135,8 +128,7 @@ subroutine output_from_pf
      if(ios .ne. 0)  then
         write(*,*) 'PARTICLE FILTER DATA ERROR!!!!! Cannot open file pf_&
              &weak'
-        write(*,*) 'Very strange that I couldn''t open it. I''m going to&
-             & stop now.'
+        write(*,*) 'Very strange that I couldnt open it. Im going to stop now.'
         stop
      end if
      
@@ -150,9 +142,7 @@ subroutine output_from_pf
              &,status='replace')
         if(ios .ne. 0)  then
            write(*,*) 'Cannot open file gnuplot_weak'
-           write(*,*) 'Very strange that I couldn''t open it. I''m going&
-                &&
-                & to stop now.'
+           write(*,*) 'Very strange that I couldnt open it. Im going to stop now.'
            stop
         end if
         write(77,'(A)') 'reset'
@@ -170,9 +160,7 @@ subroutine output_from_pf
              &,status='replace')
         if(ios .ne. 0)  then
            write(*,*) 'Cannot open file animateweak.lorenz'
-           write(*,*) 'Very strange that I couldn''t open it. I''m going&
-                &&
-                & to stop now.'
+           write(*,*) 'Very strange that I couldnt open it. Im going to stop now.'
            stop
         end if
         write(77,'(A,i0)') 'set multiplot layout 3,1 title "Lorenz 63 usi&

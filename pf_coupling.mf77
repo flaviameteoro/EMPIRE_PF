@@ -14,7 +14,7 @@
 *CALL ARGPPX 
      &          ICODE,CMESSAGE)
 *I U_MODEL1.87
-            CALL TOCOUPLER (
+            CALL PF_COUPLER (
 *CALL ARGSIZE
 *CALL ARTD1 
 *CALL ARTDUMA 
@@ -24,9 +24,10 @@
 *CALL ARTPTRA 
 *CALL ARTSTS 
 *CALL ARGPPX 
+     & submodel,
      &          ICODE,CMESSAGE)
 *I U_MODEL1.122
-            CALL TOCOUPLER (
+            CALL PF_COUPLER (
 *CALL ARGSIZE
 *CALL ARTD1 
 *CALL ARTDUMA 
@@ -36,6 +37,20 @@
 *CALL ARTPTRA 
 *CALL ARTSTS 
 *CALL ARGPPX 
+     & submodel,
+     &          ICODE,CMESSAGE)
+*I U_MODEL1.130
+            CALL PF_COUPLER (
+*CALL ARGSIZE
+*CALL ARTD1 
+*CALL ARTDUMA 
+*CALL ARTDUMO
+*CALL ARTDUMW 
+*CALL ARTCONA
+*CALL ARTPTRA 
+*CALL ARTSTS 
+*CALL ARGPPX 
+     & submodel,
      &          ICODE,CMESSAGE)
 
 
@@ -118,8 +133,8 @@ c      CALL GC_INIT(parexe_env,mype,nproc_max)
 
         len_basename=GET_CHAR_LEN(stdout_basename)
 
-*DECK TOCOUPLER
-      SUBROUTINE TOCOUPLER ( 
+*DECK PF_COUP
+      SUBROUTINE PF_COUPLER ( 
 *CALL ARGSIZE 
 *CALL ARGD1
 *CALL ARGDUMA
@@ -128,7 +143,8 @@ c      CALL GC_INIT(parexe_env,mype,nproc_max)
 *CALL ARGCONA  
 *CALL ARGPTRA  
 *CALL ARGSTS 
-*CALL ARGPPX 
+*CALL ARGPPX
+     $     submodel,
      &           ICODE,CMESSAGE)
 
       IMPLICIT NONE
@@ -146,28 +162,47 @@ c      CALL GC_INIT(parexe_env,mype,nproc_max)
 *CALL PPXLOOK
 *CALL PARVARS
 *CALL GCCOM
-
+*CALL DECOMPTP
+*CALL TYPPTRO
       INTEGER ICODE            ! OUT - Error return code
       CHARACTER*80 CMESSAGE
 
-      integer num_fields
+      integer a_num_fields,o_num_fields,a_size,o_size
+      integer submodel
+      write(6,*)'subhello1',submodel
+      CALL CHANGE_DECOMPOSITION(decomp_standard_atmos,ICODE)
+      a_size=glsize(1)*glsize(2)
+      CALL CHANGE_DECOMPOSITION(decomp_standard_ocean,ICODE)
+      o_size=glsize(1)*glsize(2)
 
-      num_fields=p_levels*4+1
+      if (submodel.eq.ocean_sm) then
+         CALL CHANGE_DECOMPOSITION(decomp_standard_ocean,ICODE)
+      else
+         CALL CHANGE_DECOMPOSITION(decomp_standard_atmos,ICODE)
+      endif
 
-      CALL TOCOUPLER_WORK (
+!      if (submodel.ne.atmos_sm) return
+
+
+      a_num_fields=p_levels*4+1
+      o_num_fields=KM*4
+
+      CALL PF_COUPLER_WORK (
 *CALL ARGSIZE
-     & glsize(1)*glsize(2),
+     &  a_size,o_size,a_num_fields,o_num_fields,
      &  D1(JPSTAR),D1(JU(1)),D1(JV(1)),D1(JTHETA(1)),D1(JQ(1)),
-     & num_fields)
-
+     &  D1(joc_tracer(1,1)),D1(joc_tracer(2,1)),
+     &  D1(joc_u(1)),D1(joc_v(1)),
+     &  submodel)
       RETURN
       END
 
-      SUBROUTINE TOCOUPLER_WORK (
+      SUBROUTINE PF_COUPLER_WORK (
 *CALL ARGSIZE
-     & WORK_FLD_SIZE,
+     &  a_size,o_size,a_num_fields,o_num_fields,
      &  PSTAR_LOCAL,U_LOCAL,V_LOCAL,THETA_LOCAL,Q_LOCAL,
-     & num_fields)
+     &  o_t_local,o_sal_local,o_u_local,o_v_local,
+     &  submodel)
 
       IMPLICIT NONE
 *CALL CMAXSIZE  
@@ -175,27 +210,37 @@ c      CALL GC_INIT(parexe_env,mype,nproc_max)
 *CALL TYPSIZE  
 *CALL PARVARS
 *CALL GCCOM
+*CALL DECOMPTP
 
-      integer num_fields
+      integer a_num_fields,o_num_fields,a_size,o_size
+      integer icode,a_index,o_index
 
-      REAL 
+      REAL
      & PSTAR_LOCAL(P_FIELD),
      & U_LOCAL(U_FIELD,P_LEVELS),
      & V_LOCAL(U_FIELD,P_LEVELS),
      & THETA_LOCAL(P_FIELD,P_LEVELS),
      & Q_LOCAL(P_FIELD,P_LEVELS)
 
+      real
+     &   o_t_local (imt,jmt,km),
+     &   o_sal_local (imt,jmt,km),
+     &   o_u_local(imt,jmt-1,km), o_v_local(imt,jmt-1,km)
+
+      
 
 
-      INTEGER WORK_FLD_SIZE,info,level,i,j
+      INTEGER info,level,i,j,all_size,submodel
 
       REAL
-     & WORK_GLOBAL(WORK_FLD_SIZE,num_fields),
-     & WORK_GLOBAL1(WORK_FLD_SIZE,num_fields)
+     & WORK_GLOBAL(A_SIZE*a_num_fields+o_size*o_num_fields),
+     & WORK_GLOBAL1(A_SIZE*a_num_fields+o_size*o_num_fields)
+
+!      common/pf_data/work_global
 
       integer MPL_REAL8
       include "mpif.h"
-      
+
       integer couple_mpi_communicator,couple_myrank,couple_nproc,
      $     couple_root
       common/pf_couple/COUPLE_MPI_COMMUNICATOR,couple_myRank,
@@ -204,127 +249,243 @@ c      CALL GC_INIT(parexe_env,mype,nproc_max)
       integer err,status(MPI_STATUS_SIZE)
       MPL_REAL8=MPI_REAL8
 
+
+      all_size=A_SIZE*a_num_fields+o_size*o_num_fields
+
       if (mype.eq.0) then
-         do j=1,num_fields
-            do i=1,WORK_FLD_SIZE
-               WORK_GLOBAL(i,j)=0.0
-               WORK_GLOBAL1(i,j)=0.0
-            enddo
+         do i=1,all_SIZE
+            WORK_GLOBAL(i)=0.0
+            WORK_GLOBAL1(i)=0.0
          enddo
       endif
-
-        CALL GATHER_FIELD(PSTAR_LOCAL(1),WORK_GLOBAL(1,1),
+!ATMOS
+      CALL CHANGE_DECOMPOSITION(decomp_standard_atmos,ICODE)
+      
+      a_index=1
+        CALL GATHER_FIELD(PSTAR_LOCAL(1),WORK_GLOBAL(a_index),
      &                  lasize(1),lasize(2),
-     &                  glsize(1),glsize(2)-1,
+     &                  glsize(1),glsize(2),
      &                  0,GCG_ALL,
      &                  info)
+         a_index=a_index+a_size
 
 
       do level=1,p_levels
-
         CALL GATHER_FIELD(U_LOCAL(1,LEVEL),
-     &                  WORK_GLOBAL(1,1+LEVEL),
+     &                  WORK_GLOBAL(a_index),
      &                  lasize(1),lasize(2),
      &                  glsize(1),glsize(2)-1,
      &                  0,GCG_ALL,
      &                  info)
+         a_index=a_index+a_size
       enddo
       do level=1,p_levels
 
         CALL GATHER_FIELD(V_LOCAL(1,LEVEL),
-     &                  WORK_GLOBAL(1,1+P_lEVELS+LEVEL),
+     &                  WORK_GLOBAL(a_index),
      &                  lasize(1),lasize(2),
-     &                  glsize(1),glsize(2)-1,
+     &                  glsize(1),glsize(2),
      &                  0,GCG_ALL,
      &                  info)
+         a_index=a_index+a_size
       enddo
       do level=1,p_levels
 
         CALL GATHER_FIELD(THETA_LOCAL(1,LEVEL),
-     &                  WORK_GLOBAL(1,1+2*P_LEVELS+LEVEL),
+     &                  WORK_GLOBAL(a_index),
      &                  lasize(1),lasize(2),
-     &                  glsize(1),glsize(2)-1,
+     &                  glsize(1),glsize(2),
      &                  0,GCG_ALL,
      &                  info)
+         a_index=a_index+a_size
       enddo
       do level=1,p_levels
 
         CALL GATHER_FIELD(Q_LOCAL(1,LEVEL),
-     &                  WORK_GLOBAL(1,1+3*P_LEVELS+LEVEL),
+     &                  WORK_GLOBAL(a_index),
      &                  lasize(1),lasize(2),
-     &                  glsize(1),glsize(2)-1,
+     &                  glsize(1),glsize(2),
      &                  0,GCG_ALL,
      &                  info)
+         a_index=a_index+a_size
+      enddo
+
+      write(6,*)'iihello',a_index,a_size,a_num_fields,a_index/a_size
+
+!Ocean
+      o_index=1+a_size*a_num_fields
+      CALL CHANGE_DECOMPOSITION(decomp_standard_ocean,ICODE)
+      do level=1,km
+
+        CALL GATHER_FIELD(o_t_LOCAL(1,1,LEVEL),
+     &                  WORK_GLOBAL(o_index),
+     &                  lasize(1),lasize(2),
+     &                  glsize(1),glsize(2),
+     &                  0,GCG_ALL,
+     &                  info)
+         o_index=o_index+o_size
+      enddo
+
+      do level=1,km
+
+        CALL GATHER_FIELD(o_sal_LOCAL(1,1,LEVEL),
+     &                  WORK_GLOBAL(o_index),
+     &                  lasize(1),lasize(2),
+     &                  glsize(1),glsize(2),
+     &                  0,GCG_ALL,
+     &                  info)
+         o_index=o_index+o_size
+      enddo
+
+      do level=1,km
+
+        CALL GATHER_FIELD(o_u_LOCAL(1,1,LEVEL),
+     &                  WORK_GLOBAL(o_index),
+     &                  lasize(1),lasize(2),
+     &                  glsize(1),glsize(2),
+     &                  0,GCG_ALL,
+     &                  info)
+         o_index=o_index+o_size
+      enddo
+
+      do level=1,km
+
+        CALL GATHER_FIELD(o_v_LOCAL(1,1,LEVEL),
+     &                  WORK_GLOBAL(o_index),
+     &                  lasize(1),lasize(2),
+     &                  glsize(1),glsize(2),
+     &                  0,GCG_ALL,
+     &                  info)
+         o_index=o_index+o_size
       enddo
 
 
-c      if (mype.eq.0) then
-c           write(6,*)'ihello',level,work_global(100,LEVEL),
-c     $         work_global(100,LEVEL+p_levels) 
-c        endif
-
       if (mype.eq.0) then
-           call MPL_Send(WORK_GLOBAL,WORK_FLD_SIZE*num_fields,
+           call MPL_Send(WORK_GLOBAL,All_SIZE,
      $     MPL_REAL8,couple_root,1,couple_mpi_communicator,err)
-           write(6,*)'shello',WORK_FLD_SIZE*P_LEVELS,couple_root
+           write(6,*)'shello',All_size,couple_root
+!           write(6,*)work_global(a_size*a_num_fields:)
            call flush(6)
       endif
 
 
 
         if (mype.eq.0) then
-           call MPL_Recv(WORK_GLOBAL1,WORK_FLD_SIZE*num_fields,
+           call MPL_Recv(WORK_GLOBAL1,All_SIZE,
      $     MPL_REAL8,couple_root,1,couple_mpi_communicator,status,err)
-      endif
+           write(6,*)'rhello',All_size,couple_root
+        endif
 
-        CALL SCATTER_FIELD(PSTAR_LOCAL(1),WORK_GLOBAL(1,1),
+!Atmos
+        if (submodel.eq.atmos_sm) then 
+      CALL CHANGE_DECOMPOSITION(decomp_standard_atmos,ICODE)
+
+        a_index=1
+        CALL SCATTER_FIELD(PSTAR_LOCAL(1),WORK_GLOBAL(a_index),
      &                  lasize(1),lasize(2),
-     &                  glsize(1),glsize(2)-1,
+     &                  glsize(1),glsize(2),
      &                  0,GCG_ALL,
      &                  info)
+        a_index=a_index+a_size
 
 
       do level=1,p_levels
 
         CALL SCATTER_FIELD(U_LOCAL(1,LEVEL),
-     &                  WORK_GLOBAL(1,1+LEVEL),
+     &                  WORK_GLOBAL(a_index),
      &                  lasize(1),lasize(2),
      &                  glsize(1),glsize(2)-1,
      &                  0,GCG_ALL,
      &                  info)
+        a_index=a_index+a_size
       enddo
       do level=1,p_levels
 
         CALL SCATTER_FIELD(V_LOCAL(1,LEVEL),
-     &                  WORK_GLOBAL(1,1+P_lEVELS+LEVEL),
+     &                  WORK_GLOBAL(a_index),
      &                  lasize(1),lasize(2),
-     &                  glsize(1),glsize(2)-1,
+     &                  glsize(1),glsize(2),
      &                  0,GCG_ALL,
      &                  info)
+        a_index=a_index+a_size
       enddo
       do level=1,p_levels
 
         CALL SCATTER_FIELD(THETA_LOCAL(1,LEVEL),
-     &                  WORK_GLOBAL(1,1+2*P_LEVELS+LEVEL),
+     &                  WORK_GLOBAL(a_index),
      &                  lasize(1),lasize(2),
-     &                  glsize(1),glsize(2)-1,
+     &                  glsize(1),glsize(2),
      &                  0,GCG_ALL,
      &                  info)
+         a_index=a_index+a_size
       enddo
       do level=1,p_levels
 
         CALL SCATTER_FIELD(Q_LOCAL(1,LEVEL),
-     &                  WORK_GLOBAL(1,1+3*P_LEVELS+LEVEL),
+     &                  WORK_GLOBAL(a_index),
      &                  lasize(1),lasize(2),
-     &                  glsize(1),glsize(2)-1,
+     &                  glsize(1),glsize(2),
      &                  0,GCG_ALL,
      &                  info)
+         a_index=a_index+a_size
       enddo
 	
-c        if (mype.eq.0) then
-c           write(6,*)'ihello1',level,work_global1(100,LEVEL),
-c     $         work_global1(100,LEVEL+p_levels) 
-c        endif
+      elseif (submodel.eq.ocean_sm) then 
+
+      write(6,*)'ohello'
+      call flush(6)
+!Ocean
+      CALL CHANGE_DECOMPOSITION(decomp_standard_ocean,ICODE)
+      o_index=1+a_size*a_num_fields
+
+      do level=1,km
+        CALL SCATTER_FIELD(o_t_LOCAL(1,1,LEVEL),
+     &                  WORK_GLOBAL(o_index),
+     &                  lasize(1),lasize(2),
+     &                  glsize(1),glsize(2),
+     &                  0,GCG_ALL,
+     &                  info)
+         o_index=o_index+o_size
+      enddo
+
+      do level=1,km
+        CALL SCATTER_FIELD(o_sal_LOCAL(1,1,LEVEL),
+     &                  WORK_GLOBAL(o_index),
+     &                  lasize(1),lasize(2),
+     &                  glsize(1),glsize(2),
+     &                  0,GCG_ALL,
+     &                  info)
+         o_index=o_index+o_size
+      enddo
+
+      do level=1,km
+        CALL SCATTER_FIELD(o_u_LOCAL(1,1,LEVEL),
+     &                  WORK_GLOBAL(o_index),
+     &                  lasize(1),lasize(2),
+     &                  glsize(1),glsize(2),
+     &                  0,GCG_ALL,
+     &                  info)
+         o_index=o_index+o_size
+      enddo
+
+      do level=1,km
+        CALL SCATTER_FIELD(o_v_LOCAL(1,1,LEVEL),
+     &                  WORK_GLOBAL(o_index),
+     &                  lasize(1),lasize(2),
+     &                  glsize(1),glsize(2),
+     &                  0,GCG_ALL,
+     &                  info)
+         o_index=o_index+o_size
+      enddo
+
+      endif
+
+        if (mype.eq.0) then
+           write(6,*)'ihello1',level,work_global(100+o_index),
+     $         work_global1(100+o_index)
+
+      call flush(6)
+        endif
 
       RETURN
       END
