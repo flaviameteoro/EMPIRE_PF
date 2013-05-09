@@ -33,7 +33,7 @@ program couple_pf
   enddo
   write(6,*) 'PF: All models received in pf couple' 
   call flush(6)
-  if(pf%gen_data) call save_truth(pf%psi(:,1))
+!  if(pf%gen_data) call save_truth(pf%psi(:,1))
   call output_from_pf
 
   do j=1,pf%time_obs

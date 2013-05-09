@@ -80,6 +80,6 @@ subroutine proposal_filter
   pf%weight = pf%weight/sum(pf%weight)
   pf%weight = -log(pf%weight)
 !  print*,'pf%weight:',pf%weight
-  if(pf%gen_data) call save_truth(pf%psi(:,1))
+!  if(pf%gen_data) call save_truth(pf%psi(:,1))
 
 end subroutine proposal_filter

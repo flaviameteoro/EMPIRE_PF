@@ -136,7 +136,7 @@ subroutine equal_weight_filter
      call NormalRandomNumbers1D(0.0D0,sqrt(2.0D0),obs_dim,obsv)
      y = y + obsv
      call save_observation_data(y)
-     call save_truth(pf%psi(:,1))
+!     call save_truth(pf%psi(:,1))
   else 
      call resample
   end if !if(pf%gen_data)
