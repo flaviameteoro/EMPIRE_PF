@@ -22,16 +22,16 @@ program couple_pf
   call set_pf_controls
 
   call allocate_pf
-  write(6,*) 'PF: starting to recieve from model'
+  write(6,*) 'PF: starting to receive from model'
 ! 1st call to model to get psi
   do particle =1,pf%ngrand
-     call recieve_from_model(pf%psi(:,particle),particle)
+     call receive_from_model(pf%psi(:,particle),particle)
 
      !lets add some random noise to the initial conditions
      call perturb_particle(pf%psi(:,particle))
 
   enddo
-  write(6,*) 'PF: All models recieved in pf couple' 
+  write(6,*) 'PF: All models received in pf couple' 
   call flush(6)
   if(pf%gen_data) call save_truth(pf%psi(:,1))
   call output_from_pf

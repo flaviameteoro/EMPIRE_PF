@@ -49,7 +49,7 @@ subroutine proposal_filter
 
    
   do particle =1,pf%ngrand
-     call recieve_from_model(fpsi,particle)
+     call receive_from_model(fpsi,particle)
 
      call B(y_Hpsin1(:,particle),kgain)
 

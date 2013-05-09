@@ -26,15 +26,14 @@ FC=ftn
 LOAD=mpif90
 LOADOPTS=
 
-#OBJS= pf_couple.o hadcm3_config.o nudge_data.o equal_weight_filter.o kb05d.o comms.o gen_rand.o random_d.o extra.o proposal_filter.o pf_control.o data_io.o model_specific.o operator_wrappers.o
-OBJS= pf_couple.o hadcm3_config.o equal_weight_filter.o comms.o gen_rand.o random_d.o extra.o proposal_filter.o pf_control.o data_io.o model_specific.o operator_wrappers.o kb05d.o resample.o diagnostics.o perturb_particle.o
+#OBJS= pf_couple.o hadcm3_config.o nudge_data.o equal_weight_filter.o quicksort.o comms.o gen_rand.o random_d.o extra.o proposal_filter.o pf_control.o data_io.o model_specific.o operator_wrappers.o
+OBJS= pf_couple.o hadcm3_config.o equal_weight_filter.o comms.o gen_rand.o random_d.o extra.o proposal_filter.o pf_control.o data_io.o model_specific.o operator_wrappers.o quicksort.o resample.o diagnostics.o perturb_particle.o
 
-#nag90_nagVersion.o
 
 hadcm3_config.o: hadcm3_config.f90 
 	$(FC) $(FCOPTS) -c hadcm3_config.f90 
 
-model_specific.o: model_specific.f90 extra.o
+model_specific.o: model_specific.f90 extra.o hadcm3_config.o
 	$(FC) $(FCOPTS) -c model_specific.f90 
 
 operator_wrappers.o: operator_wrappers.f90 pf_control.o extra.o
@@ -58,9 +57,6 @@ extra.o: extra.f90 hadcm3_config.o
 comms.o: comms.f90 extra.o pf_control.o
 	$(FC) $(FCOPTS) -c comms.f90 
 
-enssmm.o: enssmm.f90 extra.o
-	$(FC) $(FCOPTS) -c enssmm.f90 
-
 equal_weight_filter.o: equal_weight_filter.f90 random_d.o
 	$(FC) $(FCOPTS) -c equal_weight_filter.f90 
 
@@ -76,26 +72,8 @@ diagnostics.o: diagnostics.f90 pf_control.o extra.o
 test_model_specific.o: test_model_specific.f90 extra.o
 	$(FC) $(FCOPTS) -c test_model_specific.f90
 
-#kb05d.o: kb05d.f
-#	$(FC) $(FCOPTS) -c kb05d.f
-
-#nag90_nagVersion.o: nag90_nagVersion.f90
-#	$(FC) $(FCOPTS) -c nag90_nagVersion.f90 
-
-#nag90.o: nag90.f90
-#	$(FC) $(FCOPTS) -c nag90.f90 
-
-analyse.o: analyse.f90 extra.o
-	$(FC) $(FCOPTS) -c analyse.f90 
-
-#fullQ.o: fullQ.f90 extra.o minresModule.o
-#	$(FC) $(FCOPTS) -c fullQ.f90 
-
-minresModule.o: minresModule.f90 minresDataModule.o
-	$(FC) $(FCOPTS) -c minresModule.f90
-
-minresDataModule.o: minresDataModule.f90
-	$(FC) $(FCOPTS) -c minresDataModule.f90
+quicksort.o: quicksort.f90
+	$(FC) $(FCOPTS) -c quicksort.f90
 
 statistics.o: statistics.f90 extra.o
 	$(FC) $(FCOPTS) -c statistics.f90 
@@ -106,8 +84,6 @@ pf_couple.o: pf_couple.f90 comms.o pf_control.o
 gen_rand.o: gen_rand.f90 random_d.o
 	$(FC) $(FCOPTS) -c gen_rand.f90
 
-kb05d.o: /home/n02/n02/pbrowne/hsl/kb05/kb05d-1.0.0/kb05d.f
-	$(FC) $(FCOPTS) -c /home/n02/n02/pbrowne/hsl/kb05/kb05d-1.0.0/kb05d.f
 
 
 

@@ -76,7 +76,7 @@ contains
 
   end subroutine initialise_mpi
 
-  subroutine recieve_from_model(mdata,particle)
+  subroutine receive_from_model(mdata,particle)
 
     use hadcm3_config
     use sizes
@@ -106,7 +106,7 @@ contains
 !    enddo
     
     
-  end subroutine recieve_from_model
+  end subroutine receive_from_model
   
   
   subroutine send_to_model(mdata,particle)

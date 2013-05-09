@@ -14,7 +14,7 @@ subroutine configure_model
 !  !Atmosphere only for now
 !  state_dim=a_num_points
   state_dim=num_points
-  obs_dim = 100
+  obs_dim = o_nxn*o_nyn
 
 end subroutine configure_model
 
@@ -96,12 +96,33 @@ subroutine H(x,hx)
   !subroutine to take a full state vector x and return H(x)
   !in observation space.
   use sizes
+  use hadcm3_config
   implicit none
   integer, parameter :: rk=kind(1.0D+0)
   real(kind=rk), dimension(state_dim), intent(in) :: x
   real(kind=rk), dimension(obs_dim), intent(out) :: hx
+  real(kind=rk), dimension(o_nxn*o_nyn*o_levels) :: ocean_temp
+  real(kind=rk), dimension(o_nxn,o_nyn,o_levels) :: ocean_levels
+  integer :: i,j,k
 
   hx = x(1:obs_dim)
+  
+  ocean_temp = x(a_nxn*a_nyn*(1+4*a_levels)+1:a_nxn*a_nyn*(1+4*a_levels)&
+       &+o_nxn*o_nyn*o_levels)
+
+  do k = 1,o_levels
+     do i=1,o_nxn
+        do j=1,o_nyn
+           ocean_levels(i,j,k) = ocean_temp((k-1)*o_levels*o_nxn*o_nyn + (i&
+                &-1)*o_nyn+j)
+        end do
+     end do
+  end do
+
+  print*,ocean_levels(1,1,o_levels)
+  stop
+
+
 end subroutine H
 
 subroutine HT(y,x)

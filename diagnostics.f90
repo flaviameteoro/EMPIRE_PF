@@ -17,7 +17,7 @@ subroutine diagnostics
            bin_marker(particle) = Hpsi(pf%tala_obs_num)
         end do
 
-        call kb05ad(bin_marker,pf%ngrand)
+        call quicksort_d(bin_marker,pf%ngrand)
 
         call get_observation_data(y)
 

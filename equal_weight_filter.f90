@@ -29,7 +29,7 @@ subroutine equal_weight_filter
      enddo
       
      do particle =1,pf%ngrand
-        call recieve_from_model(fpsi(:,particle),particle)
+        call receive_from_model(fpsi(:,particle),particle)
         
         !c(particle) = pf%weight(particle) + 0.5*(y-Hf(x_i^n-1))^T (HQH^T + R)^(-1) (y-Hf(x_i^n-1))
         call H(fpsi(:,particle),Hfpsi)
@@ -43,7 +43,7 @@ subroutine equal_weight_filter
      
      !here we can pick somehow the 80% level etc...
      csorted = c
-     call kb05ad(csorted,pf%ngrand)
+     call quicksort_d(csorted,pf%ngrand)
      cmax = csorted(nint(pf%keep*pf%ngrand))
 
   else
@@ -53,7 +53,7 @@ subroutine equal_weight_filter
      enddo
      
      do particle =1,pf%ngrand
-        call recieve_from_model(fpsi(:,particle),particle)
+        call receive_from_model(fpsi(:,particle),particle)
      end do
      
   end if
@@ -129,7 +129,7 @@ subroutine equal_weight_filter
 
   if(pf%use_talagrand) call diagnostics
   
-  call resample
+!  call resample
   
   if(pf%gen_data) then
      call H(pf%psi(:,1),y)
@@ -137,6 +137,8 @@ subroutine equal_weight_filter
      y = y + obsv
      call save_observation_data(y)
      call save_truth(pf%psi(:,1))
+  else 
+     call resample
   end if !if(pf%gen_data)
   
   
