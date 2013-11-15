@@ -7,24 +7,32 @@ program couple_pf
   use comms
   use pf_control
   use sizes
+  use hadcm3_config
   implicit none
   include 'mpif.h'
-  integer :: i,j,k
+  integer :: i,j,k,l
   integer :: mpi_err,particle,tag
   INTEGER, DIMENSION(:), ALLOCATABLE  :: requests
   INTEGER, DIMENSION(:,:), ALLOCATABLE  :: mpi_statuses
   logical :: mpi_flag
   logical, dimension(:), ALLOCATABLE :: received
-  integer :: mpi_status(MPI_STATUS_SIZE)
-  real(kind=kind(1.0d0)) :: start_t,end_t
+  real(kind=kind(1.0D0)), dimension(o_nxn*o_nyn*o_levels) :: ocean_temp,sali,uu,vv
+
+  logical, dimension(o_nxn,o_nyn,o_levels) :: tmask,smask,umask,vmask
+  logical, dimension(o_nxn*o_nyn*o_levels) :: t1,s1,u1,v1
+
+!  real(kind=kind(1.0D0)), dimension(o_nxn,o_nyn,o_levels) :: ocean_levels
+
+
+
 
   write(6,'(A)') 'PF: Starting PF code'
   call flush(6)
   call initialise_mpi
-  print*,'PF: setting controls'
-  call set_pf_controls
   print*,'PF: configuring model'
   call configure_model
+  print*,'PF: seting controls'
+  call set_pf_controls
   print*,'allocating pf'
   call allocate_pf
 
@@ -47,30 +55,10 @@ program couple_pf
   allocate(mpi_statuses(mpi_status_size,pf%count))
   allocate(received(pf%count))
 
-  !HADCM3 MODEL SPECIFIC...
-  !let us spin the model up for one day, or 72 timesteps
-  start_t = mpi_wtime() 
-  do j = 1,72
-     do k = 1,pf%count
-        particle = pf%particles(k)
-        call mpi_recv(pf%psi(:,k), state_dim, MPI_DOUBLE_PRECISION, &
-             particle-1, tag, CPL_MPI_COMM,mpi_status, mpi_err)
-     end do
-     do k = 1,pf%count
-        particle = pf%particles(k)
-        call mpi_send(pf%psi(:,k), state_dim , MPI_DOUBLE_PRECISION, &
-             particle-1, tag, CPL_MPI_COMM, mpi_err)
-     end do
-  end do
-  end_t = mpi_wtime()
-  write(6,*) 'Time for initial day run = ',end_t-start_t,' seconds.'
-  pf%time=mpi_wtime()
 
-  if(.not. pf%gen_Q) then
-
+do i = 1,50
   DO k = 1,pf%count
      particle = pf%particles(k)
-     print*,'receiving  from ',particle
      CALL MPI_IRECV(pf%psi(:,k), state_dim, MPI_DOUBLE_PRECISION, &
           particle-1, tag, CPL_MPI_COMM,requests(k), mpi_err)
   end DO
@@ -97,70 +85,104 @@ program couple_pf
   write(6,*) 'PF: All models received in pf couple' 
   call flush(6)
 
-
-!  if(pf%gen_data) call save_truth(pf%psi(:,1))
-  call output_from_pf
-
-  start_t = mpi_wtime()
-
-  do j=1,pf%time_obs
-     write(6,*) 'PF: observation counter = ',j
-     do i = 1,pf%time_bwn_obs-1
-        pf%timestep = pf%timestep + 1
-        call proposal_filter
-!        write(6,*) 'PF: timestep = ',pf%timestep, 'after proposal filter'
-        call flush(6)
-        
-        call output_from_pf
-     end do
-           
-     pf%timestep = pf%timestep + 1
-     write(6,*) 'starting the equal weight filter step'
-     call flush(6)
-     call equal_weight_filter
-     write(6,*) 'PF: timestep = ',pf%timestep, 'after equal weight filter'
-     call flush(6)
-
-     call output_from_pf
-
-  enddo
-  write(6,*) 'PF: finished the loop - now to tidy up'
-  end_t = mpi_wtime()
-  call flush(6)
-
-
-  tag = 1        
-  DO k = 1,pf%count
+  do k=1,pf%count
      particle = pf%particles(k)
-     CALL MPI_ISEND(pf%psi(:,k), state_dim , MPI_DOUBLE_PRECISION, &
-          particle-1, tag, CPL_MPI_COMM, requests(k), mpi_err)
-     PRINT*,'Particle filter ',pfrank,'has sent final state_vector over mpi &
-          &to ensemble member ',particle
-  END DO
-  CALL MPI_WAITALL(pf%count,requests,mpi_statuses, mpi_err)
+     call mpi_send(pf%psi(:,k), state_dim, MPI_DOUBLE_PRECISION,particle-1, 1, CPL_MPI_COMM, mpi_err)
+  end do
+end do
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! lets work in here now.
+
+!first we count how many blank entries there are:
+tag = 0
+do i = 1,state_dim
+   if(pf%psi(i,1) .lt. -2.0**29) tag = tag+1
+end do
+print*,'total tag count which are not active = ',tag
+print*,'compare this with the state dimension ',state_dim
 
 
-  else
 
-     call genQ
+open(7,file='tmask',status='replace')
+open(8,file='smask',status='replace')
+open(9,file='umask',status='replace')
+open(10,file='vmask',status='replace')
 
-  end if
+
+ocean_temp = pf%psi(a_nxn*a_nyn*(1+4*a_levels)+1:a_nxn*a_nyn*(1+4&
+     &*a_levels)+o_nxn*o_nyn*o_levels,1)
+sali = pf%psi(a_nxn*a_nyn*(1+4*a_levels)+o_nxn*o_nyn*o_levels + 1:a_nxn*a_nyn&
+     &*(1+4*a_levels)+2*o_nxn*o_nyn*o_levels,1)
+uu = pf%psi(a_nxn*a_nyn*(1+4*a_levels)+2*o_nxn*o_nyn*o_levels + 1:a_nxn*a_nyn&
+     &*(1+4*a_levels)+3*o_nxn*o_nyn*o_levels,1)
+vv = pf%psi(a_nxn*a_nyn*(1+4*a_levels)+3*o_nxn*o_nyn*o_levels + 1:a_nxn*a_nyn&
+     &*(1+4*a_levels)+4*o_nxn*o_nyn*o_levels,1)
 
 
-  
+do j = 1,o_nxn*o_nyn*o_levels
+   if(ocean_temp(j) .lt. -2.0**29) then
+      t1(j) = .false.
+   else
+      t1(j) = .true.
+   end if
+
+    if(sali(j) .lt. -2.0**29) then
+      s1(j) = .false.
+   else
+      s1(j) = .true.
+   end if
+   if(uu(j) .lt. -2.0**29) then
+      u1(j) = .false.
+   else
+      u1(j) = .true.
+   end if
+   if(vv(j) .lt. -2.0**29) then
+      v1(j) = .false.
+   else
+      v1(j) = .true.
+   end if
+end do
+
+tmask = reshape(t1,(/o_nxn,o_nyn,o_levels/) )
+smask = reshape(s1,(/o_nxn,o_nyn,o_levels/) )
+umask = reshape(u1,(/o_nxn,o_nyn,o_levels/) )
+vmask = reshape(v1,(/o_nxn,o_nyn,o_levels/) )
+
+
+write(7,*) tmask
+write(8,*) smask
+write(9,*) umask
+write(10,*) vmask
+
+
+
+
+
+close(7)
+close(8)
+close(9)
+close(10)
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   call deallocate_data
 
   write(6,*) 'PF: finished deallocate_data - off to mpi_finalize'
   call flush(6)
 
-
+  STOP
   call MPI_Finalize(mpi_err)
   deallocate(requests)
   deallocate(mpi_statuses)
   deallocate(received)
   write(*,*) 'Program couple_pf terminated successfully.'
-  write(*,*) 'Time taken in running the model = ',end_t-start_t
-  write(*,*) 'Which works out at ',(end_t-start_t)/real(pf%time_obs),'seconds per day (72 timesteps)'
+
+
+
+
+
+
+
 
 
 end program couple_pf

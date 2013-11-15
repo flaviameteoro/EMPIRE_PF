@@ -2,7 +2,10 @@ module comms
   use hadcm3_config
   use hadcm3_data
 
-  integer :: COUPLE_MPI_COMMUNICATOR,mype_id,myRank,nProc
+  integer :: CPL_MPI_COMM,mype_id,myRank,nProc
+  integer :: pf_mpi_comm,pfrank
+  integer*8 :: npfs
+  integer, allocatable, dimension(:) :: gblcount,gbldisp
 contains
   
   subroutine allocate_data
@@ -43,40 +46,84 @@ contains
     implicit none
     include 'mpif.h'
     
-    integer :: dummy_colour,mpi_err
-    integer :: DUMMY_MPI_COMMUNICATOR,couple_colour
-    integer :: couple_mype_id,couple_root
-    integer*8 rtmp,ctmp
+    integer :: mpi_err!dummy_colour,mpi_err
+    integer :: couple_colour !DUMMY_MPI_COMMUNICATOR,couple_colour
+    !integer :: couple_mype_id,couple_root
+    integer :: rtmp!,ctmp
+
+ !   integer :: tag!,state_dim!,iter
+ !   integer :: num_iters
+    integer :: particle,mype_id
+    integer :: myrank !nproc,myrank
+!    integer :: mpi_status(MPI_STATUS_SIZE)
+    integer :: nens,i
+    integer*8 :: da
+    integer :: count,pf_colour,pf_id!,pf_mpi_comm
+
     
+    pf_colour = 10000
     couple_colour=9999
-    dummy_colour=10000
+    CALL MPI_INIT (mpi_err)
+    CALL MPI_COMM_RANK(MPI_COMM_WORLD,mype_id,mpi_err)
+    CALL MPI_COMM_SPLIT(MPI_COMM_WORLD,pf_colour,pf_id,pf_mpi_comm&
+         &,mpi_err)
     
+    CALL MPI_COMM_SPLIT(MPI_COMM_WORLD,couple_colour,mype_id&
+         &,CPL_MPI_COMM,mpi_err)
+    CALL MPI_COMM_RANK (CPL_MPI_COMM, myRank, mpi_err)
+    CALL MPI_COMM_SIZE (CPL_MPI_COMM, nens, mpi_err)
     
-    call MPI_Init (mpi_err)
-    CALL MPi_COMM_RANK(MPI_COMM_WORLD,mype_id,mpi_err)
-    CALL MPi_COMM_SPLIT(MPI_COMM_WORLD,dummy_colour, &
-         mype_id,DUMMY_MPI_COMMUNICATOR,mpi_err)
-    CALL MPi_COMM_SPLIT(MPI_COMM_WORLD,couple_colour, &
-         mype_id,COUPLE_MPI_COMMUNICATOR,mpi_err)
+    da = 1
+    CALL MPI_ALLREDUCE(da,npfs,1,mpi_integer8,mpi_sum,cpl_mpi_comm&
+         &,mpi_err)
+    nens = nens-npfs
     
-    call MPI_Comm_Rank (COUPLE_MPI_COMMUNICATOR, myRank, mpi_err)
-    call MPI_Comm_Size (COUPLE_MPI_COMMUNICATOR, nProc, mpi_err)
+    pfrank = myrank-nens
     
-    rtmp=myrank
-    call MPi_allreduce(rtmp,ctmp,1,MPi_INTeger8,MPi_MAX,&
-         COUPLE_MPI_COMMUNICATOR, mpi_err)
+    !lets find the particles:
+    count = 0
+    do particle = 1,nens
+       if( real(particle-1) .ge. real(nens*(pfrank))/real(npfs) .and.&
+            & real(particle-1) .lt. real(nens*(pfrank+1))/real(npfs)) then
+          count = count + 1
+       end if
+    end do
     
-!    nens=nproc-1
-    pf%ngrand=nproc-1
+    allocate(pf%particles(count))
+    rtmp = 0
+    do particle = 1,nens
+       if(real(particle-1) .ge. real(nens*(pfrank))/real(npfs) .and.&
+            & real(particle-1) .lt. real(nens*(pfrank+1))/real(npfs))&
+            & then
+          rtmp = rtmp + 1
+          pf%particles(rtmp) = particle
+       end if
+    end do
+    
+    allocate(gblcount(npfs))
+    allocate(gbldisp(npfs))
+    print*,'woohoo allgather'
+    print*,count
+    print*,gblcount
+    print*,pf_mpi_comm
+    call mpi_allgather(count,1,mpi_integer,gblcount,1,mpi_integer&
+         &,pf_mpi_comm,mpi_err)
+    print*,'allgather did not break'
+    gbldisp = 0
+    if(npfs .gt. 1) then
+       do i = 2,npfs
+          gbldisp(i) = gbldisp(i-1) + gblcount(i-1)
+       end do
+    end if
+    pf%count = count
 
+    pf%nens = nens
+    PRINT*,'PF_rank = ',pfrank,' and I own particles ',pf%particles
 
-    couple_root=ctmp
-    pf%couple_root = couple_root
-    write(6,*)'chello',mype_id,myrank,nproc,couple_root
-
+    
   end subroutine initialise_mpi
 
-  subroutine receive_from_model(mdata,particle)
+  subroutine receive_from_model(mdata,particle,request)
 
     use hadcm3_config
     use sizes
@@ -86,45 +133,49 @@ contains
     
     real(kind=kind(1.0D+0)), INTENT(OUT)     ::mdata(state_dim)
     integer, INTENT(IN) :: particle
-
-    integer :: mpi_status(MPI_STATUS_SIZE)
+    integer, intent(inout) :: request
+    !integer :: mpi_status(MPI_STATUS_SIZE)
     integer :: mpi_err
     
+
+    call MPI_IRECV(mdata, state_dim, MPI_DOUBLE_PRECISION, &
+         particle-1, 1, CPL_MPI_COMM,&
+         request, mpi_err)
     
-          call MPI_Recv(mdata, state_dim, MPI_DOUBLE, &
-               particle-1, 1, COUPLE_MPI_COMMUNICATOR,&
-               mpi_status, mpi_err)
-     write(6,*)'phellor1',particle,state_dim,mdata(100)
     
-!    do n=1,nens
-!       do j=1,a_levels
-!          do i=1,a_nxn*(a_nyn-1)
-!             u(i,j,n)=psiGrand(i,j,n)
-!             v(i,j,n)=psiGrand(i,j+levels,n)
-!          enddo
-!       enddo
-!    enddo
     
     
   end subroutine receive_from_model
   
   
-  subroutine send_to_model(mdata,particle)
+  subroutine send_to_model(mdata,particle,request)
     use hadcm3_config
     use sizes
     implicit none
     include 'mpif.h'
     
     integer, INTENT(IN) :: particle
+    integer, intent(inout) :: request
     real(kind=kind(1.0D+0)), INTENT(IN)     ::mdata(state_dim)
 
-    integer :: mpi_status(MPI_STATUS_SIZE)
     integer :: mpi_err
     
-     call MPI_Send(mdata, state_dim , MPI_DOUBLE, &
-         particle-1, 1, COUPLE_MPI_COMMUNICATOR, mpi_err)
-     write(6,*)'phellos1',particle,state_dim,mdata(100)
+    call MPI_ISend(mdata, state_dim , MPI_DOUBLE_PRECISION, &
+         particle-1, 1, CPL_MPI_COMM,request,mpi_err)
     
     
   end subroutine send_to_model
+
+  subroutine wait_mpi(requests)
+    use pf_control
+    implicit none
+    include 'mpif.h'
+    
+    integer, intent(inout), dimension(pf%count) :: requests
+    integer :: mpi_statuses(MPI_STATUS_SIZE,pf%count)
+    integer :: mpi_err
+
+    call MPI_WAITALL(pf%count,requests,mpi_statuses,mpi_err)
+  end subroutine wait_mpi
+    
 end module comms

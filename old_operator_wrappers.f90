@@ -5,46 +5,36 @@ subroutine K(y,x)
   use sizes
   implicit none
   integer, parameter :: rk=kind(1.0D+0)
-  real(kind=rk), dimension(state_dim,pf%count), intent(out) :: x
-  real(kind=rk), dimension(obs_dim,pf%count), intent(in) :: y
+  real(kind=rk), dimension(state_dim), intent(out) :: x
+  real(kind=rk), dimension(obs_dim), intent(in) :: y
 
-  real(kind=rk), dimension(obs_dim,pf%count) :: v
-  real(kind=rk), dimension(state_dim,pf%count) :: vv
+  real(kind=rk), dimension(obs_dim) :: v
+  real(kind=rk), dimension(state_dim) :: vv
   real(kind=rk) :: dnrm2
-  integer :: i
-!  print*,'||y||_2 = ',dnrm2(obs_dim,y,1)
 
-  do i = 1,pf%count
-     call solve_hqht_plus_r(y(:,i),v(:,i))
-  end do
-
-!  print*,'||(HQHT+R)^(-1)y||_2 = ',dnrm2(obs_dim,v,1)
+  print*,'||y||_2 = ',dnrm2(obs_dim,y,1)
+  call solve_hqht_plus_r(y,v)
+  print*,'||(HQHT+R)^(-1)y||_2 = ',dnrm2(obs_dim,v,1)
   call HT(v,vv)
-!  print*,'||HTv||_2 = ',dnrm2(state_dim,vv,1)
-  call Q(pf%count,vv,x)
-!  print*,'||Qvv||_2 = ',dnrm2(state_dim,x,1)
+  print*,'||HTv||_2 = ',dnrm2(state_dim,vv,1)
+  call Q(vv,x)
+  print*,'||Qvv||_2 = ',dnrm2(state_dim,x,1)
   call flush(6)
 end subroutine K
 
 subroutine innerR_1(y,w)
   !subroutine to take an observation vector y and return w = y^T R^(-1) y
   use sizes
-  use pf_control
   implicit none
   integer, parameter :: rk=kind(1.0D+0)
-  real(kind=rk), dimension(obs_dim,pf%count), intent(in) :: y
-  real(kind=rk), dimension(obs_dim,pf%count) :: v
-  real(kind=rk), dimension(pf%count), intent(out) :: w
-  real(kind=rk) :: ddot
-  integer :: i
+  real(kind=rk), dimension(obs_dim), intent(in) :: y
+  real(kind=rk), dimension(obs_dim) :: v
+  real(kind=rk), intent(out) :: w
 
   call solve_r(y,v)
 
   !this can defo be done better using BLAS PAB...
-  do i = 1,pf%count
-!!$     w(i) = sum(y(:,i)*v(:,i))
-     w(i) = ddot(obs_dim,y(:,i),1,v(:,i),1)
-  end do
+  w = sum(y*v)
 
 end subroutine innerR_1
 
@@ -98,26 +88,19 @@ end subroutine innerHQHt_plus_R_1
 !!$
 !!$end subroutine B
 
-subroutine Bprime(y,x,QHtR_1y,normaln,betan)
+subroutine Bprime(y,x,QHtR_1y)
 !this is B but with separate Q multiplication
 use pf_control
 use sizes
 implicit none
 integer, parameter :: rk = kind(1.0D0)
-real(kind=rk), dimension(obs_dim,pf%count), intent(in) :: y
-real(kind=rk), dimension(state_dim,pf%count), intent(out) :: x
-real(kind=rk), dimension(obs_dim,pf%count) :: R_1y
-real(kind=rk), dimension(state_dim,pf%count) :: HtR_1y
-real(kind=rk), dimension(state_dim,pf%count), intent(out) :: QHtR_1y
-real(kind=rk), dimension(state_dim,pf%count), intent(in) :: normaln
-real(kind=rk), dimension(state_dim,pf%count), intent(out) :: betan
-real(kind=rk), dimension(state_dim,2*pf%count) :: temp1,temp2
+real(kind=rk), dimension(obs_dim), intent(in) :: y
+real(kind=rk), dimension(state_dim), intent(out) :: x
+real(kind=rk), dimension(obs_dim) :: R_1y
+real(kind=rk), dimension(state_dim) :: HtR_1y
+real(kind=rk), dimension(state_dim), intent(out) :: QHtR_1y
 real(kind=rk) :: freetime,p,tau,atmos,ocean
-real(kind=rk) :: t
-real(kind=rk), dimension(7) :: ti
-logical, parameter :: time = .false.
-include 'mpif.h'
-if(time) t = mpi_wtime()
+
 freetime = 0.6_rk
 atmos = 2.0d0/3.0d0
 ocean = 1.0d0/3.0d0
@@ -129,82 +112,45 @@ if(tau .le. atmos) then
    !this is the atmosphere section
    if(tau .le. freetime*atmos) then
       x = 0.0_rk
-      if(time) ti(1:3) = mpi_wtime()
       QHtR_1y = 0.0_rk
-      if(time) ti(4) = mpi_wtime()
-      call Qhalf(pf%count,normaln,betan)
-      if(time) ti(5:7) = mpi_wtime()
    else
       
       call solve_r(y,R_1y)
-      if(time) ti(1) = mpi_wtime()
+      
       call HT(R_1y,HtR_1y)
-      if(time) ti(2) = mpi_wtime()
+      
       !comment out Qhalf to make this subroutine Bprime  
       !   call Qhalf(HtR_1y,QHtR_1y)
       
       p = pf%nudgefac*(tau-freetime*atmos)/(atmos-freetime*atmos)
       
       x = p*HtR_1y
-      if(time) ti(3) = mpi_wtime()
-      temp1(:,1:pf%count) = x
-      temp1(:,pf%count+1:2*pf%count) = normaln
-      if(time) ti(4) = mpi_wtime()
-      call Qhalf(2*pf%count,temp1,temp2)
-      if(time) ti(5) = mpi_wtime()
-      betan = temp2(:,pf%count+1:2*pf%count)
-      x = temp1(:,1:pf%count)
-      if(time) ti(6) = mpi_wtime()
-      call Qhalf(pf%count,x,QHtR_1y)
-      if(time) ti(7) = mpi_wtime()
-
+      
+      call Q(x,QHtR_1y)
    end if
 else
    !this is the ocean section
    if(tau .le. ocean*freetime+atmos) then
       x = 0.0_rk
-      if(time) ti(1:3) = mpi_wtime()
       QHtR_1y = 0.0_rk
-      if(time) ti(4) = mpi_wtime()
-      call Qhalf(pf%count,normaln,betan)
-      if(time) ti(5:7) = mpi_wtime()
    else
       
       call solve_r(y,R_1y)
-      if(time) ti(1) = mpi_wtime()
+      
       call HT(R_1y,HtR_1y)
-      if(time) ti(2) = mpi_wtime()
+      
       !comment out Qhalf to make this subroutine Bprime  
       !   call Qhalf(HtR_1y,QHtR_1y)
       
       p = pf%nudgefac*(tau-freetime*ocean-atmos)/(ocean-ocean*freetime)
       
       x = p*HtR_1y
-      if(time) ti(3) = mpi_wtime()
-      temp1(:,1:pf%count) = x
-      temp1(:,pf%count+1:2*pf%count) = normaln
-      if(time) ti(4) = mpi_wtime()
-      call Qhalf(2*pf%count,temp1,temp2)
-      if(time) ti(5) = mpi_wtime()
-      betan = temp2(:,pf%count+1:2*pf%count)
-      x = temp1(:,1:pf%count)
-      if(time) ti(6) = mpi_wtime()
-      call Qhalf(pf%count,x,QHtR_1y)
-      if(time) ti(7) = mpi_wtime()
+      
+      call Q(x,QHtR_1y)
    end if
 end if
-if(time) then
-   ti(7) = ti(7) - ti(6)
-   ti(6) = ti(6) - ti(5)
-   ti(5) = ti(5) - ti(4)
-   ti(4) = ti(4) - ti(3)
-   ti(3) = ti(3) - ti(2)
-   ti(2) = ti(2) - ti(1)
-   ti(1) = ti(1) - t
-   
-   print*,'Bprime times =',ti
-   print*,'_______'
-end if
+
+
 !print*,'Bprime = ',dnrm2(state_dim,x,1),dnrm2(state_dim,QHtR_1y,1)
 
 end subroutine Bprime

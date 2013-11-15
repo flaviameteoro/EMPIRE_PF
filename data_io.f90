@@ -83,11 +83,14 @@ end subroutine save_truth
 subroutine output_from_pf
   use pf_control
   use sizes
+  use comms
   implicit none
   real(kind=kind(1.0D0)), dimension(state_dim) :: mean
   integer :: ios,particle
+  character(9) :: filename
   if(pf%timestep .eq. 0) then
-     open(68,file='pf_out',iostat=ios,action='write',status='replace')
+     write(filename,'(A,i2.2)') 'pf_out_',pfrank
+     open(68,file=filename,iostat=ios,action='write',status='replace')
      if(ios .ne. 0)  then
         write(*,*) 'PARTICLE FILTER DATA ERROR!!!!! Cannot open file pf_out'
         write(*,*) 'Very strange that I couldnt open it. Im going to stop now.'
@@ -95,7 +98,14 @@ subroutine output_from_pf
      end if
   end if
 !  print*,'output: ',pf%timestep,pf%weight
-  write(68,*) pf%timestep,pf%weight(:)
+!  write(68,*) pf%timestep,pf%particles,pf%weight(:)
+  write(68,'(i6.6,A)',advance='no') pf%timestep,' '
+  do ios = 1,pf%count-1
+     write(68,'(i6.6,A,e21.15,A)',advance='no') pf%particles(ios),' ',pf&
+          &%weight(pf%particles(ios)),' '
+  end do
+  write(68,'(i6.6,A,e21.15)',advance='yes') pf%particles(pf%count),' ',pf&
+          &%weight(pf%particles(pf%count))
   call flush(68)
   if(pf%timestep .eq. pf%time_obs*pf%time_bwn_obs) close(68)
 
@@ -109,7 +119,7 @@ subroutine output_from_pf
         end if
      end if
      mean = 0.0D0
-     do particle = 1,pf%ngrand
+     do particle = 1,pf%nens
         mean(:) = mean(:) + pf%psi(:,particle)*exp(-pf%weight(particle))
      end do
      write(61,*) mean(:)
@@ -132,7 +142,7 @@ subroutine output_from_pf
         stop
      end if
      
-     do particle = 1,pf%ngrand
+     do particle = 1,pf%nens
         write(77,*) pf%psi(:,particle),exp(-pf%weight(particle))
      end do
      close(77)
@@ -149,11 +159,11 @@ subroutine output_from_pf
         write(77,'(A)') 'set terminal wxt size 600,700'
         write(77,'(A)') 'set macros'
         write(77,'(A)') 'set key off'
-        write(77,'(A,f0.5,A)') 'set yrange [0:',4.0D0/pf%ngrand,']'
+        write(77,'(A,f0.5,A)') 'set yrange [0:',4.0D0/pf%nens,']'
         write(77,'(A)') 'Str(k)=sprintf("%d",k)'
         write(77,'(A)') 'S=0'
-        write(77,'(A,i0)') 'E=S+',pf%ngrand-1
-        write(77,'(A,i0)') 'n=',pf%ngrand*pf%time_bwn_obs*pf%time_obs
+        write(77,'(A,i0)') 'E=S+',pf%nens-1
+        write(77,'(A,i0)') 'n=',pf%nens*pf%time_bwn_obs*pf%time_obs
         write(77,'(A)') 'load "animateweak.lorenz"'
         close(77)
         open(77,file='animateweak.lorenz',iostat=ios,action='write'&
@@ -164,7 +174,7 @@ subroutine output_from_pf
            stop
         end if
         write(77,'(A,i0)') 'set multiplot layout 3,1 title "Lorenz 63 usi&
-             &ng equal weight particle filter. Timestep = ".S/',pf%ngrand
+             &ng equal weight particle filter. Timestep = ".S/',pf%nens
         write(77,'(A)') 'myplotoptions=''every ::''.Str(S).''::''.Str(&
              &E)'
         write(77,'(A)') 'set xrange [-20:20]'
@@ -186,8 +196,8 @@ subroutine output_from_pf
         
         write(77,'(A)') 'unset multiplot'
         
-        write(77,'(A,i0)') 'S=S+',pf%ngrand
-        write(77,'(A,i0)') 'E=E+',pf%ngrand
+        write(77,'(A,i0)') 'S=S+',pf%nens
+        write(77,'(A,i0)') 'E=E+',pf%nens
         write(77,'(A)') 'if (E < n) reread'
         close(77)
      end if

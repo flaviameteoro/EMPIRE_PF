@@ -1,22 +1,25 @@
 module pf_control
   implicit none
   type, public :: pf_control_type
-     integer :: ngrand !the number of ensemble members
+     integer :: nens !the number of ensemble members
      real(kind=kind(1.0D0)), allocatable, dimension(:) :: weight !stores the weights of the particles
      integer :: time_obs !the number of observations we will assimilate
      integer :: time_bwn_obs !the number of model timesteps between observations
      real(kind=kind(1.0D0)) :: nudgefac !the nudging factor
-     logical :: gen_data,human_readable
+     logical :: gen_data,gen_Q,human_readable
      integer :: timestep=0
      real(kind=kind(1.0D0)), allocatable, dimension(:,:) :: psi
+     real(kind=kind(1.0D0)), allocatable, dimension(:) :: mean
      real(kind=kind(1.0D0)) :: nfac                !standard deviation of normal distribution in mixture density
      real(kind=kind(1.0D0)) :: ufac                !half width of the uniform distribution in mixture density
      real(kind=kind(1.0D0)) :: efac
-     real(kind=kind(1.0D0)) :: keep
+     real(kind=kind(1.0D0)) :: keep,time
+     real(kind=kind(1.0D0)) :: Qscale
      integer :: couple_root
      logical :: use_talagrand,use_weak,use_mean
      integer, dimension(:,:), allocatable :: talagrand
-     integer :: tala_obs_num
+     integer :: count
+     integer,allocatable, dimension(:) :: particles
   end type pf_control_type
   type(pf_control_type) :: pf
   contains
@@ -33,13 +36,14 @@ module pf_control
       read(32,*) pf%nfac
       read(32,*) pf%ufac
       read(32,*) pf%keep
+      read(32,*) pf%Qscale
       read(32,*) pf%human_readable
       read(32,*) pf%use_talagrand
       read(32,*) pf%use_weak
-      read(32,*) pf%tala_obs_num
       read(32,*) pf%use_mean
+      read(32,*) pf%gen_Q
       close(32)
-      pf%efac = 0.001/pf%ngrand
+      pf%efac = 0.001/pf%nens
       write(6,'(A)') 'pf_parameters.dat successfully read to control pf code.'
       call flush(6)
       if(pf%human_readable .and. pf%gen_data) then
@@ -53,19 +57,20 @@ module pf_control
     subroutine allocate_pf
       use sizes
       integer :: st
-      allocate(pf%weight(pf%ngrand),stat=st)
+      allocate(pf%weight(pf%nens),stat=st)
       if(st .ne. 0) stop 'Error in allocating pf%weight'
-      pf%weight = -log(1.0D0/pf%ngrand)
-      allocate(pf%psi(state_dim,pf%ngrand),stat=st)
+      pf%weight = -log(1.0D0/pf%nens)
+      allocate(pf%psi(state_dim,pf%count),stat=st)
       if(st .ne. 0) stop 'Error in allocating pf%psi'
 
       if(pf%use_talagrand) then
-         allocate(pf%talagrand(pf%ngrand+1,1),stat=st)
+         allocate(pf%talagrand(9,pf%nens+1),stat=st)
          if(st .ne. 0) stop 'Error in allocating pf%talagrand'
-         do st = 1,pf%ngrand+1
-            pf%talagrand(st,:) = 0
-         end do
+         pf%talagrand = 0
       end if
+      
+!      allocate(pf%particles(pf%count),stat=st)
+!      if(st .ne. 0) stop 'Error in allocating pf%particles'
 
     end subroutine allocate_pf
 
@@ -73,6 +78,7 @@ module pf_control
       deallocate(pf%weight)
       deallocate(pf%psi)
       if(allocated(pf%talagrand)) deallocate(pf%talagrand)
+      deallocate(pf%particles)
     end subroutine deallocate_pf
 
 
