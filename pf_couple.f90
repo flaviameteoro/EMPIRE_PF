@@ -1,8 +1,3 @@
-!program to run the particle filter on the model HadCM3.
-!this shall hopefully have minimal changes specific to the model.
-!Simon Wilson and Philip Browne 2013
-!----------------------------------------------------------------
-
 program couple_pf
   use comms
   use pf_control
@@ -47,23 +42,24 @@ program couple_pf
   allocate(mpi_statuses(mpi_status_size,pf%count))
   allocate(received(pf%count))
 
-  !HADCM3 MODEL SPECIFIC...
-  !let us spin the model up for one day, or 72 timesteps
-  start_t = mpi_wtime() 
-  do j = 1,72
-     do k = 1,pf%count
-        particle = pf%particles(k)
-        call mpi_recv(pf%psi(:,k), state_dim, MPI_DOUBLE_PRECISION, &
-             particle-1, tag, CPL_MPI_COMM,mpi_status, mpi_err)
-     end do
-     do k = 1,pf%count
-        particle = pf%particles(k)
-        call mpi_send(pf%psi(:,k), state_dim , MPI_DOUBLE_PRECISION, &
-             particle-1, tag, CPL_MPI_COMM, mpi_err)
-     end do
-  end do
-  end_t = mpi_wtime()
-  write(6,*) 'Time for initial day run = ',end_t-start_t,' seconds.'
+!!$  !HADCM3 MODEL SPECIFIC...
+!!$  !let us spin the model up for one day, or 72 timesteps
+!!$  start_t = mpi_wtime() 
+!!$  do j = 1,72
+!!$     do k = 1,pf%count
+!!$        particle = pf%particles(k)
+!!$        call mpi_recv(pf%psi(:,k), state_dim, MPI_DOUBLE_PRECISION, &
+!!$             particle-1, tag, CPL_MPI_COMM,mpi_status, mpi_err)
+!!$     end do
+!!$     do k = 1,pf%count
+!!$        particle = pf%particles(k)
+!!$        call mpi_send(pf%psi(:,k), state_dim , MPI_DOUBLE_PRECISION, &
+!!$             particle-1, tag, CPL_MPI_COMM, mpi_err)
+!!$     end do
+!!$  end do
+!!$  end_t = mpi_wtime()
+!!$  write(6,*) 'Time for initial day run = ',end_t-start_t,' seconds.'
+
   pf%time=mpi_wtime()
 
   if(.not. pf%gen_Q) then

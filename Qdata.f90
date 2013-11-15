@@ -10,7 +10,6 @@ contains
     use pf_control
     integer :: i
     real(kind=kind(1.0d0)) :: eig
-!!$    Qn = state_dim
 !!$    Qne = state_dim
 !!$    allocate(Qrow(Qne),Qcol(Qne),Qval(Qne))
 !!$    Qrow = (/ (i, i = 1,Qne) /)

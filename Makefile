@@ -49,12 +49,6 @@ ddeps90.o: $(MA87_LOC)ddeps90.f90
 hsl_ma87d.o: $(MA87_LOC)hsl_ma87d.f90 ddeps90.o common90.o
 	$(FC) $(FCOPTS) -c $(MA87_LOC)hsl_ma87d.f90
 
-getdata.o: getdata.f90
-	$(FC) $(FCOPTS) -c getdata.f90
-
-getmask.o: getmask.f90
-	$(FC) $(FCOPTS) -c getmask.f90
-
 genQ.o: genQ.f90
 	$(FC) $(FCOPTS) -c genQ.f90
 
@@ -66,9 +60,6 @@ Qevd.o: Qevd.f90 extra.o
 
 Rdata.o: Rdata.f90
 	$(FC) $(FCOPTS) -c Rdata.f90
-
-inflate.o: inflate.f90
-	$(FC) $(FCOPTS) -c inflate.f90
 
 hsl_ea20d_new.o: $(EA20DIR)hsl_ea20d_new.f90
 	$(FC) $(FCOPTS) -c $(EA20DIR)hsl_ea20d_new.f90
@@ -115,14 +106,8 @@ resample.o: resample.f90 pf_control.o random_d.o
 diagnostics.o: diagnostics.f90 pf_control.o extra.o
 	$(FC) $(FCOPTS) -c diagnostics.f90
 
-test_model_specific.o: test_model_specific.f90 extra.o
-	$(FC) $(FCOPTS) -c test_model_specific.f90
-
 quicksort.o: quicksort.f90
 	$(FC) $(FCOPTS) -c quicksort.f90
-
-statistics.o: statistics.f90 extra.o
-	$(FC) $(FCOPTS) -c statistics.f90 
 
 pf_couple.o: pf_couple.f90 comms.o pf_control.o
 	$(FC) $(FCOPTS) -c pf_couple.f90 
@@ -138,24 +123,10 @@ pf_couple: $(OBJS)
 	$(FC) $(FCOPTS) $(LOADOPTS) -o pf_couple $(OBJS) $(LIB_LIST)
 
 
-OBJS2 = $(shell echo $(OBJS) | sed 's/pf_couple/getdata/g') 
+#OBJS2 = $(shell echo $(OBJS) | sed 's/pf_couple/getdata/g') 
 
-getdata: $(OBJS2)
-	$(FC) $(FCOPTS) $(LOADOPTS) -o getdata $(OBJS2) $(LIB_LIST)
-
-OBJS3 = $(shell echo $(OBJS) | sed 's/pf_couple/getmask/g')
-
-getmask: $(OBJS3)
-	$(FC) $(FCOPTS) $(LOADOPTS) -o getmask $(OBJS3) $(LIB_LIST)
-
-OBJS4 = $(shell echo $(OBJS) | sed 's/pf_couple/test_Q/g')
-
-test_Q: $(OBJS4)
-	$(FC) $(FCOPTS) $(LOADOPTS) -o test_Q $(OBJS4) $(LIB_LIST)
-
-
-test_model_specific: test_model_specific.o extra.o model_specific.o
-	$(FC) $(FCOPTS) $(LOADOPTS) -o test_model_specific test_model_specific.o extra.o model_specific.o $(LIB_LIST)
+#getdata: $(OBJS2)
+#	$(FC) $(FCOPTS) $(LOADOPTS) -o getdata $(OBJS2) $(LIB_LIST)
 
 clean:
 	rm -f *.o *.oo *.mod pf_couple
