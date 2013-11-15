@@ -1,7 +1,6 @@
 subroutine diagnostics
   use pf_control
   use sizes
-  use hadcm3_config
   use comms
   implicit none
   integer, parameter :: rk = kind(1.0D0)
@@ -34,9 +33,7 @@ subroutine diagnostics
         if(pf%timestep .eq. pf%time_obs*pf%time_bwn_obs) then
            pf%talagrand = 0
            call mpi_barrier(pf_mpi_comm,mpi_err)
-           call split_oceans
-           print*,'split the oceans'
-           print*,'maxval(ocn_grp) = ',maxval(ocn_grp)
+
            do time = 1,pf%time_obs
 !              print*,'time = ',time
               if(mod(time,npfs) .eq. pfrank) then
@@ -53,8 +50,7 @@ subroutine diagnostics
  !             print*,'read HHpsi'
            
               do i = 1,obs_dim
-!                 print*,'i = ',i,' ocn_grp(i) = ',ocn_grp(i)
-                 if(ocn_grp(i) .gt. 0) then
+
                     do particle = 1,pf%nens
                        bin_marker(particle) = HHpsi(i,particle)
                     end do
@@ -63,8 +59,8 @@ subroutine diagnostics
 !                    print*,'quicksorted'
                     do particle  = 1,pf%nens
                        if(y(i) .lt. bin_marker(particle)) then
-                          pf%talagrand(ocn_grp(i),particle) = pf&
-                               &%talagrand(ocn_grp(i),particle)&
+                          pf%talagrand(i,particle) = pf&
+                               &%talagrand(i,particle)&
                                & + 1
                           placed = .true.
                           exit
@@ -74,15 +70,15 @@ subroutine diagnostics
 
                     if(.not. placed) then
                        if(y(i) .ge. bin_marker(pf%nens)) then
-                          pf%talagrand(ocn_grp(i),pf%nens+1) = pf&
-                               &%talagrand(ocn_grp(i),pf%nens+1) + 1
+                          pf%talagrand(i,pf%nens+1) = pf&
+                               &%talagrand(i,pf%nens+1) + 1
                        else
                           stop 'There was an error in the calculation of the placement &
                                &in the rank histogram. Bums.'
                        end if
                     end if
-                 end if
-              end do
+                 
+                 end do
 
            end if !end of mpi splitting by timestep
            end do !end of the timestep
@@ -95,7 +91,7 @@ subroutine diagnostics
 !           print*,'some reduction just happened'
 
            if(pfrank .eq. 0) then
-              do i = 1,9
+              do i = 1,1
                  write(filename,'(A,i1.0)') 'histogram_',i
                  open(17,file=filename,action='write',status='replace')
                  do j = 1,pf%nens+1

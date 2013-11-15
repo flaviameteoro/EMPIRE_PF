@@ -8,9 +8,9 @@ subroutine genQ
   include 'mpif.h'
   integer, parameter :: rk=(kind(1.0d0))
 
-  integer, dimension(a_nxn,a_nyn,a_levels) :: a_u_vec,a_v_vec,a_theta_vec,a_q_vec
-  integer, dimension(a_nxn,a_nyn) :: a_pstar_vec
-  integer, dimension(o_nxn,o_nyn,o_levels) :: o_u_vec,o_v_vec,o_theta_vec,o_sal_vec
+!  integer, dimension(a_nxn,a_nyn,a_levels) :: a_u_vec,a_v_vec,a_theta_vec,a_q_vec
+!  integer, dimension(a_nxn,a_nyn) :: a_pstar_vec
+!  integer, dimension(o_nxn,o_nyn,o_levels) :: o_u_vec,o_v_vec,o_theta_vec,o_sal_vec
   integer :: i,j,k,count,radius,nnz
   integer, parameter :: n = 426655238
   integer, allocatable, dimension(:) :: row,col
@@ -30,26 +30,26 @@ subroutine genQ
   start_t = mpi_wtime()
   !let us calculate the position vectors: put everything in its place:
   count = 0
-  !first is PSTAR (2d)
-  do j = 1,a_nyn
-     do i = 1,a_nxn
-        count = count + 1
-        a_pstar_vec(i,j) = count
-     end do
-  end do
-  print*,'a_pstar finishes on the ',count,' element'
-  !second is  U
-  do k = 1,a_levels
-     do j = 1,a_nyn
-        do i = 1,a_nxn
-           count = count + 1
-           a_u_vec(i,j,k) = count
-        end do
-     end do
-  end do
-  print*,'a_u finishes on the ',count,' element'
-  !FINISHED COMPUTING THE VECTOR POSITIONS OF EACH COMPONENT
-  print*,'FINISHED COMPUTING THE VECTOR POSITIONS OF EACH COMPONENT'
+!!$  !first is PSTAR (2d)
+!!$  do j = 1,a_nyn
+!!$     do i = 1,a_nxn
+!!$        count = count + 1
+!!$        a_pstar_vec(i,j) = count
+!!$     end do
+!!$  end do
+!!$  print*,'a_pstar finishes on the ',count,' element'
+!!$  !second is  U
+!!$  do k = 1,a_levels
+!!$     do j = 1,a_nyn
+!!$        do i = 1,a_nxn
+!!$           count = count + 1
+!!$           a_u_vec(i,j,k) = count
+!!$        end do
+!!$     end do
+!!$  end do
+!!$  print*,'a_u finishes on the ',count,' element'
+!!$  !FINISHED COMPUTING THE VECTOR POSITIONS OF EACH COMPONENT
+!!$  print*,'FINISHED COMPUTING THE VECTOR POSITIONS OF EACH COMPONENT'
 
   end_t = mpi_wtime()
   print*,'and it took ',end_t-start_t,' seconds'
