@@ -28,7 +28,8 @@ subroutine equal_weight_filter
   real(kind=rk) :: ddot
 !  print*,'in equal weight filter the weights are:'
 !  print*,pf%weight
-  
+
+  !store in weight_temp only those weights on this mpi thread
   weight_temp = -huge(1.0d0)
   do i = 1,pf%count
      weight_temp(i) = pf%weight(pf%particles(i))
@@ -36,24 +37,29 @@ subroutine equal_weight_filter
 !  print*,'temporary weight = :'
 !  print*,weight_temp
 
+  !communicate the weights of all particles to each mpi thread
   call mpi_allgatherv(weight_temp,pf%count,mpi_double_precision,pf%weight,gblcount&
        &,gbldisp,mpi_double_precision,pf_mpi_comm,mpi_err)
 
 !  print*,'after allgather, pf%weight = '
 !  print*,pf%weight
 
+
+  !normalise the weights
   pf%weight = exp(-pf%weight+maxval(pf%weight))
   pf%weight = pf%weight/sum(pf%weight)
   pf%weight = -log(pf%weight)
 !  print*,'weights should be normalised:'
 !  print*,pf%weight
   if(.not. pf%gen_data) then
+     !get the next observation and store it in vector y
      call get_observation_data(y)
  
 !     do particle =1,pf%count
 !        call send_to_model(pf%psi(:,particle),particle)
 !     enddo
 
+     !get the model to return f(x)
      DO i = 1,pf%count
         particle = pf%particles(i)
         tag = 1
@@ -68,10 +74,10 @@ subroutine equal_weight_filter
              particle-1, tag, CPL_MPI_COMM,mpi_status, mpi_err)
      END DO
      
-
+     
      call H(fpsi,Hfpsi)
-
-
+     
+     !compute c for each particle on this mpi thread
      do i = 1,pf%count
         particle = pf%particles(i)
         y_Hfpsin1(:,i) = y - Hfpsi(:,i)
@@ -92,10 +98,14 @@ subroutine equal_weight_filter
      !print*,pf%count
      !here we can pick somehow the 80% level etc...
      !print*,'launching mpi_allgatherv pfrank =',pfrank
+     
+     !communicate c to all the mpi threads
      call mpi_allgatherv(c,pf%count,mpi_double_precision,csorted,gblcount&
           &,gbldisp,mpi_double_precision,pf_mpi_comm,mpi_err)
 !     print*,'after allgatherv',mpi_err
 !     print*,csorted
+
+     !calculate cmax
      call quicksort_d(csorted,pf%nens)
      cmax = csorted(nint(pf%keep*pf%nens))
 !     print*,'cmax = ',cmax
@@ -122,16 +132,19 @@ subroutine equal_weight_filter
   psimean = 0.0_rk
 
   if(.not. pf%gen_data) then
+     !compute the kalman gain
      call K(y_Hfpsin1,kgain)
      call H(kgain,obsv)
      call solve_r(obsv,obsvv)
      
+     !compute a for each particle on this mpi thread
      do i = 1,pf%count
         a(i) = 0.5*ddot(obs_dim,obsvv(:,i),1,y_Hfpsin1(:,i),1)
      end do
      
      call innerR_1(y_Hfpsin1,e)
      
+     !compute alpha for each particle on this mpi thread
      do i = 1,pf%count
         particle = pf%particles(i)
         b(i) = 0.5*e(i) - cmax + pf%weight(particle)
@@ -148,9 +161,11 @@ subroutine equal_weight_filter
      y_Hfpsin1 = 0.0_rk
   end if !if(.not. pf%gen_data)
 
+  !draw from a mixture density for the random noise then correlate it
   call MixtureRandomNumbers2D(0.0D0,pf%nfac,pf%ufac,pf%efac,state_dim,pf%count,statev,uniform)
   call Qhalf(pf%count,statev,betan)
 
+  !update the weights and the new state
   do i = 1,pf%count
      if(c(i) .le. cmax) then
         particle = pf%particles(i)

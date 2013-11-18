@@ -27,8 +27,12 @@ subroutine proposal_filter
   real(kind=rk), dimension(7) :: ti
   logical, parameter :: time = .false.
 
+
+  !get the next observations and store it in vector y
   if(.not. pf%gen_data) call get_observation_data(y)
 
+
+  !compute y - H(x)
   if(.not. pf%gen_data) then
      if(time) t = mpi_wtime()
      call H(pf%psi,Hpsi)
@@ -43,6 +47,8 @@ subroutine proposal_filter
      y_Hpsin1 = 0.0_rk
   end if
 
+
+  !get the model to provide f(x)
   do k =1,pf%count
      particle = pf%particles(k)
      tag = 1
@@ -58,11 +64,18 @@ subroutine proposal_filter
   END DO
   if(time) ti(4) = mpi_wtime()-ti(3) -t
 
+
+  !draw from a Gaussian for the random noise
   call NormalRandomNumbers2D(0.0D0,1.0D0,state_dim,pf%count,normaln)
   if(time) ti(5) = mpi_wtime()-ti(4) -t
+  
+  !compute the relaxation term Qkgain, the intermediate
+  !term kgain and apply correlation to noise
   call Bprime(y_Hpsin1,kgain,Qkgain,normaln,betan)
   if(time) ti(6) = mpi_wtime()-ti(5) -t
 
+
+  !update the new state and weights based on these terms
   !$omp parallel do private(particle,pweight)
   DO k = 1,pf%count
      particle = pf%particles(k)
