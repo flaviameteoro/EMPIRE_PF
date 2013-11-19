@@ -30,7 +30,7 @@ LOADOPTS=
 EA20DIR=/home/n02/n02/pbrowne/hsl/ea20/hsl_ea20-1.0.0/src/
 
 #OBJS= pf_couple.o  nudge_data.o equal_weight_filter.o quicksort.o comms.o gen_rand.o random_d.o sizes.o proposal_filter.o pf_control.o data_io.o model_specific.o operator_wrappers.o
-OBJS= common90.o ddeps90.o hsl_ma87d.o sizes.o  pf_couple.o Qdata.o Rdata.o hsl_ea20d_new.o equal_weight_filter.o comms.o gen_rand.o random_d.o proposal_filter.o pf_control.o data_io.o model_specific.o operator_wrappers.o quicksort.o resample.o diagnostics.o perturb_particle.o genQ.o
+OBJS= common90.o ddeps90.o hsl_ma87d.o sizes.o  pf_couple.o Qdata.o Rdata.o hsl_ea20d_new.o equal_weight_filter.o comms.o gen_rand.o random_d.o proposal_filter.o pf_control.o data_io.o model_specific.o operator_wrappers.o quicksort.o resample.o diagnostics.o perturb_particle.o genQ.o plain_filter.o
 
 
 MA87_LOC = /home/n02/n02/pbrowne/hsl/ma87/hsl_ma87-2.1.0/src/
@@ -39,6 +39,8 @@ METISLIB = metis
 LIB_LIST = -L$(METISDIR) -l$(METISLIB)
 
 
+plain_filter.o: plain_filter.f90
+	$(FC) $(FCOPTS) -c plain_filter.f90
 
 common90.o: $(MA87_LOC)common90.f90
 	$(FC) $(FCOPTS) -c $(MA87_LOC)common90.f90
