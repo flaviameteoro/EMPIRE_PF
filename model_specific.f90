@@ -3,7 +3,7 @@ subroutine configure_model
   use sizes
   use Qdata
   use Rdata
-  use hqht_plus_r
+!  use hqht_plus_r
   implicit none
   include 'mpif.h'
   
@@ -30,7 +30,7 @@ subroutine configure_model
      call loadR
      print*,'load R     took ',mpi_wtime()-t1,' seconds'
      t1 = mpi_wtime()
-     call load_HQHTR
+!     call load_HQHTR
      print*,'load HQHTR took ',mpi_wtime()-t1,' seconds'
      
   end if
@@ -79,8 +79,8 @@ end subroutine solve_rhalf
 subroutine solve_hqht_plus_r(y,v)
   !subroutine to take an observation vector y and return v
   !in observation space.
-  use hsl_ma87_double
-  use hqht_plus_r
+!  use hsl_ma87_double
+!  use hqht_plus_r
   use sizes
   implicit none
   integer, parameter :: rk=kind(1.0D+0)
@@ -93,7 +93,7 @@ subroutine solve_hqht_plus_r(y,v)
 
 !  v = y/2.0002_rk
   v = y
-  call ma87_solve(v,HQHTR_order, HQHTR_keep, HQHTR_control, HQHTR_info)
+!  call ma87_solve(v,HQHTR_order, HQHTR_keep, HQHTR_control, HQHTR_info)
 
 !!$use sizes
 !!$use hqht_plus_r
