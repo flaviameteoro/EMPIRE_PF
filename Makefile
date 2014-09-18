@@ -11,7 +11,7 @@ LIB_LIST = -L$(METISDIR) -l$(METISLIB) -lblas
 
 
 
-all: pf_couple
+all: EMPIRE ALLTESTS TEST_H TEST_R TEST_Q TEST_HQHTR
 
 
 OBS=obs/
@@ -22,9 +22,9 @@ SR_FILTS=src/filters/
 SR_UTILS=src/utils/
 SR_CONTS=src/controlers/
 SR_DATAS=src/data/
-SR_TESTS=src/test/
+SR_TESTS=src/tests/
 SR_OPERS=src/operations/
-OBJSQ= sizes.o pf_couple.o Qdata.o Rdata.o equivalent_weights_step.o comms.o gen_rand.o random_d.o proposal_filter.o histogram.o pf_control.o data_io.o model_specific.o operator_wrappers.o quicksort.o resample.o diagnostics.o perturb_particle.o genQ.o sir_filter.o stochastic_model.o
+OBJSQ= sizes.o pf_couple.o Qdata.o Rdata.o equivalent_weights_step.o comms.o gen_rand.o random_d.o proposal_filter.o histogram.o pf_control.o data_io.o model_specific.o operator_wrappers.o quicksort.o resample.o diagnostics.o perturb_particle.o genQ.o sir_filter.o stochastic_model.o tests.o
 OBJS=$(addprefix $(OBS),$(OBJSQ))
 FCOPTS+=$(MODFLAG) $(MODLOC)
 
@@ -88,17 +88,53 @@ $(OBS)quicksort.o: $(SR_UTILS)quicksort.f90
 $(OBS)pf_couple.o: $(SR_CONTS)pf_couple.f90 $(OBS)comms.o $(OBS)pf_control.o
 	$(FC) $(FCOPTS) -c $(SR_CONTS)pf_couple.f90 -o $@
 
+$(OBS)alltests.o: $(SR_TESTS)alltests.f90 $(OBS)pf_control.o
+	$(FC) $(FCOPTS) -c $(SR_TESTS)alltests.f90 -o $@
+
+$(OBS)test_h.o: $(SR_TESTS)test_h.f90 $(OBS)pf_control.o
+	$(FC) $(FCOPTS) -c $(SR_TESTS)test_h.f90 -o $@
+
+$(OBS)test_r.o: $(SR_TESTS)test_r.f90 $(OBS)pf_control.o
+	$(FC) $(FCOPTS) -c $(SR_TESTS)test_r.f90 -o $@
+
+$(OBS)tests.o: $(SR_TESTS)tests.f90 $(OBS)pf_control.o
+	$(FC) $(FCOPTS) -c $(SR_TESTS)tests.f90 -o $@
+
+$(OBS)test_q.o: $(SR_TESTS)test_q.f90 $(OBS)pf_control.o
+	$(FC) $(FCOPTS) -c $(SR_TESTS)test_q.f90 -o $@
+
+$(OBS)test_hqhtr.o: $(SR_TESTS)test_hqhtr.f90 $(OBS)pf_control.o
+	$(FC) $(FCOPTS) -c $(SR_TESTS)test_hqhtr.f90 -o $@
+
+
+
 $(OBS)gen_rand.o: $(SR_OPERS)gen_rand.f90 $(OBS)random_d.o
 	$(FC) $(FCOPTS) -c $(SR_OPERS)gen_rand.f90 -o $@
 
-pf_couple: $(OBJS) 
+EMPIRE: $(OBJS) 
 	$(FC) $(FCOPTS) $(LOADOPTS) -o $(BIN)empire $(OBJS) $(LIB_LIST)
 
 
-#OBJS2 = $(shell echo $(OBJS) | sed 's/pf_couple/getdata/g') 
+OBJS_ALLTEST = $(shell echo $(OBJS) | sed 's/pf_couple/alltests/g') 
+ALLTESTS: $(OBJS_ALLTEST)
+	$(FC) $(FCOPTS) $(LOADOPTS) -o $(BIN)alltests $(OBJS_ALLTEST) $(LIB_LIST)
 
-#getdata: $(OBJS2)
-#	$(FC) $(FCOPTS) $(LOADOPTS) -o getdata $(OBJS2) $(LIB_LIST)
+OBJS_TEST_H = $(shell echo $(OBJS) | sed 's/pf_couple/test_h/g') 
+TEST_H: $(OBJS_TEST_H)
+	$(FC) $(FCOPTS) $(LOADOPTS) -o $(BIN)test_h $(OBJS_TEST_H) $(LIB_LIST)
+
+OBJS_TEST_R = $(shell echo $(OBJS) | sed 's/pf_couple/test_r/g') 
+TEST_R: $(OBJS_TEST_R)
+	$(FC) $(FCOPTS) $(LOADOPTS) -o $(BIN)test_r $(OBJS_TEST_R) $(LIB_LIST)
+
+OBJS_TEST_Q = $(shell echo $(OBJS) | sed 's/pf_couple/test_q/g') 
+TEST_Q: $(OBJS_TEST_Q)
+	$(FC) $(FCOPTS) $(LOADOPTS) -o $(BIN)test_q $(OBJS_TEST_Q) $(LIB_LIST)
+
+OBJS_TEST_HQHTR = $(shell echo $(OBJS) | sed 's/pf_couple/test_hqhtr/g') 
+TEST_HQHTR: $(OBJS_TEST_HQHTR)
+	$(FC) $(FCOPTS) $(LOADOPTS) -o $(BIN)test_hqhtr $(OBJS_TEST_HQHTR) $(LIB_LIST)
+
 
 clean:
 	rm -f obs/* bin/*
