@@ -1,0 +1,3 @@
+obs/*.o
+obs/*.mod
+bin/*
