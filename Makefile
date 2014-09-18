@@ -14,6 +14,7 @@ all: pf_couple
 
 
 OBS=obs/
+BIN=bin/
 MODFLAG=-J
 MODLOC:=$(OBS)
 SR_FILTS=src/filters/
@@ -84,7 +85,7 @@ $(OBS)gen_rand.o: $(SR_OPERS)gen_rand.f90 $(OBS)random_d.o
 	$(FC) $(FCOPTS) -c $(SR_OPERS)gen_rand.f90 -o $@
 
 pf_couple: $(OBJS) 
-	$(FC) $(FCOPTS) $(LOADOPTS) -o pf_couple $(OBJS) $(LIB_LIST)
+	$(FC) $(FCOPTS) $(LOADOPTS) -o $(BIN)empire $(OBJS) $(LIB_LIST)
 
 
 #OBJS2 = $(shell echo $(OBJS) | sed 's/pf_couple/getdata/g') 
