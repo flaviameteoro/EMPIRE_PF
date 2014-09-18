@@ -1,124 +1,137 @@
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-09-18 10:37:35 pbrowne>
-!!!
-!!!    {one line to give the program's name and a brief idea of what it does.}
-!!!    Copyright (C) 2014  Philip A. Browne
-!!!
-!!!    This program is free software: you can redistribute it and/or modify
-!!!    it under the terms of the GNU General Public License as published by
-!!!    the Free Software Foundation, either version 3 of the License, or
-!!!    (at your option) any later version.
-!!!
-!!!    This program is distributed in the hope that it will be useful,
-!!!    but WITHOUT ANY WARRANTY; without even the implied warranty of
-!!!    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-!!!    GNU General Public License for more details.
-!!!
-!!!    You should have received a copy of the GNU General Public License
-!!!    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-!!!
-!!!    Email: p.browne @ reading.ac.uk
-!!!    Mail:  School of Mathematical and Physical Sciences,
-!!!    	      University of Reading,
-!!!	      Reading, UK
-!!!	      RG6 6BB
-!!!
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!! Time-stamp: <2014-09-18 11:34:38 pbrowne>
+
 subroutine diagnostics
   use pf_control
   use sizes
   use comms
+  use histogram_data
   implicit none
   integer, parameter :: rk = kind(1.0D0)
-  real(kind=rk), dimension(obs_dim,pf%nens) :: HHpsi
+  real(kind=rk), dimension(rhl_n,pf%nens) :: HHpsi
   real(kind=rk), dimension(pf%nens) :: bin_marker
-  real(kind=rk), dimension(obs_dim) :: y
-  real(kind=rk), dimension(obs_dim,pf%count) :: Hpsi
-  integer :: particle,time,i,j,mpi_err
+  real(kind=rk), dimension(rhl_n) :: y
+  integer :: particle,time,i,j,mpi_err,lb,length
   logical :: placed
-  character(27) :: filename
-  integer, dimension(9,pf%nens+1) :: reduced_talagrand
+  character(32) :: filename
+  integer, dimension(rhn_n,pf%nens+1) :: reduced_talagrand
   include 'mpif.h'
   
   if(.not. pf%gen_data) then
      if(pf%use_talagrand) then
         
-        call H(pf%psi,Hpsi,pf%timestep)
-        
+!        call H(pf%psi,Hpsi)
+        inquire(iolength=length) pf%psi(1,1)
+
+!        pf%timestep = -72
         do particle = 1,pf%count
-           write(filename,'(A,i6.6,A,i5.5)') 'timestep',((pf%timestep-1)/pf&
-                &%time_bwn_obs) + 1,'particle',pf%particles(particle)
+           write(filename,'(A,i6.6,A,i5.5)') 'hist/timestep',((pf%timestep)/pf&
+                &%time_bwn_obs) ,'particle',pf%particles(particle)
            open(12,file=filename,action='write',status='replace',form='unforma&
-                &tted')
+                &tted',access='direct',recl=length)
 !           call H(pf%psi(:,particle),Hpsi)
-           write(12) Hpsi(:,particle)
+           do i = 1,rhl_n
+              write(12,rec=i) pf%psi(rank_hist_list(i),particle)
+           end do
            close(12)
         end do
 
-
+!        pf%timestep = 0
         if(pf%timestep .eq. pf%time_obs*pf%time_bwn_obs) then
            pf%talagrand = 0
            call mpi_barrier(pf_mpi_comm,mpi_err)
-
-           do time = 1,pf%time_obs
-!              print*,'time = ',time
-              if(mod(time,npfs) .eq. pfrank) then
-              pf%timestep = time
-              call get_observation_data(y)
-!              print*,'got obs data at timestep ',pf%timestep
-              do particle = 1,pf%nens
-                 write(filename,'(A,i6.6,A,i5.5)') 'timestep',pf%timestep,'particle',particle
-                 open(13, file=filename,action='read',status='old',form='unfor&
-                      &matted')
-                 read(13) HHpsi(:,particle)
-                 close(13)
-              end do
- !             print*,'read HHpsi'
            
-              do i = 1,obs_dim
+           do time = 1,pf%time_obs
+              !              print*,'time = ',time
+              if(mod(time,npfs) .eq. pfrank) then
+                 !cock cock cock adjusted the below to make it sensible
+                 pf%timestep = time*pf%time_bwn_obs
+!                 print*,'pfrank = ',pfrank,'picking up truth at ',pf%timestep
+
+                 write(filename,'(A,i6.6,A,i5.5)') 'hist/timestep',((pf%timestep)/pf&
+                      &%time_bwn_obs) ,'truth'
+                 !print*,'filename = ',filename
+                 open(12,file=filename,action='read',status='old',form='unforma&
+                      &tted',access='direct',recl=length)
+                 !           call H(pf%psi(:,particle),Hpsi)
+                 do i = 1,rhl_n
+                    !print*,'pfrank = ',pfrank,' i = ',i
+                    read(12,rec=i) y(i)
+                    !print*,'pfrank = ',pfrank,' i = ',i,' y(i) = ',y(i)
+                 end do
+                 close(12)
+
+                 !call get_truth(y)
+                 !              print*,'got obs data at timestep ',pf%timestep
+                 do particle = 1,pf%nens
+                    write(filename,'(A,i6.6,A,i5.5)') 'hist/timestep',pf&
+                         &%timestep/pf%time_bwn_obs,'&
+                         &particle',particle
+                    open(13, file=filename,action='read',status='old',form='un&
+                         &for&
+                         &matted',access='direct',recl=length)
+                    do i = 1,rhl_n
+                       read(13,rec=i) HHpsi(i,particle)
+                    end do
+                    close(13)
+                 end do
+                 !             print*,'read HHpsi'
+
+
+                 do j = 1,rhn_n !for each histogram we want to make
+                    if( j .eq. 1) then
+                       lb = 1
+                    else
+                       lb = sum(rank_hist_nums(1:j-1)) + 1
+                    end if
+                 do i = lb,sum(rank_hist_nums(1:j))
 
                     do particle = 1,pf%nens
                        bin_marker(particle) = HHpsi(i,particle)
                     end do
+
+                    call quicksort_d(bin_marker,pf%nens)
                     
-                    call quicksort_d(bin_marker,pf%nens) 
-!                    print*,'quicksorted'
+                  
+                    !                    print*,'quicksorted'
+                    placed = .false.
                     do particle  = 1,pf%nens
                        if(y(i) .lt. bin_marker(particle)) then
-                          pf%talagrand(i,particle) = pf&
-                               &%talagrand(i,particle)&
+                          pf%talagrand(j,particle) = pf&
+                               &%talagrand(j,particle)&
                                & + 1
                           placed = .true.
                           exit
                        end if
                     end do
-!                    print*,'did we place?'
+                    !                    print*,'did we place?'
 
                     if(.not. placed) then
                        if(y(i) .ge. bin_marker(pf%nens)) then
-                          pf%talagrand(i,pf%nens+1) = pf&
-                               &%talagrand(i,pf%nens+1) + 1
+                          pf%talagrand(j,pf%nens+1) = pf&
+                               &%talagrand(j,pf%nens+1) + 1
                        else
-                          stop 'There was an error in the calculation of the placement &
+                          stop 'There was an error in the calculation of the p&
+                               &lacement &
                                &in the rank histogram. Bums.'
                        end if
                     end if
-                 
+
+                 end do
                  end do
 
-           end if !end of mpi splitting by timestep
+              end if !end of mpi splitting by timestep
            end do !end of the timestep
-!           print*,'end of all the timesteps'
+           !           print*,'end of all the timesteps'
 
            !now let us reduce the information to the master processor:
-           call mpi_reduce(pf%talagrand,reduced_talagrand,9*(pf%nens+1)&
+           call mpi_reduce(pf%talagrand,reduced_talagrand,rhn_n*(pf%nens+1)&
                 &,mpi_integer,mpi_sum,0,pf_mpi_comm,mpi_err)
-           
-!           print*,'some reduction just happened'
+
+           !           print*,'some reduction just happened'
 
            if(pfrank .eq. 0) then
-              do i = 1,1
-                 write(filename,'(A,i1.0)') 'histogram_',i
+              do i = 1,rhn_n
+                 write(filename,'(A,i0)') 'histogram_',i
                  open(17,file=filename,action='write',status='replace')
                  do j = 1,pf%nens+1
                     write(17,'(i8.8)') reduced_talagrand(i,j)
@@ -127,80 +140,71 @@ subroutine diagnostics
               end do
               !now output the image
            end if
+           pf%timestep = pf%time_obs*pf%time_bwn_obs
         end if !end of if we are the last step in the pf
 
-
-!        do particle = 1,pf%nens
-!           call H(pf%psi(:,particle),Hpsi(:,particle))
-!           bin_marker(particle) = Hpsi(i)
-!        end do
-
-!        call get_observation_data(y)
-
-!        do i = 1,obs_dim
-!           do particle = 1,pf%nens
-!              bin_marker(i,particle) = Hpsi(i,particle)
-!           end do
-           
-
-!           call quicksort_d(bin_marker(i,:),pf%nens)
-           
-!        call get_observation_data(y)
-
-!        print*,'observation is:',y(pf%tala_obs_num)
-!        print*,'bin_marker',bin_marker
-
-!           do particle = 1,pf%nens
-!              if(y(i) .lt. bin_marker(i,particle)) then
-!                 pf%talagrand(particle,i) = pf%talagrand(particle,i) + 1
-!                 placed = .true.
-!                 exit
-!              end if
-!           end do
-!           
-!           if(.not. placed) then
-!              if(y(i) .ge. bin_marker(i,pf%nens)) then
-!                 pf%talagrand(pf%nens+1,i) = pf%talagrand(pf%nens+1,i) + 1
-!              else
-!                 stop 'There was an error in the calculation of the placement &
-!                      &in the rank histogram. Bums.'
-!              end if
-!           end if
-!           
-!        end do
-        !now output the stuff if we are at the last timestep...
-!        if(pf%timestep .eq. pf%time_obs*pf%time_bwn_obs) then
-!           open(78,file='pf_talagrand',iostat=ios,action='write',status='replace')    
-!           if(ios .ne. 0)  then
-!              write(*,*) 'PARTICLE FILTER DATA ERROR!!!!! Cannot open file pf_talagrand'
-!              write(*,*) 'Very strange that I couldn''t open it. I''m going to stop now.'
-!              stop
-!           end if
-
-!           do particle = 1,pf%nens+1
-!              write(78,*) pf%talagrand(particle,:)
-!           end do
-
-!           close(78)
-!           open(78,file='gnuplot_talagrand.cfg',iostat=ios,action='write',status='replace')    
-!           if(ios .ne. 0)  then
-!              write(*,*) 'Cannot open file gnuplot_talagrand'
-!              write(*,*) 'Very strange that I couldn''t open it. I''m going to stop now.'
-!              stop
-!           end if
-!           write(78,'(A)') 'reset'
-!           !      write(78,'(A)') 'set term png truecolor'
-!           !      write(78,'(A)') 'set output "pf_talagrand.png"'
-!           write(78,'(A)') 'set xlabel "Observation rank"'
-!           write(78,'(A)') 'set ylabel "Frequency"'
-!           write(78,'(A)') 'set grid'
-!           write(78,'(A)') 'set boxwidth 0.95 relative'
-!           write(78,'(A)') 'set style fill transparent solid 0.5 noborder'
-!           write(78,'(A,i0,A)') 'set xrange [-0.5:',pf%nens,'.5]'
-!           write(78,'(A)') 'plot "pf_talagrand" w boxes notitle'
-!           close(78)
-!        end if
      end if
+
+     if(pf%use_rmse) then
+        
+
+     end if
+
+  else
+!     print*,'in diagnostics at timestep ',pf%timestep
+     inquire(iolength=length) pf%psi(1,1)
+
+!        pf%timestep = -72
+     do particle = 1,pf%count
+        write(filename,'(A,i6.6,A)') 'hist/timestep',((pf%timestep)/pf&
+             &%time_bwn_obs) ,'truth'
+        open(12,file=filename,action='write',status='replace',form='unforma&
+             &tted',access='direct',recl=length)
+        !           call H(pf%psi(:,particle),Hpsi)
+        do i = 1,rhl_n
+           write(12,rec=i) pf%psi(rank_hist_list(i),particle)
+        end do
+        close(12)
+     end do
   end if
 
 end subroutine diagnostics
+
+
+subroutine trajectories
+  use pf_control
+  use sizes
+  implicit none
+  integer, parameter :: rk = kind(1.0D0)
+  integer :: particle,i,j
+  character(28) :: filename
+  integer, parameter :: n=10
+  integer, dimension(n) :: trajvar
+
+  stop 'Trajectories have not be specified for this specific model'
+
+  !             ap   au    av    at      aq    ot       ot     os     ou      ov
+  trajvar = (/2721,10099,145949,278007,410009,547011,558240,998895,1480094,1900706/)
+
+  do i = 1,pf%count
+     particle = pf%particles(i)
+     
+     do j = 1,n
+        if(pf%gen_data) then
+           write(filename,'(A,i7.7)') 'traj/truth_var',trajvar(j)
+        else
+           write(filename,'(A,i7.7,A,i5.5)') 'traj/var',trajvar(j),'particle',particle
+        end if
+        if(pf%timestep .eq. 0) then
+!           print*,'i = ',i,' particle = ',particle,' trajvar(j) = '&
+!                &,trajvar(j),' filename = ',filename
+           open(41,file=filename,action='write',status='replace')
+        else
+           open(41,file=filename,action='write',status='old',position='append')
+        end if
+        write(41,'(es22.15)') pf%psi(trajvar(j),i)
+        close(41)
+        
+     end do
+  end do
+end subroutine trajectories

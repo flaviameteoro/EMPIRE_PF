@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-09-18 10:09:54 pbrowne>
+!!! Time-stamp: <2014-09-18 11:29:54 pbrowne>
 !!!
 !!!    {one line to give the program's name and a brief idea of what it does.}
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -24,7 +24,14 @@
 !!!	      RG6 6BB
 !!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-program couple_pf
+!!! Time-stamp: <2014-08-13 15:10:45 pbrowne>
+
+!program to run the particle filter on the model HadCM3.
+!this shall hopefully have minimal changes specific to the model.
+!Simon Wilson and Philip Browne 2013
+!----------------------------------------------------------------
+
+program empire
   use comms
   use pf_control
   use sizes
@@ -38,6 +45,9 @@ program couple_pf
   logical, dimension(:), ALLOCATABLE :: received
   integer :: mpi_status(MPI_STATUS_SIZE)
   real(kind=kind(1.0d0)) :: start_t,end_t
+  character(14) :: filename
+
+
 
   write(6,'(A)') 'PF: Starting PF code'
   call flush(6)
@@ -51,41 +61,16 @@ program couple_pf
 
   call random_seed_mpi(pfrank)
   write(6,*) 'PF: starting to receive from model'
-! 1st call to model to get psi
-!  do k =1,pf%count
-!     call receive_from_model(pf%psi(:,k),pf%particles(k))
 
-     !lets add some random noise to the initial conditions
-!     call perturb_particle(pf%psi(:,k))
 
-!  enddo
-  print*,'launching the receives'
- ! print*,pf%count
- ! print*,pf%particles
- ! print*,allocated(requests)
   tag = 1        
   allocate(requests(pf%count))
   allocate(mpi_statuses(mpi_status_size,pf%count))
   allocate(received(pf%count))
 
-!!$  !HADCM3 MODEL SPECIFIC...
-!!$  !let us spin the model up for one day, or 72 timesteps
-!!$  start_t = mpi_wtime() 
-!!$  do j = 1,72
-!!$     do k = 1,pf%count
-!!$        particle = pf%particles(k)
-!!$        call mpi_recv(pf%psi(:,k), state_dim, MPI_DOUBLE_PRECISION, &
-!!$             particle-1, tag, CPL_MPI_COMM,mpi_status, mpi_err)
-!!$     end do
-!!$     do k = 1,pf%count
-!!$        particle = pf%particles(k)
-!!$        call mpi_send(pf%psi(:,k), state_dim , MPI_DOUBLE_PRECISION, &
-!!$             particle-1, tag, CPL_MPI_COMM, mpi_err)
-!!$     end do
-!!$  end do
-!!$  end_t = mpi_wtime()
-!!$  write(6,*) 'Time for initial day run = ',end_t-start_t,' seconds.'
-
+  !HADCM3 MODEL SPECIFIC...
+  !let us spin the model up for one day, or 72 timesteps
+  start_t = mpi_wtime() 
   pf%time=mpi_wtime()
 
   if(.not. pf%gen_Q) then
@@ -111,6 +96,7 @@ program couple_pf
 !           PRINT*,'Particle filter ',pfrank,'has received initial state_v&
 !                &ector over mpi from ensemble member ',particle
            received(k) = .true.
+!           if(.not. pf%gen_data) call perturb_particle(pf%psi(:,k))
            call perturb_particle(pf%psi(:,k))
         end if
      end if
@@ -122,30 +108,52 @@ program couple_pf
 
 !  if(pf%gen_data) call save_truth(pf%psi(:,1))
   call output_from_pf
-
+  if(pf%gen_data) call save_truth(pf%psi(:,1))
+  if(pf%use_traj) call trajectories
   start_t = mpi_wtime()
 
   do j=1,pf%time_obs
      write(6,*) 'PF: observation counter = ',j
      do i = 1,pf%time_bwn_obs-1
         pf%timestep = pf%timestep + 1
-        call proposal_filter
+        if(pf%type .eq. 'EW') then
+           call proposal_filter
+        elseif(pf%type .eq. 'SI') then
+           call stochastic_model
+        elseif(pf%type .eq. 'SE') then
+           call stochastic_model
+        else
+           print*,'Error -555: Incorrect pf%type'
+        end if
 !        write(6,*) 'PF: timestep = ',pf%timestep, 'after proposal filter'
         call flush(6)
-        
+        if(pf%use_traj) call trajectories
         call output_from_pf
      end do
            
      pf%timestep = pf%timestep + 1
      write(6,*) 'starting the equal weight filter step'
      call flush(6)
-     call equal_weight_filter
+
+
+     if(pf%type .eq. 'EW') then
+           call equal_weight_filter
+        elseif(pf%type .eq. 'SI') then
+           call sir_filter
+        elseif(pf%type .eq. 'SE') then
+           call stochastic_model
+           call diagnostics
+        else
+           print*,'Error -556: Incorrect pf%type'
+        end if
      write(6,*) 'PF: timestep = ',pf%timestep, 'after equal weight filter'
      call flush(6)
 
+     if(pf%use_traj) call trajectories
      call output_from_pf
 
-  enddo
+  end do
+  call diagnostics
   write(6,*) 'PF: finished the loop - now to tidy up'
   end_t = mpi_wtime()
   call flush(6)
@@ -182,9 +190,8 @@ program couple_pf
   deallocate(received)
   write(*,*) 'Program couple_pf terminated successfully.'
   write(*,*) 'Time taken in running the model = ',end_t-start_t
-  write(*,*) 'Which works out at ',(end_t-start_t)/real(pf%time_obs),'seconds per day (72 timesteps)'
 
 
-end program couple_pf
+end program empire
 
 
