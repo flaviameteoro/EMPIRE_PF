@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-09-18 10:09:54 pbrowne>
+!!! Time-stamp: <2014-09-18 11:55:25 pbrowne>
 !!!
 !!!    {one line to give the program's name and a brief idea of what it does.}
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -30,7 +30,7 @@ module comms
 
   integer :: CPL_MPI_COMM,mype_id,myRank,nProc
   integer :: pf_mpi_comm,pfrank
-  integer*8 :: npfs
+  integer :: npfs
   integer, allocatable, dimension(:) :: gblcount,gbldisp
 contains
   

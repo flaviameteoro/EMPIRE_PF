@@ -4,6 +4,7 @@ FC=mpif90
 
 #set the compiliation options for the fortran compiler
 FCOPTS = -O3 -fopenmp
+FCOPTS = -fimplicit-none -Wall -fbounds-check -fopenmp -O2 -fbacktrace
 
 #set the location of the libraries
 LIB_LIST = -L$(METISDIR) -l$(METISLIB) -lblas

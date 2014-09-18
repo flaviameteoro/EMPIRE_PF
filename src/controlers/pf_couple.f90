@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-09-18 11:29:54 pbrowne>
+!!! Time-stamp: <2014-09-18 11:56:29 pbrowne>
 !!!
 !!!    {one line to give the program's name and a brief idea of what it does.}
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -43,9 +43,7 @@ program empire
   INTEGER, DIMENSION(:,:), ALLOCATABLE  :: mpi_statuses
   logical :: mpi_flag
   logical, dimension(:), ALLOCATABLE :: received
-  integer :: mpi_status(MPI_STATUS_SIZE)
   real(kind=kind(1.0d0)) :: start_t,end_t
-  character(14) :: filename
 
 
 
@@ -155,7 +153,6 @@ program empire
   end do
   call diagnostics
   write(6,*) 'PF: finished the loop - now to tidy up'
-  end_t = mpi_wtime()
   call flush(6)
 
 
@@ -175,6 +172,7 @@ program empire
      call genQ
 
   end if
+  end_t = mpi_wtime()
 
 
   
