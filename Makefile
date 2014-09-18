@@ -23,9 +23,12 @@ SR_CONTS=src/controlers/
 SR_DATAS=src/data/
 SR_TESTS=src/test/
 SR_OPERS=src/operations/
-OBJSQ= sizes.o pf_couple.o Qdata.o Rdata.o equivalent_weights_step.o comms.o gen_rand.o random_d.o proposal_filter.o pf_control.o data_io.o model_specific.o operator_wrappers.o quicksort.o resample.o diagnostics.o perturb_particle.o genQ.o sir_filter.o
+OBJSQ= sizes.o pf_couple.o Qdata.o Rdata.o equivalent_weights_step.o comms.o gen_rand.o random_d.o proposal_filter.o histogram.o pf_control.o data_io.o model_specific.o operator_wrappers.o quicksort.o resample.o diagnostics.o perturb_particle.o genQ.o sir_filter.o
 OBJS=$(addprefix $(OBS),$(OBJSQ))
 FCOPTS+=$(MODFLAG) $(MODLOC)
+
+$(OBS)histogram.o: $(SR_UTILS)histogram.f90
+	$(FC) $(FCOPTS) -c $(SR_UTILS)histogram.f90 -o $@
 
 $(OBS)sir_filter.o: $(SR_FILTS)sir_filter.f90
 	$(FC) $(FCOPTS) -c $(SR_FILTS)sir_filter.f90 -o $@
@@ -45,7 +48,7 @@ $(OBS)model_specific.o: model_specific.f90 $(OBS)sizes.o
 $(OBS)operator_wrappers.o: $(SR_OPERS)operator_wrappers.f90 $(OBS)pf_control.o $(OBS)sizes.o
 	$(FC) $(FCOPTS) -c $(SR_OPERS)operator_wrappers.f90 -o $@
 
-$(OBS)pf_control.o: $(SR_CONTS)pf_control.f90 $(OBS)sizes.o
+$(OBS)pf_control.o: $(SR_CONTS)pf_control.f90 $(OBS)sizes.o $(OBS)histogram.o
 	$(FC) $(FCOPTS) -c $(SR_CONTS)pf_control.f90 -o $@
 
 $(OBS)perturb_particle.o: $(SR_OPERS)perturb_particle.f90 $(OBS)sizes.o
@@ -94,5 +97,5 @@ pf_couple: $(OBJS)
 #	$(FC) $(FCOPTS) $(LOADOPTS) -o getdata $(OBJS2) $(LIB_LIST)
 
 clean:
-	rm -f obs/* pf_couple
+	rm -f obs/* bin/*
 

@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-09-18 10:09:38 pbrowne>
+!!! Time-stamp: <2014-09-18 10:09:54 pbrowne>
 !!!
 !!!    {one line to give the program's name and a brief idea of what it does.}
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -24,6 +24,8 @@
 !!!	      RG6 6BB
 !!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!! Time-stamp: <2014-07-25 11:12:12 pbrowne>
+
 module pf_control
   implicit none
   type, public :: pf_control_type
@@ -42,10 +44,12 @@ module pf_control
      real(kind=kind(1.0D0)) :: keep,time
      real(kind=kind(1.0D0)) :: Qscale
      integer :: couple_root
-     logical :: use_talagrand,use_weak,use_mean
+     logical :: use_talagrand,use_weak,use_mean,use_var,use_traj,use_rmse
      integer, dimension(:,:), allocatable :: talagrand
      integer :: count
      integer,allocatable, dimension(:) :: particles
+     character(2) :: type
+     character(1) :: init
   end type pf_control_type
   type(pf_control_type) :: pf
   contains
@@ -67,7 +71,12 @@ module pf_control
       read(32,*) pf%use_talagrand
       read(32,*) pf%use_weak
       read(32,*) pf%use_mean
+      read(32,*) pf%use_var
+      read(32,*) pf%use_rmse
       read(32,*) pf%gen_Q
+      read(32,*) pf%use_traj
+      read(32,*) pf%type
+      read(32,*) pf%init
       close(32)
       pf%efac = 0.001/pf%nens
       write(6,'(A)') 'pf_parameters.dat successfully read to control pf code.'
@@ -78,10 +87,38 @@ module pf_control
          close(64)
       end if
 
+      !let us verify pf%type
+      if(    pf%type .eq. 'EW') then
+         print*,'Running the equivalent weights particle filter'
+      elseif(pf%type .eq. 'SE') then
+         print*,'Running a stochastic ensemble'
+      elseif(pf%type .eq. 'SI') then
+         print*,'Running the SIR particle filter'
+      elseif(pf%type .eq. 'ET') then
+         print*,'Running the Ensemble Transform Kalman Filter'
+         print*,'Error: The ETKF is not implemented here'
+         stop
+      elseif(pf%type .eq. 'EA') then
+         print*,'Running the Ensemble Adjustment Kalman Filter'
+         print*,'Error: The EAKF is not implemented here yet'
+         stop
+      else
+         print*,'Error: Incorrect filter type selected'
+         print*,'Please ensure that pf%type in pf_parameters.dat is either:'
+         print*,'EW                  the equivalent weights particle filter'
+         print*,'SE                  a stochastic ensemble'
+         print*,'SI                  the SIR particle filter'
+         print*,'ET                  the Ensemble Transform Kalman Filter'
+         print*,'EA                  the Ensemble Adjustment Kalman Filter'
+         stop
+      end if
+         
+
     end subroutine set_pf_controls
 
     subroutine allocate_pf
       use sizes
+      use histogram_data
       integer :: st
       allocate(pf%weight(pf%nens),stat=st)
       if(st .ne. 0) stop 'Error in allocating pf%weight'
@@ -90,7 +127,7 @@ module pf_control
       if(st .ne. 0) stop 'Error in allocating pf%psi'
 
       if(pf%use_talagrand) then
-         allocate(pf%talagrand(9,pf%nens+1),stat=st)
+         allocate(pf%talagrand(rhn_n,pf%nens+1),stat=st)
          if(st .ne. 0) stop 'Error in allocating pf%talagrand'
          pf%talagrand = 0
       end if
