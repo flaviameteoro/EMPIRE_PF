@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-09-18 10:09:54 pbrowne>
+!!! Time-stamp: <2014-09-18 10:35:15 pbrowne>
 !!!
 !!!    {one line to give the program's name and a brief idea of what it does.}
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -61,7 +61,7 @@ subroutine proposal_filter
   !compute y - H(x)
   if(.not. pf%gen_data) then
      if(time) t = mpi_wtime()
-     call H(pf%psi,Hpsi)
+     call H(pf%psi,Hpsi,pf%timestep)
      if(time) ti(1) = mpi_wtime()-t
      !$omp parallel do
      do k = 1,pf%count

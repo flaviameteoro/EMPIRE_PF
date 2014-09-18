@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-09-18 10:09:54 pbrowne>
+!!! Time-stamp: <2014-09-18 10:37:35 pbrowne>
 !!!
 !!!    {one line to give the program's name and a brief idea of what it does.}
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -43,7 +43,7 @@ subroutine diagnostics
   if(.not. pf%gen_data) then
      if(pf%use_talagrand) then
         
-        call H(pf%psi,Hpsi)
+        call H(pf%psi,Hpsi,pf%timestep)
         
         do particle = 1,pf%count
            write(filename,'(A,i6.6,A,i5.5)') 'timestep',((pf%timestep-1)/pf&

@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-09-18 10:09:54 pbrowne>
+!!! Time-stamp: <2014-09-18 10:35:51 pbrowne>
 !!!
 !!!    {one line to give the program's name and a brief idea of what it does.}
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -24,7 +24,7 @@
 !!!	      RG6 6BB
 !!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-subroutine plain_particle_filter
+subroutine sir_filter
   use comms
   use sizes
   use pf_control
@@ -82,7 +82,7 @@ if(mod(pf%timestep,pf%time_bwn_obs) .eq. 0) then
    call get_observation_data(y)
    !this is the analysis step.
    
-   call H(fpsi,Hfpsi)
+   call H(fpsi,Hfpsi,pf%timestep)
 
    !$omp parallel do
    do k = 1,pf%count
@@ -101,4 +101,4 @@ if(mod(pf%timestep,pf%time_bwn_obs) .eq. 0) then
 end if
 
 
-end subroutine plain_particle_filter
+end subroutine sir_filter
