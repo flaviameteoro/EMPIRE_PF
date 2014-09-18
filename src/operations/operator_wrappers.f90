@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-09-18 10:09:54 pbrowne>
+!!! Time-stamp: <2014-09-18 10:31:45 pbrowne>
 !!!
 !!!    {one line to give the program's name and a brief idea of what it does.}
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -323,18 +323,5 @@ end subroutine Bprime
 !!$
 !!$end subroutine Qhalf
 
-
-subroutine rhalf(x,y)
-
-  ! Simple code to illustrate row entry to hsl_ea20
-  use pf_control
-!  use HSL_EA20_double
-  use sizes
-  implicit none
-
-  real(kind=kind(1.0d0)), intent(in), dimension(obs_dim) :: x
-  real(kind=kind(1.0d0)), intent(out), dimension(obs_dim) :: y
-
-end subroutine rhalf
 
 
