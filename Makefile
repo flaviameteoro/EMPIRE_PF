@@ -1,11 +1,16 @@
+#modify the following options:
+#set FC to be the fortran compiler (mpi wrapper generally)
 FC=mpif90
+
+#set the compiliation options for the fortran compiler
+FCOPTS = -O3 -fopenmp
+
+#set the location of the libraries
+LIB_LIST = -L$(METISDIR) -l$(METISLIB) -lblas
+
 
 
 all: pf_couple
-
-FCOPTS = -O3 -fopenmp
-
-LIB_LIST = -L$(METISDIR) -l$(METISLIB) -lblas
 
 
 OBS=obs/

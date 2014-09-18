@@ -1,3 +1,3 @@
-The Equal weights particle filter implemented using EMPIRE.
+EMPIRE DATA ASSIMILATION CODES FOR SEQUENTIAL FILTERING.
 
-P Browne November 2013. Email: p.browne@reading.ac.uk
+P Browne September 2014. Email: p.browne@reading.ac.uk
