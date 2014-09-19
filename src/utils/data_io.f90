@@ -1,7 +1,7 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-09-18 10:09:54 pbrowne>
+!!! Time-stamp: <2014-09-19 17:18:28 pbrowne>
 !!!
-!!!    {one line to give the program's name and a brief idea of what it does.}
+!!!    Collection of subroutines to deal with i/o
 !!!    Copyright (C) 2014  Philip A. Browne
 !!!
 !!!    This program is free software: you can redistribute it and/or modify
