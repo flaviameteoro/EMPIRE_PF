@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-09-19 10:33:19 pbrowne>
+!!! Time-stamp: <2014-09-19 10:57:41 pbrowne>
 !!!
 !!!    This file must be adapted to the specific model in use.
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -91,7 +91,8 @@ subroutine solve_hqht_plus_r(y,v,t)
   real(kind=rk), dimension(obs_dim), intent(in) :: y
   real(kind=rk), dimension(obs_dim), intent(out) :: v
 
-  stop 'solve_hqht_plus_r not yet implemented'
+  v = y/(5.3d3**2+0.3d0**2)
+!  stop 'solve_hqht_plus_r not yet implemented'
 
 
 end subroutine solve_hqht_plus_r
@@ -176,8 +177,8 @@ subroutine H(x,hx,t)
   real(kind=rk), dimension(state_dim,pf%count), intent(in) :: x
   real(kind=rk), dimension(obs_dim,pf%count), intent(out) :: hx
 
-  stop 'H not yet implemented'
-  !hx(:,:) = x(539617:566986,:)
+  !stop 'H not yet implemented'
+  hx(:,:) = x(539617:566986,:)
 
 end subroutine H
 
@@ -192,9 +193,9 @@ subroutine HT(y,x,t)
   real(kind=rk), dimension(state_dim,pf%count), intent(out) :: x
   real(kind=rk), dimension(obs_dim,pf%count), intent(in) :: y
 
-  stop 'HT not yet implemented'
-  !x = 0.0_rk
-  !x(539617:566986,:) = y(:,:)
+  !stop 'HT not yet implemented'
+  x = 0.0_rk
+  x(539617:566986,:) = y(:,:)
 
 end subroutine HT
 
