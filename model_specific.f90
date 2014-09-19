@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-09-18 10:31:12 pbrowne>
+!!! Time-stamp: <2014-09-19 10:33:19 pbrowne>
 !!!
 !!!    This file must be adapted to the specific model in use.
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -75,7 +75,8 @@ subroutine solve_r(y,v,t)
   real(kind=rk), dimension(obs_dim,pf%count), intent(in) :: y
   real(kind=rk), dimension(obs_dim,pf%count), intent(out) :: v
 
-  stop 'Solve_r not yet implemented'
+  v = y/(0.3d0**2)
+  !stop 'Solve_r not yet implemented'
   
 end subroutine solve_r
 
@@ -124,7 +125,8 @@ subroutine Qhalf(nrhs,x,Qx)
   real(kind=rk), dimension(state_dim,nrhs), intent(in) :: x
   real(kind=rk), dimension(state_dim,nrhs), intent(out) :: qx
 
-  stop 'Qhalf not yet implemented'
+  qx = 5.3d3*x
+!  stop 'Qhalf not yet implemented'
   
 end subroutine Qhalf
 
@@ -141,7 +143,8 @@ subroutine R(nrhs,y,Ry,t)
   real(kind=rk), dimension(obs_dim,nrhs), intent(in) :: y
   real(kind=rk), dimension(obs_dim,nrhs), intent(out) :: Ry
 
-  stop 'R not yet implemented'
+!  stop 'R not yet implemented'
+  Ry = 0.3d0**2*y
 
 end subroutine R
 
@@ -157,7 +160,8 @@ subroutine Rhalf(nrhs,y,Ry,t)
   real(kind=rk), dimension(obs_dim,nrhs), intent(in) :: y
   real(kind=rk), dimension(obs_dim,nrhs), intent(out) :: Ry
 
-  stop 'Rhalf not yet implemented'
+!  stop 'Rhalf not yet implemented'
+  Ry = 0.3d0*y
 
 end subroutine RHALF
 
