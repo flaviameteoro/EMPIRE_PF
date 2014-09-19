@@ -1,7 +1,7 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-09-18 12:21:17 pbrowne>
+!!! Time-stamp: <2014-09-19 17:13:21 pbrowne>
 !!!
-!!!    {one line to give the program's name and a brief idea of what it does.}
+!!!    Tests program for user supplied model and observation specific routines
 !!!    Copyright (C) 2014  Philip A. Browne
 !!!
 !!!    This program is free software: you can redistribute it and/or modify

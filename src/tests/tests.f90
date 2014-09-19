@@ -1,7 +1,7 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-09-19 11:14:29 pbrowne>
+!!! Time-stamp: <2014-09-19 17:16:29 pbrowne>
 !!!
-!!!    {one line to give the program's name and a brief idea of what it does.}
+!!!    Collection of subroutines to perform checks of user supplied routines
 !!!    Copyright (C) 2014  Philip A. Browne
 !!!
 !!!    This program is free software: you can redistribute it and/or modify

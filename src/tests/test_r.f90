@@ -1,7 +1,8 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-09-18 12:24:57 pbrowne>
+!!! Time-stamp: <2014-09-19 17:15:56 pbrowne>
 !!!
-!!!    {one line to give the program's name and a brief idea of what it does.}
+!!!    Test program to check user supplied observation error
+!!!    covariance matrix
 !!!    Copyright (C) 2014  Philip A. Browne
 !!!
 !!!    This program is free software: you can redistribute it and/or modify
