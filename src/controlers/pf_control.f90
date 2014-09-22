@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-09-18 10:09:54 pbrowne>
+!!! Time-stamp: <2014-09-22 13:51:13 pbrowne>
 !!!
 !!!    {one line to give the program's name and a brief idea of what it does.}
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -24,36 +24,46 @@
 !!!	      RG6 6BB
 !!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-07-25 11:12:12 pbrowne>
+!> module to hold all the information to control the the main program
 
 module pf_control
   implicit none
   type, public :: pf_control_type
-     integer :: nens !the number of ensemble members
-     real(kind=kind(1.0D0)), allocatable, dimension(:) :: weight !stores the weights of the particles
-     integer :: time_obs !the number of observations we will assimilate
-     integer :: time_bwn_obs !the number of model timesteps between observations
-     real(kind=kind(1.0D0)) :: nudgefac !the nudging factor
-     logical :: gen_data,gen_Q,human_readable
-     integer :: timestep=0
-     real(kind=kind(1.0D0)), allocatable, dimension(:,:) :: psi
-     real(kind=kind(1.0D0)), allocatable, dimension(:) :: mean
-     real(kind=kind(1.0D0)) :: nfac                !standard deviation of normal distribution in mixture density
-     real(kind=kind(1.0D0)) :: ufac                !half width of the uniform distribution in mixture density
+     integer :: nens !<the total number of ensemble members
+     real(kind=kind(1.0D0)), allocatable, dimension(:) :: weight !< the negative log of the weights of the particles
+     integer :: time_obs !< the number of observations we will assimilate
+     integer :: time_bwn_obs !< the number of model timesteps between observations
+     real(kind=kind(1.0D0)) :: nudgefac !< the nudging factor
+     logical :: gen_data !< true generates synthetic obs for a twin experiment
+     logical :: gen_Q    !< true attempts to build up \f$Q\f$ from
+     !<long model run
+     logical :: human_readable !< unused
+     integer :: timestep=0     !< the current timestep as the model progresses
+     real(kind=kind(1.0D0)), allocatable, dimension(:,:) :: psi !< state vector of ensemble members on this mpi process
+     real(kind=kind(1.0D0)), allocatable, dimension(:) :: mean !< mean state vector
+     real(kind=kind(1.0D0)) :: nfac                !< standard deviation of normal distribution in mixture density
+     real(kind=kind(1.0D0)) :: ufac                !< half width of the uniform distribution in mixture density
      real(kind=kind(1.0D0)) :: efac
-     real(kind=kind(1.0D0)) :: keep,time
-     real(kind=kind(1.0D0)) :: Qscale
-     integer :: couple_root
-     logical :: use_talagrand,use_weak,use_mean,use_var,use_traj,use_rmse
-     integer, dimension(:,:), allocatable :: talagrand
-     integer :: count
-     integer,allocatable, dimension(:) :: particles
-     character(2) :: type
-     character(1) :: init
+     real(kind=kind(1.0D0)) :: keep                !< proportion of particles to keep in EWPF EW step
+     real(kind=kind(1.0D0)) :: time                !< dunno
+     real(kind=kind(1.0D0)) :: Qscale              !< scalar to multiply Q by
+     integer :: couple_root                        !< empire master processor
+     logical :: use_talagrand !< switch if true outputs rank histograms
+     logical :: use_weak      !< switch unused
+     logical :: use_mean      !< switch if true outputs ensemble mean
+     logical :: use_var       !< switch if true outputs ensemble variance
+     logical :: use_traj      !< switch if true outputs trajectories
+     logical :: use_rmse      !< switch if true outputs Root Mean Square Errors
+     integer, dimension(:,:), allocatable :: talagrand !< storage for rank histograms
+     integer :: count         !< number of ensemble members associated with this MPI process
+     integer,allocatable, dimension(:) :: particles !< particles associates with this MPI process
+     character(2) :: type     !< which filter to use
+     character(1) :: init     !< which method to initialise ensemble
   end type pf_control_type
-  type(pf_control_type) :: pf
+  type(pf_control_type) :: pf !< the derived data type holding all controlling data
   contains
     subroutine set_pf_controls
+      !< subroutine to read in pf_control data from pf_parameters.dat'
       integer :: ios
       write(6,'(A)') 'Opening pf_parameters.dat'
       open(32,file='pf_parameters.dat',iostat=ios,action='read',status='old')
@@ -117,6 +127,7 @@ module pf_control
     end subroutine set_pf_controls
 
     subroutine allocate_pf
+      !< subroutine to allocate space for the filtering code
       use sizes
       use histogram_data
       integer :: st
@@ -138,6 +149,7 @@ module pf_control
     end subroutine allocate_pf
 
     subroutine deallocate_pf
+      !< subroutine to deallocate space for the filtering code
       deallocate(pf%weight)
       deallocate(pf%psi)
       if(allocated(pf%talagrand)) deallocate(pf%talagrand)

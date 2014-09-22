@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-09-19 17:16:29 pbrowne>
+!!! Time-stamp: <2014-09-22 12:24:19 pbrowne>
 !!!
 !!!    Collection of subroutines to perform checks of user supplied routines
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -25,6 +25,8 @@
 !!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 subroutine H_tests()
+  !> @brief These are some tests to check that the observation
+  !> operator is implemented correctly
   use pf_control
   use sizes
   implicit none
@@ -250,6 +252,8 @@ end subroutine H_tests
 
 
 subroutine R_tests()
+  !> @brief These are some tests to check that the observation
+  !> error covariance matrix is implemented correctly
   use sizes
   use pf_control
   implicit none
@@ -554,6 +558,8 @@ end subroutine R_tests
 
 
 subroutine Q_tests()
+  !> @brief These are some tests to check that the model error
+  !> covariance matrix is implemented correctly
   use sizes
   use pf_control
   implicit none
@@ -749,6 +755,11 @@ end subroutine Q_tests
 
 
 subroutine HQHTR_tests()
+  !> @brief These are some tests to check that the linear solve
+  !> operator is implemented correctly
+  !>
+  !>
+  !> This should check the operation \f$(HQH^T+R)^{-1}\f$ is working
   use pf_control
   use sizes
   implicit none

@@ -1,0 +1,84 @@
+\hypertarget{perturb__particle_8f90}{\section{src/operations/perturb\-\_\-particle.f90 File Reference}
+\label{perturb__particle_8f90}\index{src/operations/perturb\-\_\-particle.\-f90@{src/operations/perturb\-\_\-particle.\-f90}}
+}
+\subsection*{Functions/\-Subroutines}
+\begin{DoxyCompactItemize}
+\item 
+subroutine \hyperlink{perturb__particle_8f90_a6948efec663affbf7e1b3877298ee9c9}{perturb\-\_\-particle} (x)
+\begin{DoxyCompactList}\small\item\em Subroutine to perturb state vector with normal random vector drawn from $\mathcal{N}(0,Q)$. \end{DoxyCompactList}\item 
+subroutine \hyperlink{perturb__particle_8f90_a7b7fb7c4adca778bebb88945eaa8e564}{update\-\_\-state} (state, fpsi, kgain, betan)
+\begin{DoxyCompactList}\small\item\em Subroutine to update the state. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Function/\-Subroutine Documentation}
+\hypertarget{perturb__particle_8f90_a6948efec663affbf7e1b3877298ee9c9}{\index{perturb\-\_\-particle.\-f90@{perturb\-\_\-particle.\-f90}!perturb\-\_\-particle@{perturb\-\_\-particle}}
+\index{perturb\-\_\-particle@{perturb\-\_\-particle}!perturb_particle.f90@{perturb\-\_\-particle.\-f90}}
+\subsubsection[{perturb\-\_\-particle}]{\setlength{\rightskip}{0pt plus 5cm}subroutine perturb\-\_\-particle (
+\begin{DoxyParamCaption}
+\item[{real(kind=rk), dimension(state\-\_\-dim), intent(inout)}]{x}
+\end{DoxyParamCaption}
+)}}\label{perturb__particle_8f90_a6948efec663affbf7e1b3877298ee9c9}
+
+
+Subroutine to perturb state vector with normal random vector drawn from $\mathcal{N}(0,Q)$. 
+
+
+
+Here is the call graph for this function\-:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{perturb__particle_8f90_a6948efec663affbf7e1b3877298ee9c9_cgraph}
+\end{center}
+\end{figure}
+
+
+
+
+Here is the caller graph for this function\-:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=260pt]{perturb__particle_8f90_a6948efec663affbf7e1b3877298ee9c9_icgraph}
+\end{center}
+\end{figure}
+
+
+\hypertarget{perturb__particle_8f90_a7b7fb7c4adca778bebb88945eaa8e564}{\index{perturb\-\_\-particle.\-f90@{perturb\-\_\-particle.\-f90}!update\-\_\-state@{update\-\_\-state}}
+\index{update\-\_\-state@{update\-\_\-state}!perturb_particle.f90@{perturb\-\_\-particle.\-f90}}
+\subsubsection[{update\-\_\-state}]{\setlength{\rightskip}{0pt plus 5cm}subroutine update\-\_\-state (
+\begin{DoxyParamCaption}
+\item[{real(kind=rk), dimension(state\-\_\-dim), intent(out)}]{state, }
+\item[{real(kind=rk), dimension(state\-\_\-dim), intent(in)}]{fpsi, }
+\item[{real(kind=rk), dimension(state\-\_\-dim), intent(in)}]{kgain, }
+\item[{real(kind=rk), dimension(state\-\_\-dim), intent(inout)}]{betan}
+\end{DoxyParamCaption}
+)}}\label{perturb__particle_8f90_a7b7fb7c4adca778bebb88945eaa8e564}
+
+
+Subroutine to update the state. 
+
+This can be changed for the specific model if it needs to be
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em fpsi} & deterministic model update $f(x^{n-1})$ \\
+\hline
+\mbox{\tt in}  & {\em kgain} & nudging term \\
+\hline
+\mbox{\tt in,out}  & {\em betan} & Stochastic term \\
+\hline
+\mbox{\tt out}  & {\em state} & The updated state vector \\
+\hline
+\end{DoxyParams}
+
+
+Here is the caller graph for this function\-:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{perturb__particle_8f90_a7b7fb7c4adca778bebb88945eaa8e564_icgraph}
+\end{center}
+\end{figure}
+
+

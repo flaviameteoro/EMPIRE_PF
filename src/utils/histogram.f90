@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-09-19 17:20:10 pbrowne>
+!!! Time-stamp: <2014-09-22 15:46:43 pbrowne>
 !!!
 !!!    Module to control what variables are used to generate rank histograms
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -25,13 +25,15 @@
 !!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-
+!> Module to control what variables are used to generate rank histograms
 module histogram_data
   integer, allocatable, dimension(:) :: rank_hist_list
   integer, allocatable, dimension(:) :: rank_hist_nums
   integer :: rhl_n,rhn_n
 
 contains
+  !> subroutine to read from variables_hist.dat which 
+  !! variables to be used to make the rank histograms
   subroutine load_histogram_data
     implicit none
     integer :: i
@@ -51,6 +53,7 @@ contains
     close(2)
   end subroutine load_histogram_data
 
+  !>subroutine to clean up arrays used in rank histograms
   subroutine kill_histogram_data
     deallocate(rank_hist_list)
     deallocate(rank_hist_nums)

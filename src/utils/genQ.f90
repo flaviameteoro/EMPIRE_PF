@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-09-19 17:19:20 pbrowne>
+!!! Time-stamp: <2014-09-22 15:45:36 pbrowne>
 !!!
 !!!    A subroutine to estimate Q from a long model run
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -24,6 +24,7 @@
 !!!	      RG6 6BB
 !!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!> Subroutine to estimate Q from a long model run
 subroutine genQ
   use sizes
   use pf_control

@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-09-19 17:17:58 pbrowne>
+!!! Time-stamp: <2014-09-22 15:42:19 pbrowne>
 !!!
 !!!    Module and subroutine to intitalise EMPIRE coupling to models
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -24,10 +24,10 @@
 !!!	      RG6 6BB
 !!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-module comms
-!  use hadcm3_config
-!  use hadcm3_data
 
+
+!> Module containing EMPIRE coupling data
+module comms
   integer :: CPL_MPI_COMM,mype_id,myRank,nProc
   integer :: pf_mpi_comm,pfrank
   integer :: npfs
@@ -44,8 +44,11 @@ contains
     implicit none
 
   end subroutine deallocate_data
-  
+
+  !> subroutine to make EMPIRE connections and saves details into
+  !! pf_control module
   subroutine initialise_mpi
+
     use pf_control
     implicit none
     include 'mpif.h'

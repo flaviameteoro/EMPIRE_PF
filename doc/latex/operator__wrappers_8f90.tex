@@ -1,0 +1,146 @@
+\hypertarget{operator__wrappers_8f90}{\section{src/operations/operator\-\_\-wrappers.f90 File Reference}
+\label{operator__wrappers_8f90}\index{src/operations/operator\-\_\-wrappers.\-f90@{src/operations/operator\-\_\-wrappers.\-f90}}
+}
+\subsection*{Functions/\-Subroutines}
+\begin{DoxyCompactItemize}
+\item 
+subroutine \hyperlink{operator__wrappers_8f90_aec571ade653c1cf8fd6cde17285af055}{k} (y, x)
+\begin{DoxyCompactList}\small\item\em Subroutine to apply $K$ to a vector y in observation space where $K := QH^T(HQH^T+R)^{-1}$. \end{DoxyCompactList}\item 
+subroutine \hyperlink{operator__wrappers_8f90_adb7f01ab90a983549eaf0ebb1f5c8289}{innerr\-\_\-1} (y, w)
+\begin{DoxyCompactList}\small\item\em subroutine to compute the inner product with $R^{-1}$ \end{DoxyCompactList}\item 
+subroutine \hyperlink{operator__wrappers_8f90_a2bdcf5ca1fde3d87061ae8e984b4c1d9}{innerhqht\-\_\-plus\-\_\-r\-\_\-1} (y, w)
+\begin{DoxyCompactList}\small\item\em subroutine to compute the inner product with $(HQH^T+R)^{-1}$ \end{DoxyCompactList}\item 
+subroutine \hyperlink{operator__wrappers_8f90_a96d0c9700917cd1bcb959b2d96e27036}{bprime} (y, x, Q\-Ht\-R\-\_\-1y, normaln, betan)
+\begin{DoxyCompactList}\small\item\em subroutine to calculate nudging term and correlated random errors efficiently \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Function/\-Subroutine Documentation}
+\hypertarget{operator__wrappers_8f90_a96d0c9700917cd1bcb959b2d96e27036}{\index{operator\-\_\-wrappers.\-f90@{operator\-\_\-wrappers.\-f90}!bprime@{bprime}}
+\index{bprime@{bprime}!operator_wrappers.f90@{operator\-\_\-wrappers.\-f90}}
+\subsubsection[{bprime}]{\setlength{\rightskip}{0pt plus 5cm}subroutine bprime (
+\begin{DoxyParamCaption}
+\item[{real(kind=rk), dimension(obs\-\_\-dim,pf\%count), intent(in)}]{y, }
+\item[{real(kind=rk), dimension(state\-\_\-dim,pf\%count), intent(out)}]{x, }
+\item[{real(kind=rk), dimension(state\-\_\-dim,pf\%count), intent(out)}]{Q\-Ht\-R\-\_\-1y, }
+\item[{real(kind=rk), dimension(state\-\_\-dim,pf\%count), intent(in)}]{normaln, }
+\item[{real(kind=rk), dimension(state\-\_\-dim,pf\%count), intent(out)}]{betan}
+\end{DoxyParamCaption}
+)}}\label{operator__wrappers_8f90_a96d0c9700917cd1bcb959b2d96e27036}
+
+
+subroutine to calculate nudging term and correlated random errors efficiently 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em y} & (obs\-\_\-dim,pf\%count) vectors of innovations $y-H(x^{n-1})$ \\
+\hline
+\mbox{\tt out}  & {\em x} & (state\-\_\-dim,pf\%count) vectors of $\rho Q^{\frac{1}{2}}H^TR^{-1}[y-H(x^{n-1})]$ \\
+\hline
+\mbox{\tt out}  & {\em Q\-Ht\-R\-\_\-1y} & (state\-\_\-dim,pf\%count) vectors of $\rho QH^TR^{-1}[y-H(x^{n-1})]$ \\
+\hline
+\mbox{\tt in}  & {\em normaln} & (state\-\_\-dim,pf\%count) uncorrelated random vectors such that normaln(\-:,i) $\sim \mathcal{N}(0,I)$ \\
+\hline
+\mbox{\tt out}  & {\em betan} & (state\-\_\-dim,pf\%count) correlated random vectors such that betan(\-:,i) $\sim \mathcal{N}(0,Q)$ \\
+\hline
+\end{DoxyParams}
+
+
+Here is the caller graph for this function\-:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=336pt]{operator__wrappers_8f90_a96d0c9700917cd1bcb959b2d96e27036_icgraph}
+\end{center}
+\end{figure}
+
+
+\hypertarget{operator__wrappers_8f90_a2bdcf5ca1fde3d87061ae8e984b4c1d9}{\index{operator\-\_\-wrappers.\-f90@{operator\-\_\-wrappers.\-f90}!innerhqht\-\_\-plus\-\_\-r\-\_\-1@{innerhqht\-\_\-plus\-\_\-r\-\_\-1}}
+\index{innerhqht\-\_\-plus\-\_\-r\-\_\-1@{innerhqht\-\_\-plus\-\_\-r\-\_\-1}!operator_wrappers.f90@{operator\-\_\-wrappers.\-f90}}
+\subsubsection[{innerhqht\-\_\-plus\-\_\-r\-\_\-1}]{\setlength{\rightskip}{0pt plus 5cm}subroutine innerhqht\-\_\-plus\-\_\-r\-\_\-1 (
+\begin{DoxyParamCaption}
+\item[{real(kind=rk), dimension(obs\-\_\-dim), intent(in)}]{y, }
+\item[{real(kind=rk), intent(out)}]{w}
+\end{DoxyParamCaption}
+)}}\label{operator__wrappers_8f90_a2bdcf5ca1fde3d87061ae8e984b4c1d9}
+
+
+subroutine to compute the inner product with $(HQH^T+R)^{-1}$ 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em y} & vector in observation space \\
+\hline
+\mbox{\tt out}  & {\em w} & scalar with value $y^TR^{-1}y$ \\
+\hline
+\end{DoxyParams}
+
+
+Here is the caller graph for this function\-:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{operator__wrappers_8f90_a2bdcf5ca1fde3d87061ae8e984b4c1d9_icgraph}
+\end{center}
+\end{figure}
+
+
+\hypertarget{operator__wrappers_8f90_adb7f01ab90a983549eaf0ebb1f5c8289}{\index{operator\-\_\-wrappers.\-f90@{operator\-\_\-wrappers.\-f90}!innerr\-\_\-1@{innerr\-\_\-1}}
+\index{innerr\-\_\-1@{innerr\-\_\-1}!operator_wrappers.f90@{operator\-\_\-wrappers.\-f90}}
+\subsubsection[{innerr\-\_\-1}]{\setlength{\rightskip}{0pt plus 5cm}subroutine innerr\-\_\-1 (
+\begin{DoxyParamCaption}
+\item[{real(kind=rk), dimension(obs\-\_\-dim,pf\%count), intent(in)}]{y, }
+\item[{real(kind=rk), dimension(pf\%count), intent(out)}]{w}
+\end{DoxyParamCaption}
+)}}\label{operator__wrappers_8f90_adb7f01ab90a983549eaf0ebb1f5c8289}
+
+
+subroutine to compute the inner product with $R^{-1}$ 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em y} & multiple vectors in observation space (pf\%count of them) \\
+\hline
+\mbox{\tt out}  & {\em w} & multiple scalars (pf\%count) where w(i) has the value $y(:,i)^TR^{-1}y(:,i)$ \\
+\hline
+\end{DoxyParams}
+
+
+Here is the caller graph for this function\-:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{operator__wrappers_8f90_adb7f01ab90a983549eaf0ebb1f5c8289_icgraph}
+\end{center}
+\end{figure}
+
+
+\hypertarget{operator__wrappers_8f90_aec571ade653c1cf8fd6cde17285af055}{\index{operator\-\_\-wrappers.\-f90@{operator\-\_\-wrappers.\-f90}!k@{k}}
+\index{k@{k}!operator_wrappers.f90@{operator\-\_\-wrappers.\-f90}}
+\subsubsection[{k}]{\setlength{\rightskip}{0pt plus 5cm}subroutine k (
+\begin{DoxyParamCaption}
+\item[{real(kind=rk), dimension(obs\-\_\-dim,pf\%count), intent(in)}]{y, }
+\item[{real(kind=rk), dimension(state\-\_\-dim,pf\%count), intent(out)}]{x}
+\end{DoxyParamCaption}
+)}}\label{operator__wrappers_8f90_aec571ade653c1cf8fd6cde17285af055}
+
+
+Subroutine to apply $K$ to a vector y in observation space where $K := QH^T(HQH^T+R)^{-1}$. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em y} & vector in observation space \\
+\hline
+\mbox{\tt out}  & {\em x} & vector in state space \\
+\hline
+\end{DoxyParams}
+
+
+Here is the caller graph for this function\-:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=550pt]{operator__wrappers_8f90_aec571ade653c1cf8fd6cde17285af055_icgraph}
+\end{center}
+\end{figure}
+
+

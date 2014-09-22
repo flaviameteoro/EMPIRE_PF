@@ -1,0 +1,285 @@
+\hypertarget{gen__rand_8f90}{\section{src/operations/gen\-\_\-rand.f90 File Reference}
+\label{gen__rand_8f90}\index{src/operations/gen\-\_\-rand.\-f90@{src/operations/gen\-\_\-rand.\-f90}}
+}
+\subsection*{Functions/\-Subroutines}
+\begin{DoxyCompactItemize}
+\item 
+subroutine \hyperlink{gen__rand_8f90_a7cd2e26a4fde81c03cf831511d512bd9}{uniformrandomnumbers1d} (minv, maxv, n, phi)
+\begin{DoxyCompactList}\small\item\em generate one dimension of uniform random numbers \end{DoxyCompactList}\item 
+subroutine \hyperlink{gen__rand_8f90_a009e8ce631181191ef16c1f99f43a158}{normalrandomnumbers1d} (mean, stdev, n, phi)
+\begin{DoxyCompactList}\small\item\em generate one dimension of Normal random numbers \end{DoxyCompactList}\item 
+subroutine \hyperlink{gen__rand_8f90_a79c7f64e458a6af30a2fa95a1650c917}{normalrandomnumbers2d} (mean, stdev, n, \hyperlink{operator__wrappers_8f90_aec571ade653c1cf8fd6cde17285af055}{k}, phi)
+\begin{DoxyCompactList}\small\item\em generate two dimensional Normal random numbers \end{DoxyCompactList}\item 
+subroutine \hyperlink{gen__rand_8f90_ad4c0e9c0f916eb9c4f784239c2768851}{mixturerandomnumbers1d} (mean, stdev, ufac, epsi, n, phi, uniform)
+\begin{DoxyCompactList}\small\item\em generate one dimensional vector drawn from mixture density \end{DoxyCompactList}\item 
+subroutine \hyperlink{gen__rand_8f90_a5ee81ac6968037e88d3686f9b477b77d}{mixturerandomnumbers2d} (mean, stdev, ufac, epsi, n, \hyperlink{operator__wrappers_8f90_aec571ade653c1cf8fd6cde17285af055}{k}, phi, uniform)
+\begin{DoxyCompactList}\small\item\em generate two dimensional vector, each drawn from mixture density \end{DoxyCompactList}\item 
+subroutine \hyperlink{gen__rand_8f90_ae9c8b02eca8aa840a34882d0836bcfff}{random\-\_\-seed\-\_\-mpi} (pfid)
+\begin{DoxyCompactList}\small\item\em Subroutine to set the random seed across M\-P\-I threads. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Function/\-Subroutine Documentation}
+\hypertarget{gen__rand_8f90_ad4c0e9c0f916eb9c4f784239c2768851}{\index{gen\-\_\-rand.\-f90@{gen\-\_\-rand.\-f90}!mixturerandomnumbers1d@{mixturerandomnumbers1d}}
+\index{mixturerandomnumbers1d@{mixturerandomnumbers1d}!gen_rand.f90@{gen\-\_\-rand.\-f90}}
+\subsubsection[{mixturerandomnumbers1d}]{\setlength{\rightskip}{0pt plus 5cm}subroutine mixturerandomnumbers1d (
+\begin{DoxyParamCaption}
+\item[{real(kind=kind(1.\-0d0)), intent(in)}]{mean, }
+\item[{real(kind=kind(1.\-0d0)), intent(in)}]{stdev, }
+\item[{real(kind=kind(1.\-0d0)), intent(in)}]{ufac, }
+\item[{real(kind=kind(1.\-0d0)), intent(in)}]{epsi, }
+\item[{integer, intent(in)}]{n, }
+\item[{real(kind=kind(1.\-0d0)), dimension(n), intent(out)}]{phi, }
+\item[{logical, intent(out)}]{uniform}
+\end{DoxyParamCaption}
+)}}\label{gen__rand_8f90_ad4c0e9c0f916eb9c4f784239c2768851}
+
+
+generate one dimensional vector drawn from mixture density 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em mean} & Mean of normal distribution \\
+\hline
+\mbox{\tt in}  & {\em stdev} & Standard deviation of normal distribution \\
+\hline
+\mbox{\tt in}  & {\em ufac} & half-\/width of uniform distribution that is centered on the mean \\
+\hline
+\mbox{\tt in}  & {\em epsi} & Proportion controlling mixture draw. if random\-\_\-number $>$ epsi then draw from uniform, else normal \\
+\hline
+\mbox{\tt in}  & {\em n} & size of output vector \\
+\hline
+\mbox{\tt out}  & {\em phi} & n dimensional mixture random numbers \\
+\hline
+\mbox{\tt out}  & {\em uniform} & True if mixture drawn from uniform. False if drawn from normal \\
+\hline
+\end{DoxyParams}
+
+
+Here is the call graph for this function\-:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{gen__rand_8f90_ad4c0e9c0f916eb9c4f784239c2768851_cgraph}
+\end{center}
+\end{figure}
+
+
+\hypertarget{gen__rand_8f90_a5ee81ac6968037e88d3686f9b477b77d}{\index{gen\-\_\-rand.\-f90@{gen\-\_\-rand.\-f90}!mixturerandomnumbers2d@{mixturerandomnumbers2d}}
+\index{mixturerandomnumbers2d@{mixturerandomnumbers2d}!gen_rand.f90@{gen\-\_\-rand.\-f90}}
+\subsubsection[{mixturerandomnumbers2d}]{\setlength{\rightskip}{0pt plus 5cm}subroutine mixturerandomnumbers2d (
+\begin{DoxyParamCaption}
+\item[{real(kind=kind(1.\-0d0)), intent(in)}]{mean, }
+\item[{real(kind=kind(1.\-0d0)), intent(in)}]{stdev, }
+\item[{real(kind=kind(1.\-0d0)), intent(in)}]{ufac, }
+\item[{real(kind=kind(1.\-0d0)), intent(in)}]{epsi, }
+\item[{integer, intent(in)}]{n, }
+\item[{integer, intent(in)}]{k, }
+\item[{real(kind=kind(1.\-0d0)), dimension(n,k), intent(out)}]{phi, }
+\item[{logical, dimension({\bf k}), intent(out)}]{uniform}
+\end{DoxyParamCaption}
+)}}\label{gen__rand_8f90_a5ee81ac6968037e88d3686f9b477b77d}
+
+
+generate two dimensional vector, each drawn from mixture density 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em mean} & Mean of normal distribution \\
+\hline
+\mbox{\tt in}  & {\em stdev} & Standard deviation of normal distribution \\
+\hline
+\mbox{\tt in}  & {\em ufac} & half-\/width of uniform distribution that is centered on the mean \\
+\hline
+\mbox{\tt in}  & {\em epsi} & Proportion controlling mixture draw. if random\-\_\-number $>$ epsi then draw from uniform, else normal \\
+\hline
+\mbox{\tt in}  & {\em n} & first dimension of output vector \\
+\hline
+\mbox{\tt in}  & {\em n} & second dimension of output vector \\
+\hline
+\mbox{\tt out}  & {\em phi} & n,k dimensional mixture random numbers \\
+\hline
+\mbox{\tt out}  & {\em uniform} & k dimensional logical with uniform(i) True if phi(\-:,i) drawn from uniform. False if drawn from normal \\
+\hline
+\end{DoxyParams}
+
+
+Here is the call graph for this function\-:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{gen__rand_8f90_a5ee81ac6968037e88d3686f9b477b77d_cgraph}
+\end{center}
+\end{figure}
+
+
+
+
+Here is the caller graph for this function\-:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{gen__rand_8f90_a5ee81ac6968037e88d3686f9b477b77d_icgraph}
+\end{center}
+\end{figure}
+
+
+\hypertarget{gen__rand_8f90_a009e8ce631181191ef16c1f99f43a158}{\index{gen\-\_\-rand.\-f90@{gen\-\_\-rand.\-f90}!normalrandomnumbers1d@{normalrandomnumbers1d}}
+\index{normalrandomnumbers1d@{normalrandomnumbers1d}!gen_rand.f90@{gen\-\_\-rand.\-f90}}
+\subsubsection[{normalrandomnumbers1d}]{\setlength{\rightskip}{0pt plus 5cm}subroutine normalrandomnumbers1d (
+\begin{DoxyParamCaption}
+\item[{real(kind=rk), intent(in)}]{mean, }
+\item[{real(kind=rk), intent(in)}]{stdev, }
+\item[{integer, intent(in)}]{n, }
+\item[{real(kind=rk), dimension(n), intent(out)}]{phi}
+\end{DoxyParamCaption}
+)}}\label{gen__rand_8f90_a009e8ce631181191ef16c1f99f43a158}
+
+
+generate one dimension of Normal random numbers 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em n} & size of output vector\\
+\hline
+\mbox{\tt in}  & {\em mean} & mean of normal distribution\\
+\hline
+\mbox{\tt in}  & {\em stdev} & Standard Deviation of normal distribution\\
+\hline
+\mbox{\tt out}  & {\em phi} & n dimensional normal random numbers \\
+\hline
+\end{DoxyParams}
+
+
+Here is the call graph for this function\-:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{gen__rand_8f90_a009e8ce631181191ef16c1f99f43a158_cgraph}
+\end{center}
+\end{figure}
+
+
+
+
+Here is the caller graph for this function\-:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{gen__rand_8f90_a009e8ce631181191ef16c1f99f43a158_icgraph}
+\end{center}
+\end{figure}
+
+
+\hypertarget{gen__rand_8f90_a79c7f64e458a6af30a2fa95a1650c917}{\index{gen\-\_\-rand.\-f90@{gen\-\_\-rand.\-f90}!normalrandomnumbers2d@{normalrandomnumbers2d}}
+\index{normalrandomnumbers2d@{normalrandomnumbers2d}!gen_rand.f90@{gen\-\_\-rand.\-f90}}
+\subsubsection[{normalrandomnumbers2d}]{\setlength{\rightskip}{0pt plus 5cm}subroutine normalrandomnumbers2d (
+\begin{DoxyParamCaption}
+\item[{real(kind=rk), intent(in)}]{mean, }
+\item[{real(kind=rk), intent(in)}]{stdev, }
+\item[{integer, intent(in)}]{n, }
+\item[{integer, intent(in)}]{k, }
+\item[{real(kind=rk), dimension(n,{\bf k}), intent(out)}]{phi}
+\end{DoxyParamCaption}
+)}}\label{gen__rand_8f90_a79c7f64e458a6af30a2fa95a1650c917}
+
+
+generate two dimensional Normal random numbers 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em n} & first dimension of output vector\\
+\hline
+\mbox{\tt in}  & {\em n} & second dimension of output vector\\
+\hline
+\mbox{\tt in}  & {\em mean} & mean of normal distribution\\
+\hline
+\mbox{\tt in}  & {\em stdev} & Standard Deviation of normal distribution\\
+\hline
+\mbox{\tt out}  & {\em phi} & n,k dimensional normal random numbers \\
+\hline
+\end{DoxyParams}
+
+
+Here is the call graph for this function\-:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{gen__rand_8f90_a79c7f64e458a6af30a2fa95a1650c917_cgraph}
+\end{center}
+\end{figure}
+
+
+
+
+Here is the caller graph for this function\-:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{gen__rand_8f90_a79c7f64e458a6af30a2fa95a1650c917_icgraph}
+\end{center}
+\end{figure}
+
+
+\hypertarget{gen__rand_8f90_ae9c8b02eca8aa840a34882d0836bcfff}{\index{gen\-\_\-rand.\-f90@{gen\-\_\-rand.\-f90}!random\-\_\-seed\-\_\-mpi@{random\-\_\-seed\-\_\-mpi}}
+\index{random\-\_\-seed\-\_\-mpi@{random\-\_\-seed\-\_\-mpi}!gen_rand.f90@{gen\-\_\-rand.\-f90}}
+\subsubsection[{random\-\_\-seed\-\_\-mpi}]{\setlength{\rightskip}{0pt plus 5cm}subroutine random\-\_\-seed\-\_\-mpi (
+\begin{DoxyParamCaption}
+\item[{integer, intent(in)}]{pfid}
+\end{DoxyParamCaption}
+)}}\label{gen__rand_8f90_ae9c8b02eca8aa840a34882d0836bcfff}
+
+
+Subroutine to set the random seed across M\-P\-I threads. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em pfid} & The process identifier of the M\-P\-I process \\
+\hline
+\end{DoxyParams}
+
+
+Here is the caller graph for this function\-:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=272pt]{gen__rand_8f90_ae9c8b02eca8aa840a34882d0836bcfff_icgraph}
+\end{center}
+\end{figure}
+
+
+\hypertarget{gen__rand_8f90_a7cd2e26a4fde81c03cf831511d512bd9}{\index{gen\-\_\-rand.\-f90@{gen\-\_\-rand.\-f90}!uniformrandomnumbers1d@{uniformrandomnumbers1d}}
+\index{uniformrandomnumbers1d@{uniformrandomnumbers1d}!gen_rand.f90@{gen\-\_\-rand.\-f90}}
+\subsubsection[{uniformrandomnumbers1d}]{\setlength{\rightskip}{0pt plus 5cm}subroutine uniformrandomnumbers1d (
+\begin{DoxyParamCaption}
+\item[{real(kind=rk), intent(in)}]{minv, }
+\item[{real(kind=rk), intent(in)}]{maxv, }
+\item[{integer, intent(in)}]{n, }
+\item[{real(kind=rk), dimension(n), intent(out)}]{phi}
+\end{DoxyParamCaption}
+)}}\label{gen__rand_8f90_a7cd2e26a4fde81c03cf831511d512bd9}
+
+
+generate one dimension of uniform random numbers 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em n} & size of output vector\\
+\hline
+\mbox{\tt in}  & {\em minv} & minimum value of uniform distribution\\
+\hline
+\mbox{\tt in}  & {\em maxv} & maximum value of uniform distribution\\
+\hline
+\mbox{\tt out}  & {\em phi} & n dimensional uniform random numbers \\
+\hline
+\end{DoxyParams}
+
+
+Here is the caller graph for this function\-:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{gen__rand_8f90_a7cd2e26a4fde81c03cf831511d512bd9_icgraph}
+\end{center}
+\end{figure}
+
+

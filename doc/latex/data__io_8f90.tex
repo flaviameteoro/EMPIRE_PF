@@ -1,0 +1,126 @@
+\hypertarget{data__io_8f90}{\section{src/utils/data\-\_\-io.f90 File Reference}
+\label{data__io_8f90}\index{src/utils/data\-\_\-io.\-f90@{src/utils/data\-\_\-io.\-f90}}
+}
+\subsection*{Functions/\-Subroutines}
+\begin{DoxyCompactItemize}
+\item 
+subroutine \hyperlink{data__io_8f90_a6dc5d8aea89b34a0942dfa6e4cc000ab}{get\-\_\-observation\-\_\-data} (y)
+\begin{DoxyCompactList}\small\item\em Subroutine to read observation from a file \par
+ Uses pftimestep to determine which observation to read. \end{DoxyCompactList}\item 
+subroutine \hyperlink{data__io_8f90_a72594989fbfcfa6ed0b9935d48d73ba0}{save\-\_\-observation\-\_\-data} (y)
+\begin{DoxyCompactList}\small\item\em Subroutine to save observation to a file \par
+ Uses pftimestep to determine which observation to save. \end{DoxyCompactList}\item 
+subroutine \hyperlink{data__io_8f90_a4a1af9be00771c4b74e182dd43bb0211}{save\-\_\-truth} (x)
+\begin{DoxyCompactList}\small\item\em Subroutine to save truth to a file \par
+. \end{DoxyCompactList}\item 
+subroutine \hyperlink{data__io_8f90_a4b7f0fc2733276e4b8b074f089c7b4fb}{output\-\_\-from\-\_\-pf}
+\begin{DoxyCompactList}\small\item\em subroutine to ouput data from the filter \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Function/\-Subroutine Documentation}
+\hypertarget{data__io_8f90_a6dc5d8aea89b34a0942dfa6e4cc000ab}{\index{data\-\_\-io.\-f90@{data\-\_\-io.\-f90}!get\-\_\-observation\-\_\-data@{get\-\_\-observation\-\_\-data}}
+\index{get\-\_\-observation\-\_\-data@{get\-\_\-observation\-\_\-data}!data_io.f90@{data\-\_\-io.\-f90}}
+\subsubsection[{get\-\_\-observation\-\_\-data}]{\setlength{\rightskip}{0pt plus 5cm}subroutine get\-\_\-observation\-\_\-data (
+\begin{DoxyParamCaption}
+\item[{real(kind=rk), dimension(obs\-\_\-dim), intent(out)}]{y}
+\end{DoxyParamCaption}
+)}}\label{data__io_8f90_a6dc5d8aea89b34a0942dfa6e4cc000ab}
+
+
+Subroutine to read observation from a file \par
+ Uses pftimestep to determine which observation to read. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt out}  & {\em y} & The observation \\
+\hline
+\end{DoxyParams}
+
+
+Here is the caller graph for this function\-:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{data__io_8f90_a6dc5d8aea89b34a0942dfa6e4cc000ab_icgraph}
+\end{center}
+\end{figure}
+
+
+\hypertarget{data__io_8f90_a4b7f0fc2733276e4b8b074f089c7b4fb}{\index{data\-\_\-io.\-f90@{data\-\_\-io.\-f90}!output\-\_\-from\-\_\-pf@{output\-\_\-from\-\_\-pf}}
+\index{output\-\_\-from\-\_\-pf@{output\-\_\-from\-\_\-pf}!data_io.f90@{data\-\_\-io.\-f90}}
+\subsubsection[{output\-\_\-from\-\_\-pf}]{\setlength{\rightskip}{0pt plus 5cm}subroutine output\-\_\-from\-\_\-pf (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{data__io_8f90_a4b7f0fc2733276e4b8b074f089c7b4fb}
+
+
+subroutine to ouput data from the filter 
+
+
+
+Here is the caller graph for this function\-:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=258pt]{data__io_8f90_a4b7f0fc2733276e4b8b074f089c7b4fb_icgraph}
+\end{center}
+\end{figure}
+
+
+\hypertarget{data__io_8f90_a72594989fbfcfa6ed0b9935d48d73ba0}{\index{data\-\_\-io.\-f90@{data\-\_\-io.\-f90}!save\-\_\-observation\-\_\-data@{save\-\_\-observation\-\_\-data}}
+\index{save\-\_\-observation\-\_\-data@{save\-\_\-observation\-\_\-data}!data_io.f90@{data\-\_\-io.\-f90}}
+\subsubsection[{save\-\_\-observation\-\_\-data}]{\setlength{\rightskip}{0pt plus 5cm}subroutine save\-\_\-observation\-\_\-data (
+\begin{DoxyParamCaption}
+\item[{real(kind=rk), dimension(obs\-\_\-dim), intent(in)}]{y}
+\end{DoxyParamCaption}
+)}}\label{data__io_8f90_a72594989fbfcfa6ed0b9935d48d73ba0}
+
+
+Subroutine to save observation to a file \par
+ Uses pftimestep to determine which observation to save. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em y} & The observation \\
+\hline
+\end{DoxyParams}
+
+
+Here is the caller graph for this function\-:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{data__io_8f90_a72594989fbfcfa6ed0b9935d48d73ba0_icgraph}
+\end{center}
+\end{figure}
+
+
+\hypertarget{data__io_8f90_a4a1af9be00771c4b74e182dd43bb0211}{\index{data\-\_\-io.\-f90@{data\-\_\-io.\-f90}!save\-\_\-truth@{save\-\_\-truth}}
+\index{save\-\_\-truth@{save\-\_\-truth}!data_io.f90@{data\-\_\-io.\-f90}}
+\subsubsection[{save\-\_\-truth}]{\setlength{\rightskip}{0pt plus 5cm}subroutine save\-\_\-truth (
+\begin{DoxyParamCaption}
+\item[{real(kind=rk), dimension(state\-\_\-dim), intent(in)}]{x}
+\end{DoxyParamCaption}
+)}}\label{data__io_8f90_a4a1af9be00771c4b74e182dd43bb0211}
+
+
+Subroutine to save truth to a file \par
+. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em x} & The state vector \\
+\hline
+\end{DoxyParams}
+
+
+Here is the caller graph for this function\-:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=224pt]{data__io_8f90_a4a1af9be00771c4b74e182dd43bb0211_icgraph}
+\end{center}
+\end{figure}
+
+

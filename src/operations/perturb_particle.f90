@@ -1,7 +1,7 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-09-18 10:09:54 pbrowne>
+!!! Time-stamp: <2014-09-22 15:07:25 pbrowne>
 !!!
-!!!    {one line to give the program's name and a brief idea of what it does.}
+!!!    Collection of routines to perturb and update states
 !!!    Copyright (C) 2014  Philip A. Browne
 !!!
 !!!    This program is free software: you can redistribute it and/or modify
@@ -24,6 +24,9 @@
 !!!	      RG6 6BB
 !!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+!> Subroutine to perturb state vector with normal random vector
+!! drawn from \f$\mathcal{N}(0,Q)\f$
 subroutine perturb_particle(x)
 use sizes
 integer, parameter :: rk=kind(1.0D0)
@@ -36,6 +39,15 @@ x = x + y
 
 end subroutine perturb_particle
 
+!> Subroutine to update the state
+!!
+!! This can be changed for the specific model
+!! if it needs to be
+!!
+!! @param[in] fpsi deterministic model update \f$f(x^{n-1})\f$
+!! @param[in] kgain nudging term
+!! @param[inout] betan Stochastic term
+!! @param[out] state The updated state vector 
 
 subroutine update_state(state,fpsi,kgain,betan)
 use sizes

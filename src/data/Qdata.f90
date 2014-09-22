@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-09-18 14:15:37 pbrowne>
+!!! Time-stamp: <2014-09-22 14:18:28 pbrowne>
 !!!
 !!!    {one line to give the program's name and a brief idea of what it does.}
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -24,6 +24,9 @@
 !!!	      RG6 6BB
 !!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!> @brief Module as a place to store user specified data for \f$Q\f$
+!> - the model error covariance matrix
+
 module Qdata
 implicit none
 integer :: Qn,Qne
@@ -31,6 +34,7 @@ integer, allocatable, dimension(:) :: Qrow,Qcol
 real(kind=kind(1.0D0)), allocatable, dimension(:) :: Qval,Qdiag
 real(kind=kind(1.0d0)) :: Qscale
 contains
+  !> Subroutine to load in user data for Q
   subroutine loadQ
     use sizes
     use pf_control
@@ -38,6 +42,7 @@ contains
   end subroutine loadQ
 
   subroutine killQ
+    !> SUbroutine to deallocate user data for Q
     if(allocated(Qrow)) deallocate(Qrow)
     if(allocated(Qcol)) deallocate(Qcol)
     if(allocated(Qval)) deallocate(Qval)

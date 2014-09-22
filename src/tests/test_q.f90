@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-09-19 17:15:16 pbrowne>
+!!! Time-stamp: <2014-09-22 12:27:37 pbrowne>
 !!!
 !!!    Test program to check user supplied model error covariance matrix
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -25,8 +25,11 @@
 !!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+!> program to run tests of user supplied model error covariance matrix
+!!
+
 program test_q
-  !program to run all tests of user specific functions
+
   use pf_control
   implicit none
   

@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-09-19 17:19:00 pbrowne>
+!!! Time-stamp: <2014-09-22 15:43:32 pbrowne>
 !!!
 !!!    Subroutine to give output diagnositics such as rank histograms
 !!!    and trajectories
@@ -26,6 +26,8 @@
 !!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+!> Subroutine to give output diagnositics such as rank histograms  
+!!    and trajectories                                             
 subroutine diagnostics
   use pf_control
   use sizes
@@ -196,7 +198,7 @@ subroutine diagnostics
 
 end subroutine diagnostics
 
-
+!> subroutine to output trajectories
 subroutine trajectories
   use pf_control
   use sizes

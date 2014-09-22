@@ -1,0 +1,7 @@
+<map id="insertionsort_d" name="insertionsort_d">
+<area shape="rect" id="node2" href="$quicksort_8f90.html#af8ae66026837cca99f0bad2ac022f649" title="subroutine to sort using the quicksort algorithm " alt="" coords="161,31,250,57"/>
+<area shape="rect" id="node3" href="$equivalent__weights__step_8f90.html#a3439a2d355440c40666f773e889e5f26" title="subroutine to do the equivalent weights step " alt="" coords="435,5,565,32"/>
+<area shape="rect" id="node6" href="$diagnostics_8f90.html#ab86e86523f3c0812112f5b2f447432b1" title="Subroutine to give output diagnositics such as rank histograms and trajectories. " alt="" coords="299,56,387,83"/>
+<area shape="rect" id="node4" href="$old__pf__couple_8f90.html#a1216ad66e8485a0af45ed20218ee2272" title="couple_pf" alt="" coords="614,5,693,32"/>
+<area shape="rect" id="node5" href="$pf__couple_8f90.html#a0142283b3d363fac9899bfaaf2621eae" title="the main program " alt="" coords="623,56,684,83"/>
+</map>

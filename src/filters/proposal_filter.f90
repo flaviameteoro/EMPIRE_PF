@@ -1,7 +1,7 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-09-18 10:35:15 pbrowne>
+!!! Time-stamp: <2014-09-22 14:27:10 pbrowne>
 !!!
-!!!    {one line to give the program's name and a brief idea of what it does.}
+!!!    Subroutine to perform nudging in the proposal step of EWPF
 !!!    Copyright (C) 2014  Philip A. Browne
 !!!
 !!!    This program is free software: you can redistribute it and/or modify
@@ -29,6 +29,7 @@
 !given from the Particle filter code of Mel and Peter Jan
 !PAB 04-02-2013
 
+!> Subroutine to perform nudging in the proposal step of EWPF
 subroutine proposal_filter
   use pf_control
   use Sizes

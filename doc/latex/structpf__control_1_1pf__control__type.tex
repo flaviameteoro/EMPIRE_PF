@@ -1,0 +1,272 @@
+\hypertarget{structpf__control_1_1pf__control__type}{\section{pf\-\_\-control\-:\-:pf\-\_\-control\-\_\-type Type Reference}
+\label{structpf__control_1_1pf__control__type}\index{pf\-\_\-control\-::pf\-\_\-control\-\_\-type@{pf\-\_\-control\-::pf\-\_\-control\-\_\-type}}
+}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+integer \hyperlink{structpf__control_1_1pf__control__type_a54b2dd5d94eb5fd34e0384490b7a293e}{nens}
+\begin{DoxyCompactList}\small\item\em the total number of ensemble members \end{DoxyCompactList}\item 
+real(kind=kind(1.\-0d0)), dimension(\-:), allocatable \hyperlink{structpf__control_1_1pf__control__type_a6924d4f75cbd9e358263f7cfe453e063}{weight}
+\begin{DoxyCompactList}\small\item\em the negative log of the weights of the particles \end{DoxyCompactList}\item 
+integer \hyperlink{structpf__control_1_1pf__control__type_a7199be1c1a99f9f066af0ee214f51824}{time\-\_\-obs}
+\begin{DoxyCompactList}\small\item\em the number of observations we will assimilate \end{DoxyCompactList}\item 
+integer \hyperlink{structpf__control_1_1pf__control__type_a13e65bce20eb3de30403efca169f9635}{time\-\_\-bwn\-\_\-obs}
+\begin{DoxyCompactList}\small\item\em the number of model timesteps between observations \end{DoxyCompactList}\item 
+real(kind=kind(1.\-0d0)) \hyperlink{structpf__control_1_1pf__control__type_ae8e8786c073ded3dc39645629863cb73}{nudgefac}
+\begin{DoxyCompactList}\small\item\em the nudging factor \end{DoxyCompactList}\item 
+logical \hyperlink{structpf__control_1_1pf__control__type_a250ef33de2e01234ed341b9864338b7d}{gen\-\_\-data}
+\begin{DoxyCompactList}\small\item\em true generates synthetic obs for a twin experiment \end{DoxyCompactList}\item 
+logical \hyperlink{structpf__control_1_1pf__control__type_ae1e2616b063090ccd403e0f1c7820fce}{gen\-\_\-q}
+\begin{DoxyCompactList}\small\item\em true attempts to build up $Q$ from long model run \end{DoxyCompactList}\item 
+logical \hyperlink{structpf__control_1_1pf__control__type_a8b7974924f8883cc71d3fd7d3ef66a9b}{human\-\_\-readable}
+\begin{DoxyCompactList}\small\item\em unused \end{DoxyCompactList}\item 
+integer \hyperlink{structpf__control_1_1pf__control__type_a12beb826016805c71fcc112a733f2330}{timestep} =0
+\begin{DoxyCompactList}\small\item\em the current timestep as the model progresses \end{DoxyCompactList}\item 
+real(kind=kind(1.\-0d0)), dimension(\-:,\-:), allocatable \hyperlink{structpf__control_1_1pf__control__type_a3e5d92f215b032c3a563de43278c937f}{psi}
+\begin{DoxyCompactList}\small\item\em state vector of ensemble members on this mpi process \end{DoxyCompactList}\item 
+real(kind=kind(1.\-0d0)), dimension(\-:), allocatable \hyperlink{structpf__control_1_1pf__control__type_a90ea6d211c5b4d70ab99e12e9a8dc8d5}{mean}
+\begin{DoxyCompactList}\small\item\em mean state vector \end{DoxyCompactList}\item 
+real(kind=kind(1.\-0d0)) \hyperlink{structpf__control_1_1pf__control__type_a77aec7df0491895c8300476fb856b80a}{nfac}
+\begin{DoxyCompactList}\small\item\em standard deviation of normal distribution in mixture density \end{DoxyCompactList}\item 
+real(kind=kind(1.\-0d0)) \hyperlink{structpf__control_1_1pf__control__type_a41d48f1ac4e0d69dcea1cd99a62fca90}{ufac}
+\begin{DoxyCompactList}\small\item\em half width of the uniform distribution in mixture density \end{DoxyCompactList}\item 
+real(kind=kind(1.\-0d0)) \hyperlink{structpf__control_1_1pf__control__type_a105254bf19b7d9582f187d6fefe3b8eb}{efac}
+\item 
+real(kind=kind(1.\-0d0)) \hyperlink{structpf__control_1_1pf__control__type_a32d13f7de6d41376980374e9ae2c2a62}{keep}
+\begin{DoxyCompactList}\small\item\em proportion of particles to keep in E\-W\-P\-F E\-W step \end{DoxyCompactList}\item 
+real(kind=kind(1.\-0d0)) \hyperlink{structpf__control_1_1pf__control__type_a4240d041987192d6b192b6910efeb29a}{time}
+\begin{DoxyCompactList}\small\item\em dunno \end{DoxyCompactList}\item 
+real(kind=kind(1.\-0d0)) \hyperlink{structpf__control_1_1pf__control__type_a48fc82562f2982c72312a1bba7d03d0d}{qscale}
+\begin{DoxyCompactList}\small\item\em scalar to multiply Q by \end{DoxyCompactList}\item 
+integer \hyperlink{structpf__control_1_1pf__control__type_a739b1b0b9ed322b84b834b9a185fe238}{couple\-\_\-root}
+\begin{DoxyCompactList}\small\item\em empire master processor \end{DoxyCompactList}\item 
+logical \hyperlink{structpf__control_1_1pf__control__type_a8acf4d56e3c012a8d5761ade51cfc48e}{use\-\_\-talagrand}
+\begin{DoxyCompactList}\small\item\em switch if true outputs rank histograms \end{DoxyCompactList}\item 
+logical \hyperlink{structpf__control_1_1pf__control__type_ac8097ede5f988970340635da9c936264}{use\-\_\-weak}
+\begin{DoxyCompactList}\small\item\em switch unused \end{DoxyCompactList}\item 
+logical \hyperlink{structpf__control_1_1pf__control__type_a9fb54b12465d1b75e7337fa7b569cac8}{use\-\_\-mean}
+\begin{DoxyCompactList}\small\item\em switch if true outputs ensemble mean \end{DoxyCompactList}\item 
+logical \hyperlink{structpf__control_1_1pf__control__type_a0ddc8995c902c77e0a04f70f701f3a5b}{use\-\_\-var}
+\begin{DoxyCompactList}\small\item\em switch if true outputs ensemble variance \end{DoxyCompactList}\item 
+logical \hyperlink{structpf__control_1_1pf__control__type_a6c3195c3fb580a3d68c0b449a5ce6ab1}{use\-\_\-traj}
+\begin{DoxyCompactList}\small\item\em switch if true outputs trajectories \end{DoxyCompactList}\item 
+logical \hyperlink{structpf__control_1_1pf__control__type_a47eb88fd006d8ac00206cfd20cd41622}{use\-\_\-rmse}
+\begin{DoxyCompactList}\small\item\em switch if true outputs Root Mean Square Errors \end{DoxyCompactList}\item 
+integer, dimension(\-:,\-:), \\*
+allocatable \hyperlink{structpf__control_1_1pf__control__type_aa35adefc9a96845c065fd01ecf99b37d}{talagrand}
+\begin{DoxyCompactList}\small\item\em storage for rank histograms \end{DoxyCompactList}\item 
+integer \hyperlink{structpf__control_1_1pf__control__type_a8e26d20b11d6b909dc10731cd3e8d42f}{count}
+\begin{DoxyCompactList}\small\item\em number of ensemble members associated with this M\-P\-I process \end{DoxyCompactList}\item 
+integer, dimension(\-:), allocatable \hyperlink{structpf__control_1_1pf__control__type_a5a15db12bd5e3ab8163049e4412cf755}{particles}
+\begin{DoxyCompactList}\small\item\em particles associates with this M\-P\-I process \end{DoxyCompactList}\item 
+character(2) \hyperlink{structpf__control_1_1pf__control__type_ab21afb0aa9c7933073356dbc2155870c}{type}
+\begin{DoxyCompactList}\small\item\em which filter to use \end{DoxyCompactList}\item 
+character(1) \hyperlink{structpf__control_1_1pf__control__type_ab024d9ea51de1956c671b483f1c9d020}{init}
+\begin{DoxyCompactList}\small\item\em which method to initialise ensemble \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Member Data Documentation}
+\hypertarget{structpf__control_1_1pf__control__type_a8e26d20b11d6b909dc10731cd3e8d42f}{\index{pf\-\_\-control\-::pf\-\_\-control\-\_\-type@{pf\-\_\-control\-::pf\-\_\-control\-\_\-type}!count@{count}}
+\index{count@{count}!pf_control::pf_control_type@{pf\-\_\-control\-::pf\-\_\-control\-\_\-type}}
+\subsubsection[{count}]{\setlength{\rightskip}{0pt plus 5cm}integer pf\-\_\-control\-::pf\-\_\-control\-\_\-type\-::count}}\label{structpf__control_1_1pf__control__type_a8e26d20b11d6b909dc10731cd3e8d42f}
+
+
+number of ensemble members associated with this M\-P\-I process 
+
+\hypertarget{structpf__control_1_1pf__control__type_a739b1b0b9ed322b84b834b9a185fe238}{\index{pf\-\_\-control\-::pf\-\_\-control\-\_\-type@{pf\-\_\-control\-::pf\-\_\-control\-\_\-type}!couple\-\_\-root@{couple\-\_\-root}}
+\index{couple\-\_\-root@{couple\-\_\-root}!pf_control::pf_control_type@{pf\-\_\-control\-::pf\-\_\-control\-\_\-type}}
+\subsubsection[{couple\-\_\-root}]{\setlength{\rightskip}{0pt plus 5cm}integer pf\-\_\-control\-::pf\-\_\-control\-\_\-type\-::couple\-\_\-root}}\label{structpf__control_1_1pf__control__type_a739b1b0b9ed322b84b834b9a185fe238}
+
+
+empire master processor 
+
+\hypertarget{structpf__control_1_1pf__control__type_a105254bf19b7d9582f187d6fefe3b8eb}{\index{pf\-\_\-control\-::pf\-\_\-control\-\_\-type@{pf\-\_\-control\-::pf\-\_\-control\-\_\-type}!efac@{efac}}
+\index{efac@{efac}!pf_control::pf_control_type@{pf\-\_\-control\-::pf\-\_\-control\-\_\-type}}
+\subsubsection[{efac}]{\setlength{\rightskip}{0pt plus 5cm}real(kind=kind(1.\-0d0)) pf\-\_\-control\-::pf\-\_\-control\-\_\-type\-::efac}}\label{structpf__control_1_1pf__control__type_a105254bf19b7d9582f187d6fefe3b8eb}
+\hypertarget{structpf__control_1_1pf__control__type_a250ef33de2e01234ed341b9864338b7d}{\index{pf\-\_\-control\-::pf\-\_\-control\-\_\-type@{pf\-\_\-control\-::pf\-\_\-control\-\_\-type}!gen\-\_\-data@{gen\-\_\-data}}
+\index{gen\-\_\-data@{gen\-\_\-data}!pf_control::pf_control_type@{pf\-\_\-control\-::pf\-\_\-control\-\_\-type}}
+\subsubsection[{gen\-\_\-data}]{\setlength{\rightskip}{0pt plus 5cm}logical pf\-\_\-control\-::pf\-\_\-control\-\_\-type\-::gen\-\_\-data}}\label{structpf__control_1_1pf__control__type_a250ef33de2e01234ed341b9864338b7d}
+
+
+true generates synthetic obs for a twin experiment 
+
+\hypertarget{structpf__control_1_1pf__control__type_ae1e2616b063090ccd403e0f1c7820fce}{\index{pf\-\_\-control\-::pf\-\_\-control\-\_\-type@{pf\-\_\-control\-::pf\-\_\-control\-\_\-type}!gen\-\_\-q@{gen\-\_\-q}}
+\index{gen\-\_\-q@{gen\-\_\-q}!pf_control::pf_control_type@{pf\-\_\-control\-::pf\-\_\-control\-\_\-type}}
+\subsubsection[{gen\-\_\-q}]{\setlength{\rightskip}{0pt plus 5cm}logical pf\-\_\-control\-::pf\-\_\-control\-\_\-type\-::gen\-\_\-q}}\label{structpf__control_1_1pf__control__type_ae1e2616b063090ccd403e0f1c7820fce}
+
+
+true attempts to build up $Q$ from long model run 
+
+\hypertarget{structpf__control_1_1pf__control__type_a8b7974924f8883cc71d3fd7d3ef66a9b}{\index{pf\-\_\-control\-::pf\-\_\-control\-\_\-type@{pf\-\_\-control\-::pf\-\_\-control\-\_\-type}!human\-\_\-readable@{human\-\_\-readable}}
+\index{human\-\_\-readable@{human\-\_\-readable}!pf_control::pf_control_type@{pf\-\_\-control\-::pf\-\_\-control\-\_\-type}}
+\subsubsection[{human\-\_\-readable}]{\setlength{\rightskip}{0pt plus 5cm}logical pf\-\_\-control\-::pf\-\_\-control\-\_\-type\-::human\-\_\-readable}}\label{structpf__control_1_1pf__control__type_a8b7974924f8883cc71d3fd7d3ef66a9b}
+
+
+unused 
+
+\hypertarget{structpf__control_1_1pf__control__type_ab024d9ea51de1956c671b483f1c9d020}{\index{pf\-\_\-control\-::pf\-\_\-control\-\_\-type@{pf\-\_\-control\-::pf\-\_\-control\-\_\-type}!init@{init}}
+\index{init@{init}!pf_control::pf_control_type@{pf\-\_\-control\-::pf\-\_\-control\-\_\-type}}
+\subsubsection[{init}]{\setlength{\rightskip}{0pt plus 5cm}character(1) pf\-\_\-control\-::pf\-\_\-control\-\_\-type\-::init}}\label{structpf__control_1_1pf__control__type_ab024d9ea51de1956c671b483f1c9d020}
+
+
+which method to initialise ensemble 
+
+\hypertarget{structpf__control_1_1pf__control__type_a32d13f7de6d41376980374e9ae2c2a62}{\index{pf\-\_\-control\-::pf\-\_\-control\-\_\-type@{pf\-\_\-control\-::pf\-\_\-control\-\_\-type}!keep@{keep}}
+\index{keep@{keep}!pf_control::pf_control_type@{pf\-\_\-control\-::pf\-\_\-control\-\_\-type}}
+\subsubsection[{keep}]{\setlength{\rightskip}{0pt plus 5cm}real(kind=kind(1.\-0d0)) pf\-\_\-control\-::pf\-\_\-control\-\_\-type\-::keep}}\label{structpf__control_1_1pf__control__type_a32d13f7de6d41376980374e9ae2c2a62}
+
+
+proportion of particles to keep in E\-W\-P\-F E\-W step 
+
+\hypertarget{structpf__control_1_1pf__control__type_a90ea6d211c5b4d70ab99e12e9a8dc8d5}{\index{pf\-\_\-control\-::pf\-\_\-control\-\_\-type@{pf\-\_\-control\-::pf\-\_\-control\-\_\-type}!mean@{mean}}
+\index{mean@{mean}!pf_control::pf_control_type@{pf\-\_\-control\-::pf\-\_\-control\-\_\-type}}
+\subsubsection[{mean}]{\setlength{\rightskip}{0pt plus 5cm}real(kind=kind(1.\-0d0)), dimension(\-:), allocatable pf\-\_\-control\-::pf\-\_\-control\-\_\-type\-::mean}}\label{structpf__control_1_1pf__control__type_a90ea6d211c5b4d70ab99e12e9a8dc8d5}
+
+
+mean state vector 
+
+\hypertarget{structpf__control_1_1pf__control__type_a54b2dd5d94eb5fd34e0384490b7a293e}{\index{pf\-\_\-control\-::pf\-\_\-control\-\_\-type@{pf\-\_\-control\-::pf\-\_\-control\-\_\-type}!nens@{nens}}
+\index{nens@{nens}!pf_control::pf_control_type@{pf\-\_\-control\-::pf\-\_\-control\-\_\-type}}
+\subsubsection[{nens}]{\setlength{\rightskip}{0pt plus 5cm}integer pf\-\_\-control\-::pf\-\_\-control\-\_\-type\-::nens}}\label{structpf__control_1_1pf__control__type_a54b2dd5d94eb5fd34e0384490b7a293e}
+
+
+the total number of ensemble members 
+
+\hypertarget{structpf__control_1_1pf__control__type_a77aec7df0491895c8300476fb856b80a}{\index{pf\-\_\-control\-::pf\-\_\-control\-\_\-type@{pf\-\_\-control\-::pf\-\_\-control\-\_\-type}!nfac@{nfac}}
+\index{nfac@{nfac}!pf_control::pf_control_type@{pf\-\_\-control\-::pf\-\_\-control\-\_\-type}}
+\subsubsection[{nfac}]{\setlength{\rightskip}{0pt plus 5cm}real(kind=kind(1.\-0d0)) pf\-\_\-control\-::pf\-\_\-control\-\_\-type\-::nfac}}\label{structpf__control_1_1pf__control__type_a77aec7df0491895c8300476fb856b80a}
+
+
+standard deviation of normal distribution in mixture density 
+
+\hypertarget{structpf__control_1_1pf__control__type_ae8e8786c073ded3dc39645629863cb73}{\index{pf\-\_\-control\-::pf\-\_\-control\-\_\-type@{pf\-\_\-control\-::pf\-\_\-control\-\_\-type}!nudgefac@{nudgefac}}
+\index{nudgefac@{nudgefac}!pf_control::pf_control_type@{pf\-\_\-control\-::pf\-\_\-control\-\_\-type}}
+\subsubsection[{nudgefac}]{\setlength{\rightskip}{0pt plus 5cm}real(kind=kind(1.\-0d0)) pf\-\_\-control\-::pf\-\_\-control\-\_\-type\-::nudgefac}}\label{structpf__control_1_1pf__control__type_ae8e8786c073ded3dc39645629863cb73}
+
+
+the nudging factor 
+
+\hypertarget{structpf__control_1_1pf__control__type_a5a15db12bd5e3ab8163049e4412cf755}{\index{pf\-\_\-control\-::pf\-\_\-control\-\_\-type@{pf\-\_\-control\-::pf\-\_\-control\-\_\-type}!particles@{particles}}
+\index{particles@{particles}!pf_control::pf_control_type@{pf\-\_\-control\-::pf\-\_\-control\-\_\-type}}
+\subsubsection[{particles}]{\setlength{\rightskip}{0pt plus 5cm}integer, dimension(\-:), allocatable pf\-\_\-control\-::pf\-\_\-control\-\_\-type\-::particles}}\label{structpf__control_1_1pf__control__type_a5a15db12bd5e3ab8163049e4412cf755}
+
+
+particles associates with this M\-P\-I process 
+
+\hypertarget{structpf__control_1_1pf__control__type_a3e5d92f215b032c3a563de43278c937f}{\index{pf\-\_\-control\-::pf\-\_\-control\-\_\-type@{pf\-\_\-control\-::pf\-\_\-control\-\_\-type}!psi@{psi}}
+\index{psi@{psi}!pf_control::pf_control_type@{pf\-\_\-control\-::pf\-\_\-control\-\_\-type}}
+\subsubsection[{psi}]{\setlength{\rightskip}{0pt plus 5cm}real(kind=kind(1.\-0d0)), dimension(\-:,\-:), allocatable pf\-\_\-control\-::pf\-\_\-control\-\_\-type\-::psi}}\label{structpf__control_1_1pf__control__type_a3e5d92f215b032c3a563de43278c937f}
+
+
+state vector of ensemble members on this mpi process 
+
+\hypertarget{structpf__control_1_1pf__control__type_a48fc82562f2982c72312a1bba7d03d0d}{\index{pf\-\_\-control\-::pf\-\_\-control\-\_\-type@{pf\-\_\-control\-::pf\-\_\-control\-\_\-type}!qscale@{qscale}}
+\index{qscale@{qscale}!pf_control::pf_control_type@{pf\-\_\-control\-::pf\-\_\-control\-\_\-type}}
+\subsubsection[{qscale}]{\setlength{\rightskip}{0pt plus 5cm}real(kind=kind(1.\-0d0)) pf\-\_\-control\-::pf\-\_\-control\-\_\-type\-::qscale}}\label{structpf__control_1_1pf__control__type_a48fc82562f2982c72312a1bba7d03d0d}
+
+
+scalar to multiply Q by 
+
+\hypertarget{structpf__control_1_1pf__control__type_aa35adefc9a96845c065fd01ecf99b37d}{\index{pf\-\_\-control\-::pf\-\_\-control\-\_\-type@{pf\-\_\-control\-::pf\-\_\-control\-\_\-type}!talagrand@{talagrand}}
+\index{talagrand@{talagrand}!pf_control::pf_control_type@{pf\-\_\-control\-::pf\-\_\-control\-\_\-type}}
+\subsubsection[{talagrand}]{\setlength{\rightskip}{0pt plus 5cm}integer, dimension(\-:,\-:), allocatable pf\-\_\-control\-::pf\-\_\-control\-\_\-type\-::talagrand}}\label{structpf__control_1_1pf__control__type_aa35adefc9a96845c065fd01ecf99b37d}
+
+
+storage for rank histograms 
+
+\hypertarget{structpf__control_1_1pf__control__type_a4240d041987192d6b192b6910efeb29a}{\index{pf\-\_\-control\-::pf\-\_\-control\-\_\-type@{pf\-\_\-control\-::pf\-\_\-control\-\_\-type}!time@{time}}
+\index{time@{time}!pf_control::pf_control_type@{pf\-\_\-control\-::pf\-\_\-control\-\_\-type}}
+\subsubsection[{time}]{\setlength{\rightskip}{0pt plus 5cm}real(kind=kind(1.\-0d0)) pf\-\_\-control\-::pf\-\_\-control\-\_\-type\-::time}}\label{structpf__control_1_1pf__control__type_a4240d041987192d6b192b6910efeb29a}
+
+
+dunno 
+
+\hypertarget{structpf__control_1_1pf__control__type_a13e65bce20eb3de30403efca169f9635}{\index{pf\-\_\-control\-::pf\-\_\-control\-\_\-type@{pf\-\_\-control\-::pf\-\_\-control\-\_\-type}!time\-\_\-bwn\-\_\-obs@{time\-\_\-bwn\-\_\-obs}}
+\index{time\-\_\-bwn\-\_\-obs@{time\-\_\-bwn\-\_\-obs}!pf_control::pf_control_type@{pf\-\_\-control\-::pf\-\_\-control\-\_\-type}}
+\subsubsection[{time\-\_\-bwn\-\_\-obs}]{\setlength{\rightskip}{0pt plus 5cm}integer pf\-\_\-control\-::pf\-\_\-control\-\_\-type\-::time\-\_\-bwn\-\_\-obs}}\label{structpf__control_1_1pf__control__type_a13e65bce20eb3de30403efca169f9635}
+
+
+the number of model timesteps between observations 
+
+\hypertarget{structpf__control_1_1pf__control__type_a7199be1c1a99f9f066af0ee214f51824}{\index{pf\-\_\-control\-::pf\-\_\-control\-\_\-type@{pf\-\_\-control\-::pf\-\_\-control\-\_\-type}!time\-\_\-obs@{time\-\_\-obs}}
+\index{time\-\_\-obs@{time\-\_\-obs}!pf_control::pf_control_type@{pf\-\_\-control\-::pf\-\_\-control\-\_\-type}}
+\subsubsection[{time\-\_\-obs}]{\setlength{\rightskip}{0pt plus 5cm}integer pf\-\_\-control\-::pf\-\_\-control\-\_\-type\-::time\-\_\-obs}}\label{structpf__control_1_1pf__control__type_a7199be1c1a99f9f066af0ee214f51824}
+
+
+the number of observations we will assimilate 
+
+\hypertarget{structpf__control_1_1pf__control__type_a12beb826016805c71fcc112a733f2330}{\index{pf\-\_\-control\-::pf\-\_\-control\-\_\-type@{pf\-\_\-control\-::pf\-\_\-control\-\_\-type}!timestep@{timestep}}
+\index{timestep@{timestep}!pf_control::pf_control_type@{pf\-\_\-control\-::pf\-\_\-control\-\_\-type}}
+\subsubsection[{timestep}]{\setlength{\rightskip}{0pt plus 5cm}integer pf\-\_\-control\-::pf\-\_\-control\-\_\-type\-::timestep =0}}\label{structpf__control_1_1pf__control__type_a12beb826016805c71fcc112a733f2330}
+
+
+the current timestep as the model progresses 
+
+\hypertarget{structpf__control_1_1pf__control__type_ab21afb0aa9c7933073356dbc2155870c}{\index{pf\-\_\-control\-::pf\-\_\-control\-\_\-type@{pf\-\_\-control\-::pf\-\_\-control\-\_\-type}!type@{type}}
+\index{type@{type}!pf_control::pf_control_type@{pf\-\_\-control\-::pf\-\_\-control\-\_\-type}}
+\subsubsection[{type}]{\setlength{\rightskip}{0pt plus 5cm}character(2) pf\-\_\-control\-::pf\-\_\-control\-\_\-type\-::type}}\label{structpf__control_1_1pf__control__type_ab21afb0aa9c7933073356dbc2155870c}
+
+
+which filter to use 
+
+\hypertarget{structpf__control_1_1pf__control__type_a41d48f1ac4e0d69dcea1cd99a62fca90}{\index{pf\-\_\-control\-::pf\-\_\-control\-\_\-type@{pf\-\_\-control\-::pf\-\_\-control\-\_\-type}!ufac@{ufac}}
+\index{ufac@{ufac}!pf_control::pf_control_type@{pf\-\_\-control\-::pf\-\_\-control\-\_\-type}}
+\subsubsection[{ufac}]{\setlength{\rightskip}{0pt plus 5cm}real(kind=kind(1.\-0d0)) pf\-\_\-control\-::pf\-\_\-control\-\_\-type\-::ufac}}\label{structpf__control_1_1pf__control__type_a41d48f1ac4e0d69dcea1cd99a62fca90}
+
+
+half width of the uniform distribution in mixture density 
+
+\hypertarget{structpf__control_1_1pf__control__type_a9fb54b12465d1b75e7337fa7b569cac8}{\index{pf\-\_\-control\-::pf\-\_\-control\-\_\-type@{pf\-\_\-control\-::pf\-\_\-control\-\_\-type}!use\-\_\-mean@{use\-\_\-mean}}
+\index{use\-\_\-mean@{use\-\_\-mean}!pf_control::pf_control_type@{pf\-\_\-control\-::pf\-\_\-control\-\_\-type}}
+\subsubsection[{use\-\_\-mean}]{\setlength{\rightskip}{0pt plus 5cm}logical pf\-\_\-control\-::pf\-\_\-control\-\_\-type\-::use\-\_\-mean}}\label{structpf__control_1_1pf__control__type_a9fb54b12465d1b75e7337fa7b569cac8}
+
+
+switch if true outputs ensemble mean 
+
+\hypertarget{structpf__control_1_1pf__control__type_a47eb88fd006d8ac00206cfd20cd41622}{\index{pf\-\_\-control\-::pf\-\_\-control\-\_\-type@{pf\-\_\-control\-::pf\-\_\-control\-\_\-type}!use\-\_\-rmse@{use\-\_\-rmse}}
+\index{use\-\_\-rmse@{use\-\_\-rmse}!pf_control::pf_control_type@{pf\-\_\-control\-::pf\-\_\-control\-\_\-type}}
+\subsubsection[{use\-\_\-rmse}]{\setlength{\rightskip}{0pt plus 5cm}logical pf\-\_\-control\-::pf\-\_\-control\-\_\-type\-::use\-\_\-rmse}}\label{structpf__control_1_1pf__control__type_a47eb88fd006d8ac00206cfd20cd41622}
+
+
+switch if true outputs Root Mean Square Errors 
+
+\hypertarget{structpf__control_1_1pf__control__type_a8acf4d56e3c012a8d5761ade51cfc48e}{\index{pf\-\_\-control\-::pf\-\_\-control\-\_\-type@{pf\-\_\-control\-::pf\-\_\-control\-\_\-type}!use\-\_\-talagrand@{use\-\_\-talagrand}}
+\index{use\-\_\-talagrand@{use\-\_\-talagrand}!pf_control::pf_control_type@{pf\-\_\-control\-::pf\-\_\-control\-\_\-type}}
+\subsubsection[{use\-\_\-talagrand}]{\setlength{\rightskip}{0pt plus 5cm}logical pf\-\_\-control\-::pf\-\_\-control\-\_\-type\-::use\-\_\-talagrand}}\label{structpf__control_1_1pf__control__type_a8acf4d56e3c012a8d5761ade51cfc48e}
+
+
+switch if true outputs rank histograms 
+
+\hypertarget{structpf__control_1_1pf__control__type_a6c3195c3fb580a3d68c0b449a5ce6ab1}{\index{pf\-\_\-control\-::pf\-\_\-control\-\_\-type@{pf\-\_\-control\-::pf\-\_\-control\-\_\-type}!use\-\_\-traj@{use\-\_\-traj}}
+\index{use\-\_\-traj@{use\-\_\-traj}!pf_control::pf_control_type@{pf\-\_\-control\-::pf\-\_\-control\-\_\-type}}
+\subsubsection[{use\-\_\-traj}]{\setlength{\rightskip}{0pt plus 5cm}logical pf\-\_\-control\-::pf\-\_\-control\-\_\-type\-::use\-\_\-traj}}\label{structpf__control_1_1pf__control__type_a6c3195c3fb580a3d68c0b449a5ce6ab1}
+
+
+switch if true outputs trajectories 
+
+\hypertarget{structpf__control_1_1pf__control__type_a0ddc8995c902c77e0a04f70f701f3a5b}{\index{pf\-\_\-control\-::pf\-\_\-control\-\_\-type@{pf\-\_\-control\-::pf\-\_\-control\-\_\-type}!use\-\_\-var@{use\-\_\-var}}
+\index{use\-\_\-var@{use\-\_\-var}!pf_control::pf_control_type@{pf\-\_\-control\-::pf\-\_\-control\-\_\-type}}
+\subsubsection[{use\-\_\-var}]{\setlength{\rightskip}{0pt plus 5cm}logical pf\-\_\-control\-::pf\-\_\-control\-\_\-type\-::use\-\_\-var}}\label{structpf__control_1_1pf__control__type_a0ddc8995c902c77e0a04f70f701f3a5b}
+
+
+switch if true outputs ensemble variance 
+
+\hypertarget{structpf__control_1_1pf__control__type_ac8097ede5f988970340635da9c936264}{\index{pf\-\_\-control\-::pf\-\_\-control\-\_\-type@{pf\-\_\-control\-::pf\-\_\-control\-\_\-type}!use\-\_\-weak@{use\-\_\-weak}}
+\index{use\-\_\-weak@{use\-\_\-weak}!pf_control::pf_control_type@{pf\-\_\-control\-::pf\-\_\-control\-\_\-type}}
+\subsubsection[{use\-\_\-weak}]{\setlength{\rightskip}{0pt plus 5cm}logical pf\-\_\-control\-::pf\-\_\-control\-\_\-type\-::use\-\_\-weak}}\label{structpf__control_1_1pf__control__type_ac8097ede5f988970340635da9c936264}
+
+
+switch unused 
+
+\hypertarget{structpf__control_1_1pf__control__type_a6924d4f75cbd9e358263f7cfe453e063}{\index{pf\-\_\-control\-::pf\-\_\-control\-\_\-type@{pf\-\_\-control\-::pf\-\_\-control\-\_\-type}!weight@{weight}}
+\index{weight@{weight}!pf_control::pf_control_type@{pf\-\_\-control\-::pf\-\_\-control\-\_\-type}}
+\subsubsection[{weight}]{\setlength{\rightskip}{0pt plus 5cm}real(kind=kind(1.\-0d0)), dimension(\-:), allocatable pf\-\_\-control\-::pf\-\_\-control\-\_\-type\-::weight}}\label{structpf__control_1_1pf__control__type_a6924d4f75cbd9e358263f7cfe453e063}
+
+
+the negative log of the weights of the particles 
+
+
+
+The documentation for this type was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+src/controlers/\hyperlink{pf__control_8f90}{pf\-\_\-control.\-f90}\end{DoxyCompactItemize}

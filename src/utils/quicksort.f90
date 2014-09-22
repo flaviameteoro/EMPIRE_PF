@@ -1,8 +1,11 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-09-19 17:20:51 pbrowne>
+!!! Time-stamp: <2014-09-22 15:48:46 pbrowne>
 !This code was taken from http://rosettacode.org/wiki/Quicksort#Fortran
 !and is distributed under GNU Free Documentation License 1.2.
 !see  http://www.gnu.org/licenses/fdl-1.2.html
+!> subroutine to sort using the quicksort algorithm
+!! @param[in,out] a array of doubles to be sorted
+!! @param[in] na dimension of array a
 recursive subroutine quicksort_d(a,na)
 implicit none 
 ! DUMMY ARGUMENTS
@@ -76,7 +79,10 @@ integer :: marker
     end if
  
   end subroutine quicksort_d
- 
+
+!> subroutine to sort using the insertionsort algorithm
+!! @param[in,out] a array of doubles to be sorted
+!! @param[in] na dimension of array a 
 subroutine InsertionSort_d(A,nA)
  
 ! DUMMY ARGUMENTS

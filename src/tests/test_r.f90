@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-09-19 17:15:56 pbrowne>
+!!! Time-stamp: <2014-09-22 12:28:23 pbrowne>
 !!!
 !!!    Test program to check user supplied observation error
 !!!    covariance matrix
@@ -26,8 +26,10 @@
 !!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+!> program to run all tests of user supplied observation error
+!> covariance matrix/
 program test_r
-  !program to run all tests of user specific functions
+  
   use pf_control
   implicit none
   

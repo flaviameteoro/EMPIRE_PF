@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-09-19 17:13:21 pbrowne>
+!!! Time-stamp: <2014-09-22 12:15:42 pbrowne>
 !!!
 !!!    Tests program for user supplied model and observation specific routines
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -25,8 +25,10 @@
 !!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+!> program to run all tests of user specific functions
+!!
+
 program alltests
-  !program to run all tests of user specific functions
   use pf_control
   implicit none
   

@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-09-19 17:18:28 pbrowne>
+!!! Time-stamp: <2014-09-22 15:45:10 pbrowne>
 !!!
 !!!    Collection of subroutines to deal with i/o
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -24,7 +24,13 @@
 !!!	      RG6 6BB
 !!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+!> Subroutine to read observation from a file
+!! \n
+!! Uses pf%timestep to determine which observation to read
+!> @param[out] y The observation
 subroutine get_observation_data(y)
+
   use pf_control
   use sizes
   implicit none
@@ -47,7 +53,12 @@ subroutine get_observation_data(y)
   close(67)
 end subroutine get_observation_data
 
+!> Subroutine to save observation to a file              
+!! \n              
+!! Uses pf%timestep to determine which observation to save   
+!> @param[in] y The observation
 subroutine save_observation_data(y)
+
   use pf_control
   use sizes
   implicit none
@@ -81,7 +92,11 @@ subroutine save_observation_data(y)
   end if
 end subroutine save_observation_data
 
+!> Subroutine to save truth to a file              
+!! \n                 
+!> @param[in] x The state vector
 subroutine save_truth(x)
+
   use pf_control
   use sizes
   implicit none
@@ -105,7 +120,7 @@ subroutine save_truth(x)
   end if
 end subroutine save_truth
 
-
+!>subroutine to ouput data from the filter
 subroutine output_from_pf
   use pf_control
   use sizes

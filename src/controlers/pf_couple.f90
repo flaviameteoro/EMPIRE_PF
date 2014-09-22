@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-09-18 11:56:29 pbrowne>
+!!! Time-stamp: <2014-09-22 14:02:24 pbrowne>
 !!!
 !!!    {one line to give the program's name and a brief idea of what it does.}
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -31,6 +31,18 @@
 !Simon Wilson and Philip Browne 2013
 !----------------------------------------------------------------
 
+
+!> @mainpage 
+!! This is where we put the stuff to go at the top of the documentation.
+!!
+!! looks like this
+
+!! @todo whats this?
+
+
+!> the main program
+!!
+
 program empire
   use comms
   use pf_control
@@ -49,14 +61,19 @@ program empire
 
   write(6,'(A)') 'PF: Starting PF code'
   call flush(6)
+  !> set up EMPIRE coupling
   call initialise_mpi
   print*,'PF: setting controls'
+  !> read in controlling data
   call set_pf_controls
   print*,'PF: configuring model'
+  !> call user specific routine for initialisation
   call configure_model
   print*,'allocating pf'
+  !> allocate space for the filter
   call allocate_pf
 
+  !> ensure random seed is set across mpi processes
   call random_seed_mpi(pfrank)
   write(6,*) 'PF: starting to receive from model'
 

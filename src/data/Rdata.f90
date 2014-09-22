@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-09-18 10:09:54 pbrowne>
+!!! Time-stamp: <2014-09-22 14:18:42 pbrowne>
 !!!
 !!!    {one line to give the program's name and a brief idea of what it does.}
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -24,12 +24,15 @@
 !!!	      RG6 6BB
 !!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!> @brief Module to hold user supplied data for \f$R\f$
+!> observation error covariance matrix
 module Rdata
 implicit none
 integer :: Rn,Rne
 integer, allocatable, dimension(:) :: Rrow,Rcol
 real(kind=kind(1.0D0)), allocatable, dimension(:) :: Rval,Rdiag
 contains
+  !> Subroutine to load data for R
   subroutine loadR
     use sizes
     integer :: i
@@ -44,6 +47,7 @@ contains
   end subroutine loadR
 
   subroutine killR
+    !> SUbroutine to deallocate R data
     if(allocated(Rrow)) deallocate(Rrow)
     if(allocated(Rcol)) deallocate(Rcol)
     if(allocated(Rval)) deallocate(Rval)

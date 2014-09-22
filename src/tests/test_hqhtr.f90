@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-09-19 17:14:42 pbrowne>
+!!! Time-stamp: <2014-09-22 12:27:12 pbrowne>
 !!!
 !!!    Test program to check user supplied linear solve used in EWPF
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -24,6 +24,11 @@
 !!!	      RG6 6BB
 !!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+!> program to run tests of user supplied linear solve
+!!
+!! \f$(HQH^T+R)^{-1}\f$
+
 
 program test_hqhtr
   !program to run all tests of user specific functions

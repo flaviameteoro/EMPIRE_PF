@@ -1,26 +1,25 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-09-19 17:21:25 pbrowne>
+!!! Time-stamp: <2014-09-22 15:52:53 pbrowne>
+!> A module for random number generation from the following distributions:
+!!
+!!     Distribution                    Function/subroutine name
+!!
+!!     Normal (Gaussian)               random_normal
+!!     Gamma                           random_gamma
+!!     Chi-squared                     random_chisq
+!!     Exponential                     random_exponential
+!!     Weibull                         random_Weibull
+!!     Beta                            random_beta
+!!     t                               random_t
+!!     Multivariate normal             random_mvnorm
+!!     Generalized inverse Gaussian    random_inv_gauss
+!!     Poisson                         random_Poisson
+!!     Binomial                        random_binomial1   *
+!!                                     random_binomial2   *
+!!     Negative binomial               random_neg_binomial
+!!     von Mises                       random_von_Mises
+!!     Cauchy                          random_Cauchy
 MODULE random
-! A module for random number generation from the following distributions:
-!
-!     Distribution                    Function/subroutine name
-!
-!     Normal (Gaussian)               random_normal
-!     Gamma                           random_gamma
-!     Chi-squared                     random_chisq
-!     Exponential                     random_exponential
-!     Weibull                         random_Weibull
-!     Beta                            random_beta
-!     t                               random_t
-!     Multivariate normal             random_mvnorm
-!     Generalized inverse Gaussian    random_inv_gauss
-!     Poisson                         random_Poisson
-!     Binomial                        random_binomial1   *
-!                                     random_binomial2   *
-!     Negative binomial               random_neg_binomial
-!     von Mises                       random_von_Mises
-!     Cauchy                          random_Cauchy
-!
 !  Generate a random ordering of the integers 1 .. N
 !                                     random_order
 !     Initialize (seed) the uniform random number generator for ANY compiler
@@ -104,7 +103,8 @@ INTEGER, PARAMETER :: dp = SELECTED_REAL_KIND(12, 60)
 
 CONTAINS
 
-
+!> function to get random normal with zero mean and stdev 1
+!> @return fn_val
 FUNCTION random_normal() RESULT(fn_val)
 
 ! Adapted from the following Fortran 77 code
@@ -149,7 +149,6 @@ fn_val = v/u
 RETURN
 
 END FUNCTION random_normal
-
 
 
 FUNCTION random_gamma(s, first) RESULT(fn_val)

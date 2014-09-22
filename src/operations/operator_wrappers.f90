@@ -1,7 +1,7 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-09-18 10:38:04 pbrowne>
+!!! Time-stamp: <2014-09-22 15:39:52 pbrowne>
 !!!
-!!!    {one line to give the program's name and a brief idea of what it does.}
+!!!    Collection of combinations of other subroutines
 !!!    Copyright (C) 2014  Philip A. Browne
 !!!
 !!!    This program is free software: you can redistribute it and/or modify
@@ -24,6 +24,11 @@
 !!!	      RG6 6BB
 !!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!> Subroutine to apply \f$K\f$ to a vector y in observation space
+!! where \f$K := QH^T(HQH^T+R)^{-1}\f$
+!! @param[in] y vector in observation space
+!! @param[out] x vector in state space
+
 subroutine K(y,x)
   !subroutine to apply the operator K to a vector y in obs space and return
   !the vector x in full state space.
@@ -52,6 +57,11 @@ subroutine K(y,x)
   call flush(6)
 end subroutine K
 
+
+!>subroutine to compute the inner product with \f$R^{-1}\f$
+!! @param[in] y multiple vectors in observation space (pf\%count of them)
+!! @param[out] w multiple scalars (pf\%count) where w(i) has the value
+!! \f$y(:,i)^TR^{-1}y(:,i)\f$
 subroutine innerR_1(y,w)
   !subroutine to take an observation vector y and return w = y^T R^(-1) y
   use sizes
@@ -74,6 +84,10 @@ subroutine innerR_1(y,w)
 
 end subroutine innerR_1
 
+
+!>subroutine to compute the inner product with \f$(HQH^T+R)^{-1}\f$      
+!! @param[in] y vector in observation space
+!! @param[out] w scalar with value \f$y^TR^{-1}y\f$
 subroutine innerHQHt_plus_R_1(y,w)
   !subroutine to take an observation vector y and return w = y^T (HQH^T+R)^(-1) y
   use sizes
@@ -125,7 +139,20 @@ end subroutine innerHQHt_plus_R_1
 !!$
 !!$end subroutine B
 
-subroutine Bprime(y,x,QHtR_1y,normaln,betan)
+
+!> subroutine to calculate nudging term and correlated random errors
+!!efficiently
+!! @param[in] y (obs_dim,pf\%count) vectors of innovations
+!! \f$y-H(x^{n-1})\f$
+!! @param[out] x (state_dim,pf\%count) vectors of
+!! \f$\rho Q^{\frac{1}{2}}H^TR^{-1}[y-H(x^{n-1})]\f$
+!! @param[out] QHtR_1y (state_dim,pf\%count) vectors of
+!! \f$\rho QH^TR^{-1}[y-H(x^{n-1})]\f$ 
+!! @param[in] normaln (state_dim,pf\%count) uncorrelated random vectors such that
+!! normaln(:,i) \f$\sim \mathcal{N}(0,I)\f$
+!! @param[out] betan (state_dim,pf\%count) correlated random vectors such that        
+!! betan(:,i) \f$\sim \mathcal{N}(0,Q)\f$
+ subroutine Bprime(y,x,QHtR_1y,normaln,betan)
 !this is B but with separate Q multiplication
 use pf_control
 use sizes

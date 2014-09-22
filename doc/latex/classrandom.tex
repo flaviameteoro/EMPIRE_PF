@@ -1,0 +1,477 @@
+\hypertarget{classrandom}{\section{random Module Reference}
+\label{classrandom}\index{random@{random}}
+}
+
+
+A module for random number generation from the following distributions\-:  
+
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+real(kind=kind(1.\-0d+0)) function \hyperlink{classrandom_a05c493f12b4a3acad4d42bf23e3bf23a}{random\-\_\-normal} ()
+\begin{DoxyCompactList}\small\item\em function to get random normal with zero mean and stdev 1 \end{DoxyCompactList}\item 
+real(kind=kind(1.\-0d+0)) function \hyperlink{classrandom_a0ffe848e8b744d46f54c64489374cadf}{random\-\_\-gamma} (s, first)
+\item 
+real(kind=kind(1.\-0d+0)) function \hyperlink{classrandom_a7f62d97723dd55391a86b2875b8f67b1}{random\-\_\-gamma1} (s, first)
+\item 
+real(kind=kind(1.\-0d+0)) function \hyperlink{classrandom_a6c16fa1e3c755b37dc43212078c6af18}{random\-\_\-gamma2} (s, first)
+\item 
+real(kind=kind(1.\-0d+0)) function \hyperlink{classrandom_ac6329ddadc01dc01d991971b5d955727}{random\-\_\-chisq} (ndf, first)
+\item 
+real(kind=kind(1.\-0d+0)) function \hyperlink{classrandom_a14421c1b908f2263d65da068fddfc7dd}{random\-\_\-exponential} ()
+\item 
+real(kind=kind(1.\-0d+0)) function \hyperlink{classrandom_ab847036d4dbe5c63613425d28a395275}{random\-\_\-weibull} (a)
+\item 
+real(kind=kind(1.\-0d+0)) function \hyperlink{classrandom_a0037b9f6838b023c794c2addf89f9ba1}{random\-\_\-beta} (aa, bb, first)
+\item 
+real(kind=kind(1.\-0d+0)) function \hyperlink{classrandom_a52f7096c93579e684fd894e01bedcd4d}{random\-\_\-t} (m)
+\item 
+subroutine \hyperlink{classrandom_a2770bb736479f52377a6f9eea473da8e}{random\-\_\-mvnorm} (n, h, d, f, first, x, ier)
+\item 
+real(kind=kind(1.\-0d+0)) function \hyperlink{classrandom_a238863a66d36cc568a878418c31e96b4}{random\-\_\-inv\-\_\-gauss} (h, b, first)
+\item 
+integer function \hyperlink{classrandom_a4ec519e7171cd11a636820c235a04e97}{random\-\_\-poisson} (mu, first)
+\item 
+integer function \hyperlink{classrandom_a9d4c34e7ad5aab9e084465c7842d1a8a}{random\-\_\-binomial1} (n, p, first)
+\item 
+real(kind=kind(1.\-0d+0)) function \hyperlink{classrandom_a09f3df72ead2420edd0672a21a7d210e}{bin\-\_\-prob} (n, p, r)
+\item 
+real(\hyperlink{classrandom_a0026984dfe1c95755ce81e2372a06f22}{dp}) function \hyperlink{classrandom_aeb29b320c803774e82f6245ad6f33aae}{lngamma} (x)
+\item 
+integer function \hyperlink{classrandom_aefecf83790063d8974d72c28293f2413}{random\-\_\-binomial2} (n, pp, first)
+\item 
+integer function \hyperlink{classrandom_a3107e0ecaf18a7095150c0f911aac145}{random\-\_\-neg\-\_\-binomial} (sk, p)
+\item 
+real(kind=kind(1.\-0d+0)) function \hyperlink{classrandom_ae89f09ae700db89c4e3593dda9e4d334}{random\-\_\-von\-\_\-mises} (\hyperlink{operator__wrappers_8f90_aec571ade653c1cf8fd6cde17285af055}{k}, first)
+\item 
+real(kind=kind(1.\-0d+0)) function \hyperlink{classrandom_a812d6055f4c3c34177a7681a2302b03b}{random\-\_\-cauchy} ()
+\item 
+subroutine \hyperlink{classrandom_a03e6b0b30475831f6d57082faed3bb34}{random\-\_\-order} (order, n)
+\item 
+subroutine \hyperlink{classrandom_a82f08f6c9b3c4740501abb1970397f8d}{seed\-\_\-random\-\_\-number} (iounit)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+integer, parameter \hyperlink{classrandom_a0026984dfe1c95755ce81e2372a06f22}{dp} = S\-E\-L\-E\-C\-T\-E\-D\-\_\-\-R\-E\-A\-L\-\_\-\-K\-I\-N\-D(12, 60)
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+A module for random number generation from the following distributions\-: 
+
+Distribution Function/subroutine name
+
+Normal (Gaussian) random\-\_\-normal Gamma random\-\_\-gamma Chi-\/squared random\-\_\-chisq Exponential random\-\_\-exponential Weibull random\-\_\-\-Weibull Beta random\-\_\-beta t random\-\_\-t Multivariate normal random\-\_\-mvnorm Generalized inverse Gaussian random\-\_\-inv\-\_\-gauss Poisson random\-\_\-\-Poisson Binomial random\-\_\-binomial1 $\ast$ random\-\_\-binomial2 $\ast$ Negative binomial random\-\_\-neg\-\_\-binomial von Mises random\-\_\-von\-\_\-\-Mises Cauchy random\-\_\-\-Cauchy 
+
+\subsection{Member Function/\-Subroutine Documentation}
+\hypertarget{classrandom_a09f3df72ead2420edd0672a21a7d210e}{\index{random@{random}!bin\-\_\-prob@{bin\-\_\-prob}}
+\index{bin\-\_\-prob@{bin\-\_\-prob}!random@{random}}
+\subsubsection[{bin\-\_\-prob}]{\setlength{\rightskip}{0pt plus 5cm}real(kind=kind(1.\-0d+0)) function random\-::bin\-\_\-prob (
+\begin{DoxyParamCaption}
+\item[{integer, intent(in)}]{n, }
+\item[{real(kind=kind(1.\-0d+0)), intent(in)}]{p, }
+\item[{integer, intent(in)}]{r}
+\end{DoxyParamCaption}
+)}}\label{classrandom_a09f3df72ead2420edd0672a21a7d210e}
+
+
+Here is the call graph for this function\-:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=304pt]{classrandom_a09f3df72ead2420edd0672a21a7d210e_cgraph}
+\end{center}
+\end{figure}
+
+
+
+
+Here is the caller graph for this function\-:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=342pt]{classrandom_a09f3df72ead2420edd0672a21a7d210e_icgraph}
+\end{center}
+\end{figure}
+
+
+\hypertarget{classrandom_aeb29b320c803774e82f6245ad6f33aae}{\index{random@{random}!lngamma@{lngamma}}
+\index{lngamma@{lngamma}!random@{random}}
+\subsubsection[{lngamma}]{\setlength{\rightskip}{0pt plus 5cm}real ({\bf dp}) function random\-::lngamma (
+\begin{DoxyParamCaption}
+\item[{real ({\bf dp}), intent(in)}]{x}
+\end{DoxyParamCaption}
+)}}\label{classrandom_aeb29b320c803774e82f6245ad6f33aae}
+
+
+Here is the caller graph for this function\-:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classrandom_aeb29b320c803774e82f6245ad6f33aae_icgraph}
+\end{center}
+\end{figure}
+
+
+\hypertarget{classrandom_a0037b9f6838b023c794c2addf89f9ba1}{\index{random@{random}!random\-\_\-beta@{random\-\_\-beta}}
+\index{random\-\_\-beta@{random\-\_\-beta}!random@{random}}
+\subsubsection[{random\-\_\-beta}]{\setlength{\rightskip}{0pt plus 5cm}real(kind=kind(1.\-0d+0)) function random\-::random\-\_\-beta (
+\begin{DoxyParamCaption}
+\item[{real(kind=kind(1.\-0d+0)), intent(in)}]{aa, }
+\item[{real(kind=kind(1.\-0d+0)), intent(in)}]{bb, }
+\item[{logical, intent(in)}]{first}
+\end{DoxyParamCaption}
+)}}\label{classrandom_a0037b9f6838b023c794c2addf89f9ba1}
+\hypertarget{classrandom_a9d4c34e7ad5aab9e084465c7842d1a8a}{\index{random@{random}!random\-\_\-binomial1@{random\-\_\-binomial1}}
+\index{random\-\_\-binomial1@{random\-\_\-binomial1}!random@{random}}
+\subsubsection[{random\-\_\-binomial1}]{\setlength{\rightskip}{0pt plus 5cm}integer function random\-::random\-\_\-binomial1 (
+\begin{DoxyParamCaption}
+\item[{integer, intent(in)}]{n, }
+\item[{real(kind=kind(1.\-0d+0)), intent(in)}]{p, }
+\item[{logical, intent(in)}]{first}
+\end{DoxyParamCaption}
+)}}\label{classrandom_a9d4c34e7ad5aab9e084465c7842d1a8a}
+
+
+Here is the call graph for this function\-:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classrandom_a9d4c34e7ad5aab9e084465c7842d1a8a_cgraph}
+\end{center}
+\end{figure}
+
+
+\hypertarget{classrandom_aefecf83790063d8974d72c28293f2413}{\index{random@{random}!random\-\_\-binomial2@{random\-\_\-binomial2}}
+\index{random\-\_\-binomial2@{random\-\_\-binomial2}!random@{random}}
+\subsubsection[{random\-\_\-binomial2}]{\setlength{\rightskip}{0pt plus 5cm}integer function random\-::random\-\_\-binomial2 (
+\begin{DoxyParamCaption}
+\item[{integer, intent(in)}]{n, }
+\item[{real(kind=kind(1.\-0d+0)), intent(in)}]{pp, }
+\item[{logical, intent(in)}]{first}
+\end{DoxyParamCaption}
+)}}\label{classrandom_aefecf83790063d8974d72c28293f2413}
+
+
+Here is the call graph for this function\-:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=280pt]{classrandom_aefecf83790063d8974d72c28293f2413_cgraph}
+\end{center}
+\end{figure}
+
+
+\hypertarget{classrandom_a812d6055f4c3c34177a7681a2302b03b}{\index{random@{random}!random\-\_\-cauchy@{random\-\_\-cauchy}}
+\index{random\-\_\-cauchy@{random\-\_\-cauchy}!random@{random}}
+\subsubsection[{random\-\_\-cauchy}]{\setlength{\rightskip}{0pt plus 5cm}real(kind=kind(1.\-0d+0)) function random\-::random\-\_\-cauchy (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{classrandom_a812d6055f4c3c34177a7681a2302b03b}
+\hypertarget{classrandom_ac6329ddadc01dc01d991971b5d955727}{\index{random@{random}!random\-\_\-chisq@{random\-\_\-chisq}}
+\index{random\-\_\-chisq@{random\-\_\-chisq}!random@{random}}
+\subsubsection[{random\-\_\-chisq}]{\setlength{\rightskip}{0pt plus 5cm}real(kind=kind(1.\-0d+0)) function random\-::random\-\_\-chisq (
+\begin{DoxyParamCaption}
+\item[{integer, intent(in)}]{ndf, }
+\item[{logical, intent(in)}]{first}
+\end{DoxyParamCaption}
+)}}\label{classrandom_ac6329ddadc01dc01d991971b5d955727}
+
+
+Here is the call graph for this function\-:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classrandom_ac6329ddadc01dc01d991971b5d955727_cgraph}
+\end{center}
+\end{figure}
+
+
+\hypertarget{classrandom_a14421c1b908f2263d65da068fddfc7dd}{\index{random@{random}!random\-\_\-exponential@{random\-\_\-exponential}}
+\index{random\-\_\-exponential@{random\-\_\-exponential}!random@{random}}
+\subsubsection[{random\-\_\-exponential}]{\setlength{\rightskip}{0pt plus 5cm}real(kind=kind(1.\-0d+0)) function random\-::random\-\_\-exponential (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{classrandom_a14421c1b908f2263d65da068fddfc7dd}
+
+
+Here is the caller graph for this function\-:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classrandom_a14421c1b908f2263d65da068fddfc7dd_icgraph}
+\end{center}
+\end{figure}
+
+
+\hypertarget{classrandom_a0ffe848e8b744d46f54c64489374cadf}{\index{random@{random}!random\-\_\-gamma@{random\-\_\-gamma}}
+\index{random\-\_\-gamma@{random\-\_\-gamma}!random@{random}}
+\subsubsection[{random\-\_\-gamma}]{\setlength{\rightskip}{0pt plus 5cm}real(kind=kind(1.\-0d+0)) function random\-::random\-\_\-gamma (
+\begin{DoxyParamCaption}
+\item[{real(kind=kind(1.\-0d+0)), intent(in)}]{s, }
+\item[{logical, intent(in)}]{first}
+\end{DoxyParamCaption}
+)}}\label{classrandom_a0ffe848e8b744d46f54c64489374cadf}
+
+
+Here is the call graph for this function\-:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classrandom_a0ffe848e8b744d46f54c64489374cadf_cgraph}
+\end{center}
+\end{figure}
+
+
+
+
+Here is the caller graph for this function\-:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classrandom_a0ffe848e8b744d46f54c64489374cadf_icgraph}
+\end{center}
+\end{figure}
+
+
+\hypertarget{classrandom_a7f62d97723dd55391a86b2875b8f67b1}{\index{random@{random}!random\-\_\-gamma1@{random\-\_\-gamma1}}
+\index{random\-\_\-gamma1@{random\-\_\-gamma1}!random@{random}}
+\subsubsection[{random\-\_\-gamma1}]{\setlength{\rightskip}{0pt plus 5cm}real(kind=kind(1.\-0d+0)) function random\-::random\-\_\-gamma1 (
+\begin{DoxyParamCaption}
+\item[{real(kind=kind(1.\-0d+0)), intent(in)}]{s, }
+\item[{logical, intent(in)}]{first}
+\end{DoxyParamCaption}
+)}}\label{classrandom_a7f62d97723dd55391a86b2875b8f67b1}
+
+
+Here is the call graph for this function\-:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classrandom_a7f62d97723dd55391a86b2875b8f67b1_cgraph}
+\end{center}
+\end{figure}
+
+
+
+
+Here is the caller graph for this function\-:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classrandom_a7f62d97723dd55391a86b2875b8f67b1_icgraph}
+\end{center}
+\end{figure}
+
+
+\hypertarget{classrandom_a6c16fa1e3c755b37dc43212078c6af18}{\index{random@{random}!random\-\_\-gamma2@{random\-\_\-gamma2}}
+\index{random\-\_\-gamma2@{random\-\_\-gamma2}!random@{random}}
+\subsubsection[{random\-\_\-gamma2}]{\setlength{\rightskip}{0pt plus 5cm}real(kind=kind(1.\-0d+0)) function random\-::random\-\_\-gamma2 (
+\begin{DoxyParamCaption}
+\item[{real(kind=kind(1.\-0d+0)), intent(in)}]{s, }
+\item[{logical, intent(in)}]{first}
+\end{DoxyParamCaption}
+)}}\label{classrandom_a6c16fa1e3c755b37dc43212078c6af18}
+
+
+Here is the caller graph for this function\-:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classrandom_a6c16fa1e3c755b37dc43212078c6af18_icgraph}
+\end{center}
+\end{figure}
+
+
+\hypertarget{classrandom_a238863a66d36cc568a878418c31e96b4}{\index{random@{random}!random\-\_\-inv\-\_\-gauss@{random\-\_\-inv\-\_\-gauss}}
+\index{random\-\_\-inv\-\_\-gauss@{random\-\_\-inv\-\_\-gauss}!random@{random}}
+\subsubsection[{random\-\_\-inv\-\_\-gauss}]{\setlength{\rightskip}{0pt plus 5cm}real(kind=kind(1.\-0d+0)) function random\-::random\-\_\-inv\-\_\-gauss (
+\begin{DoxyParamCaption}
+\item[{real(kind=kind(1.\-0d+0)), intent(in)}]{h, }
+\item[{real(kind=kind(1.\-0d+0)), intent(in)}]{b, }
+\item[{logical, intent(in)}]{first}
+\end{DoxyParamCaption}
+)}}\label{classrandom_a238863a66d36cc568a878418c31e96b4}
+\hypertarget{classrandom_a2770bb736479f52377a6f9eea473da8e}{\index{random@{random}!random\-\_\-mvnorm@{random\-\_\-mvnorm}}
+\index{random\-\_\-mvnorm@{random\-\_\-mvnorm}!random@{random}}
+\subsubsection[{random\-\_\-mvnorm}]{\setlength{\rightskip}{0pt plus 5cm}subroutine random\-::random\-\_\-mvnorm (
+\begin{DoxyParamCaption}
+\item[{integer, intent(in)}]{n, }
+\item[{real(kind=kind(1.\-0d+0)), dimension(\-:), intent(in)}]{h, }
+\item[{real(kind=kind(1.\-0d+0)), dimension(\-:), intent(in)}]{d, }
+\item[{real(kind=kind(1.\-0d+0)), dimension(\-:), intent(inout)}]{f, }
+\item[{logical, intent(in)}]{first, }
+\item[{real(kind=kind(1.\-0d+0)), dimension(\-:), intent(out)}]{x, }
+\item[{integer, intent(out)}]{ier}
+\end{DoxyParamCaption}
+)}}\label{classrandom_a2770bb736479f52377a6f9eea473da8e}
+
+
+Here is the call graph for this function\-:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classrandom_a2770bb736479f52377a6f9eea473da8e_cgraph}
+\end{center}
+\end{figure}
+
+
+\hypertarget{classrandom_a3107e0ecaf18a7095150c0f911aac145}{\index{random@{random}!random\-\_\-neg\-\_\-binomial@{random\-\_\-neg\-\_\-binomial}}
+\index{random\-\_\-neg\-\_\-binomial@{random\-\_\-neg\-\_\-binomial}!random@{random}}
+\subsubsection[{random\-\_\-neg\-\_\-binomial}]{\setlength{\rightskip}{0pt plus 5cm}integer function random\-::random\-\_\-neg\-\_\-binomial (
+\begin{DoxyParamCaption}
+\item[{real(kind=kind(1.\-0d+0)), intent(in)}]{sk, }
+\item[{real(kind=kind(1.\-0d+0)), intent(in)}]{p}
+\end{DoxyParamCaption}
+)}}\label{classrandom_a3107e0ecaf18a7095150c0f911aac145}
+
+
+Here is the call graph for this function\-:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=254pt]{classrandom_a3107e0ecaf18a7095150c0f911aac145_cgraph}
+\end{center}
+\end{figure}
+
+
+\hypertarget{classrandom_a05c493f12b4a3acad4d42bf23e3bf23a}{\index{random@{random}!random\-\_\-normal@{random\-\_\-normal}}
+\index{random\-\_\-normal@{random\-\_\-normal}!random@{random}}
+\subsubsection[{random\-\_\-normal}]{\setlength{\rightskip}{0pt plus 5cm}real(kind=kind(1.\-0d+0)) function random\-::random\-\_\-normal (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{classrandom_a05c493f12b4a3acad4d42bf23e3bf23a}
+
+
+function to get random normal with zero mean and stdev 1 
+
+\begin{DoxyReturn}{Returns}
+fn\-\_\-val 
+\end{DoxyReturn}
+
+
+Here is the caller graph for this function\-:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classrandom_a05c493f12b4a3acad4d42bf23e3bf23a_icgraph}
+\end{center}
+\end{figure}
+
+
+\hypertarget{classrandom_a03e6b0b30475831f6d57082faed3bb34}{\index{random@{random}!random\-\_\-order@{random\-\_\-order}}
+\index{random\-\_\-order@{random\-\_\-order}!random@{random}}
+\subsubsection[{random\-\_\-order}]{\setlength{\rightskip}{0pt plus 5cm}subroutine random\-::random\-\_\-order (
+\begin{DoxyParamCaption}
+\item[{integer, dimension(n), intent(out)}]{order, }
+\item[{integer, intent(in)}]{n}
+\end{DoxyParamCaption}
+)}}\label{classrandom_a03e6b0b30475831f6d57082faed3bb34}
+
+
+Here is the call graph for this function\-:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=260pt]{classrandom_a03e6b0b30475831f6d57082faed3bb34_cgraph}
+\end{center}
+\end{figure}
+
+
+\hypertarget{classrandom_a4ec519e7171cd11a636820c235a04e97}{\index{random@{random}!random\-\_\-poisson@{random\-\_\-poisson}}
+\index{random\-\_\-poisson@{random\-\_\-poisson}!random@{random}}
+\subsubsection[{random\-\_\-poisson}]{\setlength{\rightskip}{0pt plus 5cm}integer function random\-::random\-\_\-poisson (
+\begin{DoxyParamCaption}
+\item[{real(kind=kind(1.\-0d+0)), intent(in)}]{mu, }
+\item[{logical, intent(in)}]{first}
+\end{DoxyParamCaption}
+)}}\label{classrandom_a4ec519e7171cd11a636820c235a04e97}
+
+
+Here is the call graph for this function\-:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classrandom_a4ec519e7171cd11a636820c235a04e97_cgraph}
+\end{center}
+\end{figure}
+
+
+\hypertarget{classrandom_a52f7096c93579e684fd894e01bedcd4d}{\index{random@{random}!random\-\_\-t@{random\-\_\-t}}
+\index{random\-\_\-t@{random\-\_\-t}!random@{random}}
+\subsubsection[{random\-\_\-t}]{\setlength{\rightskip}{0pt plus 5cm}real(kind=kind(1.\-0d+0)) function random\-::random\-\_\-t (
+\begin{DoxyParamCaption}
+\item[{integer, intent(in)}]{m}
+\end{DoxyParamCaption}
+)}}\label{classrandom_a52f7096c93579e684fd894e01bedcd4d}
+\hypertarget{classrandom_ae89f09ae700db89c4e3593dda9e4d334}{\index{random@{random}!random\-\_\-von\-\_\-mises@{random\-\_\-von\-\_\-mises}}
+\index{random\-\_\-von\-\_\-mises@{random\-\_\-von\-\_\-mises}!random@{random}}
+\subsubsection[{random\-\_\-von\-\_\-mises}]{\setlength{\rightskip}{0pt plus 5cm}real(kind=kind(1.\-0d+0)) function random\-::random\-\_\-von\-\_\-mises (
+\begin{DoxyParamCaption}
+\item[{real(kind=kind(1.\-0d+0)), intent(in)}]{k, }
+\item[{logical, intent(in)}]{first}
+\end{DoxyParamCaption}
+)}}\label{classrandom_ae89f09ae700db89c4e3593dda9e4d334}
+
+
+Here is the call graph for this function\-:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=254pt]{classrandom_ae89f09ae700db89c4e3593dda9e4d334_cgraph}
+\end{center}
+\end{figure}
+
+
+\hypertarget{classrandom_ab847036d4dbe5c63613425d28a395275}{\index{random@{random}!random\-\_\-weibull@{random\-\_\-weibull}}
+\index{random\-\_\-weibull@{random\-\_\-weibull}!random@{random}}
+\subsubsection[{random\-\_\-weibull}]{\setlength{\rightskip}{0pt plus 5cm}real(kind=kind(1.\-0d+0)) function random\-::random\-\_\-weibull (
+\begin{DoxyParamCaption}
+\item[{real(kind=kind(1.\-0d+0)), intent(in)}]{a}
+\end{DoxyParamCaption}
+)}}\label{classrandom_ab847036d4dbe5c63613425d28a395275}
+
+
+Here is the call graph for this function\-:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classrandom_ab847036d4dbe5c63613425d28a395275_cgraph}
+\end{center}
+\end{figure}
+
+
+\hypertarget{classrandom_a82f08f6c9b3c4740501abb1970397f8d}{\index{random@{random}!seed\-\_\-random\-\_\-number@{seed\-\_\-random\-\_\-number}}
+\index{seed\-\_\-random\-\_\-number@{seed\-\_\-random\-\_\-number}!random@{random}}
+\subsubsection[{seed\-\_\-random\-\_\-number}]{\setlength{\rightskip}{0pt plus 5cm}subroutine random\-::seed\-\_\-random\-\_\-number (
+\begin{DoxyParamCaption}
+\item[{integer, intent(in)}]{iounit}
+\end{DoxyParamCaption}
+)}}\label{classrandom_a82f08f6c9b3c4740501abb1970397f8d}
+
+
+Here is the call graph for this function\-:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=260pt]{classrandom_a82f08f6c9b3c4740501abb1970397f8d_cgraph}
+\end{center}
+\end{figure}
+
+
+
+
+\subsection{Member Data Documentation}
+\hypertarget{classrandom_a0026984dfe1c95755ce81e2372a06f22}{\index{random@{random}!dp@{dp}}
+\index{dp@{dp}!random@{random}}
+\subsubsection[{dp}]{\setlength{\rightskip}{0pt plus 5cm}integer, parameter random\-::dp = S\-E\-L\-E\-C\-T\-E\-D\-\_\-\-R\-E\-A\-L\-\_\-\-K\-I\-N\-D(12, 60)}}\label{classrandom_a0026984dfe1c95755ce81e2372a06f22}
+
+
+The documentation for this module was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+src/utils/\hyperlink{random__d_8f90}{random\-\_\-d.\-f90}\end{DoxyCompactItemize}

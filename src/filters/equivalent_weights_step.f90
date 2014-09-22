@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-09-18 10:34:37 pbrowne>
+!!! Time-stamp: <2014-09-22 14:24:05 pbrowne>
 !!!
 !!!    {one line to give the program's name and a brief idea of what it does.}
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -24,6 +24,8 @@
 !!!	      RG6 6BB
 !!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!> subroutine to do the equivalent weights step
+!!
 subroutine equal_weight_filter
   use pf_control
   use sizes
@@ -31,20 +33,20 @@ subroutine equal_weight_filter
   use comms
   implicit none
   include 'mpif.h'
-  integer, parameter :: rk = kind(1.0D0)
+  integer, parameter :: rk = kind(1.0D0) !<specify double precision
   real(kind=rk), dimension(pf%count) :: a,b,alpha,c
-  real(kind=rk), dimension(pf%nens) :: csorted
+  real(kind=rk), dimension(pf%nens) :: csorted !<sorted vector of c
   real(kind=rk) :: cmax
   integer :: particle,i,tag,mpi_err
-  real(kind=rk), dimension(obs_dim) :: y     !y, the observations
-  real(kind=rk), dimension(obs_dim,pf%count) :: Hfpsi            !H(f(psi^(n-1)))
-  real(kind=rk), dimension(obs_dim,pf%count) :: y_Hfpsin1  !y-H(f(psi^(n-1)))
-  real(kind=rk), dimension(state_dim,pf%count) :: fpsi          !f(psi^(n-1))
-  real(kind=rk), dimension(state_dim) :: psimean
-  real(kind=rk), dimension(state_dim,pf%count) :: kgain         !QH^T(HQH^T+R)^(-1)(y-H(f(psi^(n-1))))
+  real(kind=rk), dimension(obs_dim) :: y     !y, !//!<the observations
+  real(kind=rk), dimension(obs_dim,pf%count) :: Hfpsi           !H(f(psi^(n-1))) !< \f$H(f(x^{n-1}))\f$
+  real(kind=rk), dimension(obs_dim,pf%count) :: y_Hfpsin1  !y-H(f(psi^(n-1))) !< \f$y-H(f(x^{n-1}))\f$
+  real(kind=rk), dimension(state_dim,pf%count) :: fpsi     !f(psi^(n-1)) !< \f$f(x^{n-1})\f$
+  real(kind=rk), dimension(state_dim) :: psimean !< the mean of the state vectors
+  real(kind=rk), dimension(state_dim,pf%count) :: kgain !QH^T(HQH^T+R)^(-1)(y-H(f(psi^(n-1)))) !< \f$QH^T(HQH^T+R)^{-1}(y-H(f(x^{n-1})))\f$
   real(kind=rk), dimension(state_dim,pf%count) :: betan         !the mixture random variable
-  real(kind=rk), dimension(state_dim,pf%count) :: statev        !temporary state space vector 
-  real(kind=rk), dimension(obs_dim,pf%count) :: obsv,obsvv      !temporary  obs  space vector
+  real(kind=rk), dimension(state_dim,pf%count) :: statev        !<temporary state space vector 
+  real(kind=rk), dimension(obs_dim,pf%count) :: obsv,obsvv      !<temporary  obs  space vector
   real(kind=rk) :: w
   real(kind=rk), dimension(pf%count) :: e                     !e = d_i^t R^(-1) d_i
   real(kind=rk), parameter :: pi = 4.0D0*atan(1.0D0)

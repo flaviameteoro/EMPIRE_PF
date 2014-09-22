@@ -1,7 +1,7 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-09-18 11:53:13 pbrowne>
+!!! Time-stamp: <2014-09-22 14:30:06 pbrowne>
 !!!
-!!!    {one line to give the program's name and a brief idea of what it does.}
+!!!    subroutine to simply move the model forward in time one timestep
 !!!    Copyright (C) 2014  Philip A. Browne
 !!!
 !!!    This program is free software: you can redistribute it and/or modify
@@ -24,10 +24,10 @@
 !!!	      RG6 6BB
 !!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-!subroutine stochastic_model to simply move the model forward in time one 
-!timestep
-!PAB 21-05-2013
+!> @brief
+!> subroutine to simply move the model forward in time one 
+!> timestep
+!> PAB 21-05-2013
 
 subroutine stochastic_model
   use pf_control
