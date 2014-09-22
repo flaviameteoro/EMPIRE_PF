@@ -136,13 +136,13 @@ TEST_HQHTR: $(OBJS_TEST_HQHTR)
 	$(FC) $(FCOPTS) $(LOADOPTS) -o $(BIN)test_hqhtr $(OBJS_TEST_HQHTR) $(LIB_LIST)
 
 
-docs: doc_html doc_latex
+docs: doc_latex
 
 doc_html: FORCE
 	doxygen .Doxyfile
 
-doc_latex: FORCE
-	cd doc/latex && pdflatex refman
+doc_latex: doc_html
+	cd doc/latex && make
 
 FORCE:
 
