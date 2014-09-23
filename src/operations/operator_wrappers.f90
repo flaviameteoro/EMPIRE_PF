@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-09-22 16:49:58 pbrowne>
+!!! Time-stamp: <2014-09-23 14:44:20 pbrowne>
 !!!
 !!!    Collection of combinations of other subroutines
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -145,7 +145,7 @@ end subroutine innerHQHt_plus_R_1
 !! @param[in] y (obs_dim,pf\%count) vectors of innovations
 !! \f$y-H(x^{n-1})\f$
 !! @param[out] x (state_dim,pf\%count) vectors of
-!! \f$\rho Q^{\frac{1}{2}}H^TR^{-1}[y-H(x^{n-1})]\f$
+!! \f$\rho H^TR^{-1}[y-H(x^{n-1})]\f$
 !! @param[out] QHtR_1y (state_dim,pf\%count) vectors of
 !! \f$\rho QH^TR^{-1}[y-H(x^{n-1})]\f$ 
 !! @param[in] normaln (state_dim,pf\%count) uncorrelated random vectors such that
@@ -207,9 +207,9 @@ if(tau .le. atmos) then
       call Qhalf(2*pf%count,temp1,temp2)
       if(time) ti(5) = mpi_wtime()
       betan = temp2(:,pf%count+1:2*pf%count)
-      x = temp2(:,1:pf%count)
+      !x = temp2(:,1:pf%count)
       if(time) ti(6) = mpi_wtime()
-      call Qhalf(pf%count,x,QHtR_1y)
+      call Qhalf(pf%count,temp2(:,1:pf%count),QHtR_1y)
       if(time) ti(7) = mpi_wtime()
 
    end if
@@ -241,9 +241,9 @@ else
       call Qhalf(2*pf%count,temp1,temp2)
       if(time) ti(5) = mpi_wtime()
       betan = temp2(:,pf%count+1:2*pf%count)
-      x = temp2(:,1:pf%count)
+      !x = temp2(:,1:pf%count)
       if(time) ti(6) = mpi_wtime()
-      call Qhalf(pf%count,x,QHtR_1y)
+      call Qhalf(pf%count,temp2(:,1:pf%count),QHtR_1y)
       if(time) ti(7) = mpi_wtime()
    end if
 end if
