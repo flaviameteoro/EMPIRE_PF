@@ -1,5 +1,6 @@
 var searchData=
 [
+  ['r',['r',['../model__specific_8f90.html#a53fc3d9c891503fb7b369a53732b3ab6',1,'model_specific.f90']]],
   ['r_5ftests',['r_tests',['../tests_8f90.html#ae377b636e622fd3c952ed6190f3fdc18',1,'tests.f90']]],
   ['random_5fbeta',['random_beta',['../classrandom.html#a0037b9f6838b023c794c2addf89f9ba1',1,'random']]],
   ['random_5fbinomial1',['random_binomial1',['../classrandom.html#a9d4c34e7ad5aab9e084465c7842d1a8a',1,'random']]],
@@ -20,5 +21,6 @@ var searchData=
   ['random_5ft',['random_t',['../classrandom.html#a52f7096c93579e684fd894e01bedcd4d',1,'random']]],
   ['random_5fvon_5fmises',['random_von_mises',['../classrandom.html#ae89f09ae700db89c4e3593dda9e4d334',1,'random']]],
   ['random_5fweibull',['random_weibull',['../classrandom.html#ab847036d4dbe5c63613425d28a395275',1,'random']]],
-  ['resample',['resample',['../resample_8f90.html#ae311a90c08af18a1250ccc2087e7ff46',1,'resample.f90']]]
+  ['resample',['resample',['../resample_8f90.html#ae311a90c08af18a1250ccc2087e7ff46',1,'resample.f90']]],
+  ['rhalf',['rhalf',['../model__specific_8f90.html#a940c63cc3b5581bb9a8053d51918ce96',1,'model_specific.f90']]]
 ];

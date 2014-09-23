@@ -1,7 +1,10 @@
 <map id="random::random_chisq" name="random::random_chisq">
 <area shape="rect" id="node2" href="$classrandom.html#a0ffe848e8b744d46f54c64489374cadf" title="random::random_gamma" alt="" coords="209,56,375,83"/>
 <area shape="rect" id="node3" href="$classrandom.html#a7f62d97723dd55391a86b2875b8f67b1" title="random::random_gamma1" alt="" coords="432,5,605,32"/>
-<area shape="rect" id="node5" href="$classrandom.html#a6c16fa1e3c755b37dc43212078c6af18" title="random::random_gamma2" alt="" coords="432,56,605,83"/>
-<area shape="rect" id="node6" href="$classrandom.html#a14421c1b908f2263d65da068fddfc7dd" title="random::random_exponential" alt="" coords="424,107,613,133"/>
+<area shape="rect" id="node7" href="$classrandom.html#a6c16fa1e3c755b37dc43212078c6af18" title="random::random_gamma2" alt="" coords="432,56,605,83"/>
+<area shape="rect" id="node9" href="$classrandom.html#a14421c1b908f2263d65da068fddfc7dd" title="random::random_exponential" alt="" coords="424,107,613,133"/>
 <area shape="rect" id="node4" href="$classrandom.html#a05c493f12b4a3acad4d42bf23e3bf23a" title="function to get random normal with zero mean and stdev 1 " alt="" coords="661,5,824,32"/>
+<area shape="rect" id="node5" href="$model__specific_8f90.html#acf3754d8c40a10449d5feb60e2a509c8" title="q" alt="" coords="873,5,911,32"/>
+<area shape="rect" id="node6" href="$model__specific_8f90.html#a3dbc8fa84bd7229ff5e123f3f5b7bd0d" title="qhalf" alt="" coords="960,5,1011,32"/>
+<area shape="rect" id="node8" href="$model__specific_8f90.html#a53fc3d9c891503fb7b369a53732b3ab6" title="r" alt="" coords="723,81,762,108"/>
 </map>

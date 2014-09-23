@@ -1,3 +1,7 @@
 <map id="get_local_observation_data" name="get_local_observation_data">
-<area shape="rect" id="node2" href="$operator__wrappers_8f90.html#aec571ade653c1cf8fd6cde17285af055" title="Subroutine to apply &#160;to a vector y in observation space where . " alt="" coords="235,5,274,32"/>
+<area shape="rect" id="node2" href="$operator__wrappers_8f90.html#aec571ade653c1cf8fd6cde17285af055" title="Subroutine to apply &#160;to a vector y in observation space where . " alt="" coords="235,56,274,83"/>
+<area shape="rect" id="node3" href="$model__specific_8f90.html#add8aa278999fc6e80f96f33d2bffa006" title="solve_hqht_plus_r" alt="" coords="323,5,450,32"/>
+<area shape="rect" id="node4" href="$model__specific_8f90.html#a45f29ccc70484189224896162442ccff" title="ht" alt="" coords="367,56,406,83"/>
+<area shape="rect" id="node5" href="$model__specific_8f90.html#acf3754d8c40a10449d5feb60e2a509c8" title="q" alt="" coords="367,107,406,133"/>
+<area shape="rect" id="node6" href="$model__specific_8f90.html#a3dbc8fa84bd7229ff5e123f3f5b7bd0d" title="qhalf" alt="" coords="499,107,549,133"/>
 </map>

@@ -1,6 +1,10 @@
 <map id="stochastic_model" name="stochastic_model">
-<area shape="rect" id="node2" href="$operator__wrappers_8f90.html#aec571ade653c1cf8fd6cde17285af055" title="Subroutine to apply &#160;to a vector y in observation space where . " alt="" coords="457,5,495,32"/>
-<area shape="rect" id="node3" href="$gen__rand_8f90.html#a79c7f64e458a6af30a2fa95a1650c917" title="generate two dimensional Normal random numbers " alt="" coords="179,56,347,83"/>
-<area shape="rect" id="node5" href="$perturb__particle_8f90.html#a7b7fb7c4adca778bebb88945eaa8e564" title="Subroutine to update the state. " alt="" coords="214,107,311,133"/>
-<area shape="rect" id="node4" href="$classrandom.html#a05c493f12b4a3acad4d42bf23e3bf23a" title="function to get random normal with zero mean and stdev 1 " alt="" coords="395,56,557,83"/>
+<area shape="rect" id="node2" href="$operator__wrappers_8f90.html#aec571ade653c1cf8fd6cde17285af055" title="Subroutine to apply &#160;to a vector y in observation space where . " alt="" coords="457,77,495,104"/>
+<area shape="rect" id="node6" href="$model__specific_8f90.html#a3dbc8fa84bd7229ff5e123f3f5b7bd0d" title="qhalf" alt="" coords="781,52,832,78"/>
+<area shape="rect" id="node7" href="$gen__rand_8f90.html#a79c7f64e458a6af30a2fa95a1650c917" title="generate two dimensional Normal random numbers " alt="" coords="179,102,347,129"/>
+<area shape="rect" id="node9" href="$perturb__particle_8f90.html#a7b7fb7c4adca778bebb88945eaa8e564" title="Subroutine to update the state. " alt="" coords="214,153,311,180"/>
+<area shape="rect" id="node3" href="$model__specific_8f90.html#add8aa278999fc6e80f96f33d2bffa006" title="solve_hqht_plus_r" alt="" coords="606,77,733,104"/>
+<area shape="rect" id="node4" href="$model__specific_8f90.html#a45f29ccc70484189224896162442ccff" title="ht" alt="" coords="650,26,689,53"/>
+<area shape="rect" id="node5" href="$model__specific_8f90.html#acf3754d8c40a10449d5feb60e2a509c8" title="q" alt="" coords="650,128,689,154"/>
+<area shape="rect" id="node8" href="$classrandom.html#a05c493f12b4a3acad4d42bf23e3bf23a" title="function to get random normal with zero mean and stdev 1 " alt="" coords="395,128,557,154"/>
 </map>

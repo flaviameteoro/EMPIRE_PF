@@ -1,10 +1,12 @@
 var searchData=
 [
+  ['q',['q',['../model__specific_8f90.html#acf3754d8c40a10449d5feb60e2a509c8',1,'model_specific.f90']]],
   ['q_5ftests',['q_tests',['../tests_8f90.html#ac15a5a85a2487c7489c22096a3c681e7',1,'tests.f90']]],
   ['qcol',['qcol',['../classqdata.html#a5f6719033fda8397989e8d86c4947e53',1,'qdata']]],
   ['qdata',['qdata',['../classqdata.html',1,'']]],
   ['qdata_2ef90',['Qdata.f90',['../_qdata_8f90.html',1,'']]],
   ['qdiag',['qdiag',['../classqdata.html#a545fd0353e6bc1b8e0b8a615966a4971',1,'qdata']]],
+  ['qhalf',['qhalf',['../model__specific_8f90.html#a3dbc8fa84bd7229ff5e123f3f5b7bd0d',1,'model_specific.f90']]],
   ['qn',['qn',['../classqdata.html#aa4944ce2e99ea3dcb54ea42d9b3f9a22',1,'qdata']]],
   ['qne',['qne',['../classqdata.html#ad8959a634c2f41f8b347e089c6a69dae',1,'qdata']]],
   ['qrow',['qrow',['../classqdata.html#a2c604eee1d7b0a8fcd3a8e8432472b9e',1,'qdata']]],

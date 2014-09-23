@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-09-22 15:39:52 pbrowne>
+!!! Time-stamp: <2014-09-22 16:49:58 pbrowne>
 !!!
 !!!    Collection of combinations of other subroutines
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -24,11 +24,11 @@
 !!!	      RG6 6BB
 !!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 !> Subroutine to apply \f$K\f$ to a vector y in observation space
 !! where \f$K := QH^T(HQH^T+R)^{-1}\f$
 !! @param[in] y vector in observation space
 !! @param[out] x vector in state space
-
 subroutine K(y,x)
   !subroutine to apply the operator K to a vector y in obs space and return
   !the vector x in full state space.

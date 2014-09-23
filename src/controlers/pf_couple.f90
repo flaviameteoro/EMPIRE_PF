@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-09-22 14:02:24 pbrowne>
+!!! Time-stamp: <2014-09-23 10:07:40 pbrowne>
 !!!
 !!!    {one line to give the program's name and a brief idea of what it does.}
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -32,17 +32,8 @@
 !----------------------------------------------------------------
 
 
-!> @mainpage 
-!! This is where we put the stuff to go at the top of the documentation.
-!!
-!! looks like this
-
-!! @todo whats this?
-
-
 !> the main program
 !!
-
 program empire
   use comms
   use pf_control

@@ -1,3 +1,8 @@
 <map id="random::random_von_mises" name="random::random_von_mises">
-<area shape="rect" id="node2" href="$operator__wrappers_8f90.html#aec571ade653c1cf8fd6cde17285af055" title="Subroutine to apply &#160;to a vector y in observation space where . " alt="" coords="198,12,237,39"/>
+<area shape="rect" id="node2" href="$operator__wrappers_8f90.html#aec571ade653c1cf8fd6cde17285af055" title="Subroutine to apply &#160;to a vector y in observation space where . " alt="" coords="198,56,237,83"/>
+<area shape="rect" id="node7" href="$model__specific_8f90.html#a53fc3d9c891503fb7b369a53732b3ab6" title="r" alt="" coords="198,107,237,133"/>
+<area shape="rect" id="node3" href="$model__specific_8f90.html#add8aa278999fc6e80f96f33d2bffa006" title="solve_hqht_plus_r" alt="" coords="286,5,413,32"/>
+<area shape="rect" id="node4" href="$model__specific_8f90.html#a45f29ccc70484189224896162442ccff" title="ht" alt="" coords="330,56,369,83"/>
+<area shape="rect" id="node5" href="$model__specific_8f90.html#acf3754d8c40a10449d5feb60e2a509c8" title="q" alt="" coords="330,107,369,133"/>
+<area shape="rect" id="node6" href="$model__specific_8f90.html#a3dbc8fa84bd7229ff5e123f3f5b7bd0d" title="qhalf" alt="" coords="461,107,512,133"/>
 </map>

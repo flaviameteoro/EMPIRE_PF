@@ -1,3 +1,7 @@
 <map id="random::random_order" name="random::random_order">
-<area shape="rect" id="node2" href="$operator__wrappers_8f90.html#aec571ade653c1cf8fd6cde17285af055" title="Subroutine to apply &#160;to a vector y in observation space where . " alt="" coords="206,5,245,32"/>
+<area shape="rect" id="node2" href="$operator__wrappers_8f90.html#aec571ade653c1cf8fd6cde17285af055" title="Subroutine to apply &#160;to a vector y in observation space where . " alt="" coords="206,56,245,83"/>
+<area shape="rect" id="node3" href="$model__specific_8f90.html#add8aa278999fc6e80f96f33d2bffa006" title="solve_hqht_plus_r" alt="" coords="294,5,421,32"/>
+<area shape="rect" id="node4" href="$model__specific_8f90.html#a45f29ccc70484189224896162442ccff" title="ht" alt="" coords="338,56,377,83"/>
+<area shape="rect" id="node5" href="$model__specific_8f90.html#acf3754d8c40a10449d5feb60e2a509c8" title="q" alt="" coords="338,107,377,133"/>
+<area shape="rect" id="node6" href="$model__specific_8f90.html#a3dbc8fa84bd7229ff5e123f3f5b7bd0d" title="qhalf" alt="" coords="469,107,520,133"/>
 </map>

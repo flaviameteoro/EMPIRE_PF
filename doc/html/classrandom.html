@@ -52,6 +52,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
+      <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
       <li class="current"><a href="annotated.html"><span>Data&#160;Types&#160;List</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
       <li>
@@ -99,7 +100,7 @@ $(document).ready(function(){initNavTree('classrandom.html','');});
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Pages</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -142,15 +143,15 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a0037b9f6838b023c794c2addf89f9ba1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a52f7096c93579e684fd894e01bedcd4d"><td class="memItemLeft" align="right" valign="top">real(kind=kind(1.0d+0)) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrandom.html#a52f7096c93579e684fd894e01bedcd4d">random_t</a> (m)</td></tr>
 <tr class="separator:a52f7096c93579e684fd894e01bedcd4d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2770bb736479f52377a6f9eea473da8e"><td class="memItemLeft" align="right" valign="top">subroutine&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrandom.html#a2770bb736479f52377a6f9eea473da8e">random_mvnorm</a> (n, h, d, f, first, x, ier)</td></tr>
+<tr class="memitem:a2770bb736479f52377a6f9eea473da8e"><td class="memItemLeft" align="right" valign="top">subroutine&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrandom.html#a2770bb736479f52377a6f9eea473da8e">random_mvnorm</a> (n, <a class="el" href="model__specific_8f90.html#a550f4ecef3f7b43aa9c908395a3fe15c">h</a>, d, f, first, x, ier)</td></tr>
 <tr class="separator:a2770bb736479f52377a6f9eea473da8e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a238863a66d36cc568a878418c31e96b4"><td class="memItemLeft" align="right" valign="top">real(kind=kind(1.0d+0)) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrandom.html#a238863a66d36cc568a878418c31e96b4">random_inv_gauss</a> (h, b, first)</td></tr>
+<tr class="memitem:a238863a66d36cc568a878418c31e96b4"><td class="memItemLeft" align="right" valign="top">real(kind=kind(1.0d+0)) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrandom.html#a238863a66d36cc568a878418c31e96b4">random_inv_gauss</a> (<a class="el" href="model__specific_8f90.html#a550f4ecef3f7b43aa9c908395a3fe15c">h</a>, b, first)</td></tr>
 <tr class="separator:a238863a66d36cc568a878418c31e96b4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4ec519e7171cd11a636820c235a04e97"><td class="memItemLeft" align="right" valign="top">integer function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrandom.html#a4ec519e7171cd11a636820c235a04e97">random_poisson</a> (mu, first)</td></tr>
 <tr class="separator:a4ec519e7171cd11a636820c235a04e97"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9d4c34e7ad5aab9e084465c7842d1a8a"><td class="memItemLeft" align="right" valign="top">integer function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrandom.html#a9d4c34e7ad5aab9e084465c7842d1a8a">random_binomial1</a> (n, p, first)</td></tr>
 <tr class="separator:a9d4c34e7ad5aab9e084465c7842d1a8a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a09f3df72ead2420edd0672a21a7d210e"><td class="memItemLeft" align="right" valign="top">real(kind=kind(1.0d+0)) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrandom.html#a09f3df72ead2420edd0672a21a7d210e">bin_prob</a> (n, p, r)</td></tr>
+<tr class="memitem:a09f3df72ead2420edd0672a21a7d210e"><td class="memItemLeft" align="right" valign="top">real(kind=kind(1.0d+0)) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrandom.html#a09f3df72ead2420edd0672a21a7d210e">bin_prob</a> (n, p, <a class="el" href="model__specific_8f90.html#a53fc3d9c891503fb7b369a53732b3ab6">r</a>)</td></tr>
 <tr class="separator:a09f3df72ead2420edd0672a21a7d210e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aeb29b320c803774e82f6245ad6f33aae"><td class="memItemLeft" align="right" valign="top">real(<a class="el" href="classrandom.html#a0026984dfe1c95755ce81e2372a06f22">dp</a>) function&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classrandom.html#aeb29b320c803774e82f6245ad6f33aae">lngamma</a> (x)</td></tr>
 <tr class="separator:aeb29b320c803774e82f6245ad6f33aae"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -212,7 +213,7 @@ Here is the call graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="classrandom_a09f3df72ead2420edd0672a21a7d210e_cgraph.png" border="0" usemap="#classrandom_a09f3df72ead2420edd0672a21a7d210e_cgraph" alt=""/></div>
 <map name="classrandom_a09f3df72ead2420edd0672a21a7d210e_cgraph" id="classrandom_a09f3df72ead2420edd0672a21a7d210e_cgraph">
-<area shape="rect" id="node2" href="classrandom.html#aeb29b320c803774e82f6245ad6f33aae" title="random::lngamma" alt="" coords="177,5,303,32"/></map>
+<area shape="rect" id="node2" href="classrandom.html#aeb29b320c803774e82f6245ad6f33aae" title="random::lngamma" alt="" coords="177,5,303,32"/><area shape="rect" id="node3" href="model__specific_8f90.html#a53fc3d9c891503fb7b369a53732b3ab6" title="r" alt="" coords="221,56,259,83"/></map>
 </div>
 </p>
 
@@ -282,6 +283,15 @@ Here is the caller graph for this function:</div>
       </table>
 </div><div class="memdoc">
 
+<p><div class="dynheader">
+Here is the call graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="classrandom_a0037b9f6838b023c794c2addf89f9ba1_cgraph.png" border="0" usemap="#classrandom_a0037b9f6838b023c794c2addf89f9ba1_cgraph" alt=""/></div>
+<map name="classrandom_a0037b9f6838b023c794c2addf89f9ba1_cgraph" id="classrandom_a0037b9f6838b023c794c2addf89f9ba1_cgraph">
+<area shape="rect" id="node2" href="model__specific_8f90.html#a550f4ecef3f7b43aa9c908395a3fe15c" title="h" alt="" coords="203,5,242,32"/><area shape="rect" id="node3" href="model__specific_8f90.html#a53fc3d9c891503fb7b369a53732b3ab6" title="r" alt="" coords="203,56,242,83"/></map>
+</div>
+</p>
+
 </div>
 </div>
 <a class="anchor" id="a9d4c34e7ad5aab9e084465c7842d1a8a"></a>
@@ -319,7 +329,7 @@ Here is the call graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="classrandom_a9d4c34e7ad5aab9e084465c7842d1a8a_cgraph.png" border="0" usemap="#classrandom_a9d4c34e7ad5aab9e084465c7842d1a8a_cgraph" alt=""/></div>
 <map name="classrandom_a9d4c34e7ad5aab9e084465c7842d1a8a_cgraph" id="classrandom_a9d4c34e7ad5aab9e084465c7842d1a8a_cgraph">
-<area shape="rect" id="node2" href="classrandom.html#a09f3df72ead2420edd0672a21a7d210e" title="random::bin_prob" alt="" coords="232,5,355,32"/><area shape="rect" id="node3" href="classrandom.html#aeb29b320c803774e82f6245ad6f33aae" title="random::lngamma" alt="" coords="403,5,530,32"/></map>
+<area shape="rect" id="node2" href="classrandom.html#a09f3df72ead2420edd0672a21a7d210e" title="random::bin_prob" alt="" coords="232,31,355,57"/><area shape="rect" id="node3" href="classrandom.html#aeb29b320c803774e82f6245ad6f33aae" title="random::lngamma" alt="" coords="403,5,530,32"/><area shape="rect" id="node4" href="model__specific_8f90.html#a53fc3d9c891503fb7b369a53732b3ab6" title="r" alt="" coords="447,56,486,83"/></map>
 </div>
 </p>
 
@@ -360,7 +370,7 @@ Here is the call graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="classrandom_aefecf83790063d8974d72c28293f2413_cgraph.png" border="0" usemap="#classrandom_aefecf83790063d8974d72c28293f2413_cgraph" alt=""/></div>
 <map name="classrandom_aefecf83790063d8974d72c28293f2413_cgraph" id="classrandom_aefecf83790063d8974d72c28293f2413_cgraph">
-<area shape="rect" id="node2" href="operator__wrappers_8f90.html#aec571ade653c1cf8fd6cde17285af055" title="Subroutine to apply &#160;to a vector y in observation space where . " alt="" coords="233,5,271,32"/></map>
+<area shape="rect" id="node2" href="model__specific_8f90.html#acf3754d8c40a10449d5feb60e2a509c8" title="q" alt="" coords="365,5,403,32"/><area shape="rect" id="node4" href="operator__wrappers_8f90.html#aec571ade653c1cf8fd6cde17285af055" title="Subroutine to apply &#160;to a vector y in observation space where . " alt="" coords="233,56,271,83"/><area shape="rect" id="node7" href="model__specific_8f90.html#a53fc3d9c891503fb7b369a53732b3ab6" title="r" alt="" coords="233,107,271,133"/><area shape="rect" id="node3" href="model__specific_8f90.html#a3dbc8fa84bd7229ff5e123f3f5b7bd0d" title="qhalf" alt="" coords="496,5,547,32"/><area shape="rect" id="node5" href="model__specific_8f90.html#add8aa278999fc6e80f96f33d2bffa006" title="solve_hqht_plus_r" alt="" coords="321,56,447,83"/><area shape="rect" id="node6" href="model__specific_8f90.html#a45f29ccc70484189224896162442ccff" title="ht" alt="" coords="365,107,403,133"/></map>
 </div>
 </p>
 
@@ -410,7 +420,7 @@ Here is the call graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="classrandom_ac6329ddadc01dc01d991971b5d955727_cgraph.png" border="0" usemap="#classrandom_ac6329ddadc01dc01d991971b5d955727_cgraph" alt=""/></div>
 <map name="classrandom_ac6329ddadc01dc01d991971b5d955727_cgraph" id="classrandom_ac6329ddadc01dc01d991971b5d955727_cgraph">
-<area shape="rect" id="node2" href="classrandom.html#a0ffe848e8b744d46f54c64489374cadf" title="random::random_gamma" alt="" coords="209,56,375,83"/><area shape="rect" id="node3" href="classrandom.html#a7f62d97723dd55391a86b2875b8f67b1" title="random::random_gamma1" alt="" coords="432,5,605,32"/><area shape="rect" id="node5" href="classrandom.html#a6c16fa1e3c755b37dc43212078c6af18" title="random::random_gamma2" alt="" coords="432,56,605,83"/><area shape="rect" id="node6" href="classrandom.html#a14421c1b908f2263d65da068fddfc7dd" title="random::random_exponential" alt="" coords="424,107,613,133"/><area shape="rect" id="node4" href="classrandom.html#a05c493f12b4a3acad4d42bf23e3bf23a" title="function to get random normal with zero mean and stdev 1 " alt="" coords="661,5,824,32"/></map>
+<area shape="rect" id="node2" href="classrandom.html#a0ffe848e8b744d46f54c64489374cadf" title="random::random_gamma" alt="" coords="209,56,375,83"/><area shape="rect" id="node3" href="classrandom.html#a7f62d97723dd55391a86b2875b8f67b1" title="random::random_gamma1" alt="" coords="432,5,605,32"/><area shape="rect" id="node7" href="classrandom.html#a6c16fa1e3c755b37dc43212078c6af18" title="random::random_gamma2" alt="" coords="432,56,605,83"/><area shape="rect" id="node9" href="classrandom.html#a14421c1b908f2263d65da068fddfc7dd" title="random::random_exponential" alt="" coords="424,107,613,133"/><area shape="rect" id="node4" href="classrandom.html#a05c493f12b4a3acad4d42bf23e3bf23a" title="function to get random normal with zero mean and stdev 1 " alt="" coords="661,5,824,32"/><area shape="rect" id="node5" href="model__specific_8f90.html#acf3754d8c40a10449d5feb60e2a509c8" title="q" alt="" coords="873,5,911,32"/><area shape="rect" id="node6" href="model__specific_8f90.html#a3dbc8fa84bd7229ff5e123f3f5b7bd0d" title="qhalf" alt="" coords="960,5,1011,32"/><area shape="rect" id="node8" href="model__specific_8f90.html#a53fc3d9c891503fb7b369a53732b3ab6" title="r" alt="" coords="723,81,762,108"/></map>
 </div>
 </p>
 
@@ -428,6 +438,15 @@ Here is the call graph for this function:</div>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p><div class="dynheader">
+Here is the call graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="classrandom_a14421c1b908f2263d65da068fddfc7dd_cgraph.png" border="0" usemap="#classrandom_a14421c1b908f2263d65da068fddfc7dd_cgraph" alt=""/></div>
+<map name="classrandom_a14421c1b908f2263d65da068fddfc7dd_cgraph" id="classrandom_a14421c1b908f2263d65da068fddfc7dd_cgraph">
+<area shape="rect" id="node2" href="model__specific_8f90.html#a53fc3d9c891503fb7b369a53732b3ab6" title="r" alt="" coords="243,5,282,32"/></map>
+</div>
+</p>
 
 <p><div class="dynheader">
 Here is the caller graph for this function:</div>
@@ -469,7 +488,7 @@ Here is the call graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="classrandom_a0ffe848e8b744d46f54c64489374cadf_cgraph.png" border="0" usemap="#classrandom_a0ffe848e8b744d46f54c64489374cadf_cgraph" alt=""/></div>
 <map name="classrandom_a0ffe848e8b744d46f54c64489374cadf_cgraph" id="classrandom_a0ffe848e8b744d46f54c64489374cadf_cgraph">
-<area shape="rect" id="node2" href="classrandom.html#a7f62d97723dd55391a86b2875b8f67b1" title="random::random_gamma1" alt="" coords="229,5,403,32"/><area shape="rect" id="node4" href="classrandom.html#a6c16fa1e3c755b37dc43212078c6af18" title="random::random_gamma2" alt="" coords="229,56,403,83"/><area shape="rect" id="node5" href="classrandom.html#a14421c1b908f2263d65da068fddfc7dd" title="random::random_exponential" alt="" coords="221,107,411,133"/><area shape="rect" id="node3" href="classrandom.html#a05c493f12b4a3acad4d42bf23e3bf23a" title="function to get random normal with zero mean and stdev 1 " alt="" coords="459,5,621,32"/></map>
+<area shape="rect" id="node2" href="classrandom.html#a7f62d97723dd55391a86b2875b8f67b1" title="random::random_gamma1" alt="" coords="229,5,403,32"/><area shape="rect" id="node6" href="classrandom.html#a6c16fa1e3c755b37dc43212078c6af18" title="random::random_gamma2" alt="" coords="229,56,403,83"/><area shape="rect" id="node8" href="classrandom.html#a14421c1b908f2263d65da068fddfc7dd" title="random::random_exponential" alt="" coords="221,107,411,133"/><area shape="rect" id="node3" href="classrandom.html#a05c493f12b4a3acad4d42bf23e3bf23a" title="function to get random normal with zero mean and stdev 1 " alt="" coords="459,5,621,32"/><area shape="rect" id="node4" href="model__specific_8f90.html#acf3754d8c40a10449d5feb60e2a509c8" title="q" alt="" coords="670,5,709,32"/><area shape="rect" id="node5" href="model__specific_8f90.html#a3dbc8fa84bd7229ff5e123f3f5b7bd0d" title="qhalf" alt="" coords="757,5,808,32"/><area shape="rect" id="node7" href="model__specific_8f90.html#a53fc3d9c891503fb7b369a53732b3ab6" title="r" alt="" coords="521,81,559,108"/></map>
 </div>
 </p>
 
@@ -513,7 +532,7 @@ Here is the call graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="classrandom_a7f62d97723dd55391a86b2875b8f67b1_cgraph.png" border="0" usemap="#classrandom_a7f62d97723dd55391a86b2875b8f67b1_cgraph" alt=""/></div>
 <map name="classrandom_a7f62d97723dd55391a86b2875b8f67b1_cgraph" id="classrandom_a7f62d97723dd55391a86b2875b8f67b1_cgraph">
-<area shape="rect" id="node2" href="classrandom.html#a05c493f12b4a3acad4d42bf23e3bf23a" title="function to get random normal with zero mean and stdev 1 " alt="" coords="227,5,389,32"/></map>
+<area shape="rect" id="node2" href="classrandom.html#a05c493f12b4a3acad4d42bf23e3bf23a" title="function to get random normal with zero mean and stdev 1 " alt="" coords="227,5,389,32"/><area shape="rect" id="node3" href="model__specific_8f90.html#acf3754d8c40a10449d5feb60e2a509c8" title="q" alt="" coords="438,5,477,32"/><area shape="rect" id="node4" href="model__specific_8f90.html#a3dbc8fa84bd7229ff5e123f3f5b7bd0d" title="qhalf" alt="" coords="525,5,576,32"/></map>
 </div>
 </p>
 
@@ -551,6 +570,15 @@ Here is the caller graph for this function:</div>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p><div class="dynheader">
+Here is the call graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="classrandom_a6c16fa1e3c755b37dc43212078c6af18_cgraph.png" border="0" usemap="#classrandom_a6c16fa1e3c755b37dc43212078c6af18_cgraph" alt=""/></div>
+<map name="classrandom_a6c16fa1e3c755b37dc43212078c6af18_cgraph" id="classrandom_a6c16fa1e3c755b37dc43212078c6af18_cgraph">
+<area shape="rect" id="node2" href="model__specific_8f90.html#a53fc3d9c891503fb7b369a53732b3ab6" title="r" alt="" coords="227,5,266,32"/></map>
+</div>
+</p>
 
 <p><div class="dynheader">
 Here is the caller graph for this function:</div>
@@ -592,6 +620,15 @@ Here is the caller graph for this function:</div>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p><div class="dynheader">
+Here is the call graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="classrandom_a238863a66d36cc568a878418c31e96b4_cgraph.png" border="0" usemap="#classrandom_a238863a66d36cc568a878418c31e96b4_cgraph" alt=""/></div>
+<map name="classrandom_a238863a66d36cc568a878418c31e96b4_cgraph" id="classrandom_a238863a66d36cc568a878418c31e96b4_cgraph">
+<area shape="rect" id="node2" href="model__specific_8f90.html#a550f4ecef3f7b43aa9c908395a3fe15c" title="h" alt="" coords="195,5,234,32"/><area shape="rect" id="node3" href="model__specific_8f90.html#a53fc3d9c891503fb7b369a53732b3ab6" title="r" alt="" coords="195,56,234,83"/></map>
+</div>
+</p>
 
 </div>
 </div>
@@ -654,7 +691,7 @@ Here is the call graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="classrandom_a2770bb736479f52377a6f9eea473da8e_cgraph.png" border="0" usemap="#classrandom_a2770bb736479f52377a6f9eea473da8e_cgraph" alt=""/></div>
 <map name="classrandom_a2770bb736479f52377a6f9eea473da8e_cgraph" id="classrandom_a2770bb736479f52377a6f9eea473da8e_cgraph">
-<area shape="rect" id="node2" href="classrandom.html#a05c493f12b4a3acad4d42bf23e3bf23a" title="function to get random normal with zero mean and stdev 1 " alt="" coords="224,5,387,32"/></map>
+<area shape="rect" id="node2" href="model__specific_8f90.html#a550f4ecef3f7b43aa9c908395a3fe15c" title="h" alt="" coords="286,5,325,32"/><area shape="rect" id="node3" href="classrandom.html#a05c493f12b4a3acad4d42bf23e3bf23a" title="function to get random normal with zero mean and stdev 1 " alt="" coords="224,56,387,83"/><area shape="rect" id="node4" href="model__specific_8f90.html#acf3754d8c40a10449d5feb60e2a509c8" title="q" alt="" coords="435,56,474,83"/><area shape="rect" id="node5" href="model__specific_8f90.html#a3dbc8fa84bd7229ff5e123f3f5b7bd0d" title="qhalf" alt="" coords="523,56,573,83"/></map>
 </div>
 </p>
 
@@ -689,7 +726,7 @@ Here is the call graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="classrandom_a3107e0ecaf18a7095150c0f911aac145_cgraph.png" border="0" usemap="#classrandom_a3107e0ecaf18a7095150c0f911aac145_cgraph" alt=""/></div>
 <map name="classrandom_a3107e0ecaf18a7095150c0f911aac145_cgraph" id="classrandom_a3107e0ecaf18a7095150c0f911aac145_cgraph">
-<area shape="rect" id="node2" href="operator__wrappers_8f90.html#aec571ade653c1cf8fd6cde17285af055" title="Subroutine to apply &#160;to a vector y in observation space where . " alt="" coords="198,12,237,39"/></map>
+<area shape="rect" id="node2" href="model__specific_8f90.html#acf3754d8c40a10449d5feb60e2a509c8" title="q" alt="" coords="330,5,369,32"/><area shape="rect" id="node4" href="model__specific_8f90.html#a550f4ecef3f7b43aa9c908395a3fe15c" title="h" alt="" coords="198,43,237,69"/><area shape="rect" id="node5" href="operator__wrappers_8f90.html#aec571ade653c1cf8fd6cde17285af055" title="Subroutine to apply &#160;to a vector y in observation space where . " alt="" coords="198,93,237,120"/><area shape="rect" id="node8" href="model__specific_8f90.html#a53fc3d9c891503fb7b369a53732b3ab6" title="r" alt="" coords="198,144,237,171"/><area shape="rect" id="node3" href="model__specific_8f90.html#a3dbc8fa84bd7229ff5e123f3f5b7bd0d" title="qhalf" alt="" coords="461,5,512,32"/><area shape="rect" id="node6" href="model__specific_8f90.html#add8aa278999fc6e80f96f33d2bffa006" title="solve_hqht_plus_r" alt="" coords="286,81,413,108"/><area shape="rect" id="node7" href="model__specific_8f90.html#a45f29ccc70484189224896162442ccff" title="ht" alt="" coords="330,132,369,159"/></map>
 </div>
 </p>
 
@@ -710,6 +747,15 @@ Here is the call graph for this function:</div>
 
 <p>function to get random normal with zero mean and stdev 1 </p>
 <dl class="section return"><dt>Returns</dt><dd>fn_val </dd></dl>
+
+<p><div class="dynheader">
+Here is the call graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="classrandom_a05c493f12b4a3acad4d42bf23e3bf23a_cgraph.png" border="0" usemap="#classrandom_a05c493f12b4a3acad4d42bf23e3bf23a_cgraph" alt=""/></div>
+<map name="classrandom_a05c493f12b4a3acad4d42bf23e3bf23a_cgraph" id="classrandom_a05c493f12b4a3acad4d42bf23e3bf23a_cgraph">
+<area shape="rect" id="node2" href="model__specific_8f90.html#acf3754d8c40a10449d5feb60e2a509c8" title="q" alt="" coords="217,5,255,32"/><area shape="rect" id="node3" href="model__specific_8f90.html#a3dbc8fa84bd7229ff5e123f3f5b7bd0d" title="qhalf" alt="" coords="304,5,355,32"/></map>
+</div>
+</p>
 
 <p><div class="dynheader">
 Here is the caller graph for this function:</div>
@@ -751,7 +797,7 @@ Here is the call graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="classrandom_a03e6b0b30475831f6d57082faed3bb34_cgraph.png" border="0" usemap="#classrandom_a03e6b0b30475831f6d57082faed3bb34_cgraph" alt=""/></div>
 <map name="classrandom_a03e6b0b30475831f6d57082faed3bb34_cgraph" id="classrandom_a03e6b0b30475831f6d57082faed3bb34_cgraph">
-<area shape="rect" id="node2" href="operator__wrappers_8f90.html#aec571ade653c1cf8fd6cde17285af055" title="Subroutine to apply &#160;to a vector y in observation space where . " alt="" coords="206,5,245,32"/></map>
+<area shape="rect" id="node2" href="operator__wrappers_8f90.html#aec571ade653c1cf8fd6cde17285af055" title="Subroutine to apply &#160;to a vector y in observation space where . " alt="" coords="206,56,245,83"/><area shape="rect" id="node3" href="model__specific_8f90.html#add8aa278999fc6e80f96f33d2bffa006" title="solve_hqht_plus_r" alt="" coords="294,5,421,32"/><area shape="rect" id="node4" href="model__specific_8f90.html#a45f29ccc70484189224896162442ccff" title="ht" alt="" coords="338,56,377,83"/><area shape="rect" id="node5" href="model__specific_8f90.html#acf3754d8c40a10449d5feb60e2a509c8" title="q" alt="" coords="338,107,377,133"/><area shape="rect" id="node6" href="model__specific_8f90.html#a3dbc8fa84bd7229ff5e123f3f5b7bd0d" title="qhalf" alt="" coords="469,107,520,133"/></map>
 </div>
 </p>
 
@@ -786,7 +832,7 @@ Here is the call graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="classrandom_a4ec519e7171cd11a636820c235a04e97_cgraph.png" border="0" usemap="#classrandom_a4ec519e7171cd11a636820c235a04e97_cgraph" alt=""/></div>
 <map name="classrandom_a4ec519e7171cd11a636820c235a04e97_cgraph" id="classrandom_a4ec519e7171cd11a636820c235a04e97_cgraph">
-<area shape="rect" id="node2" href="classrandom.html#a05c493f12b4a3acad4d42bf23e3bf23a" title="function to get random normal with zero mean and stdev 1 " alt="" coords="235,5,397,32"/><area shape="rect" id="node3" href="classrandom.html#a14421c1b908f2263d65da068fddfc7dd" title="random::random_exponential" alt="" coords="221,56,411,83"/><area shape="rect" id="node4" href="operator__wrappers_8f90.html#aec571ade653c1cf8fd6cde17285af055" title="Subroutine to apply &#160;to a vector y in observation space where . " alt="" coords="297,107,335,133"/></map>
+<area shape="rect" id="node2" href="classrandom.html#a05c493f12b4a3acad4d42bf23e3bf23a" title="function to get random normal with zero mean and stdev 1 " alt="" coords="235,26,397,53"/><area shape="rect" id="node3" href="model__specific_8f90.html#acf3754d8c40a10449d5feb60e2a509c8" title="q" alt="" coords="503,13,542,40"/><area shape="rect" id="node5" href="classrandom.html#a14421c1b908f2263d65da068fddfc7dd" title="random::random_exponential" alt="" coords="221,140,411,166"/><area shape="rect" id="node7" href="operator__wrappers_8f90.html#aec571ade653c1cf8fd6cde17285af055" title="Subroutine to apply &#160;to a vector y in observation space where . " alt="" coords="297,77,335,104"/><area shape="rect" id="node4" href="model__specific_8f90.html#a3dbc8fa84bd7229ff5e123f3f5b7bd0d" title="qhalf" alt="" coords="635,13,685,40"/><area shape="rect" id="node6" href="model__specific_8f90.html#a53fc3d9c891503fb7b369a53732b3ab6" title="r" alt="" coords="503,165,542,192"/><area shape="rect" id="node8" href="model__specific_8f90.html#add8aa278999fc6e80f96f33d2bffa006" title="solve_hqht_plus_r" alt="" coords="459,64,586,90"/><area shape="rect" id="node9" href="model__specific_8f90.html#a45f29ccc70484189224896162442ccff" title="ht" alt="" coords="503,114,542,141"/></map>
 </div>
 </p>
 
@@ -805,6 +851,15 @@ Here is the call graph for this function:</div>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p><div class="dynheader">
+Here is the call graph for this function:</div>
+<div class="dyncontent">
+<div class="center"><img src="classrandom_a52f7096c93579e684fd894e01bedcd4d_cgraph.png" border="0" usemap="#classrandom_a52f7096c93579e684fd894e01bedcd4d_cgraph" alt=""/></div>
+<map name="classrandom_a52f7096c93579e684fd894e01bedcd4d_cgraph" id="classrandom_a52f7096c93579e684fd894e01bedcd4d_cgraph">
+<area shape="rect" id="node2" href="model__specific_8f90.html#a53fc3d9c891503fb7b369a53732b3ab6" title="r" alt="" coords="182,5,221,32"/></map>
+</div>
+</p>
 
 </div>
 </div>
@@ -837,7 +892,7 @@ Here is the call graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="classrandom_ae89f09ae700db89c4e3593dda9e4d334_cgraph.png" border="0" usemap="#classrandom_ae89f09ae700db89c4e3593dda9e4d334_cgraph" alt=""/></div>
 <map name="classrandom_ae89f09ae700db89c4e3593dda9e4d334_cgraph" id="classrandom_ae89f09ae700db89c4e3593dda9e4d334_cgraph">
-<area shape="rect" id="node2" href="operator__wrappers_8f90.html#aec571ade653c1cf8fd6cde17285af055" title="Subroutine to apply &#160;to a vector y in observation space where . " alt="" coords="198,12,237,39"/></map>
+<area shape="rect" id="node2" href="operator__wrappers_8f90.html#aec571ade653c1cf8fd6cde17285af055" title="Subroutine to apply &#160;to a vector y in observation space where . " alt="" coords="198,56,237,83"/><area shape="rect" id="node7" href="model__specific_8f90.html#a53fc3d9c891503fb7b369a53732b3ab6" title="r" alt="" coords="198,107,237,133"/><area shape="rect" id="node3" href="model__specific_8f90.html#add8aa278999fc6e80f96f33d2bffa006" title="solve_hqht_plus_r" alt="" coords="286,5,413,32"/><area shape="rect" id="node4" href="model__specific_8f90.html#a45f29ccc70484189224896162442ccff" title="ht" alt="" coords="330,56,369,83"/><area shape="rect" id="node5" href="model__specific_8f90.html#acf3754d8c40a10449d5feb60e2a509c8" title="q" alt="" coords="330,107,369,133"/><area shape="rect" id="node6" href="model__specific_8f90.html#a3dbc8fa84bd7229ff5e123f3f5b7bd0d" title="qhalf" alt="" coords="461,107,512,133"/></map>
 </div>
 </p>
 
@@ -862,7 +917,7 @@ Here is the call graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="classrandom_ab847036d4dbe5c63613425d28a395275_cgraph.png" border="0" usemap="#classrandom_ab847036d4dbe5c63613425d28a395275_cgraph" alt=""/></div>
 <map name="classrandom_ab847036d4dbe5c63613425d28a395275_cgraph" id="classrandom_ab847036d4dbe5c63613425d28a395275_cgraph">
-<area shape="rect" id="node2" href="classrandom.html#a14421c1b908f2263d65da068fddfc7dd" title="random::random_exponential" alt="" coords="216,5,405,32"/></map>
+<area shape="rect" id="node2" href="classrandom.html#a14421c1b908f2263d65da068fddfc7dd" title="random::random_exponential" alt="" coords="216,5,405,32"/><area shape="rect" id="node3" href="model__specific_8f90.html#a53fc3d9c891503fb7b369a53732b3ab6" title="r" alt="" coords="454,5,493,32"/></map>
 </div>
 </p>
 
@@ -887,7 +942,7 @@ Here is the call graph for this function:</div>
 <div class="dyncontent">
 <div class="center"><img src="classrandom_a82f08f6c9b3c4740501abb1970397f8d_cgraph.png" border="0" usemap="#classrandom_a82f08f6c9b3c4740501abb1970397f8d_cgraph" alt=""/></div>
 <map name="classrandom_a82f08f6c9b3c4740501abb1970397f8d_cgraph" id="classrandom_a82f08f6c9b3c4740501abb1970397f8d_cgraph">
-<area shape="rect" id="node2" href="operator__wrappers_8f90.html#aec571ade653c1cf8fd6cde17285af055" title="Subroutine to apply &#160;to a vector y in observation space where . " alt="" coords="206,12,245,39"/></map>
+<area shape="rect" id="node2" href="operator__wrappers_8f90.html#aec571ade653c1cf8fd6cde17285af055" title="Subroutine to apply &#160;to a vector y in observation space where . " alt="" coords="206,56,245,83"/><area shape="rect" id="node3" href="model__specific_8f90.html#add8aa278999fc6e80f96f33d2bffa006" title="solve_hqht_plus_r" alt="" coords="294,5,421,32"/><area shape="rect" id="node4" href="model__specific_8f90.html#a45f29ccc70484189224896162442ccff" title="ht" alt="" coords="338,56,377,83"/><area shape="rect" id="node5" href="model__specific_8f90.html#acf3754d8c40a10449d5feb60e2a509c8" title="q" alt="" coords="338,107,377,133"/><area shape="rect" id="node6" href="model__specific_8f90.html#a3dbc8fa84bd7229ff5e123f3f5b7bd0d" title="qhalf" alt="" coords="469,107,520,133"/></map>
 </div>
 </p>
 
@@ -915,7 +970,7 @@ Here is the call graph for this function:</div>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="classrandom.html">random</a></li>
-    <li class="footer">Generated on Mon Sep 22 2014 16:04:35 for EMPIRE DA by
+    <li class="footer">Generated on Tue Sep 23 2014 12:07:47 for EMPIRE DA by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.6 </li>
   </ul>

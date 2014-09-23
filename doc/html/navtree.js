@@ -1,6 +1,19 @@
 var NAVTREE =
 [
   [ "EMPIRE DA", "index.html", [
+    [ "EMPIRE Data Assimilation Documentation", "index.html", [
+      [ "Downloading", "index.html#Download", null ],
+      [ "Compiling", "index.html#Compiling", [
+        [ "Compilation of the source code", "index.html#Compiling_code", null ],
+        [ "Compilation of the documentation", "index.html#Compiling_docs", null ]
+      ] ],
+      [ "Customising for specific models", "index.html#Custom", null ],
+      [ "Testing", "index.html#Testing", null ],
+      [ "Linking to your model using EMPIRE", "index.html#Linking", null ],
+      [ "Running", "index.html#Running", null ],
+      [ "Bug Reports and Functionality Requests", "index.html#Bugs", null ]
+    ] ],
+    [ "Todo List", "todo.html", null ],
     [ "Data Types List", null, [
       [ "Data Types List", "annotated.html", "annotated" ],
       [ "Data Types", "classes.html", null ],

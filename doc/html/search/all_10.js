@@ -8,6 +8,8 @@ var searchData=
   ['sir_5ffilter_2ef90',['sir_filter.f90',['../sir__filter_8f90.html',1,'']]],
   ['sizes',['sizes',['../classsizes.html',1,'']]],
   ['sizes_2ef90',['sizes.f90',['../sizes_8f90.html',1,'']]],
+  ['solve_5fhqht_5fplus_5fr',['solve_hqht_plus_r',['../model__specific_8f90.html#add8aa278999fc6e80f96f33d2bffa006',1,'model_specific.f90']]],
+  ['solve_5fr',['solve_r',['../model__specific_8f90.html#a58ea3caf89412ed642a8fc8f0184d9f0',1,'model_specific.f90']]],
   ['solve_5frhalf_5flocal',['solve_rhalf_local',['../enkf__specific_8f90.html#a391c05218787eeebf53b181156e4fcde',1,'enkf_specific.f90']]],
   ['state_5fdim',['state_dim',['../classsizes.html#a53ccc50a0ecaf0a8601298c8c5d7ad63',1,'sizes']]],
   ['stochastic_5fmodel',['stochastic_model',['../stochastic__model_8f90.html#ac824cdcc59bee27acef82df04a13e009',1,'stochastic_model.f90']]],

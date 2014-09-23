@@ -8,5 +8,6 @@ var searchData=
   ['equal_5fweight_5ffilter',['equal_weight_filter',['../equivalent__weights__step_8f90.html#a3439a2d355440c40666f773e889e5f26',1,'equivalent_weights_step.f90']]],
   ['equivalent_5fweights_5fstep_2ef90',['equivalent_weights_step.f90',['../equivalent__weights__step_8f90.html',1,'']]],
   ['etkf_5fanalysis',['etkf_analysis',['../etkf__analysis_8f90.html#a7a1f0166706aef6167aad6525c792f66',1,'etkf_analysis.f90']]],
-  ['etkf_5fanalysis_2ef90',['etkf_analysis.f90',['../etkf__analysis_8f90.html',1,'']]]
+  ['etkf_5fanalysis_2ef90',['etkf_analysis.f90',['../etkf__analysis_8f90.html',1,'']]],
+  ['empire_20data_20assimilation_20documentation',['EMPIRE Data Assimilation Documentation',['../index.html',1,'']]]
 ];

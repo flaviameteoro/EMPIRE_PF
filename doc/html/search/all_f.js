@@ -1,5 +1,6 @@
 var searchData=
 [
+  ['r',['r',['../model__specific_8f90.html#a53fc3d9c891503fb7b369a53732b3ab6',1,'model_specific.f90']]],
   ['r_5ftests',['r_tests',['../tests_8f90.html#ae377b636e622fd3c952ed6190f3fdc18',1,'tests.f90']]],
   ['random',['random',['../classrandom.html',1,'']]],
   ['random_5fbeta',['random_beta',['../classrandom.html#a0037b9f6838b023c794c2addf89f9ba1',1,'random']]],
@@ -30,6 +31,7 @@ var searchData=
   ['rdiag',['rdiag',['../classrdata.html#a89b639fead94b96b7f5d6aef6a7a449a',1,'rdata']]],
   ['resample',['resample',['../resample_8f90.html#ae311a90c08af18a1250ccc2087e7ff46',1,'resample.f90']]],
   ['resample_2ef90',['resample.f90',['../resample_8f90.html',1,'']]],
+  ['rhalf',['rhalf',['../model__specific_8f90.html#a940c63cc3b5581bb9a8053d51918ce96',1,'model_specific.f90']]],
   ['rhl_5fn',['rhl_n',['../classhistogram__data.html#ac202796c6c4bfb9c3a16bd8c4b277eba',1,'histogram_data']]],
   ['rhn_5fn',['rhn_n',['../classhistogram__data.html#a8ac6a785fa075b9bf4d162e2833635d3',1,'histogram_data']]],
   ['rn',['rn',['../classrdata.html#a9a5360e6be18637e65fcae5c55d8db98',1,'rdata']]],
