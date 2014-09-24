@@ -1,6 +1,0 @@
-<map id="random::random_exponential" name="random::random_exponential">
-<area shape="rect" id="node2" href="$classrandom.html#a0ffe848e8b744d46f54c64489374cadf" title="random::random_gamma" alt="" coords="243,5,410,32"/>
-<area shape="rect" id="node4" href="$classrandom.html#ab847036d4dbe5c63613425d28a395275" title="random::random_weibull" alt="" coords="245,56,408,83"/>
-<area shape="rect" id="node5" href="$classrandom.html#a4ec519e7171cd11a636820c235a04e97" title="random::random_poisson" alt="" coords="243,107,411,133"/>
-<area shape="rect" id="node3" href="$classrandom.html#ac6329ddadc01dc01d991971b5d955727" title="random::random_chisq" alt="" coords="459,5,613,32"/>
-</map>

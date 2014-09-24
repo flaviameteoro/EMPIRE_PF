@@ -1,9 +1,0 @@
-<map id="random::random_neg_binomial" name="random::random_neg_binomial">
-<area shape="rect" id="node2" href="$model__specific_8f90.html#acf3754d8c40a10449d5feb60e2a509c8" title="q" alt="" coords="330,5,369,32"/>
-<area shape="rect" id="node4" href="$model__specific_8f90.html#a550f4ecef3f7b43aa9c908395a3fe15c" title="h" alt="" coords="198,43,237,69"/>
-<area shape="rect" id="node5" href="$operator__wrappers_8f90.html#aec571ade653c1cf8fd6cde17285af055" title="Subroutine to apply &#160;to a vector y in observation space where . " alt="" coords="198,93,237,120"/>
-<area shape="rect" id="node8" href="$model__specific_8f90.html#a53fc3d9c891503fb7b369a53732b3ab6" title="r" alt="" coords="198,144,237,171"/>
-<area shape="rect" id="node3" href="$model__specific_8f90.html#a3dbc8fa84bd7229ff5e123f3f5b7bd0d" title="qhalf" alt="" coords="461,5,512,32"/>
-<area shape="rect" id="node6" href="$model__specific_8f90.html#add8aa278999fc6e80f96f33d2bffa006" title="solve_hqht_plus_r" alt="" coords="286,81,413,108"/>
-<area shape="rect" id="node7" href="$model__specific_8f90.html#a45f29ccc70484189224896162442ccff" title="ht" alt="" coords="330,132,369,159"/>
-</map>

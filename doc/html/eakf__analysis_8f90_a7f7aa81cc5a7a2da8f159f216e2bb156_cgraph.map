@@ -1,9 +1,0 @@
-<map id="eakf_analysis" name="eakf_analysis">
-<area shape="rect" id="node2" href="$enkf__specific_8f90.html#a282ddf2dfaee5bbf9982a216d58c66d4" title="get_local_observation_data" alt="" coords="158,56,338,83"/>
-<area shape="rect" id="node8" href="$model__specific_8f90.html#a550f4ecef3f7b43aa9c908395a3fe15c" title="h" alt="" coords="229,107,267,133"/>
-<area shape="rect" id="node3" href="$operator__wrappers_8f90.html#aec571ade653c1cf8fd6cde17285af055" title="Subroutine to apply &#160;to a vector y in observation space where . " alt="" coords="387,56,426,83"/>
-<area shape="rect" id="node4" href="$model__specific_8f90.html#add8aa278999fc6e80f96f33d2bffa006" title="solve_hqht_plus_r" alt="" coords="475,5,602,32"/>
-<area shape="rect" id="node5" href="$model__specific_8f90.html#a45f29ccc70484189224896162442ccff" title="ht" alt="" coords="519,56,558,83"/>
-<area shape="rect" id="node6" href="$model__specific_8f90.html#acf3754d8c40a10449d5feb60e2a509c8" title="q" alt="" coords="519,107,558,133"/>
-<area shape="rect" id="node7" href="$model__specific_8f90.html#a3dbc8fa84bd7229ff5e123f3f5b7bd0d" title="qhalf" alt="" coords="651,107,701,133"/>
-</map>
