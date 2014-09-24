@@ -1,6 +1,6 @@
 /** \mainpage EMPIRE Data Assimilation Documentation
 \author Philip A. Browne <a href="mailto:p.browne@reading.ac.uk">p.browne@reading.ac.uk</a>
-\date Time-stamp: <2014-09-24 13:22:40 pbrowne>
+\date Time-stamp: <2014-09-24 16:15:36 pbrowne>
 
 \section Download Downloading
 
@@ -93,7 +93,7 @@ These are by no means full-proof ways of ensuring that you have implemented thin
 For example, they will test if \f$ H H^Tx = x\f$, and if \f$ Q^{\frac{1}{2}}Q^{\frac{1}{2}}x = Qx\f$ for various different vectors \f$x\f$.
 
 \section Linking Linking to your model using EMPIRE
-\todo Write a bit about how to put the MPI commands into the model, or point to where that is. <a href="http://www.met.reading.ac.uk/~darc/empire">www.met.reading.ac.uk/~darc/empire</a>
+Full instructions on how to put the EMPIRE MPI commands into a new model can be found at <a href="http://www.met.reading.ac.uk/~darc/empire">www.met.reading.ac.uk/~darc/empire</a>.
 
 \section Running Running
 For example, to run \b N_MDL copies of the model with \b N_DA copies of empire, then the following are possible:
@@ -101,7 +101,7 @@ For example, to run \b N_MDL copies of the model with \b N_DA copies of empire, 
 
 \code{.sh}aprun -n N_MDL -N N_MDL model_executable : -n N_DA -N N_DA empire\endcode
 
-\todo I have to talk about how pf_parameters.dat works.
+The empire executable is controlled by the namelist data file \link pf_control::parse_pf_parameters pf_parameters.dat\endlink. As such, this file should be put in the directory where empire is executed.
 
 
 

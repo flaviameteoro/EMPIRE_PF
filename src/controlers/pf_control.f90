@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-09-24 15:30:44 pbrowne>
+!!! Time-stamp: <2014-09-24 16:13:15 pbrowne>
 !!!
 !!!    module to hold all the information to control the the main program
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -103,14 +103,25 @@ contains
     !! On to the content...in any order, the pf_parameters.dat may
     !! contain the following things:
     !! 
+    !! Integers:
     !! - \link pf_control::pf_control_type::time_obs time_obs \endlink
-    !! - \link pf_control::pf_control_type::time_bwn_obs time_bwn_obs\endlink
+    !! - \link pf_control::pf_control_type::time_bwn_obs
+    !! time_bwn_obs\endlink
+    !!
+    !! Reals, double precision:
     !! - \link pf_control::pf_control_type::nudgefac nudgefac\endlink
     !! - \link pf_control::pf_control_type::nfac nfac\endlink
     !! - \link pf_control::pf_control_type::ufac ufac\endlink
     !! - \link pf_control::pf_control_type::Qscale Qscale \endlink
+    !! - \link pf_control::pf_control_type::keep keep  \endlink
+    !!
+    !! 2 Characters:
     !! - \link pf_control::pf_control_type::type type\endlink
+    !!
+    !! 1 Character:
     !! - \link pf_control::pf_control_type::init init\endlink
+    !!
+    !! Logicals:
     !! - \link pf_control::pf_control_type::gen_Q gen_Q\endlink
     !! - \link pf_control::pf_control_type::gen_data gen_data\endlink
     !! - \link pf_control::pf_control_type::use_talagrand use_talagrand\endlink
@@ -131,6 +142,7 @@ contains
       real(kind=kind(1.0D0)) :: nfac=-1.0d0                
       real(kind=kind(1.0D0)) :: ufac=-1.0d0
       real(kind=kind(1.0D0)) :: Qscale=-1.0d0
+      real(kind=kind(1.0D0)) :: keep
       logical :: use_talagrand,use_weak,use_mean,use_var,use_traj&
            &,use_rmse
       character(2) :: type='++'
@@ -140,7 +152,8 @@ contains
       &nudgefac,& 
       &gen_data,gen_Q,&
       &human_readable,&
-      &nfac,&    
+      &nfac,&
+      &keep,&
       &ufac,&                
       &Qscale,&
       &use_talagrand,use_weak,use_mean,use_var,use_traj,use_rmse,&
@@ -180,11 +193,17 @@ contains
       !logical :: gen_data,gen_Q,human_readable
       if(nfac .gt. -1.0d0) then
          print*,'read nfac = ',nfac
-         pf%nfac = pf%nfac
+         pf%nfac = nfac
       end if
 
-      if(ufac .gt. 0.0d0) then
+      if(keep .gt. -1.0d0) then
+         print*,'read keep = ',keep
+         pf%keep = keep
+      end if
+
+      if(ufac .gt. -1.0d0) then
          print*,'read ufac = ',ufac
+         pf%ufac = ufac
       end if
 
       !real(kind=kind(1.0D0)) :: ufac=-1.0d0
