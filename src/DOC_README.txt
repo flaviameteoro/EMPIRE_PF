@@ -1,6 +1,6 @@
 /** \mainpage EMPIRE Data Assimilation Documentation
-\author Philip A. Browne
-\date Time-stamp: <2014-09-23 12:07:45 pbrowne>
+\author Philip A. Browne <a href="mailto:p.browne@reading.ac.uk">p.browne@reading.ac.uk</a>
+\date Time-stamp: <2014-09-24 13:22:40 pbrowne>
 
 \section Download Downloading
 
@@ -14,6 +14,8 @@ or
 \code{.sh}
 wget https://bitbucket.org/pbrowne/empire-data-assimilation/get/aa31fdfc3912.zip && gunzip aa31fdfc3912.zip
 \endcode
+
+\copyright These codes are distributed under the GNU GPU v3 Licence. See LICENCE.txt.
 
 \section Compiling Compiling
 

@@ -1,7 +1,7 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-09-22 13:51:13 pbrowne>
+!!! Time-stamp: <2014-09-24 15:30:44 pbrowne>
 !!!
-!!!    {one line to give the program's name and a brief idea of what it does.}
+!!!    module to hold all the information to control the the main program
 !!!    Copyright (C) 2014  Philip A. Browne
 !!!
 !!!    This program is free software: you can redistribute it and/or modify
@@ -24,8 +24,8 @@
 !!!	      RG6 6BB
 !!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!> module to hold all the information to control the the main program
 
+!> module pf_control holds all the information to control the the main program
 module pf_control
   implicit none
   type, public :: pf_control_type
@@ -61,33 +61,16 @@ module pf_control
      character(1) :: init     !< which method to initialise ensemble
   end type pf_control_type
   type(pf_control_type) :: pf !< the derived data type holding all controlling data
-  contains
-    subroutine set_pf_controls
-      !< subroutine to read in pf_control data from pf_parameters.dat'
+
+
+contains
+  !> subroutine to ensure pf_control data is ok
+  subroutine set_pf_controls
       integer :: ios
       write(6,'(A)') 'Opening pf_parameters.dat'
-      open(32,file='pf_parameters.dat',iostat=ios,action='read',status='old')
-      if(ios .ne. 0) stop 'Cannot open pf_parameters.dat'
 
-      read(32,*) pf%time_obs
-      read(32,*) pf%time_bwn_obs
-      read(32,*) pf%nudgefac
-      read(32,*) pf%gen_data
-      read(32,*) pf%nfac
-      read(32,*) pf%ufac
-      read(32,*) pf%keep
-      read(32,*) pf%Qscale
-      read(32,*) pf%human_readable
-      read(32,*) pf%use_talagrand
-      read(32,*) pf%use_weak
-      read(32,*) pf%use_mean
-      read(32,*) pf%use_var
-      read(32,*) pf%use_rmse
-      read(32,*) pf%gen_Q
-      read(32,*) pf%use_traj
-      read(32,*) pf%type
-      read(32,*) pf%init
-      close(32)
+      call parse_pf_parameters
+
       pf%efac = 0.001/pf%nens
       write(6,'(A)') 'pf_parameters.dat successfully read to control pf code.'
       call flush(6)
@@ -97,7 +80,127 @@ module pf_control
          close(64)
       end if
 
-      !let us verify pf%type
+
+         
+
+    end subroutine set_pf_controls
+
+
+    !>subroutine to read the namelist file and save it to pf datatype
+    !!Here we read pf_parameters.dat
+    !!
+    !! pf_parameters.dat is a fortran namelist file. As such, within
+    !! it there must be a line beginning
+    !!
+    !! &pf_params
+    !!
+    !! To make it (probably) work, ensure there is a forward slash on
+    !! the penultimate line and a blank line to end the file
+    !!
+    !! This is just the fortran standard for namelists though.
+    !!
+    !!
+    !! On to the content...in any order, the pf_parameters.dat may
+    !! contain the following things:
+    !! 
+    !! - \link pf_control::pf_control_type::time_obs time_obs \endlink
+    !! - \link pf_control::pf_control_type::time_bwn_obs time_bwn_obs\endlink
+    !! - \link pf_control::pf_control_type::nudgefac nudgefac\endlink
+    !! - \link pf_control::pf_control_type::nfac nfac\endlink
+    !! - \link pf_control::pf_control_type::ufac ufac\endlink
+    !! - \link pf_control::pf_control_type::Qscale Qscale \endlink
+    !! - \link pf_control::pf_control_type::type type\endlink
+    !! - \link pf_control::pf_control_type::init init\endlink
+    !! - \link pf_control::pf_control_type::gen_Q gen_Q\endlink
+    !! - \link pf_control::pf_control_type::gen_data gen_data\endlink
+    !! - \link pf_control::pf_control_type::use_talagrand use_talagrand\endlink
+    !! - \link pf_control::pf_control_type::use_weak use_weak\endlink
+    !! - \link pf_control::pf_control_type::use_var use_var\endlink
+    !! - \link pf_control::pf_control_type::use_traj use_traj\endlink
+    !! - \link pf_control::pf_control_type::use_rmse use_rmse\endlink
+    !! - \link pf_control::pf_control_type::human_readable human_readable\endlink
+    subroutine parse_pf_parameters
+      implicit none
+      character(*), parameter :: filename='pf_parameters.dat'
+      integer :: ios
+
+      integer :: time_obs=-1
+      integer :: time_bwn_obs=-1 
+      real(kind=kind(1.0D0)) :: nudgefac=-1.0d0
+      logical :: gen_data,gen_Q,human_readable
+      real(kind=kind(1.0D0)) :: nfac=-1.0d0                
+      real(kind=kind(1.0D0)) :: ufac=-1.0d0
+      real(kind=kind(1.0D0)) :: Qscale=-1.0d0
+      logical :: use_talagrand,use_weak,use_mean,use_var,use_traj&
+           &,use_rmse
+      character(2) :: type='++'
+      character(1) :: init='+'
+
+      namelist/pf_params/time_obs,time_bwn_obs,&
+      &nudgefac,& 
+      &gen_data,gen_Q,&
+      &human_readable,&
+      &nfac,&    
+      &ufac,&                
+      &Qscale,&
+      &use_talagrand,use_weak,use_mean,use_var,use_traj,use_rmse,&
+      &type,&
+      &init
+
+
+      gen_data = .false.
+      gen_Q = .false.
+      human_readable = .false.
+      use_talagrand = .false.
+      use_weak = .false.
+      use_mean = .false.
+      use_var = .false.
+      use_traj = .false.
+      use_rmse = .false.
+
+      open(32,file=filename,iostat=ios,action='read'&
+           &,status='old')
+      if(ios .ne. 0) stop 'Cannot open pf_parameters.dat'
+      read(32,nml=pf_params) 
+      print*,time_obs,time_bwn_obs,nudgefac,gen_data
+      close(32)
+
+      if(time_obs .gt. -1) then
+         print*,'read time_obs = ',time_obs
+         pf%time_obs = time_obs
+      end if
+      if(time_bwn_obs .gt. -1) then
+         print*,'read time_bwn_obs = ',time_bwn_obs
+         pf%time_bwn_obs = time_bwn_obs
+      end if
+      if(nudgefac .gt. -1.0d0) then
+         print*,'read nudgefac = ',nudgefac
+         pf%nudgefac = nudgefac
+      end if
+      !logical :: gen_data,gen_Q,human_readable
+      if(nfac .gt. -1.0d0) then
+         print*,'read nfac = ',nfac
+         pf%nfac = pf%nfac
+      end if
+
+      if(ufac .gt. 0.0d0) then
+         print*,'read ufac = ',ufac
+      end if
+
+      !real(kind=kind(1.0D0)) :: ufac=-1.0d0
+      if(Qscale .gt. -1.0d0) then
+         print*,'read Qscale = ',Qscale
+         pf%Qscale = Qscale
+      end if
+      !logical ::
+      !use_talagrand,use_weak,use_mean,use_var,use_traj,use_rmse
+      
+      if(type .ne. '++') then
+         print*,'read type = ',type
+         pf%type = type
+      end if
+
+            !let us verify pf%type
       if(    pf%type .eq. 'EW') then
          print*,'Running the equivalent weights particle filter'
       elseif(pf%type .eq. 'SE') then
@@ -114,20 +217,44 @@ module pf_control
          stop
       else
          print*,'Error: Incorrect filter type selected'
-         print*,'Please ensure that pf%type in pf_parameters.dat is either:'
-         print*,'EW                  the equivalent weights particle filter'
+         print*,'Please ensure that pf%type in pf_parameters.dat is ei&
+              &ther:'
+         print*,'EW                  the equivalent weights particle f&
+              &ilter'
          print*,'SE                  a stochastic ensemble'
          print*,'SI                  the SIR particle filter'
-         print*,'ET                  the Ensemble Transform Kalman Filter'
-         print*,'EA                  the Ensemble Adjustment Kalman Filter'
+         print*,'ET                  the Ensemble Transform Kalman Fil&
+              &ter'
+         print*,'EA                  the Ensemble Adjustment Kalman Fi&
+              &lter'
          stop
       end if
-         
 
-    end subroutine set_pf_controls
 
+      if(init .ne. '+') then
+         print*,'read init = ',init
+         pf%init = init
+      end if
+
+      pf%gen_data = gen_data
+      pf%gen_Q = gen_Q
+      pf%human_readable = human_readable
+      pf%use_talagrand = use_talagrand
+      pf%use_weak = use_weak
+      pf%use_mean = use_mean
+      pf%use_var = use_var
+      pf%use_traj = use_traj
+      pf%use_rmse = use_rmse
+      
+
+
+
+      
+    end subroutine parse_pf_parameters
+
+
+    !> subroutine to allocate space for the filtering code
     subroutine allocate_pf
-      !< subroutine to allocate space for the filtering code
       use sizes
       use histogram_data
       integer :: st
@@ -147,9 +274,9 @@ module pf_control
 !      if(st .ne. 0) stop 'Error in allocating pf%particles'
 
     end subroutine allocate_pf
-
+    
+    !> subroutine to deallocate space for the filtering code
     subroutine deallocate_pf
-      !< subroutine to deallocate space for the filtering code
       deallocate(pf%weight)
       deallocate(pf%psi)
       if(allocated(pf%talagrand)) deallocate(pf%talagrand)

@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-09-22 15:02:13 pbrowne>
+!!! Time-stamp: <2014-09-24 11:06:10 pbrowne>
 !!!
 !!!    Collection of subroutines to make multidimensional random arrays
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -62,7 +62,7 @@ use random
 IMPLICIT NONE
 integer, parameter :: rk = kind(1.0D0)
 integer, intent(in) :: n !< @param[in] n first dimension of output vector
-integer, intent(in) :: k !< @param[in] n second dimension of output vector
+integer, intent(in) :: k !< @param[in] k second dimension of output vector
 real(kind=rk), INTENT(IN) :: mean  !< @param[in] mean mean of normal distribution
 real(kind=rk), INTENT(IN) :: stdev !< @param[in] stdev Standard Deviation of normal distribution
 real(kind=rk), dimension(n,k), INTENT(OUT) :: phi !< @param[out] phi n,k dimensional normal random numbers                                      
@@ -117,7 +117,7 @@ end subroutine MixtureRandomNumbers1D
 !! @param[in] epsi Proportion controlling mixture draw.
 !! if random_number > epsi then draw from uniform, else normal
 !! @param[in] n first dimension of output vector
-!! @param[in] n second dimension of output vector
+!! @param[in] k second dimension of output vector
 !! @param[out] phi n,k dimensional mixture random numbers
 !! @param[out] uniform k dimensional logical with uniform(i) True if
 !! phi(:,i) drawn from uniform. False if
