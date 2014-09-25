@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-09-25 14:15:16 pbrowne>
+!!! Time-stamp: <2014-09-25 14:57:11 pbrowne>
 !!!
 !!!    This file must be adapted to the specific model in use.
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -216,7 +216,7 @@ subroutine H(x,hx,t)
 
 end subroutine H
 
-!> subroutine to take an observation vector y and return x = H^T(y)
+!> subroutine to take an observation vector y and return x \f$= H^T(y)\f$
 !> in full state space.
 !!
 !! Given \f$y\f$ compute \f$x=H^T(y)\f$
