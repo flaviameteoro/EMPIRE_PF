@@ -1,7 +1,7 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-09-18 10:09:54 pbrowne>
+!!! Time-stamp: <2014-09-25 11:46:38 pbrowne>
 !!!
-!!!    {one line to give the program's name and a brief idea of what it does.}
+!!!    Ensemble transform Kalman filter
 !!!    Copyright (C) 2014  Philip A. Browne
 !!!
 !!!    This program is free software: you can redistribute it and/or modify
@@ -28,6 +28,9 @@
 ! $Revision: 1.6 $
 ! $Date: 2013/12/12 03:58:54 $
 
+!> subroutine to perform the ensemble transform Kalman filter
+!>
+!> 
 subroutine etkf_analysis(num_hor,num_ver,this_hor,this_ver,boundary,x,N,stateDim,obsDim,rho)
 
 implicit none

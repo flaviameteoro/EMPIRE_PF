@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-09-19 11:27:17 pbrowne>
+!!! Time-stamp: <2014-09-25 14:15:16 pbrowne>
 !!!
 !!!    This file must be adapted to the specific model in use.
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -24,8 +24,10 @@
 !!!	      RG6 6BB
 !!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+!> subroutine called initially to set up details and data
+!> for model specific functions
 subroutine configure_model
-  !called initially to get up details and data for model specific functions
   use pf_control
   use sizes
   use Qdata
@@ -63,33 +65,39 @@ subroutine configure_model
 end subroutine configure_model
 
 
-
+!>subroutine to take an observation vector y and return v
+!!  in observation space.
+!!
+!! Given \f$y\f$ find \f$v\f$ such that \f$Rv=y\f$
 subroutine solve_r(y,v,t)
-  !subroutine to take an observation vector y and return v
-  !in observation space.
   use sizes
   use pf_control
   implicit none
   integer, parameter :: rk=kind(1.0D+0)
-  integer, intent(in) :: t !the timestep
-  real(kind=rk), dimension(obs_dim,pf%count), intent(in) :: y
-  real(kind=rk), dimension(obs_dim,pf%count), intent(out) :: v
+  real(kind=rk), dimension(obs_dim,pf%count), intent(in) :: y !<
+                                                              !!input vector
+  real(kind=rk), dimension(obs_dim,pf%count), intent(out) :: v!<
+  !!result vector where \f$v=R^{-1}y\f$
+  integer, intent(in) :: t !<the timestep
 
   !v = y/(0.3d0**2)
   stop 'Solve_r not yet implemented'
   
 end subroutine solve_r
 
-
+!>subroutine to take an observation vector y and return v
+!>in observation space.
+!!
+!! Given \f$y\f$ find \f$v\f$ such that \f$(HQH^T+R)v=y\f$
 subroutine solve_hqht_plus_r(y,v,t)
-  !subroutine to take an observation vector y and return v
-  !in observation space.
   use sizes
   implicit none
   integer, parameter :: rk=kind(1.0D+0)
-  integer, intent(in) :: t !the timestep
-  real(kind=rk), dimension(obs_dim), intent(in) :: y
-  real(kind=rk), dimension(obs_dim), intent(out) :: v
+  real(kind=rk), dimension(obs_dim), intent(in) :: y !<the input vector
+  real(kind=rk), dimension(obs_dim), intent(out) :: v !< the result
+  !! where \f$v = (HQH^T+R)^{-1}y\f$
+  integer, intent(in) :: t !<the timestep
+  
 
   !v = y/(5.3d3**2+0.3d0**2)
   stop 'solve_hqht_plus_r not yet implemented'
@@ -97,15 +105,20 @@ subroutine solve_hqht_plus_r(y,v,t)
 
 end subroutine solve_hqht_plus_r
 
+!> subroutine to take a full state vector x and return Qx
+!> in state space.
+!!
+!! Given \f$x\f$ compute \f$Qx\f$
 subroutine Q(nrhs,x,Qx)
-  !subroutine to take a full state vector x and return Qx
-  !in state space.
+
   use sizes
   implicit none
   integer, parameter :: rk=kind(1.0D+0)
-  integer, intent(in) :: nrhs
-  real(kind=rk), dimension(state_dim,nrhs), intent(in) :: x
-  real(kind=rk), dimension(state_dim,nrhs), intent(out) :: Qx
+  integer, intent(in) :: nrhs !< the number of right hand sides
+  real(kind=rk), dimension(state_dim,nrhs), intent(in) :: x !< the
+  !!input vector
+  real(kind=rk), dimension(state_dim,nrhs), intent(out) :: Qx !< the
+  !!resulting vector where Qx \f$= Qx\f$
   real(kind=rk), dimension(state_dim,nrhs) :: temp
 
   call Qhalf(nrhs,x,temp)
@@ -115,83 +128,108 @@ subroutine Q(nrhs,x,Qx)
 
 end subroutine Q
 
+
+
+!> subroutine to take a full state vector x and return \f$Q^{1/2}x\f$
+!> in state space.
+!!
+!! Given \f$x\f$ compute \f$Q^{\frac{1}{2}}x\f$
 subroutine Qhalf(nrhs,x,Qx)
-  !subroutine to take a full state vector x and return Q^{1/2}x
-  !in state space.
   use sizes
   use Qdata
   implicit none
   integer, parameter :: rk=kind(1.0D+0)
-  integer, intent(in) :: nrhs
-  real(kind=rk), dimension(state_dim,nrhs), intent(in) :: x
-  real(kind=rk), dimension(state_dim,nrhs), intent(out) :: qx
+  integer, intent(in) :: nrhs !< the number of right hand sides
+  real(kind=rk), dimension(state_dim,nrhs), intent(in) :: x !< the
+  !!input vector
+  real(kind=rk), dimension(state_dim,nrhs), intent(out) :: qx !< the
+  !!resulting vector where Qx \f$= Q^{\frac{1}{2}}x\f$
 
   !qx = 5.3d3*x
   stop 'Qhalf not yet implemented'
   
 end subroutine Qhalf
 
-
+!> subroutine to take an observation vector x and return Rx
+!> in observation space.
+!!
+!! Given \f$y\f$ compute \f$Ry\f$
 subroutine R(nrhs,y,Ry,t)
-  !subroutine to take an observation vector x and return Rx
-  !in observation space.
   use sizes
   use Rdata
   implicit none
   integer, parameter :: rk=kind(1.0D+0)
-  integer, intent(in) :: nrhs
-  integer, intent(in) :: t !the timestep
-  real(kind=rk), dimension(obs_dim,nrhs), intent(in) :: y
-  real(kind=rk), dimension(obs_dim,nrhs), intent(out) :: Ry
+  integer, intent(in) :: nrhs !< the number of right hand sides
+  real(kind=rk), dimension(obs_dim,nrhs), intent(in) :: y !< the
+  !!input vector
+  real(kind=rk), dimension(obs_dim,nrhs), intent(out) :: Ry !< the
+  !!resulting vectors where Ry \f$= Ry\f$
+  integer, intent(in) :: t !< the timestep
+
 
   stop 'R not yet implemented'
   !Ry = 0.3d0**2*y
 
 end subroutine R
 
+!> subroutine to take an observation vector x and return Rx
+!> in observation space.
+!!
+!! Given \f$y\f$ compute \f$R^{\frac{1}{2}}y\f$
 subroutine Rhalf(nrhs,y,Ry,t)
-  !subroutine to take an observation vector x and return Rx
-  !in observation space.
   use sizes
   use Rdata
   implicit none
   integer, parameter :: rk=kind(1.0D+0)
-  integer, intent(in) :: nrhs
-  integer, intent(in) :: t !the timestep
-  real(kind=rk), dimension(obs_dim,nrhs), intent(in) :: y
-  real(kind=rk), dimension(obs_dim,nrhs), intent(out) :: Ry
+  integer, intent(in) :: nrhs !< the number of right hand sides
+  real(kind=rk), dimension(obs_dim,nrhs), intent(in) :: y !< the
+  !!input vector
+  real(kind=rk), dimension(obs_dim,nrhs), intent(out) :: Ry !< the
+  !!resulting vector where Ry \f$= R^{\frac{1}{2}}y\f$
+  integer, intent(in) :: t !<the timestep
+
 
   stop 'Rhalf not yet implemented'
   !Ry = 0.3d0*y
 
 end subroutine RHALF
 
+
+!> subroutine to take a full state vector x and return H(x)
+!> in observation space.
+!!
+!! Given \f$x\f$ compute \f$Hx\f$
 subroutine H(x,hx,t)
-  !subroutine to take a full state vector x and return H(x)
-  !in observation space.
   use pf_control
   use sizes
   implicit none
   integer, parameter :: rk=kind(1.0D+0)
-  integer, intent(in) :: t !the timestep
-  real(kind=rk), dimension(state_dim,pf%count), intent(in) :: x
-  real(kind=rk), dimension(obs_dim,pf%count), intent(out) :: hx
+  real(kind=rk), dimension(state_dim,pf%count), intent(in) :: x !< the
+  !!input vectors in state space
+  real(kind=rk), dimension(obs_dim,pf%count), intent(out) :: hx !< the
+  !!resulting vector in observation space  where hx \f$= Hx\f$
+  integer, intent(in) :: t !< the timestep
+
 
   stop 'H not yet implemented'
   !hx(:,:) = x(539617:566986,:)
 
 end subroutine H
 
+!> subroutine to take an observation vector y and return x = H^T(y)
+!> in full state space.
+!!
+!! Given \f$y\f$ compute \f$x=H^T(y)\f$
 subroutine HT(y,x,t)
-  !subroutine to take an observation vector y and return x = H^T(y)
-  !in full state space.
   use pf_control
   use sizes
   implicit none
   integer, parameter :: rk=kind(1.0D+0)
-  integer, intent(in) :: t !the timestep
-  real(kind=rk), dimension(state_dim,pf%count), intent(out) :: x
-  real(kind=rk), dimension(obs_dim,pf%count), intent(in) :: y
+  real(kind=rk), dimension(obs_dim,pf%count), intent(in) :: y !< the
+  !!input vectors in observation space
+  real(kind=rk), dimension(state_dim,pf%count), intent(out) :: x !< the
+  !!resulting vector in state space where x \f$= H^Ty\f$
+  integer, intent(in) :: t !< the timestep
 
   stop 'HT not yet implemented'
   !x = 0.0_rk
@@ -199,3 +237,17 @@ subroutine HT(y,x,t)
 
 end subroutine HT
 
+!> subroutine to compute the distance between the variable
+!> in the state vector and the variable in the observations
+!>
+!> Compute \f$\mathrm{dist}(x(xp),y(yp))\f$
+subroutine dist(xp,yp,dis,t)
+  use sizes
+  implicit none
+  integer, intent(in) :: xp !<the index in the state vector
+  integer, intent(in) :: yp !<the index in the observation vector
+  integer, intent(in) :: t  !<the current time index for observations
+  real(kind=kind(1.0d0)), intent(out) :: dis !<the distance between
+                                             !!x(xp) and y(yp)
+  stop 'dist not yet implemented'
+end subroutine dist
