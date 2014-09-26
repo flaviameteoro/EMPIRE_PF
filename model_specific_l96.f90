@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-09-26 11:50:34 pbrowne>
+!!! Time-stamp: <2014-09-26 11:52:25 pbrowne>
 !!!
 !!!    This file must be adapted to the specific model in use.
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -173,7 +173,8 @@ subroutine Qhalf(nrhs,x,Qx)
   !!resulting vector where Qx \f$= Q^{\frac{1}{2}}x\f$
 
   !qx = 5.3d3*x
-  stop 'Qhalf not yet implemented'
+  qx = 0.0d0
+!  stop 'Qhalf not yet implemented'
   
 end subroutine Qhalf
 
