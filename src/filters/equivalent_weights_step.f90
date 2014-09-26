@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-09-22 14:24:05 pbrowne>
+!!! Time-stamp: <2014-09-26 11:13:48 pbrowne>
 !!!
 !!!    {one line to give the program's name and a brief idea of what it does.}
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -103,7 +103,7 @@ subroutine equal_weight_filter
      END DO
      
      
-     call H(fpsi,Hfpsi,pf%timestep)
+     call H(obs_dim,pf%count,fpsi,Hfpsi,pf%timestep)
      
      !compute c for each particle on this mpi thread
      do i = 1,pf%count
@@ -162,8 +162,8 @@ subroutine equal_weight_filter
   if(.not. pf%gen_data) then
      !compute the kalman gain
      call K(y_Hfpsin1,kgain)
-     call H(kgain,obsv,pf%timestep)
-     call solve_r(obsv,obsvv,pf%timestep)
+     call H(obs_dim,pf%count,kgain,obsv,pf%timestep)
+     call solve_r(obs_dim,pf%count,obsv,obsvv,pf%timestep)
      
      !compute a for each particle on this mpi thread
      do i = 1,pf%count
@@ -225,7 +225,7 @@ subroutine equal_weight_filter
   if(pf%gen_data) then
      write(6,*) 'generating the data'
      call flush(6)
-     call H(pf%psi,y,pf%timestep)
+     call H(obs_dim,pf%count,pf%psi,y,pf%timestep)
      !     write(6,*) 'after H'
      !     call flush(6)
      call NormalRandomNumbers1D(0.0D0,1.0D0,obs_dim,obsv)

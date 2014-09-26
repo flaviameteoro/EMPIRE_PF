@@ -7,7 +7,7 @@ FCOPTS = -O3 -fopenmp
 FCOPTS = -fimplicit-none -Wall -fbounds-check -fopenmp -O2 -fbacktrace
 
 #set the location of the libraries
-LIB_LIST = -L$(METISDIR) -l$(METISLIB) -lblas
+LIB_LIST = -L$(METISDIR) -l$(METISLIB) -lblas -llapack
 
 
 
@@ -24,7 +24,7 @@ SR_CONTS=src/controlers/
 SR_DATAS=src/data/
 SR_TESTS=src/tests/
 SR_OPERS=src/operations/
-OBJSQ= sizes.o pf_couple.o Qdata.o Rdata.o equivalent_weights_step.o comms.o gen_rand.o random_d.o proposal_filter.o histogram.o pf_control.o data_io.o model_specific.o operator_wrappers.o quicksort.o resample.o diagnostics.o perturb_particle.o genQ.o sir_filter.o stochastic_model.o tests.o
+OBJSQ= sizes.o pf_couple.o Qdata.o Rdata.o equivalent_weights_step.o comms.o gen_rand.o random_d.o proposal_filter.o histogram.o pf_control.o data_io.o model_specific.o operator_wrappers.o quicksort.o resample.o diagnostics.o perturb_particle.o genQ.o sir_filter.o stochastic_model.o tests.o letkf_analysis.o
 OBJS=$(addprefix $(OBS),$(OBJSQ))
 FCOPTS+=$(MODFLAG) $(MODLOC)
 
@@ -106,10 +106,19 @@ $(OBS)test_q.o: $(SR_TESTS)test_q.f90 $(OBS)pf_control.o
 $(OBS)test_hqhtr.o: $(SR_TESTS)test_hqhtr.f90 $(OBS)pf_control.o
 	$(FC) $(FCOPTS) -c $(SR_TESTS)test_hqhtr.f90 -o $@
 
-
-
 $(OBS)gen_rand.o: $(SR_OPERS)gen_rand.f90 $(OBS)random_d.o
 	$(FC) $(FCOPTS) -c $(SR_OPERS)gen_rand.f90 -o $@
+
+
+#ENKF SECTION:
+$(OBS)letkf_analysis.o: $(SR_FILTS)letkf_analysis.f90
+	$(FC) $(FCOPTS) -c $(SR_FILTS)letkf_analysis.f90 -o $@
+
+
+
+
+
+
 
 EMPIRE: $(OBJS) 
 	$(FC) $(FCOPTS) $(LOADOPTS) -o $(BIN)empire $(OBJS) $(LIB_LIST)

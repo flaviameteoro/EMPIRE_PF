@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-09-23 14:44:20 pbrowne>
+!!! Time-stamp: <2014-09-26 11:13:30 pbrowne>
 !!!
 !!!    Collection of combinations of other subroutines
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -46,11 +46,11 @@ subroutine K(y,x)
 !  print*,'||y||_2 = ',dnrm2(obs_dim,y,1)
 
   do i = 1,pf%count
-     call solve_hqht_plus_r(y(:,i),v(:,i),pf%timestep)
+     call solve_hqht_plus_r(obs_dim,y(:,i),v(:,i),pf%timestep)
   end do
 
 !  print*,'||(HQHT+R)^(-1)y||_2 = ',dnrm2(obs_dim,v,1)
-  call HT(v,vv,pf%timestep)
+  call HT(obs_dim,pf%count,v,vv,pf%timestep)
 !  print*,'||HTv||_2 = ',dnrm2(state_dim,vv,1)
   call Q(pf%count,vv,x)
 !  print*,'||Qvv||_2 = ',dnrm2(state_dim,x,1)
@@ -74,7 +74,7 @@ subroutine innerR_1(y,w)
   real(kind=rk) :: ddot
   integer :: i
 
-  call solve_r(y,v,pf%timestep)
+  call solve_r(obs_dim,pf%count,y,v,pf%timestep)
 
   !this can defo be done better using BLAS PAB...
   do i = 1,pf%count
@@ -98,7 +98,7 @@ subroutine innerHQHt_plus_R_1(y,w)
   real(kind=rk), dimension(obs_dim) :: v
   real(kind=rk), intent(out) :: w
 
-  call solve_hqht_plus_r(y,v,pf%timestep)
+  call solve_hqht_plus_r(obs_dim,y,v,pf%timestep)
 
   !this can defo be done better using BLAS PAB...
   w = sum(y*v)
@@ -190,9 +190,9 @@ if(tau .le. atmos) then
       if(time) ti(5:7) = mpi_wtime()
    else
       
-      call solve_r(y,R_1y,pf%timestep)
+      call solve_r(obs_dim,pf%count,y,R_1y,pf%timestep)
       if(time) ti(1) = mpi_wtime()
-      call HT(R_1y,HtR_1y,pf%timestep)
+      call HT(obs_dim,pf%count,R_1y,HtR_1y,pf%timestep)
       if(time) ti(2) = mpi_wtime()
       !comment out Qhalf to make this subroutine Bprime  
       !   call Qhalf(HtR_1y,QHtR_1y)
@@ -224,9 +224,9 @@ else
       if(time) ti(5:7) = mpi_wtime()
    else
       
-      call solve_r(y,R_1y,pf%timestep)
+      call solve_r(obs_dim,pf%count,y,R_1y,pf%timestep)
       if(time) ti(1) = mpi_wtime()
-      call HT(R_1y,HtR_1y,pf%timestep)
+      call HT(obs_dim,pf%count,R_1y,HtR_1y,pf%timestep)
       if(time) ti(2) = mpi_wtime()
       !comment out Qhalf to make this subroutine Bprime  
       !   call Qhalf(HtR_1y,QHtR_1y)

@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-09-22 12:24:19 pbrowne>
+!!! Time-stamp: <2014-09-26 11:12:56 pbrowne>
 !!!
 !!!    Collection of subroutines to perform checks of user supplied routines
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -50,8 +50,8 @@ subroutine H_tests()
   !test one - zeros
   a = 0.0d0
   pf%count = 1
-  call HT(a,j,1)
-  call H(j,s,1)
+  call HT(obs_dim,pf%count,a,j,1)
+  call H(obs_dim,pf%count,j,s,1)
   !s should be a
   r = dnrm2(obs_dim,s,1)
   write(6,'(A)',advance='no') 'Test 1: H H^T(0) ... '
@@ -63,8 +63,8 @@ subroutine H_tests()
   end if
 
   a = 1.0d0
-  call HT(a,j,1)
-  call H(j,s,1)
+  call HT(obs_dim,pf%count,a,j,1)
+  call H(obs_dim,pf%count,j,s,1)
   !s should be a
   r = dnrm2(obs_dim,s-a,1)
   write(6,'(A)',advance='no') 'Test 2: H H^T(1) ... '
@@ -76,8 +76,8 @@ subroutine H_tests()
   end if
   
   a = -1.0d0
-  call HT(a,j,1)
-  call H(j,s,1)
+  call HT(obs_dim,pf%count,a,j,1)
+  call H(obs_dim,pf%count,j,s,1)
   !s should be a
   r = dnrm2(obs_dim,s-a,1)
   write(6,'(A)',advance='no') 'Test 3: H H^T(-1) ... '
@@ -90,8 +90,8 @@ subroutine H_tests()
 
 
   call NormalRandomNumbers1D(0.0_rk,1.0_rk,obs_dim,a)
-  call HT(a,j,1)
-  call H(j,s,1)
+  call HT(obs_dim,pf%count,a,j,1)
+  call H(obs_dim,pf%count,j,s,1)
   !s should be a                              
   r = dnrm2(obs_dim,s-a,1)
   write(6,'(A)',advance='no') 'Test 4: H H^T( N(0,1) ) ... '
@@ -106,8 +106,8 @@ subroutine H_tests()
   do i = 1,10
      aa = 0.0_rk
      pf%count = i
-     call HT(aa(:,1:i),jj(:,1:i),i)
-     call  H(jj(:,1:i),ss(:,1:i),i)
+     call HT(obs_dim,pf%count,aa(:,1:i),jj(:,1:i),i)
+     call  H(obs_dim,pf%count,jj(:,1:i),ss(:,1:i),i)
      write(6,'(A,i2,A,i2,A)',advance='no') 'Test 5 ',i,' RHS: H H^T(0) ... '
      do k = 1,i
         !s should be a
@@ -135,8 +135,8 @@ subroutine H_tests()
   do i = 1,10
      aa = 1.0_rk
      pf%count = i
-     call HT(aa(:,1:i),jj(:,1:i),i)
-     call  H(jj(:,1:i),ss(:,1:i),i)
+     call HT(obs_dim,pf%count,aa(:,1:i),jj(:,1:i),i)
+     call  H(obs_dim,pf%count,jj(:,1:i),ss(:,1:i),i)
      write(6,'(A,i2,A,i2,A)',advance='no') 'Test 6 ',i,' RHS: H H^T(1) ... '
      do k = 1,i
         !s should be a
@@ -163,8 +163,8 @@ subroutine H_tests()
   do i = 1,10
      aa = 0.0_rk
      pf%count = i
-     call HT(aa(:,1:i),jj(:,1:i),i)
-     call  H(jj(:,1:i),ss(:,1:i),i)
+     call HT(obs_dim,pf%count,aa(:,1:i),jj(:,1:i),i)
+     call  H(obs_dim,pf%count,jj(:,1:i),ss(:,1:i),i)
      write(6,'(A,i2,A,i2,A)',advance='no') 'Test 7 ',i,' RHS: H H^T(-1) ... '
      do k = 1,i
         !s should be a
@@ -192,8 +192,8 @@ subroutine H_tests()
   call NormalRandomNumbers2D(0.0_rk,1.0_rk,obs_dim,10,aa)
   do i = 1,10
      pf%count = i
-     call HT(aa(:,1:i),jj(:,1:i),i)
-     call  H(jj(:,1:i),ss(:,1:i),i)
+     call HT(obs_dim,pf%count,aa(:,1:i),jj(:,1:i),i)
+     call  H(obs_dim,pf%count,jj(:,1:i),ss(:,1:i),i)
      write(6,'(A,i2,A,i2,A)',advance='no') 'Test 8 ',i,' RHS: H H^T( N&
           &(0,1) ) ... '
      do k = 1,i
@@ -277,7 +277,7 @@ subroutine R_tests()
   !test one - zeros
   a = 0.0d0
   pf%count = 1
-  call R(1,a,s,1)
+  call R(obs_dim,1,a,s,1)
  
   !s should be 0
   rr = dnrm2(obs_dim,s,1)
@@ -292,7 +292,7 @@ subroutine R_tests()
   end if
 
   a = 0.0d0
-  call Rhalf(1,a,s,1)
+  call Rhalf(obs_dim,1,a,s,1)
   !s should be a
   rr = dnrm2(obs_dim,s,1)
   write(6,'(A)',advance='no') 'Test 2: Rhalf(0) ... '
@@ -307,9 +307,9 @@ subroutine R_tests()
   
   a = 1.0d0
   s = 1.0d0
-  call     R(1,a,q,1)
-  call Rhalf(1,s,w,1)
-  call Rhalf(1,w,e,1)
+  call     R(obs_dim,1,a,q,1)
+  call Rhalf(obs_dim,1,s,w,1)
+  call Rhalf(obs_dim,1,w,e,1)
   !q should be e
   rr = dnrm2(obs_dim,q-e,1)
   write(6,'(A)',advance='no') 'Test 3: [RhalfRhalf(1)]-[R(1)] ... '
@@ -324,9 +324,9 @@ subroutine R_tests()
 
   a = -1.0d0
   s = -1.0d0
-  call     R(1,a,q,1)
-  call Rhalf(1,s,w,1)
-  call Rhalf(1,w,e,1)
+  call     R(obs_dim,1,a,q,1)
+  call Rhalf(obs_dim,1,s,w,1)
+  call Rhalf(obs_dim,1,w,e,1)
   !q should be e
   rr = dnrm2(obs_dim,q-e,1)
   write(6,'(A)',advance='no') 'Test 4: [RhalfRhalf(-1)]-[R(-1)] ... '
@@ -341,9 +341,9 @@ subroutine R_tests()
 
   call NormalRandomNumbers1D(0.0d0,1.0d0,obs_dim,a)
   s = a
-  call     R(1,a,q,1)
-  call Rhalf(1,s,w,1)
-  call Rhalf(1,w,e,1)
+  call     R(obs_dim,1,a,q,1)
+  call Rhalf(obs_dim,1,s,w,1)
+  call Rhalf(obs_dim,1,w,e,1)
   !q should be e
   rr = dnrm2(obs_dim,q-e,1)
   write(6,'(A)',advance='no') 'Test 5: [RhalfRhalf( N(0,1) )]-[R( N(0,1) )] ... '
@@ -386,9 +386,9 @@ subroutine R_tests()
              &0,1) )-&
              &Rhalf(Rhalf( N(0,1) )) ... '   
      end if
-     call     R(i,aa(:,1:i),qq(:,1:i),1)
-     call Rhalf(i,ss(:,1:i),ww(:,1:i),1)
-     call Rhalf(i,ww(:,1:i),ee(:,1:i),1)
+     call     R(obs_dim,i,aa(:,1:i),qq(:,1:i),1)
+     call Rhalf(obs_dim,i,ss(:,1:i),ww(:,1:i),1)
+     call Rhalf(obs_dim,i,ww(:,1:i),ee(:,1:i),1)
      
      do k = 1,i
         !qq should be ee
@@ -429,7 +429,7 @@ subroutine R_tests()
   
   a = 0.0d0
   pf%count = 1
-  call solve_r(a,s,1)
+  call solve_r(obs_dim,pf%count,a,s,1)
  
   !s should be 0
   rr = dnrm2(obs_dim,s,1)
@@ -456,8 +456,8 @@ subroutine R_tests()
      end if
 
 
-     call     R(1,a,q,1)
-     call solve_r(q,w,1)
+     call     R(obs_dim,1,a,q,1)
+     call solve_r(obs_dim,pf%count,q,w,1)
      !w should be a
      rr = dnrm2(obs_dim,w-a,1)
 
@@ -490,8 +490,8 @@ subroutine R_tests()
      end if
 
      pf%count = i
-     call     R(i,aa(:,1:i),qq(:,1:i),1)
-     call solve_r(qq(:,1:i),ww(:,1:i),1)
+     call     R(obs_dim,i,aa(:,1:i),qq(:,1:i),1)
+     call solve_r(obs_dim,pf%count,qq(:,1:i),ww(:,1:i),1)
      !w should be a
      do k = 1,i
         rr = dnrm2(obs_dim,ww(:,k)-aa(:,k),1)
@@ -782,7 +782,7 @@ write(6,*) 'TESTING (HQH^T+R)^(-1)'
   !test one - zeros
   a = 0.0d0
   pf%count = 1
-  call solve_hqht_plus_r(a,s,1)
+  call solve_hqht_plus_r(obs_dim,a,s,1)
   !s should be a
   rr = dnrm2(obs_dim,s,1)
   write(6,'(A)',advance='no') 'Test 1: (HQH^T+R)^(-1)[0] ... '
@@ -810,12 +810,12 @@ write(6,*) 'TESTING (HQH^T+R)^(-1)'
      end if
 
 
-     call     R(1,a,qq,1)
-     call   HT(a,ha,1)
+     call     R(obs_dim,1,a,qq,1)
+     call   HT(obs_dim,1,a,ha,1)
      call    Q(1,ha,qha)
-     call    H(qha,hqha,1)
+     call    H(obs_dim,1,qha,hqha,1)
      hqha_r = hqha+qq
-     call solve_hqht_plus_r(hqha_r,s,1)
+     call solve_hqht_plus_r(obs_dim,hqha_r,s,1)
      !w should be a
      rr = dnrm2(obs_dim,s-a,1)
 

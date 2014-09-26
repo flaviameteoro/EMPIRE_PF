@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-09-22 14:27:10 pbrowne>
+!!! Time-stamp: <2014-09-26 11:10:52 pbrowne>
 !!!
 !!!    Subroutine to perform nudging in the proposal step of EWPF
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -62,7 +62,7 @@ subroutine proposal_filter
   !compute y - H(x)
   if(.not. pf%gen_data) then
      if(time) t = mpi_wtime()
-     call H(pf%psi,Hpsi,pf%timestep)
+     call H(obs_dim,pf%count,pf%psi,Hpsi,pf%timestep)
      if(time) ti(1) = mpi_wtime()-t
      !$omp parallel do
      do k = 1,pf%count

@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-09-25 14:57:11 pbrowne>
+!!! Time-stamp: <2014-09-26 11:01:58 pbrowne>
 !!!
 !!!    This file must be adapted to the specific model in use.
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -69,14 +69,14 @@ end subroutine configure_model
 !!  in observation space.
 !!
 !! Given \f$y\f$ find \f$v\f$ such that \f$Rv=y\f$
-subroutine solve_r(y,v,t)
-  use sizes
-  use pf_control
+subroutine solve_r(obsDim,nrhs,y,v,t)
   implicit none
   integer, parameter :: rk=kind(1.0D+0)
-  real(kind=rk), dimension(obs_dim,pf%count), intent(in) :: y !<
+  integer, intent(in) :: obsDim !< the dimension of the observations
+  integer, intent(in) :: nrhs   !< the number of right hand sides
+  real(kind=rk), dimension(obsdim,nrhs), intent(in) :: y !<
                                                               !!input vector
-  real(kind=rk), dimension(obs_dim,pf%count), intent(out) :: v!<
+  real(kind=rk), dimension(obsdim,nrhs), intent(out) :: v!<
   !!result vector where \f$v=R^{-1}y\f$
   integer, intent(in) :: t !<the timestep
 
@@ -86,15 +86,37 @@ subroutine solve_r(y,v,t)
 end subroutine solve_r
 
 !>subroutine to take an observation vector y and return v
+!!  in observation space.
+!!
+!! Given \f$y\f$ find \f$v\f$ such that \f$R^{\frac{1}{2}}v=y\f$
+subroutine solve_rhalf(obsdim,nrhs,y,v,t)
+  implicit none
+  integer, parameter :: rk=kind(1.0D+0)
+  integer, intent(in) :: obsDim !< the dimension of the observations
+  integer, intent(in) :: nrhs !< the number of right hand sides
+  real(kind=rk), dimension(obsdim,nrhs), intent(in) :: y !<
+                                                              !!input vector
+  real(kind=rk), dimension(obsdim,nrhs), intent(out) :: v!<
+  !!result vector where \f$v=R^{-\frac{1}{2}}y\f$
+  integer, intent(in) :: t !<the timestep
+
+  !v = y/(0.3d0**2)
+  stop 'Solve_r_half not yet implemented'
+  
+end subroutine solve_rhalf
+
+
+
+!>subroutine to take an observation vector y and return v
 !>in observation space.
 !!
 !! Given \f$y\f$ find \f$v\f$ such that \f$(HQH^T+R)v=y\f$
-subroutine solve_hqht_plus_r(y,v,t)
-  use sizes
+subroutine solve_hqht_plus_r(obsdim,y,v,t)
   implicit none
   integer, parameter :: rk=kind(1.0D+0)
-  real(kind=rk), dimension(obs_dim), intent(in) :: y !<the input vector
-  real(kind=rk), dimension(obs_dim), intent(out) :: v !< the result
+  integer, intent(in) :: obsdim !< the dimension of the observations
+  real(kind=rk), dimension(obsdim), intent(in) :: y !<the input vector
+  real(kind=rk), dimension(obsdim), intent(out) :: v !< the result
   !! where \f$v = (HQH^T+R)^{-1}y\f$
   integer, intent(in) :: t !<the timestep
   
@@ -154,15 +176,15 @@ end subroutine Qhalf
 !> in observation space.
 !!
 !! Given \f$y\f$ compute \f$Ry\f$
-subroutine R(nrhs,y,Ry,t)
-  use sizes
+subroutine R(obsDim,nrhs,y,Ry,t)
   use Rdata
   implicit none
   integer, parameter :: rk=kind(1.0D+0)
+  integer, intent(in) :: obsDim !< the dimension of the observations
   integer, intent(in) :: nrhs !< the number of right hand sides
-  real(kind=rk), dimension(obs_dim,nrhs), intent(in) :: y !< the
+  real(kind=rk), dimension(obsDim,nrhs), intent(in) :: y !< the
   !!input vector
-  real(kind=rk), dimension(obs_dim,nrhs), intent(out) :: Ry !< the
+  real(kind=rk), dimension(obsDim,nrhs), intent(out) :: Ry !< the
   !!resulting vectors where Ry \f$= Ry\f$
   integer, intent(in) :: t !< the timestep
 
@@ -176,15 +198,15 @@ end subroutine R
 !> in observation space.
 !!
 !! Given \f$y\f$ compute \f$R^{\frac{1}{2}}y\f$
-subroutine Rhalf(nrhs,y,Ry,t)
-  use sizes
+subroutine Rhalf(obsDim,nrhs,y,Ry,t)
   use Rdata
   implicit none
   integer, parameter :: rk=kind(1.0D+0)
+  integer, intent(in) :: obsDim !< the dimension of the observations
   integer, intent(in) :: nrhs !< the number of right hand sides
-  real(kind=rk), dimension(obs_dim,nrhs), intent(in) :: y !< the
+  real(kind=rk), dimension(obsDim,nrhs), intent(in) :: y !< the
   !!input vector
-  real(kind=rk), dimension(obs_dim,nrhs), intent(out) :: Ry !< the
+  real(kind=rk), dimension(obsDim,nrhs), intent(out) :: Ry !< the
   !!resulting vector where Ry \f$= R^{\frac{1}{2}}y\f$
   integer, intent(in) :: t !<the timestep
 
@@ -199,14 +221,16 @@ end subroutine RHALF
 !> in observation space.
 !!
 !! Given \f$x\f$ compute \f$Hx\f$
-subroutine H(x,hx,t)
+subroutine H(obsDim,nrhs,x,hx,t)
   use pf_control
   use sizes
   implicit none
   integer, parameter :: rk=kind(1.0D+0)
-  real(kind=rk), dimension(state_dim,pf%count), intent(in) :: x !< the
+  integer, intent(in) :: obsDim !< the dimension of the observations
+  integer, intent(in) :: nrhs !< the number of right hand sides
+  real(kind=rk), dimension(state_dim,nrhs), intent(in) :: x !< the
   !!input vectors in state space
-  real(kind=rk), dimension(obs_dim,pf%count), intent(out) :: hx !< the
+  real(kind=rk), dimension(obsDim,nrhs), intent(out) :: hx !< the
   !!resulting vector in observation space  where hx \f$= Hx\f$
   integer, intent(in) :: t !< the timestep
 
@@ -220,14 +244,16 @@ end subroutine H
 !> in full state space.
 !!
 !! Given \f$y\f$ compute \f$x=H^T(y)\f$
-subroutine HT(y,x,t)
+subroutine HT(obsDim,nrhs,y,x,t)
   use pf_control
   use sizes
   implicit none
   integer, parameter :: rk=kind(1.0D+0)
-  real(kind=rk), dimension(obs_dim,pf%count), intent(in) :: y !< the
+  integer, intent(in) :: obsDim !< the dimension of the observations
+  integer, intent(in) :: nrhs !< the number of right hand sides
+  real(kind=rk), dimension(obsDim,nrhs), intent(in) :: y !< the
   !!input vectors in observation space
-  real(kind=rk), dimension(state_dim,pf%count), intent(out) :: x !< the
+  real(kind=rk), dimension(state_dim,nrhs), intent(out) :: x !< the
   !!resulting vector in state space where x \f$= H^Ty\f$
   integer, intent(in) :: t !< the timestep
 
@@ -241,13 +267,13 @@ end subroutine HT
 !> in the state vector and the variable in the observations
 !>
 !> Compute \f$\mathrm{dist}(x(xp),y(yp))\f$
-subroutine dist(xp,yp,dis,t)
+subroutine dist_st_ob(xp,yp,dis,t)
   use sizes
   implicit none
   integer, intent(in) :: xp !<the index in the state vector
   integer, intent(in) :: yp !<the index in the observation vector
-  integer, intent(in) :: t  !<the current time index for observations
   real(kind=kind(1.0d0)), intent(out) :: dis !<the distance between
                                              !!x(xp) and y(yp)
+  integer, intent(in) :: t  !<the current time index for observations
   stop 'dist not yet implemented'
-end subroutine dist
+end subroutine dist_st_ob

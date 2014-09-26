@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-09-22 14:29:33 pbrowne>
+!!! Time-stamp: <2014-09-26 10:55:02 pbrowne>
 !!!
 !!!    Subroutine to perform SIR filter
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -83,7 +83,7 @@ if(mod(pf%timestep,pf%time_bwn_obs) .eq. 0) then
    call get_observation_data(y)
    !this is the analysis step.
    
-   call H(fpsi,Hfpsi,pf%timestep)
+   call H(obs_dim,pf%count,fpsi,Hfpsi,pf%timestep)
 
    !$omp parallel do
    do k = 1,pf%count

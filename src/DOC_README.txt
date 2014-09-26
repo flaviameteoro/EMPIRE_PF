@@ -1,6 +1,6 @@
 /** \mainpage EMPIRE Data Assimilation Documentation
 \author Philip A. Browne <a href="mailto:p.browne@reading.ac.uk">p.browne@reading.ac.uk</a>
-\date Time-stamp: <2014-09-24 16:15:36 pbrowne>
+\date Time-stamp: <2014-09-26 10:21:42 pbrowne>
 
 \section Download Downloading
 
@@ -12,7 +12,7 @@ git clone git@bitbucket.org:pbrowne/empire-data-assimilation.git
 or
 
 \code{.sh}
-wget https://bitbucket.org/pbrowne/empire-data-assimilation/get/aa31fdfc3912.zip && gunzip aa31fdfc3912.zip
+wget https://bitbucket.org/pbrowne/empire-data-assimilation/get/c25362521bd3.zip && unzip c25362521bd3.zip
 \endcode
 
 \copyright These codes are distributed under the GNU GPU v3 Licence. See LICENCE.txt.
@@ -75,6 +75,8 @@ The file model_specific.f90 should be editted for the specific model which you w
 - \link rhalf \endlink This is the square root of the observation error covariance matrix \f$R^{\frac{1}{2}}\f$
  
 - \link solve_r \endlink This is a linear solve with the observation error covariance matrix, i.e. given \f$b\f$, find \f$x\f$ such that \f$Rx=b\f$ or indeed, \f$x = R^{-1}b\f$
+
+- \link solve_rhalf \endlink This is a linear solve with the square root of the observation error covariance matrix, i.e. given \f$b\f$, find \f$x\f$ such that \f$R^{\frac{1}{2}}x=b\f$ or indeed, \f$x = R^{-\frac{1}{2}}b\f$
 
 - \link q \endlink This is the model error covariance matrix \f$Q\f$
 
