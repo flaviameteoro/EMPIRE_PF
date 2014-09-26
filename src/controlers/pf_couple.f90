@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-09-26 13:30:33 pbrowne>
+!!! Time-stamp: <2014-09-26 16:59:33 pbrowne>
 !!!
 !!!    {one line to give the program's name and a brief idea of what it does.}
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -167,6 +167,7 @@ program empire
      write(6,*) 'PF: timestep = ',pf%timestep, 'after equal weight filter'
      call flush(6)
 
+     if(pf%gen_data) call save_truth(pf%psi(:,1))
      if(pf%use_traj) call trajectories
      call output_from_pf
 
