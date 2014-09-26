@@ -1,6 +1,6 @@
 /** \mainpage EMPIRE Data Assimilation Documentation
 \author Philip A. Browne <a href="mailto:p.browne@reading.ac.uk">p.browne@reading.ac.uk</a>
-\date Time-stamp: <2014-09-26 10:21:42 pbrowne>
+\date Time-stamp: <2014-09-26 11:47:35 pbrowne>
 
 \section Download Downloading
 
@@ -25,6 +25,9 @@ The Makefile must be editted for the specific compiler setup. In the main direct
 
 Edit the variables as follows:
 - \c FC The fortran compiler
+
+This has been tested with gfortran 4.8.2
+
 - \c FCOPTS The options for the fortran compiler
 - \c LIB_LIST The libraries to be called. Note this must include BLAS
 
