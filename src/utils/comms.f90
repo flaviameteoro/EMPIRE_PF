@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-09-22 15:42:19 pbrowne>
+!!! Time-stamp: <2014-09-26 12:11:50 pbrowne>
 !!!
 !!!    Module and subroutine to intitalise EMPIRE coupling to models
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -81,7 +81,7 @@ contains
     CALL MPI_COMM_SIZE (CPL_MPI_COMM, nens, mpi_err)
     
     da = 1
-    CALL MPI_ALLREDUCE(da,npfs,1,mpi_integer8,mpi_sum,cpl_mpi_comm&
+    CALL MPI_ALLREDUCE(da,npfs,1,mpi_integer,mpi_sum,cpl_mpi_comm&
          &,mpi_err)
     nens = nens-npfs
     
