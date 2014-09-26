@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-09-26 11:52:25 pbrowne>
+!!! Time-stamp: <2014-09-26 13:22:41 pbrowne>
 !!!
 !!!    This file must be adapted to the specific model in use.
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -106,7 +106,8 @@ subroutine solve_rhalf(obsdim,nrhs,y,v,t)
   integer, intent(in) :: t !<the timestep
 
   !v = y/(0.3d0**2)
-  stop 'Solve_r_half not yet implemented'
+  v = y
+!  stop 'Solve_r_half not yet implemented'
   
 end subroutine solve_rhalf
 

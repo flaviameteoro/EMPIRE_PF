@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-09-26 11:15:08 pbrowne>
+!!! Time-stamp: <2014-09-26 13:56:25 pbrowne>
 !!!
 !!!    Ensemble transform Kalman filter
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -73,7 +73,7 @@ integer :: i,j,number_gridpoints
 
 !variables for localisation
 real(kind=rk) :: dist
-real(kind=rk), parameter :: minscal=1.0d-14
+real(kind=rk), parameter :: maxscal=1.0d12
 real(kind=rk),dimension(obsDim) :: scal
 logical, dimension(obsDim) :: yes
 integer :: red_obsdim
@@ -81,7 +81,6 @@ real(kind=rk), allocatable, dimension(:,:) :: Ysf_red
 real(kind=rk), allocatable, dimension(:) :: dd_red
 integer :: stateDim !generally 1 for the letkf
 
-yes = .false.
 
 
 ! Split forecast ensemble into mean and perturbation matrix, inflating
@@ -117,15 +116,16 @@ number_gridpoints = stateDimension
 !$OMP PARALLEL DO PRIVATE(stateDim,i,dist,scal,yes,Ysf_red,red_obsDim,r,V,S,LWORK,WORK,dd_red,UT,dd,d,number_gridpoints)
 do j = 1,number_gridpoints
    stateDim = 1
-
+   yes = .false.
    !let us process the observations here:
    do i = 1,obsDim
       call dist_st_ob(j,i,dist,t)
       scal(i) = exp((dist**2)/(2.0_rk*len**2))
-      if(scal(i) .gt. minscal) yes(i) = .true.
+      if(scal(i) .lt. maxscal) yes(i) = .true.
    end do
    
    red_obsdim = count(yes)
+   print*,'j = ',j,' red_obsdim = ',red_obsdim,scal
 
    allocate(Ysf_red(red_obsdim,N))
    !multiply by the distance matrix
@@ -186,6 +186,10 @@ do j = 1,number_gridpoints
 
    !put this back into the full state vector
    !wait it is already
+   deallocate(Ysf_red)
+   deallocate(V)
+   deallocate(S)
+   deallocate(dd_red)
 end do
 !$OMP END PARALLEL DO
 

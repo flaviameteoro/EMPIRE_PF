@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-09-24 16:13:15 pbrowne>
+!!! Time-stamp: <2014-09-26 13:46:03 pbrowne>
 !!!
 !!!    module to hold all the information to control the the main program
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -46,7 +46,13 @@ module pf_control
      real(kind=kind(1.0D0)) :: efac
      real(kind=kind(1.0D0)) :: keep                !< proportion of particles to keep in EWPF EW step
      real(kind=kind(1.0D0)) :: time                !< dunno
-     real(kind=kind(1.0D0)) :: Qscale              !< scalar to multiply Q by
+     real(kind=kind(1.0D0)) :: Qscale              !< scalar to
+                                                   !!multiply Q by
+     real(kind=kind(1.0d0)) :: rho                 !< enkf inflation factor
+                                                   !! so that \f$P_f =
+                                                   !! (1+\rho)P_f\f$
+     real(kind=kind(1.0d0)) :: len                 !< R localisation
+                                                   !! length scale
      integer :: couple_root                        !< empire master processor
      logical :: use_talagrand !< switch if true outputs rank histograms
      logical :: use_weak      !< switch unused
@@ -114,6 +120,8 @@ contains
     !! - \link pf_control::pf_control_type::ufac ufac\endlink
     !! - \link pf_control::pf_control_type::Qscale Qscale \endlink
     !! - \link pf_control::pf_control_type::keep keep  \endlink
+    !! - \link pf_control::pf_control_type::rho rho  \endlink
+    !! - \link pf_control::pf_control_type::len len  \endlink
     !!
     !! 2 Characters:
     !! - \link pf_control::pf_control_type::type type\endlink
@@ -142,6 +150,8 @@ contains
       real(kind=kind(1.0D0)) :: nfac=-1.0d0                
       real(kind=kind(1.0D0)) :: ufac=-1.0d0
       real(kind=kind(1.0D0)) :: Qscale=-1.0d0
+      real(kind=kind(1.0D0)) :: rho=0.0d0
+      real(kind=kind(1.0d0)) :: len=-1.0d0
       real(kind=kind(1.0D0)) :: keep
       logical :: use_talagrand,use_weak,use_mean,use_var,use_traj&
            &,use_rmse
@@ -156,6 +166,8 @@ contains
       &keep,&
       &ufac,&                
       &Qscale,&
+      &rho,&
+      &len,&
       &use_talagrand,use_weak,use_mean,use_var,use_traj,use_rmse,&
       &type,&
       &init
@@ -211,6 +223,28 @@ contains
          print*,'read Qscale = ',Qscale
          pf%Qscale = Qscale
       end if
+      
+
+      if(rho .gt. 0.0d0) then
+         print*,'read rho = ',rho
+         pf%rho = rho
+      elseif(rho .lt. 0.0d0) then
+         print*,'read rho = ',rho,' WARNING ABOUT THAT ONE! rho is nor&
+              &mally positive'
+         pf%rho = rho
+      else
+         pf%rho = rho
+      end if
+
+
+      if(len .ge. 0.0d0) then
+         print*,'read len = ',len
+         pf%len = len
+       else
+         pf%len = len
+      end if
+
+
       !logical ::
       !use_talagrand,use_weak,use_mean,use_var,use_traj,use_rmse
       
@@ -228,8 +262,8 @@ contains
          print*,'Running the SIR particle filter'
       elseif(pf%type .eq. 'ET') then
          print*,'Running the Ensemble Transform Kalman Filter'
-         print*,'Error: The ETKF is not implemented here'
-         stop
+         !print*,'Error: The ETKF is not implemented here'
+         !stop
       elseif(pf%type .eq. 'EA') then
          print*,'Running the Ensemble Adjustment Kalman Filter'
          print*,'Error: The EAKF is not implemented here yet'

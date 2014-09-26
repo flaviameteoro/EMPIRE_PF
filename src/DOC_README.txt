@@ -1,12 +1,12 @@
 /** \mainpage EMPIRE Data Assimilation Documentation
 \author Philip A. Browne <a href="mailto:p.browne@reading.ac.uk">p.browne@reading.ac.uk</a>
-\date Time-stamp: <2014-09-26 11:47:35 pbrowne>
+\date Time-stamp: <2014-09-26 16:48:34 pbrowne>
 
 \section Download Downloading
 
 These codes are hosted on www.bitbucket.org and can be attained with the following commands:
 \code{.sh}
-git clone git@bitbucket.org:pbrowne/empire-data-assimilation.git
+git clone https://www.bitbucket.org/pbrowne/empire-data-assimilation.git
 \endcode
 
 or
