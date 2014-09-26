@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-09-26 11:13:48 pbrowne>
+!!! Time-stamp: <2014-09-26 12:21:27 pbrowne>
 !!!
 !!!    {one line to give the program's name and a brief idea of what it does.}
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -229,9 +229,10 @@ subroutine equal_weight_filter
      !     write(6,*) 'after H'
      !     call flush(6)
      call NormalRandomNumbers1D(0.0D0,1.0D0,obs_dim,obsv)
-     call rhalf(obsv,obsvv,pf%timestep)
+     call rhalf(obs_dim,pf%count,obsv,obsvv,pf%timestep)
      y = y + obsvv(:,1)
      call save_observation_data(y)
+     call diagnostics
   else 
      if(pf%use_talagrand) call diagnostics
      !print*,'entering resample step'

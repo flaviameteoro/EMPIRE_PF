@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-09-22 15:43:32 pbrowne>
+!!! Time-stamp: <2014-09-26 12:19:36 pbrowne>
 !!!
 !!!    Subroutine to give output diagnositics such as rank histograms
 !!!    and trajectories
@@ -179,23 +179,24 @@ subroutine diagnostics
      end if
 
   else
-!     print*,'in diagnostics at timestep ',pf%timestep
-     inquire(iolength=length) pf%psi(1,1)
-
-!        pf%timestep = -72
-     do particle = 1,pf%count
-        write(filename,'(A,i6.6,A)') 'hist/timestep',((pf%timestep)/pf&
-             &%time_bwn_obs) ,'truth'
-        open(12,file=filename,action='write',status='replace',form='unforma&
-             &tted',access='direct',recl=length)
-        !           call H(pf%psi(:,particle),Hpsi)
-        do i = 1,rhl_n
-           write(12,rec=i) pf%psi(rank_hist_list(i),particle)
+     if(pf%use_talagrand) then
+        !     print*,'in diagnostics at timestep ',pf%timestep
+        inquire(iolength=length) pf%psi(1,1)
+        
+        !        pf%timestep = -72
+        do particle = 1,pf%count
+           write(filename,'(A,i6.6,A)') 'hist/timestep',((pf%timestep)/pf&
+                &%time_bwn_obs) ,'truth'
+           open(12,file=filename,action='write',status='replace',form='unforma&
+                &tted',access='direct',recl=length)
+           !           call H(pf%psi(:,particle),Hpsi)
+           do i = 1,rhl_n
+              write(12,rec=i) pf%psi(rank_hist_list(i),particle)
+           end do
+           close(12)
         end do
-        close(12)
-     end do
+     end if
   end if
-
 end subroutine diagnostics
 
 !> subroutine to output trajectories
