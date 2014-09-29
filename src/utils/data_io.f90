@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-09-22 15:45:10 pbrowne>
+!!! Time-stamp: <2014-09-29 15:12:27 pbrowne>
 !!!
 !!!    Collection of subroutines to deal with i/o
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -251,3 +251,54 @@ subroutine output_from_pf
 
 
 end subroutine output_from_pf
+
+!> subroutine to save the state vector to a named file
+!! as an unformatted fortran file
+subroutine save_state(state,filename)
+  use sizes
+  implicit none
+  integer, parameter :: rk = kind(1.0d0)
+  real(kind=rk), dimension(state_dim), intent(in) :: state !< the
+  !!state vector
+  character(14), intent(in) :: filename !< the name of the file to
+  !!save the state vector in
+  integer :: ios
+
+  open(16,file=filename,iostat=ios,action='write',status='replace'&
+       &,form='unformatted')
+  if(ios .ne. 0)  then
+     write(*,*) 'PARTICLE FILTER DATA ERROR!!!!! Cannot open file '&
+          &,filename
+     write(*,*) 'Very strange that I couldnt open it. Im going to stop&
+          & now.'
+     stop
+  end if
+  write(16) state
+  close(16)
+end subroutine save_state
+
+
+!> subroutine to write the state vector to a named file
+!! as an unformatted fortran file
+subroutine get_state(state,filename)
+  use sizes
+  implicit none
+  integer, parameter :: rk = kind(1.0d0)
+  real(kind=rk), dimension(state_dim), intent(out) :: state !< the
+  !!state vector
+  character(14), intent(in) :: filename!< the name of the file to 
+  !!write the state vector in
+  integer :: ios
+
+  open(16,file=filename,iostat=ios,action='read',status='old',form='un&
+       &formatted')
+  if(ios .ne. 0)  then
+     write(*,*) 'PARTICLE FILTER DATA ERROR!!!!! Cannot open file '&
+          &,filename
+     write(*,*) 'Very strange that I couldnt open it. Im going to stop&
+          & now.'
+     stop
+  end if
+  read(16) state
+  close(16)
+end subroutine get_state

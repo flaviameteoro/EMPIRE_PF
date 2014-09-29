@@ -1,6 +1,6 @@
 /** \mainpage EMPIRE Data Assimilation Documentation
 \author Philip A. Browne <a href="mailto:p.browne@reading.ac.uk">p.browne@reading.ac.uk</a>
-\date Time-stamp: <2014-09-26 16:52:44 pbrowne>
+\date Time-stamp: <2014-09-26 18:02:48 pbrowne>
 
 \section Download Downloading
 
@@ -10,7 +10,7 @@ git clone https://www.bitbucket.org/pbrowne/empire-data-assimilation.git
 \endcode
 
 
-\copyright These codes are distributed under the GNU GPU v3 Licence. See LICENCE.txt.
+\copyright These codes are distributed under the GNU GPU v3 License. See LICENSE.txt.
 
 \section Compiling Compiling
 
@@ -24,7 +24,7 @@ Edit the variables as follows:
 This has been tested with gfortran 4.8.2
 
 - \c FCOPTS The options for the fortran compiler
-- \c LIB_LIST The libraries to be called. Note this must include BLAS
+- \c LIB_LIST The libraries to be called. Note this must include BLAS and LAPACK
 
 To compile the source code, simply then type the command
 \code{.sh}

@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-09-26 13:34:09 pbrowne>
+!!! Time-stamp: <2014-09-29 16:18:17 pbrowne>
 !!!
 !!!    subroutine to simply move the model forward in time one timestep
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -48,6 +48,7 @@ subroutine stochastic_model
   integer :: mpi_status( MPI_STATUS_SIZE )
   logical, parameter :: checkscaling=.true.
 
+!  print*,'huh',pf%psi(:,1)
   do k =1,pf%count
      particle = pf%particles(k)
      tag = 1

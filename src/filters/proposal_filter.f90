@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-09-26 11:10:52 pbrowne>
+!!! Time-stamp: <2014-09-26 17:31:05 pbrowne>
 !!!
 !!!    Subroutine to perform nudging in the proposal step of EWPF
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -73,7 +73,6 @@ subroutine proposal_filter
   else
      y_Hpsin1 = 0.0_rk
   end if
-
 
   !get the model to provide f(x)
   do k =1,pf%count

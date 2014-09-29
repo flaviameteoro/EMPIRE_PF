@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-09-26 16:59:33 pbrowne>
+!!! Time-stamp: <2014-09-26 17:47:44 pbrowne>
 !!!
 !!!    {one line to give the program's name and a brief idea of what it does.}
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -103,6 +103,7 @@ program empire
 !                &ector over mpi from ensemble member ',particle
            received(k) = .true.
 !           if(.not. pf%gen_data) call perturb_particle(pf%psi(:,k))
+!           print*,pf%psi(:,k)
            call perturb_particle(pf%psi(:,k))
         end if
      end if
@@ -110,7 +111,6 @@ program empire
   end do
   write(6,*) 'PF: All models received in pf couple' 
   call flush(6)
-
 
 !  if(pf%gen_data) call save_truth(pf%psi(:,1))
   call output_from_pf

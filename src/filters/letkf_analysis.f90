@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-09-26 13:56:25 pbrowne>
+!!! Time-stamp: <2014-09-29 18:07:40 pbrowne>
 !!!
 !!!    Ensemble transform Kalman filter
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -81,11 +81,15 @@ real(kind=rk), allocatable, dimension(:,:) :: Ysf_red
 real(kind=rk), allocatable, dimension(:) :: dd_red
 integer :: stateDim !generally 1 for the letkf
 
-
+print*,'obs y = ',y
 
 ! Split forecast ensemble into mean and perturbation matrix, inflating
 ! if necessary
 mean_x = sum(x,dim=2)/real(N,rk)
+open(1,file='before',action='write',status='replace')
+write(1,*) mean_x
+close(1)
+
 do i = 1,N
    Xp(:,i) = x(:,i) - mean_x
 end do
@@ -106,6 +110,10 @@ mean_yf = sum(yf,dim=2)/real(N,rk)
 do i = 1,N
    yf(:,i) = yf(:,i) - mean_yf
 end do
+
+print*,'mean_yf = ',mean_yf
+print*,'mean_x = ',mean_x
+
 yf = yf/sqrt(real(N-1,rk))
 !call solve_rhalf(N,obsDim,yf,Ysf)
 call solve_rhalf(obsDim,N,yf,Ysf,t)
@@ -113,7 +121,7 @@ call solve_rhalf(obsDim,N,yf,Ysf,t)
 !I THINK I CAN STEP IN AT THIS POINT!!!
 !this is for serial processing
 number_gridpoints = stateDimension
-!$OMP PARALLEL DO PRIVATE(stateDim,i,dist,scal,yes,Ysf_red,red_obsDim,r,V,S,LWORK,WORK,dd_red,UT,dd,d,number_gridpoints)
+!!!!$OMP PARALLEL DO PRIVATE(stateDim,i,dist,scal,yes,Ysf_red,red_obsDim,r,V,S,LWORK,WORK,dd_red,UT,dd,d,number_gridpoints)
 do j = 1,number_gridpoints
    stateDim = 1
    yes = .false.
@@ -123,6 +131,8 @@ do j = 1,number_gridpoints
       scal(i) = exp((dist**2)/(2.0_rk*len**2))
       if(scal(i) .lt. maxscal) yes(i) = .true.
    end do
+   print*,'scal = ',scal
+   print*,'yes = ',yes
    
    red_obsdim = count(yes)
    print*,'j = ',j,' red_obsdim = ',red_obsdim,scal
@@ -134,14 +144,17 @@ do j = 1,number_gridpoints
    do i = 1,N
       Ysf_red(:,i) = pack(Ysf(:,i),yes)/sqrt(pack(scal,yes))
    end do
+   print*,'Ysf_red ',Ysf_red 
 
    ! Compute the SVD
    r = min(red_obsDim,N)
    allocate(V(red_obsDim,r))
    allocate(S(r))
    LWORK = 2*max( 3*r+max(red_obsDim,N), 5*r )
+   !LWORK=400
    allocate(WORK(LWORK))
-   call dgesvd('S','A',red_obsDim,N,Ysf,red_obsDim,S,V,red_obsDim,UT,N,WORK,LWORK,INFO)
+   print*,LWORK
+   call dgesvd('S','A',red_obsDim,N,Ysf_red,red_obsDim,S,V,red_obsDim,UT,N,WORK,LWORK,INFO)
    if(INFO .ne. 0) then
       print*,'SVD failed with INFO = ',INFO
       print*,'FYI WORK(1) = ',WORK(1)
@@ -149,29 +162,40 @@ do j = 1,number_gridpoints
    end if
    deallocate(WORK)
    
+
+   print*,'S = ',S
+   print*,'V = ',V
+   print*,'UT = ',UT
    ! Compute product of forecast ensemble perturbation matrix and U.  We
    ! store the result in x, which we here call X to distinguish this
    ! secondary use of the variable.
    ! pick out the correct row of X and Xp here:
    call dgemm('N','T',stateDim,N,N,1.0d0,Xp(j,:),stateDim,UT,N,0.0d0,X(j,:),stateDim)
-   
+   print*,'X(j,:) = ',X(j,:)
    ! Build up analysis ensemble mean (to be stored in mean_x); done now
    ! because we shall be reusing X shortly
    d = y - mean_yf
+   print*,'d = ',d
    !call solve_rhalf(1,obsDim,d,dd)
    call solve_rhalf(obsDim,1,d,dd,t)
    
+   print*,'dd = ',dd
    allocate(dd_red(red_obsDim))
    dd_red = pack(dd,yes)/sqrt(pack(scal,yes))
    
+   print*,'dd_red = ',dd_red
 
 
    ! Only the first r elements of d are in use from here on
    call dgemv('T',red_obsDim,r,1.0d0,V,red_obsDim,dd_red,1,0.0d0,d,1)
+
+   print*,'d(1:r) = ',d(1:r)
    d(1:r) = S * d(1:r) / (1.0_rk + S**2)
+   print*,'d(1:r) = ',d(1:r)
    ! Only the first r columns of X are used in the following
    call dgemv('N',stateDim,r,1.0d0,X(j,:),stateDim,d,1,1.0d0,mean_x(j),1)
    
+   print*,'mean_x(j) = ',mean_x(j)
    ! Build up analysis ensemble perturbation matrix
    do i = 1,r
       X(j,i) = X(j,i) / sqrt(1.0_rk + S(i)**2)
@@ -190,7 +214,12 @@ do j = 1,number_gridpoints
    deallocate(V)
    deallocate(S)
    deallocate(dd_red)
+!   if(j ==2) stop
 end do
-!$OMP END PARALLEL DO
+!!!!$OMP END PARALLEL DO
 
+
+open(1,file='after',action='write',status='replace')
+write(1,*) mean_x
+close(1)
 end subroutine letkf_analysis
