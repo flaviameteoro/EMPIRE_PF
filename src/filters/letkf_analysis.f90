@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-10-01 11:52:09 pbrowne>
+!!! Time-stamp: <2014-10-01 12:24:23 pbrowne>
 !!!
 !!!    Ensemble transform Kalman filter
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -229,7 +229,8 @@ do j = 1,number_gridpoints
 !!$   print*,'yes = ',yes
    
    red_obsdim = count(yes)
-!!$   print*,'j = ',j,' red_obsdim = ',red_obsdim,scal
+   print*,'j = ',j,' red_obsdim = ',red_obsdim,scal
+   PRINT*,'var = ',j+start_var(pfrank+1)-1
 
    if(red_obsdim .gt. 0) then
 
@@ -314,8 +315,11 @@ do j = 1,number_gridpoints
    else !if there are no observations near, the analysis is
         ! just the forecast
       do i = 1,pf%nens
-         xa(j,:) =  + mean_xa(j) + xp(j,i)
+         xa(j,i) =  mean_xa(j) + xp(j,i)
       end do
+      print*,'xp ',xp(j,:)
+      print*,'xa ',xa(j,:)
+      print*,'mean_xa ',mean_xa(j)
    end if
 end do
 !$OMP END PARALLEL DO
