@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-09-26 17:47:44 pbrowne>
+!!! Time-stamp: <2014-09-30 13:51:29 pbrowne>
 !!!
 !!!    {one line to give the program's name and a brief idea of what it does.}
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -47,7 +47,6 @@ program empire
   logical :: mpi_flag
   logical, dimension(:), ALLOCATABLE :: received
   real(kind=kind(1.0d0)) :: start_t,end_t
-  real(kind=kind(1.0d0)), allocatable, dimension(:) :: y
 
 
   write(6,'(A)') 'PF: Starting PF code'
@@ -130,7 +129,7 @@ program empire
            call stochastic_model
         elseif(pf%type .eq. 'ET') then
            !this may not need to be stochastic...
-           call stochastic_model
+           call deterministic_model
         else
            print*,'Error -555: Incorrect pf%type'
         end if
@@ -154,12 +153,8 @@ program empire
            call diagnostics
         elseif(pf%type .eq. 'ET') then
            print*,'starting the letkf'
-           call stochastic_model
-           allocate(y(obs_dim))
-           call get_observation_data(y)
-           call letkf_analysis(pf%psi,pf%nens,state_dim,obs_dim,y&
-                &,pf%rho,pf%len,pf%timestep)
-           deallocate(y)
+           call deterministic_model
+           call letkf_analysis
            print*,'finished the letkf'
         else
            print*,'Error -556: Incorrect pf%type'

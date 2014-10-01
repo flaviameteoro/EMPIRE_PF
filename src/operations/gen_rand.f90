@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-09-24 11:06:10 pbrowne>
+!!! Time-stamp: <2014-10-01 11:30:16 pbrowne>
 !!!
 !!!    Collection of subroutines to make multidimensional random arrays
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -149,6 +149,7 @@ end subroutine MixtureRandomNumbers2D
 !> Subroutine to set the random seed across MPI threads
 !! @param[in] pfid The process identifier of the MPI process
 subroutine random_seed_mpi(pfid)
+  use pf_control
   integer, intent(in) :: pfid
 
   integer :: n
@@ -157,10 +158,15 @@ subroutine random_seed_mpi(pfid)
   call random_seed(SIZE=n)
   allocate(seed(n))
   call random_seed(GET=seed)
-  !add the particle filter id to the seed to make it
-  !independent on each process
-  seed = seed+pfid
+  !add the particle filter id to the seed to make it              
+  !independent on each process              
+  if(.not. pf%gen_data) then
+     seed = seed+pfid
+  else
+     seed = seed-1
+  end if
   call random_seed(PUT=seed)
   deallocate(seed)
 
 end subroutine random_seed_mpi
+
