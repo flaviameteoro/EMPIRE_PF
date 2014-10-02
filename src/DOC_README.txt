@@ -1,10 +1,10 @@
 /** \mainpage EMPIRE Data Assimilation Documentation
 \author Philip A. Browne <a href="mailto:p.browne@reading.ac.uk">p.browne@reading.ac.uk</a>
-\date Time-stamp: <2014-09-26 18:02:48 pbrowne>
+\date Time-stamp: <2014-10-02 11:02:36 pbrowne>
 
 \section Download Downloading
 
-These codes are hosted on www.bitbucket.org and can be attained with the following commands:
+These codes are hosted on www.bitbucket.org and can be obtained with the following commands:
 \code{.sh}
 git clone https://www.bitbucket.org/pbrowne/empire-data-assimilation.git
 \endcode
@@ -81,6 +81,8 @@ The file model_specific.f90 should be editted for the specific model which you w
 - \link qhalf \endlink This is the square root model error covariance matrix \f$Q^{\frac{1}{2}}\f$
  
 - \link solve_hqht_plus_r \endlink This is a linear solve with the matrix \f$(HQH^T+R)\f$
+
+- \link dist_st_ob \endlink This specifies the distance between a an element of the state vector and an element of the observation vector
 
 Not all of these subroutines will be required for each filtering method you wish to use, so it may be advantageous to only implement the necessary ones.
 
