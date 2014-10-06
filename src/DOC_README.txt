@@ -1,6 +1,6 @@
 /** \mainpage EMPIRE Data Assimilation Documentation
 \author Philip A. Browne <a href="mailto:p.browne@reading.ac.uk">p.browne@reading.ac.uk</a>
-\date Time-stamp: <2014-10-02 11:02:36 pbrowne>
+\date Time-stamp: <2014-10-06 14:04:55 pbrowne>
 
 \section Download Downloading
 
@@ -8,7 +8,10 @@ These codes are hosted on www.bitbucket.org and can be obtained with the followi
 \code{.sh}
 git clone https://www.bitbucket.org/pbrowne/empire-data-assimilation.git
 \endcode
-
+To upgrade to the latest versions of the codes, use the following command:
+\code{.sh}
+git pull https://www.bitbucket.org/pbrowne/empire-data-assimilation.git
+\endcode
 
 \copyright These codes are distributed under the GNU GPU v3 License. See LICENSE.txt.
 
