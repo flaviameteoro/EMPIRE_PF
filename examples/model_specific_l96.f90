@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-10-01 12:28:20 pbrowne>
+!!! Time-stamp: <2014-10-06 16:27:01 pbrowne>
 !!!
 !!!    This file must be adapted to the specific model in use.
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -128,8 +128,10 @@ subroutine solve_hqht_plus_r(obsdim,y,v,t)
   
 
   !v = y/(5.3d3**2+0.3d0**2)
-  stop 'solve_hqht_plus_r not yet implemented'
-  
+!  stop 'solve_hqht_plus_r not yet implemented'
+ 
+  v = y/(0.2d0 + 0.1d0)
+ 
 
 end subroutine solve_hqht_plus_r
 
@@ -174,7 +176,7 @@ subroutine Qhalf(nrhs,x,Qx)
   !!resulting vector where Qx \f$= Q^{\frac{1}{2}}x\f$
 
   !qx = 5.3d3*x
-  qx = 0.0d0
+  qx = sqrt(0.2d0)*x
 !  stop 'Qhalf not yet implemented'
   
 end subroutine Qhalf
