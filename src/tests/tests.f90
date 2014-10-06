@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-09-26 11:12:56 pbrowne>
+!!! Time-stamp: <2014-10-06 11:31:12 pbrowne>
 !!!
 !!!    Collection of subroutines to perform checks of user supplied routines
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -530,6 +530,111 @@ subroutine R_tests()
 
   end do
 
+
+  write(6,*) 'TESTING SOLVE Rhalf WITH SINGLE RHS'
+  
+  a = 0.0d0
+  pf%count = 1
+  call solve_rhalf(obs_dim,pf%count,a,s,1)
+ 
+  !s should be 0
+  rr = dnrm2(obs_dim,s,1)
+  write(6,'(A)',advance='no') 'Test 17: R^(-1/2)(0) ... '
+  if(rr .lt. pass) then
+     !passed the test
+     write(6,'(A)',advance='yes') 'passed'
+  elseif(rr .lt. warn) then
+     write(6,'(A,es23.17)',advance='yes') 'passed with warning rr = ',rr
+  else
+     write(6,'(A,es23.17)',advance='yes') 'failed with rr = ',rr
+  end if
+
+  do l = 18,20
+     if( l .eq. 18) then
+        a = 1.0d0
+        write(6,'(A)',advance='no') 'Test 18: R^{-1/2}[R^{1/2}(1)] ... '
+     elseif (l .eq. 19) then
+        a = -1.0d0
+        write(6,'(A)',advance='no') 'Test 19: R^{-1/2}[R^{1/2}(-1)] ... '
+     elseif (l .eq. 20) then
+        call NormalRandomNumbers1D(0.0d0,1.0d0,obs_dim,a)
+        write(6,'(A)',advance='no') 'Test 20: R^{-1/2}[R^{1/2}( N(0,1) )] ... '
+     end if
+
+
+     call     Rhalf(obs_dim,1,a,q,1)
+     call solve_rhalf(obs_dim,pf%count,q,w,1)
+     !w should be a
+     rr = dnrm2(obs_dim,w-a,1)
+
+     
+     if(rr .lt. pass) then
+        !passed the test                                   
+        write(6,'(A)',advance='yes') 'passed'
+     elseif(rr .lt. warn) then
+        write(6,'(A,es23.17)',advance='yes') 'passed with warning rr = ',rr
+     else
+        write(6,'(A,es23.17)',advance='yes') 'failed with rr = ',rr
+     end if
+
+  end do
+
+  write(6,*) 'TESTING SOLVE Rhalf WITH MULTIPLE RHS'
+  
+  do l = 21,23
+
+  do i = 1,10
+     if( l .eq. 21) then
+        aa = 1.0d0
+        write(6,'(A)',advance='no') 'Test 21: R^{-1/2}[R^{1/2}(1)] ... '
+     elseif (l .eq. 22) then
+        aa = -1.0d0
+        write(6,'(A)',advance='no') 'Test 22: R^{-1/2}[R^{1/2}(-1)] ... '
+     elseif (l .eq. 23) then
+        call NormalRandomNumbers2D(0.0d0,1.0d0,obs_dim,10,aa)
+        write(6,'(A)',advance='no') 'Test 23: R^{-1/2}[R^{1/2}( N(0,1) )] ... '
+     end if
+
+     pf%count = i
+     call     Rhalf(obs_dim,i,aa(:,1:i),qq(:,1:i),1)
+     call solve_rhalf(obs_dim,pf%count,qq(:,1:i),ww(:,1:i),1)
+     !w should be a
+     do k = 1,i
+        rr = dnrm2(obs_dim,ww(:,k)-aa(:,k),1)
+
+        if(rr .lt. pass) then
+           !passed the test
+           if(k .eq. 1 .and. i .eq. 1) then
+              write(6,'(A,i2)',advance='yes') 'passed: ',k
+           elseif(k .eq. 1) then
+              write(6,'(A,i2)',advance='no') 'passed: ',k
+           elseif(k .eq. i) then
+              write(6,'(A,i2)',advance='yes') ' ',k
+           else
+              write(6,'(A,i2)',advance='no') ' ',k
+           end if
+        elseif(rr .lt. warn) then
+
+           if(k .eq. 1 .and. i .eq. 1) then
+              write(6,'(A,i2,A,es8.2)',advance='yes') 'passed: ',k,' warn ',rr
+           elseif(k .eq. 1) then
+              write(6,'(A,i2,A,es8.2)',advance='no') 'passed: ',k,' warn ',rr
+           elseif(k .eq. i) then
+              write(6,'(A,i2,A,es8.2)',advance='yes') ' ',k,' warn ',rr
+           else
+              write(6,'(A,i2,A,es8.2)',advance='no') ' ',k,' warn ',rr
+           end if
+        else
+           !write(6,'(A)',advance='yes') ''
+           write(6,'(i2,A,es8.2)',advance='yes') k,' failed with rr = ',rr
+        end if
+
+
+     end do
+
+  end do
+
+  end do
 
 
 
