@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-10-06 11:31:12 pbrowne>
+!!! Time-stamp: <2014-10-06 17:01:09 pbrowne>
 !!!
 !!!    Collection of subroutines to perform checks of user supplied routines
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -309,6 +309,13 @@ subroutine R_tests()
   s = 1.0d0
   call     R(obs_dim,1,a,q,1)
   call Rhalf(obs_dim,1,s,w,1)
+
+  if(all(w .eq. 0.0d0)) then
+     write(6,'(A)') 'SERIOUS ERROR: Rhalf*e = 0 i.e. Rhalf is the zero&
+          & matrix'
+     stop 'MEGA FAIL'
+  end if
+
   call Rhalf(obs_dim,1,w,e,1)
   !q should be e
   rr = dnrm2(obs_dim,q-e,1)
@@ -720,6 +727,13 @@ subroutine Q_tests()
   s = 1.0d0
   call     Q(1,a,qqq,1)
   call Qhalf(1,s,w,1)
+
+  if(all(w .eq. 0.0d0)) then
+     write(6,'(A)') 'SERIOUS ERROR: Qhalf*e = 0 i.e. Qhalf is the zero&
+          & matrix'
+     stop 'MEGA FAIL'
+  end if
+
   call Qhalf(1,w,e,1)
   !q should be e
   rr = dnrm2(state_dim,qqq-e,1)
@@ -941,3 +955,5 @@ write(6,*) 'TESTING (HQH^T+R)^(-1)'
 
 
 end subroutine HQHTR_tests
+
+
