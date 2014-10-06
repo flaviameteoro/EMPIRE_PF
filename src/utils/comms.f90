@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-09-26 12:11:50 pbrowne>
+!!! Time-stamp: <2014-10-06 14:41:22 pbrowne>
 !!!
 !!!    Module and subroutine to intitalise EMPIRE coupling to models
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -28,10 +28,20 @@
 
 !> Module containing EMPIRE coupling data
 module comms
-  integer :: CPL_MPI_COMM,mype_id,myRank,nProc
-  integer :: pf_mpi_comm,pfrank
-  integer :: npfs
-  integer, allocatable, dimension(:) :: gblcount,gbldisp
+  integer :: CPL_MPI_COMM !< the communicator between the empire
+  !< codes and the model master nodes
+  integer :: mype_id !< the rank of this process on MPI_COMM_WORLD
+  integer :: myRank !< the rank of this process on CPL_MPI_COMM
+  integer :: nProc !< the total number of processes
+  integer :: pf_mpi_comm !< the communicator between DA processes
+  integer :: pfrank      !< the rank of this process on PF_MPI_COMM
+  integer :: npfs        !< the total number of DA processes
+  integer, allocatable, dimension(:) :: gblcount !< the number of
+  !< ensemble members associated with each DA process
+  integer, allocatable, dimension(:) :: gbldisp !< the displacements
+  !< of each each ensemble member relative to pfrank=0. VERY useful
+  !< for mpi_gatherv and mpi_scatterv on pf_mpi_comm
+  
 contains
   
   subroutine allocate_data
@@ -64,7 +74,7 @@ contains
     integer :: myrank !nproc,myrank
 !    integer :: mpi_status(MPI_STATUS_SIZE)
     integer :: nens,i
-    integer*8 :: da
+    integer :: da
     integer :: count,pf_colour,pf_id!,pf_mpi_comm
 
     
