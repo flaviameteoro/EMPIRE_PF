@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-10-01 12:24:23 pbrowne>
+!!! Time-stamp: <2014-10-06 12:26:19 pbrowne>
 !!!
 !!!    Ensemble transform Kalman filter
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -101,9 +101,10 @@ call get_observation_data(y)
 
 ! Split forecast ensemble into mean and perturbation matrix, inflating
 ! if necessary
+! mean_x will only be the sum of state vectors on this mpi process
 mean_x = sum(pf%psi,dim=2)
 
-!send mean_x to all processes
+!send mean_x to all processes and add up to get global sum
 call mpi_allreduce(MPI_IN_PLACE,mean_x,state_dim,MPI_DOUBLE_PRECISION&
      &,MPI_SUM,pf_mpi_comm,mpi_err)
 
@@ -115,35 +116,40 @@ mean_x = mean_x/real(pf%nens,rk)
 !!$write(1,*) mean_x
 !!$close(1)
 
+! compute the ensemble perturbation matrix for those ensemble members
+! stored on this local mpi process
 do i = 1,pf%count
    Xp_loc(:,i) = pf%psi(:,i) - mean_x
 end do
 
+! inflate the ensemble perturbation matrix
 Xp_loc = (1.0_rk + pf%rho) * Xp_loc
+! store the local state vectors back in x_loc
 do i = 1,pf%count
    x_loc(:,i) = mean_x + Xp_loc(:,i)
 end do
 
+! make the local ensemble perturbation matrix the correct scale
 Xp_loc = Xp_loc/sqrt(real(pf%nens-1,rk))
 
 ! Calculate forecast observations, split into mean and ensemble
 ! perturbation matrix, scale perturbations by inverse square root of
 ! observation covariance
-!call H(N,stateDim,obsDim,x,yf)
 
-!print*,'x_loc = ',x_loc
-
+! first apply observation operator only to local state vectors
+! on this mpi process
 call H(obs_dim,pf%count,x_loc,yf_loc,pf%timestep)
 
-!print*,'yf_loc = ',yf_loc
 
-!need to send round all yf_loc and store in yf on all processes
+! as yf_loc should be much smaller than x_loc, send this to mpi processes
+! need to send round all yf_loc and store in yf on all processes
 call mpi_allgatherv(yf_loc,pf%count*obs_dim,MPI_DOUBLE_PRECISION,yf&
      &,gblcount*obs_dim,gbldisp*obs_dim,MPI_DOUBLE_PRECISION&
      &,pf_mpi_comm,mpi_err)
 
 !!$print*,'allgatherv 1 = ',mpi_err
 
+! compute the mean of yf
 mean_yf = sum(yf,dim=2)/real(pf%nens,rk)
 do i = 1,pf%nens
    yf(:,i) = yf(:,i) - mean_yf
@@ -151,12 +157,15 @@ end do
 
 !!$print*,'mean_yf = ',mean_yf
 !!$print*,'mean_x = ',mean_x
-
+! now make yf the forecast perturbation matrix
 yf = yf/sqrt(real(pf%nens-1,rk))
 !call solve_rhalf(N,obsDim,yf,Ysf)
+! scale yf to become ysf
 call solve_rhalf(obs_dim,pf%nens,yf,Ysf,pf%timestep)
 
 
+! now let us compute which state variables will be analysed on each
+! MPI process:
 do i = 1,npfs
    start_var(i) = (i-1)*ceiling( real(state_dim,rk)/real(npfs,rk) )+1
    stop_var(i) = min( i*ceiling(real(state_dim,rk)/real(npfs,rk)) ,state_dim)
@@ -221,23 +230,36 @@ do j = 1,number_gridpoints
    yes = .false.
    !let us process the observations here:
    do i = 1,obs_dim
+      ! get the distance between the current state variable
+      ! j+start_var(pfrank+1)-1
+      ! and the observation i
+      ! store it as distance
       call dist_st_ob(j+start_var(pfrank+1)-1,i,dist,pf%timestep)
+      ! compute the scaling factor based in this distance and the
+      ! length scale
       scal(i) = sqrt(exp((dist**2)/(2.0_rk*pf%len**2)))
+      ! determine if the scaling is such that we shall compute with
+      ! this observation
       if(scal(i) .lt. maxscal) yes(i) = .true.
    end do
 !!$   print*,'scal = ',scal
 !!$   print*,'yes = ',yes
    
+   ! count the total number of observations we shall consider for this
+   ! state variable
    red_obsdim = count(yes)
    print*,'j = ',j,' red_obsdim = ',red_obsdim,scal
    PRINT*,'var = ',j+start_var(pfrank+1)-1
 
+
+   ! if there are no observations in range, treat this as a special case
    if(red_obsdim .gt. 0) then
 
    allocate(Ysf_red(red_obsdim,pf%nens))
    !multiply by the distance matrix
    !this line only works for diagonal R matrix...
-   !move the sqrt to the calculation of scal probably
+   ! reduce the forecast ensemble to only the observations in range
+   ! and scale by the distance function
    do i = 1,pf%nens
       Ysf_red(:,i) = pack(Ysf(:,i),yes)/pack(scal,yes)
    end do
@@ -327,7 +349,7 @@ end do
 
 !!$print*,'loop finished'
 
-!now we must scatter xa back into pf%psi
+! now we must scatter xa back into pf%psi
 do i = 1,npfs
    
    number_gridpoints = stop_var(i)-start_var(i)+1
