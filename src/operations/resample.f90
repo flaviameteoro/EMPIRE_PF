@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-10-07 10:18:07 pbrowne>
+!!! Time-stamp: <2014-10-07 11:17:36 pbrowne>
 !!!
 !!!    Subroutine to perform Universal Importance Resampling
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -161,9 +161,9 @@ do i = 1,pf%nens
       brandnew(tobereplaced(i)) = dupe
    end if
 end do
-print*,'##################################'
-print*,brandnew
-print*,'##################################'
+!print*,'##################################'
+!print*,brandnew
+!print*,'##################################'
 
 
 end if
@@ -171,7 +171,7 @@ end if
 !now the master processor can send the array
 !BRANDNEW to all the other processors
 call mpi_bcast(brandnew,pf%nens,mpi_integer,0,pf_mpi_comm,mpi_err)
-print*,brandnew
+!print*,brandnew
 
 
 

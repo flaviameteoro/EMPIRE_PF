@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-10-06 14:41:22 pbrowne>
+!!! Time-stamp: <2014-10-07 11:15:50 pbrowne>
 !!!
 !!!    Module and subroutine to intitalise EMPIRE coupling to models
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -82,7 +82,7 @@ contains
     couple_colour=9999
     CALL MPI_INIT (mpi_err)
     CALL MPI_COMM_RANK(MPI_COMM_WORLD,mype_id,mpi_err)
-    CALL MPI_COMM_SPLIT(MPI_COMM_WORLD,pf_colour,pf_id,pf_mpi_comm&
+    CALL MPI_COMM_SPLIT(MPI_COMM_WORLD,pf_colour,mype_id,pf_mpi_comm&
          &,mpi_err)
     
     CALL MPI_COMM_SPLIT(MPI_COMM_WORLD,couple_colour,mype_id&
