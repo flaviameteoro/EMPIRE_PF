@@ -3,6 +3,7 @@ mv examples/lorenz96/model_specific_l96.f90 model_specific.f90
 make
 mkdir run
 cp bin/* run/
+cd run
 cp src/controllers/pf_parameters.dat pf_parameters.dat
 alltests
 wget http://www.met.reading.ac.uk/~darc/empire/lorenz96.dat
