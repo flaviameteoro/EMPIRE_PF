@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-10-06 15:30:15 pbrowne>
+!!! Time-stamp: <2014-10-07 15:41:06 pbrowne>
 !!!
 !!!    module to hold all the information to control the the main program
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -64,7 +64,29 @@ module pf_control
      integer :: count         !< number of ensemble members associated with this MPI process
      integer,allocatable, dimension(:) :: particles !< particles associates with this MPI process
      character(2) :: type     !< which filter to use
+                              !< currently this has a number of
+                              !<options:
+                              !< - SE -- a stochastic ensemble
+                              !< - SI -- the SIR filter
+                              !< - ET -- the L-ETKF
+                              !< - EW -- the Equivalent Weights
+                              !< particle filter
      character(1) :: init     !< which method to initialise ensemble
+                              !< currently this has a number of
+                              !< options:
+                              !< - N -- perturb around the model
+                              !< initial conditions with random noise
+                              !< distributed \f$\mathcal{N}(0,I)\f$
+                              !< - P -- perturb around the model
+                              !< initial conditions with random noise
+                              !< distributed \f$\mathcal{N}(0,Q)\f$
+                              !< - R -- read model states from
+                              !< rstrt folder where each ensemble member
+                              !< is stored in the file rstrt/##.state
+                              !< - S -- read model states from
+                              !< start folder where each ensemble member
+                              !< is stored in the file start/##.state
+     
   end type pf_control_type
   type(pf_control_type) :: pf !< the derived data type holding all controlling data
 
