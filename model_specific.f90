@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-10-06 16:27:01 pbrowne>
+!!! Time-stamp: <2014-09-26 11:01:58 pbrowne>
 !!!
 !!!    This file must be adapted to the specific model in use.
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -41,12 +41,8 @@ subroutine configure_model
 !  obs_dim = 1
 
   !this is for hadcm3
-!  state_dim = 2314430
-!  obs_dim = 27370
-
-  !this is for lorenz 96
-  state_dim = 40
-  obs_dim = 20
+  state_dim = 2314430
+  obs_dim = 27370
 
   print*,'#################################'
   print*,'######### SANITY CHECK ##########'
@@ -56,10 +52,10 @@ subroutine configure_model
   print*,'#################################'
   if(.not. pf%gen_Q) then
      t1 = mpi_wtime()
-!     call loadQ
+     call loadQ
      print*,'load Q     took ',mpi_wtime()-t1,' seconds'
      t1 = mpi_wtime()
-!     call loadR
+     call loadR
      print*,'load R     took ',mpi_wtime()-t1,' seconds'
      t1 = mpi_wtime()
 !     call load_HQHTR
@@ -85,8 +81,7 @@ subroutine solve_r(obsDim,nrhs,y,v,t)
   integer, intent(in) :: t !<the timestep
 
   !v = y/(0.3d0**2)
-!  stop 'Solve_r not yet implemented'
-  v = y/0.1d0
+  stop 'Solve_r not yet implemented'
   
 end subroutine solve_r
 
@@ -106,8 +101,7 @@ subroutine solve_rhalf(obsdim,nrhs,y,v,t)
   integer, intent(in) :: t !<the timestep
 
   !v = y/(0.3d0**2)
-  v = y/sqrt(0.1d0)
-!  stop 'Solve_r_half not yet implemented'
+  stop 'Solve_r_half not yet implemented'
   
 end subroutine solve_rhalf
 
@@ -128,10 +122,8 @@ subroutine solve_hqht_plus_r(obsdim,y,v,t)
   
 
   !v = y/(5.3d3**2+0.3d0**2)
-!  stop 'solve_hqht_plus_r not yet implemented'
- 
-  v = y/(0.2d0 + 0.1d0)
- 
+  stop 'solve_hqht_plus_r not yet implemented'
+
 
 end subroutine solve_hqht_plus_r
 
@@ -176,8 +168,7 @@ subroutine Qhalf(nrhs,x,Qx)
   !!resulting vector where Qx \f$= Q^{\frac{1}{2}}x\f$
 
   !qx = 5.3d3*x
-  qx = sqrt(0.2d0)*x
-!  stop 'Qhalf not yet implemented'
+  stop 'Qhalf not yet implemented'
   
 end subroutine Qhalf
 
@@ -197,8 +188,8 @@ subroutine R(obsDim,nrhs,y,Ry,t)
   !!resulting vectors where Ry \f$= Ry\f$
   integer, intent(in) :: t !< the timestep
 
-  Ry = y*0.1d0
-!  stop 'R not yet implemented'
+
+  stop 'R not yet implemented'
   !Ry = 0.3d0**2*y
 
 end subroutine R
@@ -220,8 +211,7 @@ subroutine Rhalf(obsDim,nrhs,y,Ry,t)
   integer, intent(in) :: t !<the timestep
 
 
-  Ry = y*sqrt(0.1d0)
-!  stop 'Rhalf not yet implemented'
+  stop 'Rhalf not yet implemented'
   !Ry = 0.3d0*y
 
 end subroutine RHALF
@@ -245,9 +235,7 @@ subroutine H(obsDim,nrhs,x,hx,t)
   integer, intent(in) :: t !< the timestep
 
 
-  hx(:,:) = x(1:state_dim/2,:)
-!hx = x
-!  stop 'H not yet implemented'
+  stop 'H not yet implemented'
   !hx(:,:) = x(539617:566986,:)
 
 end subroutine H
@@ -269,10 +257,9 @@ subroutine HT(obsDim,nrhs,y,x,t)
   !!resulting vector in state space where x \f$= H^Ty\f$
   integer, intent(in) :: t !< the timestep
 
-!  stop 'HT not yet implemented'
-  x = 0.0_rk
-  x(1:state_dim/2,:) = y(:,:)
-!  x = y
+  stop 'HT not yet implemented'
+  !x = 0.0_rk
+  !x(539617:566986,:) = y(:,:)
 
 end subroutine HT
 
@@ -288,13 +275,5 @@ subroutine dist_st_ob(xp,yp,dis,t)
   real(kind=kind(1.0d0)), intent(out) :: dis !<the distance between
                                              !!x(xp) and y(yp)
   integer, intent(in) :: t  !<the current time index for observations
-!  stop 'dist not yet implemented'
-  integer, parameter :: rk = kind(1.0d0)
-  real(kind=rk) :: st,ob
-  st = real(xp,rk)/real(state_dim,rk)
-!  ob = real(2*yp-1,rk)/real(state_dim,rk) !alternately observed
-!  ob = real(yp,rk)/real(state_dim,rk) !all observed
-  ob = real(yp,rk)/real(state_dim,rk) !first half
-  dis = min(abs(st-ob),1.0d0-abs(st-ob))
-  
+  stop 'dist not yet implemented'
 end subroutine dist_st_ob
