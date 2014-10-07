@@ -1,0 +1,13 @@
+mv model_specific.f90 model_specific_backup.f90
+mv examples/lorenz96/model_specific_l96.f90 model_specific.f90
+make
+mkdir run
+cp bin/* run/
+cp src/controllers/pf_parameters.dat pf_parameters.dat
+alltests
+wget http://www.met.reading.ac.uk/~darc/empire/lorenz96.dat
+wget http://www.met.reading.ac.uk/~darc/empire/lorenz96_empire.py
+cp ../examples/lorenz96/make_obs.dat pf_parameters.dat
+mpirun --output-filename truth -np 1 lorenz96_empire.py : -np 1 empire
+cp ../examples/lorenz96/run_ewpf.dat pf_parameters.dat
+mpirun --output-filename assim -np 10 lorenz96_empire.py : -np 3 empire

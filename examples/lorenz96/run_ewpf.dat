@@ -1,0 +1,12 @@
+&pf_params
+time_obs=1,
+time_bwn_obs=4,
+nudgefac=0.5D3,
+gen_data=.false.,
+nfac=1.0D-5,
+ufac=1.0D-5,
+keep=0.95D0,
+type='EW',
+init='N'
+/
+
