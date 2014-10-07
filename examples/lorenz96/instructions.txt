@@ -4,7 +4,7 @@ make
 mkdir run
 cp bin/* run/
 cd run
-cp src/controllers/pf_parameters.dat pf_parameters.dat
+cp ../src/controlers/pf_parameters.dat pf_parameters.dat
 alltests
 wget http://www.met.reading.ac.uk/~darc/empire/lorenz96.dat
 wget http://www.met.reading.ac.uk/~darc/empire/lorenz96_empire.py
