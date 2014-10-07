@@ -1,14 +1,42 @@
+# These are instructions to run data assimilation with the equivalent
+# weights particle filter with lorenz 1963 model.
+# Be sure to look into each file before running things to get an idea
+# of what has changed and what each parameter does
+#
+# these commands should be started from the main EMPIRE directory
+#
+#
+# make a backup of the model_specific.f90 file
 mv model_specific.f90 model_specific_backup.f90
+# copy the example model_specific file for the lorenz 1963 model
+# into the correct place to be compiled
 mv examples/lorenz96/model_specific_l96.f90 model_specific.f90
+# compile empire to use these model specific routines
+# (note you will have to have ensured the makefile is
+# configured for your system
 make
+# let us now make a directory to run the programs from
 mkdir run
+# copy all the executables to the run directory
 cp bin/* run/
+# move location to the run directory
 cd run
+# copy the default input file to the same location as the executables
 cp ../src/controlers/pf_parameters.dat pf_parameters.dat
+# now lets run the tests to ensure that the model_specific routines 
+# are consistent. look out for fails and/or warnings in the output
 alltests
+# now let us download a version of the mode and input file to use
 wget http://www.met.reading.ac.uk/~darc/empire/lorenz96.dat
 wget http://www.met.reading.ac.uk/~darc/empire/lorenz96_empire.py
+# copy a set of input files that will generate observations for the above model
 cp ../examples/lorenz96/make_obs.dat pf_parameters.dat
+# now let us run 1 copy of the model and one DA code. prepend all the outputs
+# with the word "truth"
 mpirun --output-filename truth -np 1 lorenz96_empire.py : -np 1 empire
+# now that the observations have been created, let us run some assimilation
+# copy a set of input files that will run the EWPF for the above model
 cp ../examples/lorenz96/run_ewpf.dat pf_parameters.dat
+# now run 10 ensemble members and 3 parallel DA codes and prepend all the
+# output with the word "assim"
 mpirun --output-filename assim -np 10 lorenz96_empire.py : -np 3 empire
