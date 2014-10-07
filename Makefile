@@ -9,6 +9,8 @@ FCOPTS = -fimplicit-none -Wall -fbounds-check -fbacktrace -fopenmp
 #set the location of the libraries
 LIB_LIST = -L$(METISDIR) -l$(METISLIB) -lblas -llapack
 
+#set the option for placing module files
+MODFLAG=-J
 
 
 all: EMPIRE ALLTESTS TEST_H TEST_R TEST_Q TEST_HQHTR
@@ -16,7 +18,6 @@ all: EMPIRE ALLTESTS TEST_H TEST_R TEST_Q TEST_HQHTR
 
 OBS=obs/
 BIN=bin/
-MODFLAG=-J
 MODLOC:=$(OBS)
 SR_FILTS=src/filters/
 SR_UTILS=src/utils/

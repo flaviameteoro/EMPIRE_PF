@@ -1,6 +1,6 @@
 /** \mainpage EMPIRE Data Assimilation Documentation
 \author Philip A. Browne <a href="mailto:p.browne@reading.ac.uk">p.browne@reading.ac.uk</a>
-\date Time-stamp: <2014-10-06 14:04:55 pbrowne>
+\date Time-stamp: <2014-10-07 15:00:40 pbrowne>
 
 \section Download Downloading
 
@@ -24,10 +24,15 @@ The Makefile must be editted for the specific compiler setup. In the main direct
 Edit the variables as follows:
 - \c FC The fortran compiler
 
-This has been tested with gfortran 4.8.2
+This has been tested with gfortran 4.8.2, crayftn 8.2.6 and ifort 14.0.1.106
 
 - \c FCOPTS The options for the fortran compiler
 - \c LIB_LIST The libraries to be called. Note this must include BLAS and LAPACK
+
+- \c MODFLAG The flag to specify where module files should be placed by the fortran complier. Examples are
+  - \c gfortran: -J
+  - \c ifort: -module
+  - \c crayftn: -em -J
 
 To compile the source code, simply then type the command
 \code{.sh}
