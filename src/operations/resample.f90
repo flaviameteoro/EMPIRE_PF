@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-09-22 15:08:56 pbrowne>
+!!! Time-stamp: <2014-10-07 10:18:07 pbrowne>
 !!!
 !!!    Subroutine to perform Universal Importance Resampling
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -45,7 +45,7 @@ integer, dimension(pf%nens) :: new,tobereplaced,brandnew
 logical :: in
 real(kind=rk) :: point,draw
 integer :: mpi_err
-integer, dimension(2*pf%count) :: requests
+integer, dimension(2*pf%nens) :: requests
 integer :: summ,destination,source
 integer, allocatable, dimension(:,:) :: statuses
 logical :: flag
@@ -64,6 +64,17 @@ call mpi_gatherv(pf%weight(gbldisp(pfrank+1)+1:gbldisp(pfrank+1)+pf%count&
 
 !print*,'ahoy ',pf%weight
 if(pfrank == 0 ) then
+   !check for NaN in the weight
+   if(.not. all(pf%weight .eq. pf%weight)) then
+      do i = 1,pf%nens
+         if(pf%weight(i) .ne. pf%weight(i)) then
+            print*,'Particle ',i,' has weight ',pf%weight(i)
+            print*,'stopping now'
+         end if
+      end do
+      stop
+   end if
+
 !normalise the weights and store them as the actual values.
 !print*,'seriously: ',pf%weight
 pf%weight = exp(-pf%weight + minval(pf%weight) )
@@ -150,9 +161,9 @@ do i = 1,pf%nens
       brandnew(tobereplaced(i)) = dupe
    end if
 end do
-!print*,'##################################'
-!print*,brandnew
-!print*,'##################################'
+print*,'##################################'
+print*,brandnew
+print*,'##################################'
 
 
 end if
@@ -160,7 +171,7 @@ end if
 !now the master processor can send the array
 !BRANDNEW to all the other processors
 call mpi_bcast(brandnew,pf%nens,mpi_integer,0,pf_mpi_comm,mpi_err)
-!print*,brandnew
+print*,brandnew
 
 
 
