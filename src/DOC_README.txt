@@ -1,6 +1,6 @@
 /** \mainpage EMPIRE Data Assimilation Documentation
 \author Philip A. Browne <a href="mailto:p.browne@reading.ac.uk">p.browne@reading.ac.uk</a>
-\date Time-stamp: <2014-10-07 15:28:50 pbrowne>
+\date Time-stamp: <2014-10-08 16:40:26 pbrowne>
 
 \section Download Downloading
 
@@ -33,6 +33,7 @@ This has been tested with gfortran 4.8.2, crayftn 8.2.6 and ifort 14.0.1.106
   - \c gfortran: -J
   - \c ifort: -module
   - \c crayftn: -em -J
+  - \c pgfortran: -module
 
 To compile the source code, simply then type the command
 \code{.sh}
@@ -114,7 +115,7 @@ For example, to run \b N_MDL copies of the model with \b N_DA copies of empire, 
 The empire executable is controlled by the namelist data file \link pf_control::parse_pf_parameters pf_parameters.dat\endlink. As such, this file should be put in the directory where empire is executed.
 
 \section Examples Examples
-In the directory \c examples there is currently one example of how to use EMPIRE, specififcally with the Lorenz 1996 model. In the directory you will find an example model_specific.f90 file setup for that model, along with a file \c instructions.txt which will lead you step by step through how to run a twin experiment.
+In the directory \c examples there is currently one example of how to use EMPIRE, specifically with the Lorenz 1996 model. In the directory you will find an example model_specific.f90 file setup for that model, along with a file \c instructions.txt which will lead you step by step through how to run a twin experiment.
 
 
 

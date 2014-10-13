@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-10-07 15:41:06 pbrowne>
+!!! Time-stamp: <2014-10-13 15:24:24 pbrowne>
 !!!
 !!!    module to hold all the information to control the the main program
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -88,7 +88,7 @@ module pf_control
                               !< is stored in the file start/##.state
      
   end type pf_control_type
-  type(pf_control_type) :: pf !< the derived data type holding all controlling data
+  type(pf_control_type), save :: pf !< the derived data type holding all controlling data
 
 
 contains
