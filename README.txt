@@ -16,4 +16,4 @@ This will executables in the subdirectory bin/
 
 Next, edit the file model_specific.f90 to make it appropriate for your model.
 
-See the documentation for more explaination. doc/html/index.html and/or doc/latex/refman.pdf
+See the documentation for more explanation. doc/html/index.html and/or doc/latex/refman.pdf
