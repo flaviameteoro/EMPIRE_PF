@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-10-07 11:15:50 pbrowne>
+!!! Time-stamp: <2014-11-12 13:42:46 pbrowne>
 !!!
 !!!    Module and subroutine to intitalise EMPIRE coupling to models
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -70,32 +70,33 @@ contains
 
  !   integer :: tag!,state_dim!,iter
  !   integer :: num_iters
-    integer :: particle,mype_id
+    integer :: particle,world_id
     integer :: myrank !nproc,myrank
 !    integer :: mpi_status(MPI_STATUS_SIZE)
     integer :: nens,i
     integer :: da
-    integer :: count,pf_colour,pf_id!,pf_mpi_comm
-
+    integer :: count,pf_colour
+    integer :: world_size
     
     pf_colour = 10000
     couple_colour=9999
-    CALL MPI_INIT (mpi_err)
-    CALL MPI_COMM_RANK(MPI_COMM_WORLD,mype_id,mpi_err)
-    CALL MPI_COMM_SPLIT(MPI_COMM_WORLD,pf_colour,mype_id,pf_mpi_comm&
-         &,mpi_err)
-    
-    CALL MPI_COMM_SPLIT(MPI_COMM_WORLD,couple_colour,mype_id&
-         &,CPL_MPI_COMM,mpi_err)
-    CALL MPI_COMM_RANK (CPL_MPI_COMM, myRank, mpi_err)
-    CALL MPI_COMM_SIZE (CPL_MPI_COMM, nens, mpi_err)
+    call MPI_INIT (mpi_err)
     
     da = 1
-    CALL MPI_ALLREDUCE(da,npfs,1,mpi_integer,mpi_sum,cpl_mpi_comm&
-         &,mpi_err)
-    nens = nens-npfs
+    call MPI_COMM_RANK (MPI_COMM_WORLD,world_id,     mpi_err)
+    call mpi_comm_size (mpi_comm_world,world_size,   mpi_err)
+    call mpi_comm_split(mpi_comm_world,da,           world_id,  pf_mpi_comm, mpi_err)
+    call mpi_comm_rank (pf_mpi_comm,   pfrank,       mpi_err)
+    call mpi_comm_size (pf_mpi_comm,   npfs,          mpi_err)
+    call MPI_COMM_SPLIT(MPI_COMM_WORLD,couple_colour,world_size,CPL_MPI_COMM,mpi_err)
+    call MPI_COMM_RANK (CPL_MPI_COMM,  myRank,       mpi_err)
+    call MPI_COMM_SIZE (CPL_MPI_COMM,  nens,         mpi_err)
     
-    pfrank = myrank-nens
+    nens = nens-npfs
+    print*,'DA'
+    print*,'nens = ',nens
+    print*,'npfs = ',npfs
+    
     
     !lets find the particles:
     count = 0
