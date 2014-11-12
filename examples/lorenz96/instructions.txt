@@ -29,6 +29,8 @@ alltests
 # now let us download a version of the mode and input file to use
 wget http://www.met.reading.ac.uk/~darc/empire/lorenz96.dat
 wget http://www.met.reading.ac.uk/~darc/empire/lorenz96_empire.py
+# make the python model code executable
+chmod 744 lorenz96_empire.py
 # copy a set of input files that will generate observations for the above model
 cp ../examples/lorenz96/make_obs.dat pf_parameters.dat
 # now let us run 1 copy of the model and one DA code. prepend all the outputs
