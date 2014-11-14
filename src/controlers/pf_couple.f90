@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-09-30 13:51:29 pbrowne>
+!!! Time-stamp: <2014-11-14 14:39:12 pbrowne>
 !!!
 !!!    {one line to give the program's name and a brief idea of what it does.}
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -165,6 +165,8 @@ program empire
      if(pf%gen_data) call save_truth(pf%psi(:,1))
      if(pf%use_traj) call trajectories
      call output_from_pf
+
+     call reconfigure_model
 
   end do
   call diagnostics

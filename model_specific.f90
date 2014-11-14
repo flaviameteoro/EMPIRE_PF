@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-09-26 11:01:58 pbrowne>
+!!! Time-stamp: <2014-11-14 14:36:54 pbrowne>
 !!!
 !!!    This file must be adapted to the specific model in use.
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -63,6 +63,28 @@ subroutine configure_model
      
   end if
 end subroutine configure_model
+
+
+!>subroutine to reset variables that may change when the observation
+!!network changes
+subroutine reconfigure_model
+  use pf_control
+  use sizes
+  implicit none
+
+  stop 'reconfigure model not yet implemented'
+
+  !! first set how many observations there will be until the next
+  !! observation
+
+  !pf%time_bwn_obs = 
+
+  !! now reset how many observations will occur at that time
+  !obs_dim = 
+
+
+
+end subroutine reconfigure_model
 
 
 !>subroutine to take an observation vector y and return v
