@@ -1,6 +1,6 @@
 /** \mainpage EMPIRE Data Assimilation Documentation
 \author Philip A. Browne <a href="mailto:p.browne@reading.ac.uk">p.browne@reading.ac.uk</a>
-\date Time-stamp: <2014-11-26 15:34:10 pbrowne>
+\date Time-stamp: <2014-11-26 15:38:45 pbrowne>
 
 \section Methods EMPIRE Methods
 For a list of methods implemented in EMPIRE, please click here: \link methods \endlink
@@ -158,7 +158,7 @@ Model specific operations required:
 
 \subsection methods_enkfs Ensemble Kalman filters
 
--# LETKF The Localised Ensemble Transform Kalman Filter \n
+-# LETKF The Localised Ensemble Transform Kalman Filter @ref letkf_analysis \n
 <a href="http://dx.doi.org/10.1016/j.physd.2006.11.008">Hunt, Kostelich and Szunyogh (2007)</a>. \n
 Model specific operations required: \n
     - \link h \endlink
