@@ -1,6 +1,9 @@
 /** \mainpage EMPIRE Data Assimilation Documentation
 \author Philip A. Browne <a href="mailto:p.browne@reading.ac.uk">p.browne@reading.ac.uk</a>
-\date Time-stamp: <2014-10-08 16:40:26 pbrowne>
+\date Time-stamp: <2014-11-26 10:36:35 pbrowne>
+
+\section Methods EMPIRE Methods
+For a list of methods implemented in EMPIRE, please click here: \link methods \endlink
 
 \section Download Downloading
 
@@ -128,5 +131,35 @@ However there is a webpage set up for this:
 
 <a href="https://bitbucket.org/pbrowne/empire-data-assimilation/issues">https://bitbucket.org/pbrowne/empire-data-assimilation/issues</a>
 
+
+*/
+
+/*! \page methods Empire Methods
+\section methods_filters Filters
+The filters implemented in EMPIRE can be divided into two categories, particle filters and Ensemble Kalman filters
+
+\subsection methods_pfs Particle filters
+- SIR filter (Sequential importance resampling)
+
+<a href="http://dx.doi.org/10.1049/ip-f-2.1993.0015">Gordon, Salmond and Smith (1993)</a>.
+
+- Equivalent weights particle filter
+
+<a href="http://doi.wiley.com/10.1002/qj.699">Van Leeuwen (2010)</a>.
+
+\subsection methods_enkfs Ensemble Kalman filters
+
+- LETKF The Localised Ensemble Transform Kalman Filter
+
+<a href="http://dx.doi.org/10.1016/j.physd.2006.11.008">Hunt, Kostelich and Szunyogh (2007)</a>.
+
+\section methods_smoothers Smoothers
+
+Coming at some point in the future: LETKS (Please contact us if you want us to develop this sooner rather than later)
+
+
+\section methods_var Variational Methods
+
+Coming at some point in the future: 4DEnVar (Please contact us if you want us to develop this sooner rather than later)
 
 */
