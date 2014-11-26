@@ -1,6 +1,6 @@
 /** \mainpage EMPIRE Data Assimilation Documentation
 \author Philip A. Browne <a href="mailto:p.browne@reading.ac.uk">p.browne@reading.ac.uk</a>
-\date Time-stamp: <2014-11-26 10:36:35 pbrowne>
+\date Time-stamp: <2014-11-26 15:34:10 pbrowne>
 
 \section Methods EMPIRE Methods
 For a list of methods implemented in EMPIRE, please click here: \link methods \endlink
@@ -139,19 +139,33 @@ However there is a webpage set up for this:
 The filters implemented in EMPIRE can be divided into two categories, particle filters and Ensemble Kalman filters
 
 \subsection methods_pfs Particle filters
-- SIR filter (Sequential importance resampling)
-
-<a href="http://dx.doi.org/10.1049/ip-f-2.1993.0015">Gordon, Salmond and Smith (1993)</a>.
-
-- Equivalent weights particle filter
-
-<a href="http://doi.wiley.com/10.1002/qj.699">Van Leeuwen (2010)</a>.
+-# SIR filter (Sequential importance resampling) @ref sir_filter \n
+<a href="http://dx.doi.org/10.1049/ip-f-2.1993.0015">Gordon, Salmond and Smith (1993)</a>.\n
+Model specific operations required: \n
+  - \link qhalf \endlink
+  - \link h \endlink
+  - \link solve_r \endlink
+-# Equivalent weights particle filter @ref proposal_filter @ref equivalent_weights_filter\n
+<a href="http://doi.wiley.com/10.1002/qj.699">Van Leeuwen (2010)</a>.\n
+Model specific operations required:
+ - \link qhalf \endlink
+ - \link q \endlink
+ - \link h \endlink
+ - \link ht \endlink
+ - \link solve_r \endlink
+ - \link solve_hqht_plus_r \endlink
+ - \link rhalf \endlink
 
 \subsection methods_enkfs Ensemble Kalman filters
 
-- LETKF The Localised Ensemble Transform Kalman Filter
+-# LETKF The Localised Ensemble Transform Kalman Filter \n
+<a href="http://dx.doi.org/10.1016/j.physd.2006.11.008">Hunt, Kostelich and Szunyogh (2007)</a>. \n
+Model specific operations required: \n
+    - \link h \endlink
+    - \link solve_rhalf \endlink
+    - \link dist_st_ob \endlink
 
-<a href="http://dx.doi.org/10.1016/j.physd.2006.11.008">Hunt, Kostelich and Szunyogh (2007)</a>.
+
 
 \section methods_smoothers Smoothers
 

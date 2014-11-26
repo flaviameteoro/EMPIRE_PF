@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-11-14 14:39:12 pbrowne>
+!!! Time-stamp: <2014-11-26 15:21:46 pbrowne>
 !!!
 !!!    {one line to give the program's name and a brief idea of what it does.}
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -140,12 +140,12 @@ program empire
      end do
            
      pf%timestep = pf%timestep + 1
-     write(6,*) 'starting the equal weight filter step'
+     write(6,*) 'starting the equivalent weights filter step'
      call flush(6)
 
 
      if(pf%type .eq. 'EW') then
-           call equal_weight_filter
+           call equivalent_weights_filter
         elseif(pf%type .eq. 'SI') then
            call sir_filter
         elseif(pf%type .eq. 'SE') then

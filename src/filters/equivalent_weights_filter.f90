@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-09-26 12:21:27 pbrowne>
+!!! Time-stamp: <2014-11-26 15:21:21 pbrowne>
 !!!
 !!!    {one line to give the program's name and a brief idea of what it does.}
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -26,7 +26,7 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !> subroutine to do the equivalent weights step
 !!
-subroutine equal_weight_filter
+subroutine equivalent_weights_filter
   use pf_control
   use sizes
   use random
@@ -242,4 +242,4 @@ subroutine equal_weight_filter
   end if !if(pf%gen_data)
   
   
-end subroutine equal_weight_filter
+end subroutine equivalent_weights_filter

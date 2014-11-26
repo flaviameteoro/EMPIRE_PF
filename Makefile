@@ -25,7 +25,7 @@ SR_CONTS=src/controlers/
 SR_DATAS=src/data/
 SR_TESTS=src/tests/
 SR_OPERS=src/operations/
-OBJSQ= sizes.o pf_couple.o Qdata.o Rdata.o equivalent_weights_step.o comms.o gen_rand.o random_d.o proposal_filter.o histogram.o pf_control.o data_io.o model_specific.o operator_wrappers.o quicksort.o resample.o diagnostics.o perturb_particle.o genQ.o sir_filter.o stochastic_model.o tests.o letkf_analysis.o deterministic_model.o
+OBJSQ= sizes.o pf_couple.o Qdata.o Rdata.o equivalent_weights_filter.o comms.o gen_rand.o random_d.o proposal_filter.o histogram.o pf_control.o data_io.o model_specific.o operator_wrappers.o quicksort.o resample.o diagnostics.o perturb_particle.o genQ.o sir_filter.o stochastic_model.o tests.o letkf_analysis.o deterministic_model.o
 OBJS=$(addprefix $(OBS),$(OBJSQ))
 FCOPTS+=$(MODFLAG) $(MODLOC)
 
@@ -74,8 +74,8 @@ $(OBS)sizes.o: $(SR_CONTS)sizes.f90
 $(OBS)comms.o: $(SR_UTILS)comms.f90 $(OBS)sizes.o $(OBS)pf_control.o
 	$(FC) $(FCOPTS) -c $(SR_UTILS)comms.f90 -o $@
 
-$(OBS)equivalent_weights_step.o: $(SR_FILTS)equivalent_weights_step.f90 $(OBS)random_d.o
-	$(FC) $(FCOPTS) -c $(SR_FILTS)equivalent_weights_step.f90 -o $@
+$(OBS)equivalent_weights_filter.o: $(SR_FILTS)equivalent_weights_filter.f90 $(OBS)random_d.o
+	$(FC) $(FCOPTS) -c $(SR_FILTS)equivalent_weights_filter.f90 -o $@
 
 $(OBS)random_d.o: $(SR_UTILS)random_d.f90
 	$(FC) $(FCOPTS) -c $(SR_UTILS)random_d.f90 -o $@
