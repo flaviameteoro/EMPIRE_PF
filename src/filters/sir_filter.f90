@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-09-26 10:55:02 pbrowne>
+!!! Time-stamp: <2014-11-26 15:03:31 pbrowne>
 !!!
 !!!    Subroutine to perform SIR filter
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -62,7 +62,7 @@ subroutine sir_filter
   
   !compute the relaxation term Qkgain, the intermediate
   !term kgain and apply correlation to noise
-  call Q(pf%count,normaln,betan)
+  call Qhalf(pf%count,normaln,betan)
 
   
   !update the new state and weights based on these terms
