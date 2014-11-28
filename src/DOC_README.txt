@@ -1,6 +1,6 @@
 /** \mainpage EMPIRE Data Assimilation Documentation
 \author Philip A. Browne <a href="mailto:p.browne@reading.ac.uk">p.browne@reading.ac.uk</a>
-\date Time-stamp: <2014-11-26 15:38:45 pbrowne>
+\date Time-stamp: <2014-11-28 10:56:08 pbrowne>
 
 \section Methods EMPIRE Methods
 For a list of methods implemented in EMPIRE, please click here: \link methods \endlink
@@ -134,18 +134,23 @@ However there is a webpage set up for this:
 
 */
 
-/*! \page methods Empire Methods
+/*! \page methods Assimilation Methods
 \section methods_filters Filters
 The filters implemented in EMPIRE can be divided into two categories, particle filters and Ensemble Kalman filters
 
 \subsection methods_pfs Particle filters
--# SIR filter (Sequential importance resampling) @ref sir_filter \n
+\subsubsection SIRfilter SIR Filter (Sequential Importance Resampling) 
+See file @ref sir_filter \n
 <a href="http://dx.doi.org/10.1049/ip-f-2.1993.0015">Gordon, Salmond and Smith (1993)</a>.\n
 Model specific operations required: \n
   - \link qhalf \endlink
   - \link h \endlink
-  - \link solve_r \endlink
--# Equivalent weights particle filter @ref proposal_filter @ref equivalent_weights_filter\n
+  - \link solve_r \endlink \n
+The SIR filter has no parameters to be chosen. \n
+To select the SIR filter, in \link pf_control::parse_pf_parameters pf_parameters.dat \endlink set the following variables:
+   - \link pf_control::pf_control_type::type type \endlink = 'SI'
+\subsubsection EWPF Equivalent Weights Particle Filter 
+See files @ref proposal_filter @ref equivalent_weights_filter\n
 <a href="http://doi.wiley.com/10.1002/qj.699">Van Leeuwen (2010)</a>.\n
 Model specific operations required:
  - \link qhalf \endlink
@@ -154,17 +159,28 @@ Model specific operations required:
  - \link ht \endlink
  - \link solve_r \endlink
  - \link solve_hqht_plus_r \endlink
- - \link rhalf \endlink
-
+ - \link rhalf \endlink \n
+The Equivalent Weights particle filter has a number of free parameters to be chosen. \n
+   - \link pf_control::pf_control_type::nudgefac nudgefac\endlink
+   - \link pf_control::pf_control_type::nfac nfac \endlink
+   - \link pf_control::pf_control_type::ufac ufac \endlink
+   - \link pf_control::pf_control_type::keep keep \endlink \n
+To select the EWPF, in \link pf_control::parse_pf_parameters pf_parameters.dat \endlink set the following variables:
+   - \link pf_control::pf_control_type::type type \endlink = 'EW'
 \subsection methods_enkfs Ensemble Kalman filters
 
--# LETKF The Localised Ensemble Transform Kalman Filter @ref letkf_analysis \n
+\subsubsection LETKF LETKF (The Localised Ensemble Transform Kalman Filter)
+See file  @ref letkf_analysis \n
 <a href="http://dx.doi.org/10.1016/j.physd.2006.11.008">Hunt, Kostelich and Szunyogh (2007)</a>. \n
 Model specific operations required: \n
-    - \link h \endlink
-    - \link solve_rhalf \endlink
-    - \link dist_st_ob \endlink
-
+ - \link h \endlink
+ - \link solve_rhalf \endlink
+ - \link dist_st_ob \endlink \n
+The LETKF has a number of free parameters to be chosen. \n
+   - \link pf_control::pf_control_type::rho rho \endlink
+   - \link pf_control::pf_control_type::len len \endlink \n 
+To select the LETKF, in \link pf_control::parse_pf_parameters pf_parameters.dat \endlink set the following variables:
+   - \link pf_control::pf_control_type::type type \endlink = 'ET'
 
 
 \section methods_smoothers Smoothers
@@ -176,4 +192,43 @@ Coming at some point in the future: LETKS (Please contact us if you want us to d
 
 Coming at some point in the future: 4DEnVar (Please contact us if you want us to develop this sooner rather than later)
 
+*/
+
+
+/*! \page features Other EMPIRE features
+\section gendata Generating artificial observations
+
+EMPIRE can generate artificial observations easily and quickly.
+
+Model specific operations required: \n
+ - \link h \endlink
+ - \link rhalf \endlink
+ - \link qhalf \endlink
+
+In \link pf_control::parse_pf_parameters pf_parameters.dat \endlink set the following variables:
+- \link pf_control::pf_control_type::gen_data gen_data \endlink = .true.
+- \link pf_control::pf_control_type::type type \endlink = 'EW'
+
+The system then should be run with a single ensemble member and a single EMPIRE process, i.e.
+\code{.sh}
+mpirun -np 1 model : -np 1 empire
+\endcode
+
+\section detens Running a deterministic ensemble
+
+EMPIRE can simply integrate forward in time an ensemble of models.
+
+In \link pf_control::parse_pf_parameters pf_parameters.dat \endlink set the following variables:
+- \link pf_control::pf_control_type::type type \endlink = 'DE'
+\todo ADD THIS
+
+\section stochens Running a stochastic ensemble
+
+EMPIRE can integrate forward in time an ensemble of models whilst adding stochastic forcing.
+
+Model specific operations required: \n
+ - \link qhalf \endlink
+
+In \link pf_control::parse_pf_parameters pf_parameters.dat \endlink set the following variables:
+- \link pf_control::pf_control_type::type type \endlink = 'SE'
 */
