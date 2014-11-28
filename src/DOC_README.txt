@@ -1,6 +1,6 @@
 /** \mainpage EMPIRE Data Assimilation Documentation
 \author Philip A. Browne <a href="mailto:p.browne@reading.ac.uk">p.browne@reading.ac.uk</a>
-\date Time-stamp: <2014-11-28 11:49:34 pbrowne>
+\date Time-stamp: <2014-11-28 11:51:30 pbrowne>
 
 \section Methods EMPIRE Methods
 For a list of methods implemented in EMPIRE, please click here: \link methods \endlink
@@ -106,7 +106,7 @@ You can test your user supplied routines by running the test codes found in the 
 
 These are by no means full-proof ways of ensuring that you have implemented things correctly, but should at least check what you have done for logical consistency.
 
-For example, they will test if \f$ H H^Tx = x\f$, and if \f$ Q^{\frac{1}{2}}Q^{\frac{1}{2}}x = Qx\f$ for various different vectors \f$x\f$.
+For example, they will test if \f$ R^{-1} R^Ty = y\f$, and if \f$ Q^{\frac{1}{2}}Q^{\frac{1}{2}}x = Qx\f$ for various different vectors \f$x\f$.
 
 \section Linking Linking to your model using EMPIRE
 Full instructions on how to put the EMPIRE MPI commands into a new model can be found at <a href="http://www.met.reading.ac.uk/~darc/empire">www.met.reading.ac.uk/~darc/empire</a>.
