@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-10-06 17:01:09 pbrowne>
+!!! Time-stamp: <2014-11-28 11:39:20 pbrowne>
 !!!
 !!!    Collection of subroutines to perform checks of user supplied routines
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -24,207 +24,210 @@
 !!!	      RG6 6BB
 !!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-subroutine H_tests()
-  !> @brief These are some tests to check that the observation
-  !> operator is implemented correctly
-  use pf_control
-  use sizes
-  implicit none
-  integer, parameter :: rk = kind(1.0d0)
-  real(kind=rk), dimension(obs_dim) :: a,s
-  real(kind=rk), dimension(obs_dim,10) :: aa,ss
-  real(kind=rk), dimension(state_dim) :: j
-  real(kind=rk), dimension(state_dim,10) :: jj
-  real(kind=rk) :: dnrm2,r
-  integer :: pfcount,i,k
 
-  !let us save pf%count for later
-  pfcount = pf%count
-
-
-  write(6,*) 'TESTING H'
-  write(6,*) 'First doing H^T then doing H'
-  write(6,*) 'TESTING H WITH SINGLE RIGHT HAND SIDES'
-
-  !FIRST TESTS: HHT
-  !test one - zeros
-  a = 0.0d0
-  pf%count = 1
-  call HT(obs_dim,pf%count,a,j,1)
-  call H(obs_dim,pf%count,j,s,1)
-  !s should be a
-  r = dnrm2(obs_dim,s,1)
-  write(6,'(A)',advance='no') 'Test 1: H H^T(0) ... '
-  if(r .lt. 1.0d-15) then
-     !passed the test
-     write(6,'(A)',advance='yes') 'passed'
-  else
-     write(6,'(A,es23.17)',advance='yes') 'failed with r = ',r
-  end if
-
-  a = 1.0d0
-  call HT(obs_dim,pf%count,a,j,1)
-  call H(obs_dim,pf%count,j,s,1)
-  !s should be a
-  r = dnrm2(obs_dim,s-a,1)
-  write(6,'(A)',advance='no') 'Test 2: H H^T(1) ... '
-  if(r .lt. 1.0d-15) then
-     !passed the test
-     write(6,'(A)',advance='yes') 'passed'
-  else
-     write(6,'(A,es23.17)',advance='yes') 'failed with r = ',r
-  end if
-  
-  a = -1.0d0
-  call HT(obs_dim,pf%count,a,j,1)
-  call H(obs_dim,pf%count,j,s,1)
-  !s should be a
-  r = dnrm2(obs_dim,s-a,1)
-  write(6,'(A)',advance='no') 'Test 3: H H^T(-1) ... '
-  if(r .lt. 1.0d-15) then
-     !passed the test
-     write(6,'(A)',advance='yes') 'passed'
-  else
-     write(6,'(A,es23.17)',advance='yes') 'failed with r = ',r
-  end if
-
-
-  call NormalRandomNumbers1D(0.0_rk,1.0_rk,obs_dim,a)
-  call HT(obs_dim,pf%count,a,j,1)
-  call H(obs_dim,pf%count,j,s,1)
-  !s should be a                              
-  r = dnrm2(obs_dim,s-a,1)
-  write(6,'(A)',advance='no') 'Test 4: H H^T( N(0,1) ) ... '
-  if(r .lt. 1.0d-15) then
-     !passed the test                                   
-     write(6,'(A)',advance='yes') 'passed'
-  else
-     write(6,'(A,es23.17)',advance='yes') 'failed with r = ',r
-  end if
-
-  write(6,'(A)',advance='yes') 'TESTING H WITH MULTIPLE RIGHT HAND SIDES'
-  do i = 1,10
-     aa = 0.0_rk
-     pf%count = i
-     call HT(obs_dim,pf%count,aa(:,1:i),jj(:,1:i),i)
-     call  H(obs_dim,pf%count,jj(:,1:i),ss(:,1:i),i)
-     write(6,'(A,i2,A,i2,A)',advance='no') 'Test 5 ',i,' RHS: H H^T(0) ... '
-     do k = 1,i
-        !s should be a
-        r = dnrm2(obs_dim,ss(:,k)-aa(:,k),1)
-!        write(6,'(A,i2,A,i2,A)',advance='no') 'Test 5 ',i,',',k,': H H^T(0) ... '
-        if(r .lt. 1.0d-15) then
-           !passed the test
-           if(k .eq. 1 .and. i .eq. 1) then
-              write(6,'(A,i2)',advance='yes') 'passed: ',k
-           elseif(k .eq. 1) then
-              write(6,'(A,i2)',advance='no') 'passed: ',k
-           elseif(k .eq. i) then
-              write(6,'(A,i2)',advance='yes') ' ',k
-           else
-              write(6,'(A,i2)',advance='no') ' ',k
-           end if
-        else
-           !write(6,'(A)',advance='yes') ''
-           write(6,'(A,es8.2)',advance='yes') 'failed with r = ',r
-        end if
-     end do
-  end do
-
-  
-  do i = 1,10
-     aa = 1.0_rk
-     pf%count = i
-     call HT(obs_dim,pf%count,aa(:,1:i),jj(:,1:i),i)
-     call  H(obs_dim,pf%count,jj(:,1:i),ss(:,1:i),i)
-     write(6,'(A,i2,A,i2,A)',advance='no') 'Test 6 ',i,' RHS: H H^T(1) ... '
-     do k = 1,i
-        !s should be a
-        r = dnrm2(obs_dim,ss(:,k)-aa(:,k),1)
-!        write(6,'(A,i2,A,i2,A)',advance='no') 'Test 5 ',i,',',k,': H H^T(0) ... '
-        if(r .lt. 1.0d-15) then
-           !passed the test
-           if(k .eq. 1 .and. i .eq. 1) then
-              write(6,'(A,i2)',advance='yes') 'passed: ',k
-           elseif(k .eq. 1) then
-              write(6,'(A,i2)',advance='no') 'passed: ',k
-           elseif(k .eq. i) then
-              write(6,'(A,i2)',advance='yes') ' ',k
-           else
-              write(6,'(A,i2)',advance='no') ' ',k
-           end if
-        else
-           write(6,'(A)',advance='yes') ''
-           write(6,'(A,es23.17)',advance='yes') 'failed with r = ',r
-        end if
-     end do
-  end do
-  
-  do i = 1,10
-     aa = 0.0_rk
-     pf%count = i
-     call HT(obs_dim,pf%count,aa(:,1:i),jj(:,1:i),i)
-     call  H(obs_dim,pf%count,jj(:,1:i),ss(:,1:i),i)
-     write(6,'(A,i2,A,i2,A)',advance='no') 'Test 7 ',i,' RHS: H H^T(-1) ... '
-     do k = 1,i
-        !s should be a
-        r = dnrm2(obs_dim,ss(:,k)-aa(:,k),1)
-!        write(6,'(A,i2,A,i2,A)',advance='no') 'Test 5 ',i,',',k,': H H^T(0) ... '
-        if(r .lt. 1.0d-15) then
-           !passed the test
-           if(k .eq. 1 .and. i .eq. 1) then
-              write(6,'(A,i2)',advance='yes') 'passed: ',k
-           elseif(k .eq. 1) then
-              write(6,'(A,i2)',advance='no') 'passed: ',k
-           elseif(k .eq. i) then
-              write(6,'(A,i2)',advance='yes') ' ',k
-           else
-              write(6,'(A,i2)',advance='no') ' ',k
-           end if
-        else
-           write(6,'(A)',advance='yes') ''
-           write(6,'(A,es23.17)',advance='yes') 'failed with r = ',r
-        end if
-     end do
-  end do
-
-  
-  call NormalRandomNumbers2D(0.0_rk,1.0_rk,obs_dim,10,aa)
-  do i = 1,10
-     pf%count = i
-     call HT(obs_dim,pf%count,aa(:,1:i),jj(:,1:i),i)
-     call  H(obs_dim,pf%count,jj(:,1:i),ss(:,1:i),i)
-     write(6,'(A,i2,A,i2,A)',advance='no') 'Test 8 ',i,' RHS: H H^T( N&
-          &(0,1) ) ... '
-     do k = 1,i
-        !s should be a
-        r = dnrm2(obs_dim,ss(:,k)-aa(:,k),1)
-!        write(6,'(A,i2,A,i2,A)',advance='no') 'Test 5 ',i,',',k,': H H^T(0) ... '
-        if(r .lt. 1.0d-15) then
-           !passed the test
-           if(k .eq. 1 .and. i .eq. 1) then
-              write(6,'(A,i2)',advance='yes') 'passed: ',k
-           elseif(k .eq. 1) then
-              write(6,'(A,i2)',advance='no') 'passed: ',k
-           elseif(k .eq. i) then
-              write(6,'(A,i2)',advance='yes') ' ',k
-           else
-              write(6,'(A,i2)',advance='no') ' ',k
-           end if
-        else
-           write(6,'(A)',advance='yes') ''
-           write(6,'(A,es8.2)',advance='yes') 'failed with r = ',r
-        end if
-     end do
-  end do
-
-
-  
-  !put the count back to what it was before
-  pf%count = pfcount
-  
-
-end subroutine H_tests
+!!$ it turns out that these tests don't make any sense for H...
+!!commenting out
+!!$subroutine H_tests()
+!!$  !> @brief These are some tests to check that the observation
+!!$  !> operator is implemented correctly
+!!$  use pf_control
+!!$  use sizes
+!!$  implicit none
+!!$  integer, parameter :: rk = kind(1.0d0)
+!!$  real(kind=rk), dimension(obs_dim) :: a,s
+!!$  real(kind=rk), dimension(obs_dim,10) :: aa,ss
+!!$  real(kind=rk), dimension(state_dim) :: j
+!!$  real(kind=rk), dimension(state_dim,10) :: jj
+!!$  real(kind=rk) :: dnrm2,r
+!!$  integer :: pfcount,i,k
+!!$
+!!$  !let us save pf%count for later
+!!$  pfcount = pf%count
+!!$
+!!$
+!!$  write(6,*) 'TESTING H'
+!!$  write(6,*) 'First doing H^T then doing H'
+!!$  write(6,*) 'TESTING H WITH SINGLE RIGHT HAND SIDES'
+!!$
+!!$  !FIRST TESTS: HHT
+!!$  !test one - zeros
+!!$  a = 0.0d0
+!!$  pf%count = 1
+!!$  call HT(obs_dim,pf%count,a,j,1)
+!!$  call H(obs_dim,pf%count,j,s,1)
+!!$  !s should be a
+!!$  r = dnrm2(obs_dim,s,1)
+!!$  write(6,'(A)',advance='no') 'Test 1: H H^T(0) ... '
+!!$  if(r .lt. 1.0d-15) then
+!!$     !passed the test
+!!$     write(6,'(A)',advance='yes') 'passed'
+!!$  else
+!!$     write(6,'(A,es23.17)',advance='yes') 'failed with r = ',r
+!!$  end if
+!!$
+!!$  a = 1.0d0
+!!$  call HT(obs_dim,pf%count,a,j,1)
+!!$  call H(obs_dim,pf%count,j,s,1)
+!!$  !s should be a
+!!$  r = dnrm2(obs_dim,s-a,1)
+!!$  write(6,'(A)',advance='no') 'Test 2: H H^T(1) ... '
+!!$  if(r .lt. 1.0d-15) then
+!!$     !passed the test
+!!$     write(6,'(A)',advance='yes') 'passed'
+!!$  else
+!!$     write(6,'(A,es23.17)',advance='yes') 'failed with r = ',r
+!!$  end if
+!!$  
+!!$  a = -1.0d0
+!!$  call HT(obs_dim,pf%count,a,j,1)
+!!$  call H(obs_dim,pf%count,j,s,1)
+!!$  !s should be a
+!!$  r = dnrm2(obs_dim,s-a,1)
+!!$  write(6,'(A)',advance='no') 'Test 3: H H^T(-1) ... '
+!!$  if(r .lt. 1.0d-15) then
+!!$     !passed the test
+!!$     write(6,'(A)',advance='yes') 'passed'
+!!$  else
+!!$     write(6,'(A,es23.17)',advance='yes') 'failed with r = ',r
+!!$  end if
+!!$
+!!$
+!!$  call NormalRandomNumbers1D(0.0_rk,1.0_rk,obs_dim,a)
+!!$  call HT(obs_dim,pf%count,a,j,1)
+!!$  call H(obs_dim,pf%count,j,s,1)
+!!$  !s should be a                              
+!!$  r = dnrm2(obs_dim,s-a,1)
+!!$  write(6,'(A)',advance='no') 'Test 4: H H^T( N(0,1) ) ... '
+!!$  if(r .lt. 1.0d-15) then
+!!$     !passed the test                                   
+!!$     write(6,'(A)',advance='yes') 'passed'
+!!$  else
+!!$     write(6,'(A,es23.17)',advance='yes') 'failed with r = ',r
+!!$  end if
+!!$
+!!$  write(6,'(A)',advance='yes') 'TESTING H WITH MULTIPLE RIGHT HAND SIDES'
+!!$  do i = 1,10
+!!$     aa = 0.0_rk
+!!$     pf%count = i
+!!$     call HT(obs_dim,pf%count,aa(:,1:i),jj(:,1:i),i)
+!!$     call  H(obs_dim,pf%count,jj(:,1:i),ss(:,1:i),i)
+!!$     write(6,'(A,i2,A,i2,A)',advance='no') 'Test 5 ',i,' RHS: H H^T(0) ... '
+!!$     do k = 1,i
+!!$        !s should be a
+!!$        r = dnrm2(obs_dim,ss(:,k)-aa(:,k),1)
+!!$!        write(6,'(A,i2,A,i2,A)',advance='no') 'Test 5 ',i,',',k,': H H^T(0) ... '
+!!$        if(r .lt. 1.0d-15) then
+!!$           !passed the test
+!!$           if(k .eq. 1 .and. i .eq. 1) then
+!!$              write(6,'(A,i2)',advance='yes') 'passed: ',k
+!!$           elseif(k .eq. 1) then
+!!$              write(6,'(A,i2)',advance='no') 'passed: ',k
+!!$           elseif(k .eq. i) then
+!!$              write(6,'(A,i2)',advance='yes') ' ',k
+!!$           else
+!!$              write(6,'(A,i2)',advance='no') ' ',k
+!!$           end if
+!!$        else
+!!$           !write(6,'(A)',advance='yes') ''
+!!$           write(6,'(A,es8.2)',advance='yes') 'failed with r = ',r
+!!$        end if
+!!$     end do
+!!$  end do
+!!$
+!!$  
+!!$  do i = 1,10
+!!$     aa = 1.0_rk
+!!$     pf%count = i
+!!$     call HT(obs_dim,pf%count,aa(:,1:i),jj(:,1:i),i)
+!!$     call  H(obs_dim,pf%count,jj(:,1:i),ss(:,1:i),i)
+!!$     write(6,'(A,i2,A,i2,A)',advance='no') 'Test 6 ',i,' RHS: H H^T(1) ... '
+!!$     do k = 1,i
+!!$        !s should be a
+!!$        r = dnrm2(obs_dim,ss(:,k)-aa(:,k),1)
+!!$!        write(6,'(A,i2,A,i2,A)',advance='no') 'Test 5 ',i,',',k,': H H^T(0) ... '
+!!$        if(r .lt. 1.0d-15) then
+!!$           !passed the test
+!!$           if(k .eq. 1 .and. i .eq. 1) then
+!!$              write(6,'(A,i2)',advance='yes') 'passed: ',k
+!!$           elseif(k .eq. 1) then
+!!$              write(6,'(A,i2)',advance='no') 'passed: ',k
+!!$           elseif(k .eq. i) then
+!!$              write(6,'(A,i2)',advance='yes') ' ',k
+!!$           else
+!!$              write(6,'(A,i2)',advance='no') ' ',k
+!!$           end if
+!!$        else
+!!$           write(6,'(A)',advance='yes') ''
+!!$           write(6,'(A,es23.17)',advance='yes') 'failed with r = ',r
+!!$        end if
+!!$     end do
+!!$  end do
+!!$  
+!!$  do i = 1,10
+!!$     aa = 0.0_rk
+!!$     pf%count = i
+!!$     call HT(obs_dim,pf%count,aa(:,1:i),jj(:,1:i),i)
+!!$     call  H(obs_dim,pf%count,jj(:,1:i),ss(:,1:i),i)
+!!$     write(6,'(A,i2,A,i2,A)',advance='no') 'Test 7 ',i,' RHS: H H^T(-1) ... '
+!!$     do k = 1,i
+!!$        !s should be a
+!!$        r = dnrm2(obs_dim,ss(:,k)-aa(:,k),1)
+!!$!        write(6,'(A,i2,A,i2,A)',advance='no') 'Test 5 ',i,',',k,': H H^T(0) ... '
+!!$        if(r .lt. 1.0d-15) then
+!!$           !passed the test
+!!$           if(k .eq. 1 .and. i .eq. 1) then
+!!$              write(6,'(A,i2)',advance='yes') 'passed: ',k
+!!$           elseif(k .eq. 1) then
+!!$              write(6,'(A,i2)',advance='no') 'passed: ',k
+!!$           elseif(k .eq. i) then
+!!$              write(6,'(A,i2)',advance='yes') ' ',k
+!!$           else
+!!$              write(6,'(A,i2)',advance='no') ' ',k
+!!$           end if
+!!$        else
+!!$           write(6,'(A)',advance='yes') ''
+!!$           write(6,'(A,es23.17)',advance='yes') 'failed with r = ',r
+!!$        end if
+!!$     end do
+!!$  end do
+!!$
+!!$  
+!!$  call NormalRandomNumbers2D(0.0_rk,1.0_rk,obs_dim,10,aa)
+!!$  do i = 1,10
+!!$     pf%count = i
+!!$     call HT(obs_dim,pf%count,aa(:,1:i),jj(:,1:i),i)
+!!$     call  H(obs_dim,pf%count,jj(:,1:i),ss(:,1:i),i)
+!!$     write(6,'(A,i2,A,i2,A)',advance='no') 'Test 8 ',i,' RHS: H H^T( N&
+!!$          &(0,1) ) ... '
+!!$     do k = 1,i
+!!$        !s should be a
+!!$        r = dnrm2(obs_dim,ss(:,k)-aa(:,k),1)
+!!$!        write(6,'(A,i2,A,i2,A)',advance='no') 'Test 5 ',i,',',k,': H H^T(0) ... '
+!!$        if(r .lt. 1.0d-15) then
+!!$           !passed the test
+!!$           if(k .eq. 1 .and. i .eq. 1) then
+!!$              write(6,'(A,i2)',advance='yes') 'passed: ',k
+!!$           elseif(k .eq. 1) then
+!!$              write(6,'(A,i2)',advance='no') 'passed: ',k
+!!$           elseif(k .eq. i) then
+!!$              write(6,'(A,i2)',advance='yes') ' ',k
+!!$           else
+!!$              write(6,'(A,i2)',advance='no') ' ',k
+!!$           end if
+!!$        else
+!!$           write(6,'(A)',advance='yes') ''
+!!$           write(6,'(A,es8.2)',advance='yes') 'failed with r = ',r
+!!$        end if
+!!$     end do
+!!$  end do
+!!$
+!!$
+!!$  
+!!$  !put the count back to what it was before
+!!$  pf%count = pfcount
+!!$  
+!!$
+!!$end subroutine H_tests
 
 
 

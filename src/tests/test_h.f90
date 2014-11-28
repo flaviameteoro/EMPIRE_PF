@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-09-22 12:26:40 pbrowne>
+!!! Time-stamp: <2014-11-28 11:39:47 pbrowne>
 !!!
 !!!    Tests program for user supplied observation operator
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -25,20 +25,23 @@
 !!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-!> program to run tests of user supplied observation operator
-!!
+!!$ it turns out that these tests don't make any sense for H...
+!!commenting out
 
-program test_h
-  use pf_control
-  implicit none
-  
-  call set_pf_controls
-  print*,'PF: configuring model'
-  call configure_model
-
-  
-  call H_tests
-
-end program test_h
+!!$!> program to run tests of user supplied observation operator
+!!$!!
+!!$
+!!$program test_h
+!!$  use pf_control
+!!$  implicit none
+!!$  
+!!$  call set_pf_controls
+!!$  print*,'PF: configuring model'
+!!$  call configure_model
+!!$
+!!$  
+!!$  call H_tests
+!!$
+!!$end program test_h
 
 

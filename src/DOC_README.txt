@@ -1,6 +1,6 @@
 /** \mainpage EMPIRE Data Assimilation Documentation
 \author Philip A. Browne <a href="mailto:p.browne@reading.ac.uk">p.browne@reading.ac.uk</a>
-\date Time-stamp: <2014-11-28 10:56:08 pbrowne>
+\date Time-stamp: <2014-11-28 11:42:42 pbrowne>
 
 \section Methods EMPIRE Methods
 For a list of methods implemented in EMPIRE, please click here: \link methods \endlink
@@ -46,7 +46,7 @@ make
 If successful, the following executables are created in the bin/ folder:
 - \link empire \endlink
 - \link alltests \endlink
-- \link test_h \endlink
+<!-- - \link test_h \endlink -->
 - \link test_hqhtr \endlink
 - \link test_q \endlink
 - \link test_r \endlink

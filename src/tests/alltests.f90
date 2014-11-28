@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-09-22 12:15:42 pbrowne>
+!!! Time-stamp: <2014-11-28 11:40:18 pbrowne>
 !!!
 !!!    Tests program for user supplied model and observation specific routines
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -36,8 +36,9 @@ program alltests
   print*,'PF: configuring model'
   call configure_model
 
-  
-  call H_tests
+!!$ it turns out that these tests don't make any sense for H...
+!!commenting out
+!!$  call H_tests
 
   call R_tests
   
