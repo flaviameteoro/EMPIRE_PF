@@ -1,6 +1,6 @@
 /** \mainpage EMPIRE Data Assimilation Documentation
 \author Philip A. Browne <a href="mailto:p.browne@reading.ac.uk">p.browne@reading.ac.uk</a>
-\date Time-stamp: <2014-11-28 11:42:42 pbrowne>
+\date Time-stamp: <2014-11-28 11:47:21 pbrowne>
 
 \section Methods EMPIRE Methods
 For a list of methods implemented in EMPIRE, please click here: \link methods \endlink
@@ -16,7 +16,7 @@ To upgrade to the latest versions of the codes, use the following command:
 git pull https://www.bitbucket.org/pbrowne/empire-data-assimilation.git
 \endcode
 
-\copyright These codes are distributed under the GNU GPU v3 License. See LICENSE.txt.
+\copyright These codes are distributed under the GNU GPL v3 License. See LICENSE.txt.
 
 \section Compiling Compiling
 
