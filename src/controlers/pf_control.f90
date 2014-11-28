@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-11-28 10:49:08 pbrowne>
+!!! Time-stamp: <2014-11-28 10:59:07 pbrowne>
 !!!
 !!!    module to hold all the information to control the the main program
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -56,7 +56,7 @@ module pf_control
      !! The entries in the observation error covariance matrix
      !! \f$R\f$ 
      !! are multiplied by the function
-     !! \f$ \exp\left(\frac{\text{dist}^2}{2 \text{len}^2}\right) \f$
+     !! \f$ \exp\left(\frac{\mathrm{dist}^2}{2 \mathrm{len}^2}\right) \f$
      integer :: couple_root                        !< empire master processor
      logical :: use_talagrand !< switch if true outputs rank histograms
      logical :: use_weak      !< switch unused
