@@ -1,6 +1,6 @@
 /** \mainpage EMPIRE Data Assimilation Documentation
 \author Philip A. Browne <a href="mailto:p.browne@reading.ac.uk">p.browne@reading.ac.uk</a>
-\date Time-stamp: <2014-11-28 11:47:21 pbrowne>
+\date Time-stamp: <2014-11-28 11:49:34 pbrowne>
 
 \section Methods EMPIRE Methods
 For a list of methods implemented in EMPIRE, please click here: \link methods \endlink
@@ -75,6 +75,8 @@ To simply make the html version of the documentation (if pdflatex is not availab
 The file model_specific.f90 should be editted for the specific model which you wish to use. This contains a number of subroutines which need to be adapted for the model and the observation network. We list these subsequently.
 
 - \link configure_model \endlink This is called early in the code and can be used to read in any data from files before subsequently using them in the below operations.
+
+- \link reconfigure_model \endlink This is called after each observation timestep. If the observation dimension changes it should be updated here, along with the number of model timesteps until the next observation
 
 - \link h \endlink This is the observation operator
  
