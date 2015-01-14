@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-09-30 13:50:52 pbrowne>
+!!! Time-stamp: <2015-01-14 18:11:17 pbrowne>
 !!!
 !!!    subroutine to simply move the model forward in time one timestep
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -27,6 +27,7 @@
 !> @brief
 !> subroutine to simply move the model forward in time one 
 !> timestep
+!>
 !> PAB 21-05-2013
 
 subroutine deterministic_model
@@ -40,6 +41,14 @@ subroutine deterministic_model
 
   integer :: particle,k,tag,mpi_err
   integer :: mpi_status( MPI_STATUS_SIZE )
+  logical, parameter :: nan_check=.false.
+
+  if(nan_check) then
+     if(.not. all(pf%psi .eq. pf%psi)) then
+        stop 'NaN detected in deterministic_model before mpi_send to m&
+             &odel'
+     end if
+  end if
 
   do k =1,pf%count
      particle = pf%particles(k)
@@ -53,5 +62,13 @@ subroutine deterministic_model
      CALL MPI_RECV(pf%psi(:,k), state_dim, MPI_DOUBLE_PRECISION, &
           particle-1, tag, CPL_MPI_COMM,mpi_status, mpi_err)
   END DO
+
+  if(nan_check) then
+     if(.not. all(pf%psi .eq. pf%psi)) then
+        stop 'NaN detected in deterministic_model after mpi_recv from &
+             &model'
+     end if
+  end if
+
 
 end subroutine deterministic_model

@@ -1,11 +1,13 @@
 /** \mainpage EMPIRE Data Assimilation Documentation
 \author Philip A. Browne <a href="mailto:p.browne@reading.ac.uk">p.browne@reading.ac.uk</a>
-\date Time-stamp: <2014-11-28 11:52:29 pbrowne>
+\date Time-stamp: <2015-01-14 18:25:27 pbrowne>
 
 \section Methods EMPIRE Methods
 For a list of methods implemented in EMPIRE, please click here: \link methods \endlink
 
 \section Download Downloading
+
+The current version is an *academic version*, and the user interface may be subject to change.
 
 These codes are hosted on www.bitbucket.org and can be obtained with the following commands:
 \code{.sh}
@@ -216,6 +218,11 @@ The system then should be run with a single ensemble member and a single EMPIRE 
 mpirun -np 1 model : -np 1 empire
 \endcode
 
+\section Observations Observations
+To use real observations (i.e. those not generated automatically in twin experiment mode) the user must change the subroutine \link get_observation_data get_observation_data\endlink in data_io.f90.
+
+When called, \link get_observation_data get_observation_data\endlink must return the vector of observations \f$y\f$ that corresponds to the observation on, subsequently to, the current timestep which is stored in the variable \link pf_control::pf_control_type::timestep pf\%timestep\endlink within the module pf_control.
+
 \section detens Running a deterministic ensemble
 
 EMPIRE can simply integrate forward in time an ensemble of models.
@@ -234,3 +241,4 @@ Model specific operations required: \n
 In \link pf_control::parse_pf_parameters pf_parameters.dat \endlink set the following variables:
 - \link pf_control::pf_control_type::type type \endlink = 'SE'
 */
+
