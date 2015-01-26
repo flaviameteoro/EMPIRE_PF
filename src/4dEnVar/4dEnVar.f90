@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-01-26 16:51:17 pbrowne>
+!!! Time-stamp: <2015-01-26 19:32:26 pbrowne>
 !!!
 !!!    Program to implement 4dEnVar
 !!!    Copyright (C) 2015  Philip A. Browne
@@ -27,10 +27,16 @@
 
 !> the main program to run 4DEnVar
 program FourDEnVar
-  !< whays that boyyee
   use comms
-  use vardata
+  use var_data
+  implicit none
 
+
+  integer :: n !size of optimization state vector
+
+  
+  real(kind=kind(1.0d0)), allocatable, dimension(:) :: x0
+  
 
   write(6,'(A)') 'PF: Starting PF code'
   call flush(6)
@@ -38,13 +44,13 @@ program FourDEnVar
   call initialise_mpi
   print*,'PF: setting controls'
   !> read in controlling data
-  call set_pf_controls
+  call set_var_controls
   print*,'PF: configuring model'
   !> call user specific routine for initialisation
   call configure_model
   print*,'allocating pf'
   !> allocate space for the filter
-  call allocate_pf
+  call allocate_var
 
 
   !get the initial ensemble
@@ -57,26 +63,19 @@ program FourDEnVar
   select case (vardata%opt_method)
   case('cg')
 
-     integer :: n !size of optimization state vector
-     integer :: cg_method ! the type of nonlinear cg
-     
-     real(kind=kind(1.0d0)), allocatable, dimension(:) :: x0
      
      n = 2 !rosenbrock test function
      
-     !cg_method = 1 ! FLETCHER-REEVES 
-     cg_method = 2 ! POLAK-RIBIERE
-     !cg_method = 3 ! POSITIVE POLAK-RIBIERE ( BETA=MAX{BETA,0} )
-     call subroutine_cg(cg_method,n,x0)
+
+     call subroutine_cg(vardata%cg_method,vardata%n,x0)
 
   case('lbfgs')
-     call lbfgs_sub(n,x0)
+     call lbfgs_sub(vardata%n,x0)
 
   case('lbfgsb')
-     allocate(nbd(n),l(n),u(n))
-     !read in nbd,l,u
-     call lbfgsb_sub(n,x0,nbd,l,u)
-     deallocate(nbd,l,u)
+     call read_lbfgs_bounds
+     call lbfgsb_sub(vardata%n,x0,vardata%nbd,vardata%l,vardata%u)
+
   case default
 
   end select
