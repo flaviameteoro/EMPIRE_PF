@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-01-26 16:12:45 pbrowne>
+!!! Time-stamp: <2015-01-26 16:51:17 pbrowne>
 !!!
 !!!    Program to implement 4dEnVar
 !!!    Copyright (C) 2015  Philip A. Browne
@@ -26,11 +26,11 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 !> the main program to run 4DEnVar
-!!
-
-
-program 4dEnVar
+program FourDEnVar
+  !< whays that boyyee
   use comms
+  use vardata
+
 
   write(6,'(A)') 'PF: Starting PF code'
   call flush(6)
@@ -54,8 +54,8 @@ program 4dEnVar
   !choose method and particulars
   
 
-  select case (opt_method)
-  case(cg)
+  select case (vardata%opt_method)
+  case('cg')
 
      integer :: n !size of optimization state vector
      integer :: cg_method ! the type of nonlinear cg
@@ -69,10 +69,10 @@ program 4dEnVar
      !cg_method = 3 ! POSITIVE POLAK-RIBIERE ( BETA=MAX{BETA,0} )
      call subroutine_cg(cg_method,n,x0)
 
-  case(lbfgs)
+  case('lbfgs')
      call lbfgs_sub(n,x0)
 
-  case(lbfgsb)
+  case('lbfgsb')
      allocate(nbd(n),l(n),u(n))
      !read in nbd,l,u
      call lbfgsb_sub(n,x0,nbd,l,u)
@@ -85,5 +85,4 @@ program 4dEnVar
   !finish model by sending state with tag = 0
 
 
-end program 4dEnVar
-
+end program FourDEnVar

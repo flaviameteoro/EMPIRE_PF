@@ -46,10 +46,13 @@ end subroutine objective_function
 
 !> subroutine to compute the inner product of a vector x 
 !> in the matrix norm \f$B^{-1}\f$
-!> \f$f = x^TB^{-1}x
+!>
+!> \f$f = x^TB^{-1}x\f$
 subroutine inner_b_minus_1(x,f)
   use vardata
+  !> the vector to make the product with \f$B^{-1}\f$
   real(kind=kind(1.0d0)), dimension(vardata%n), intent(in) :: x
+  !> the result \f$f = x^TB^{-1}x\f$ 
   real(kind=kind(1.0d0)), intent(out) :: f
   real(kind=kind(1.0d0))`, dimension(vardata%n) :: temp
   real(kind=kind(1.0d0)) :: ddot
