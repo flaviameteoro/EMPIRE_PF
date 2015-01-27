@@ -6,41 +6,43 @@
 !
 !                      DRIVER1 in Fortran 90
 !     --------------------------------------------------------------
-!
-!        L-BFGS-B is a code for solving large nonlinear optimization
-!             problems with simple bounds on the variables.
-!
-!        The code can also be used for unconstrained problems and is
-!        as efficient for these problems as the earlier limited memory
-!                          code L-BFGS.
-!
-!        This is the simplest driver in the package. It uses all the
-!                    default settings of the code.
-!
-!
-!     References:
-!
-!        [1] R. H. Byrd, P. Lu, J. Nocedal and C. Zhu, ``A limited
-!        memory algorithm for bound constrained optimization'',
-!        SIAM J. Scientific Computing 16 (1995), no. 5, pp. 1190--1208.
-!
-!        [2] C. Zhu, R.H. Byrd, P. Lu, J. Nocedal, ``L-BFGS-B: FORTRAN
-!        Subroutines for Large Scale Bound Constrained Optimization''
-!        Tech. Report, NAM-11, EECS Department, Northwestern University,
-!        1994.
-!
-!
-!          (Postscript files of these papers are available via anonymous
-!           ftp to eecs.nwu.edu in the directory pub/lbfgs/lbfgs_bcm.)
-!
-!                              *  *  *
-!
-!         March 2011   (latest revision)
-!         Optimization Center at Northwestern University
-!         Instituto Tecnologico Autonomo de Mexico
-!
-!         Jorge Nocedal and Jose Luis Morales
-!
+!>        Limited memory BFGS bound constrained optimization code as
+!!        callable subroutine.
+!!
+!!        L-BFGS-B is a code for solving large nonlinear optimization
+!!             problems with simple bounds on the variables.
+!!
+!!        The code can also be used for unconstrained problems and is
+!!        as efficient for these problems as the earlier limited memory
+!!                          code L-BFGS.
+!!
+!!        This is the simplest driver in the package. It uses all the
+!!                    default settings of the code.
+!!
+!!
+!!     References:
+!!
+!!        [1] R. H. Byrd, P. Lu, J. Nocedal and C. Zhu, ``A limited
+!!        memory algorithm for bound constrained optimization'',
+!!        SIAM J. Scientific Computing 16 (1995), no. 5, pp. 1190--1208.
+!!
+!!        [2] C. Zhu, R.H. Byrd, P. Lu, J. Nocedal, ``L-BFGS-B: FORTRAN
+!!        Subroutines for Large Scale Bound Constrained Optimization''
+!!        Tech. Report, NAM-11, EECS Department, Northwestern University,
+!!        1994.
+!!
+!!
+!!          (Postscript files of these papers are available via anonymous
+!!           ftp to eecs.nwu.edu in the directory pub/lbfgs/lbfgs_bcm.)
+!!
+!!                              *  *  *
+!!
+!!         March 2011   (latest revision)
+!!         Optimization Center at Northwestern University
+!!         Instituto Tecnologico Autonomo de Mexico
+!!
+!!         Jorge Nocedal and Jose Luis Morales
+!!
 !     --------------------------------------------------------------
 !             DESCRIPTION OF THE VARIABLES IN L-BFGS-B
 !     --------------------------------------------------------------
@@ -187,7 +189,25 @@
 !           END OF THE DESCRIPTION OF THE VARIABLES IN L-BFGS-B
 !     --------------------------------------------------------------
 !    
-      subroutine lbfgsb_sub(n,x,nbd,l,u)
+!> @param[in] n the size of the state vector
+!! @param[in] factr_in the factr tolerance in the stopping criteria
+!! @param[in] pgtol_in the pgtol tolerance in the stopping criteria
+!! @param[inout] x on entry the initial guess, on exit the optimized
+!! state vector
+!! @param[in] nbd nbd is an INTEGER array of dimension n that must be set by the
+!!       user to the type of bounds imposed on the variables:
+!!       nbd(i)=0 if x(i) is unbounded,
+!!              1 if x(i) has only a lower bound,
+!!              2 if x(i) has both lower and upper bounds, 
+!!              3 if x(i) has only an upper bound.
+!! @param[in] l l is a DOUBLE PRECISION array of length n that must be set by
+!!       the user to the values of the lower bounds on the variables. If
+!!       the i-th variable has no lower bound, l(i) need not be defined.
+!!
+!! @param[in] u u is a DOUBLE PRECISION array of length n that must be set by
+!!       the user to the values of the upper bounds on the variables. If
+!!       the i-th variable has no upper bound, u(i) need not be defined.
+      subroutine lbfgsb_sub(n,factr_in,pgtol_in,x,nbd,l,u)
 !
 !     This simple driver demonstrates how to call the L-BFGS-B code to
 !       solve a sample problem (the extended Rosenbrock function 
@@ -208,6 +228,8 @@
 !
       integer,  parameter    :: dp = kind(1.0d0)
       integer, intent(in) :: n 
+      real(kind=dp), intent(in) :: factr_in
+      real(kind=dp), intent(in) :: pgtol_in
       real(kind=dp), dimension(n), intent(inout) :: x
       integer, dimension(n), intent(in) :: nbd
       real(kind=dp), dimension(n), intent(in) :: l
@@ -215,7 +237,7 @@
 
       integer,  parameter    :: m = 5, iprint = 1
 
-      real(dp), parameter    :: factr  = 1.0d+7, pgtol  = 1.0d-5
+      real(dp)               :: factr  = 1.0d+7, pgtol  = 1.0d-5
 !
       character(len=60)      :: task, csave
       logical                :: lsave(4)
@@ -224,6 +246,11 @@
       real(dp)               :: dsave(29)
       integer,  allocatable  :: iwa(:)
       real(dp), allocatable  :: g(:), wa(:)
+
+!     Set convergence parameters
+
+      factr = factr_in
+      pgtol = pgtol_in
 
 
 !     Allocate dynamic arrays

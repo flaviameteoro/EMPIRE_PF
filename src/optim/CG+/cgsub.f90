@@ -1,23 +1,30 @@
-!
-!       --------------------------------------------------------------------
-!       Main program for running the conjugate gradient methods described in 
-!       the paper:
-!
-!       Gilbert, J.C. and Nocedal, J. (1992). "Global Convergence Properties 
-!       of Conjugate Gradient Methods", SIAM Journal on Optimization, Vol. 2,
-!       pp. 21-42.
-!
-!       A web-based Server which solves unconstrained nonlinear optimization
-!       problems using this Conjugate Gradient code can be found at:
-!
-!       http://www-neos.mcs.anl.gov/neos/solvers/UCO:CGPLUS/
-!
-!       Written by G. Liu, J. Nocedal and R. Waltz
-!       October 1998
-!
-!--------------------------------------------------------------------
-! modified to be a callable subroutine by Philip A Browne Jan 2015
-subroutine subroutine_cg(method,n,x)
+!>       Nonlinear Conjugate gradient method as callable subroutine
+!!
+!!       --------------------------------------------------------------------
+!!       Main program for running the conjugate gradient methods described in 
+!!       the paper:
+!!
+!!       Gilbert, J.C. and Nocedal, J. (1992). "Global Convergence Properties 
+!!       of Conjugate Gradient Methods", SIAM Journal on Optimization, Vol. 2,
+!!       pp. 21-42.
+!!
+!!       A web-based Server which solves unconstrained nonlinear optimization
+!!       problems using this Conjugate Gradient code can be found at:
+!!
+!!       http://www-neos.mcs.anl.gov/neos/solvers/UCO:CGPLUS/
+!!
+!!       Written by G. Liu, J. Nocedal and R. Waltz
+!!       October 1998
+!!
+!!--------------------------------------------------------------------
+!! modified to be a callable subroutine by Philip A Browne Jan 2015
+!!
+!! @param[in] method which CG method to use
+!! @param[in] n the dimension of the state vector
+!! @param[in] epsin the value of EPS to be used as convergence tolerance
+!! @param[inout] x on entry the initial guess, on exit is the
+!! optimized state vector
+subroutine subroutine_cg(method,n,epsin,x)
 !
 ! Change the maximum size of the problem dimension here
 !
@@ -26,6 +33,7 @@ integer, parameter :: rk = kind(1.0d0)
 
 integer, intent(in) :: method
 integer, intent(in) :: n
+real(kind=rk), intent(in) :: epsin
 real(kind=rk), dimension(n), intent(inout) :: x
 
 real(kind=rk), dimension(n) :: g,d,gold,w
@@ -81,7 +89,7 @@ ICALL=0
 !
 ! This is the convergence constant 
 !
-EPS= 1.0D-5
+EPS= epsin
 
 ! IFLAG=0 indicates an initial entry to program
 

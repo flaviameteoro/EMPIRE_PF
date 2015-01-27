@@ -1,6 +1,9 @@
+optim/*/*.o
+src/*/*.o
 obs/*.o
 obs/*.mod
 bin/*
+run/*
 *~
 */*~
 */*/*~

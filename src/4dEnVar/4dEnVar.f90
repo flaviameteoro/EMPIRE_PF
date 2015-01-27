@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-01-26 19:32:26 pbrowne>
+!!! Time-stamp: <2015-01-27 10:42:43 pbrowne>
 !!!
 !!!    Program to implement 4dEnVar
 !!!    Copyright (C) 2015  Philip A. Browne
@@ -32,9 +32,6 @@ program FourDEnVar
   implicit none
 
 
-  integer :: n !size of optimization state vector
-
-  
   real(kind=kind(1.0d0)), allocatable, dimension(:) :: x0
   
 
@@ -63,18 +60,15 @@ program FourDEnVar
   select case (vardata%opt_method)
   case('cg')
 
-     
-     n = 2 !rosenbrock test function
-     
-
-     call subroutine_cg(vardata%cg_method,vardata%n,x0)
+     call subroutine_cg(vardata%cg_method,vardata%n,vardata%cg_eps,x0)
 
   case('lbfgs')
-     call lbfgs_sub(vardata%n,x0)
+     call  lbfgs_sub(vardata%n,vardata%lbfgs_factr,vardata%lbfgs_pgtol,x0)
 
   case('lbfgsb')
      call read_lbfgs_bounds
-     call lbfgsb_sub(vardata%n,x0,vardata%nbd,vardata%l,vardata%u)
+     call lbfgsb_sub(vardata%n,vardata%lbfgs_factr,vardata%lbfgs_pgtol,&
+          x0,vardata%nbd,vardata%l,vardata%u)
 
   case default
 
