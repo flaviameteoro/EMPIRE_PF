@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-09-26 11:13:30 pbrowne>
+!!! Time-stamp: <2015-01-27 10:18:16 pbrowne>
 !!!
 !!!    Collection of combinations of other subroutines
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -60,26 +60,32 @@ end subroutine K
 
 !>subroutine to compute the inner product with \f$R^{-1}\f$
 !! @param[in] y multiple vectors in observation space (pf\%count of them)
+!! @param[in] n length of each vector in y
+!! @param[in] c number of vectors in y
+!! @param[in] t current timestep
 !! @param[out] w multiple scalars (pf\%count) where w(i) has the value
 !! \f$y(:,i)^TR^{-1}y(:,i)\f$
-subroutine innerR_1(y,w)
+subroutine innerR_1(y,n,c,w,t)
   !subroutine to take an observation vector y and return w = y^T R^(-1) y
-  use sizes
-  use pf_control
+!  use sizes
+!  use pf_control
   implicit none
   integer, parameter :: rk=kind(1.0D+0)
-  real(kind=rk), dimension(obs_dim,pf%count), intent(in) :: y
-  real(kind=rk), dimension(obs_dim,pf%count) :: v
-  real(kind=rk), dimension(pf%count), intent(out) :: w
+  integer, intent(in) :: n
+  integer, intent(in) :: c
+  integer, intent(in) :: t
+  real(kind=rk), dimension(n,c), intent(in) :: y
+  real(kind=rk), dimension(n,c) :: v
+  real(kind=rk), dimension(c), intent(out) :: w
   real(kind=rk) :: ddot
   integer :: i
 
-  call solve_r(obs_dim,pf%count,y,v,pf%timestep)
+  call solve_r(n,c,y,v,t)
 
   !this can defo be done better using BLAS PAB...
-  do i = 1,pf%count
+  do i = 1,c
 !!$     w(i) = sum(y(:,i)*v(:,i))
-     w(i) = ddot(obs_dim,y(:,i),1,v(:,i),1)
+     w(i) = ddot(n,y(:,i),1,v(:,i),1)
   end do
 
 end subroutine innerR_1

@@ -39,7 +39,7 @@ subroutine objective_function(n,x,f)
         call H(vardata%ny(t),1,xt,hxt,t)
         call get_observation_data(y)
         y = y - hxt
-        call inner_R_1(y,ft)
+        call innerR_1(vardata%ny(t),1,y,ft,t)
         
         deallocate(y)
         deallocate(hxt)

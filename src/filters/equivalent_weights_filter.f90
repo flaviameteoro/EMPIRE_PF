@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-11-26 15:21:21 pbrowne>
+!!! Time-stamp: <2015-01-27 10:19:17 pbrowne>
 !!!
 !!!    {one line to give the program's name and a brief idea of what it does.}
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -170,7 +170,7 @@ subroutine equivalent_weights_filter
         a(i) = 0.5*ddot(obs_dim,obsvv(:,i),1,y_Hfpsin1(:,i),1)
      end do
      
-     call innerR_1(y_Hfpsin1,e)
+     call innerR_1(obs_dim,pf%count,y_Hfpsin1,e,pf%timestep)
      
      !compute alpha for each particle on this mpi thread
      do i = 1,pf%count

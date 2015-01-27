@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-11-26 15:03:31 pbrowne>
+!!! Time-stamp: <2015-01-27 10:19:44 pbrowne>
 !!!
 !!!    Subroutine to perform SIR filter
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -91,7 +91,7 @@ if(mod(pf%timestep,pf%time_bwn_obs) .eq. 0) then
    end do
    !$omp end parallel do
     
-   call innerR_1(y_Hfpsi,w)
+   call innerR_1(obs_dim,pf%count,y_Hfpsi,w,pf%timestep)
 
    do k = 1,pf%count
       particle = pf%particles(k)
