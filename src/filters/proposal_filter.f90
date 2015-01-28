@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-09-26 17:31:05 pbrowne>
+!!! Time-stamp: <2015-01-28 13:36:46 pbrowne>
 !!!
 !!!    Subroutine to perform nudging in the proposal step of EWPF
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -56,7 +56,7 @@ subroutine proposal_filter
 
 
   !get the next observations and store it in vector y
-  if(.not. pf%gen_data) call get_observation_data(y)
+  if(.not. pf%gen_data) call get_observation_data(y,pf%timestep)
 
 
   !compute y - H(x)

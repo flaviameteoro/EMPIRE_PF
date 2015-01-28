@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-01-27 10:19:17 pbrowne>
+!!! Time-stamp: <2015-01-28 13:36:10 pbrowne>
 !!!
 !!!    {one line to give the program's name and a brief idea of what it does.}
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -81,7 +81,7 @@ subroutine equivalent_weights_filter
 !  print*,pf%weight
   if(.not. pf%gen_data) then
      !get the next observation and store it in vector y
-     call get_observation_data(y)
+     call get_observation_data(y,pf%timestep)
  
 !     do particle =1,pf%count
 !        call send_to_model(pf%psi(:,particle),particle)

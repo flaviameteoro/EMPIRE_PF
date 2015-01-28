@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-01-27 10:19:44 pbrowne>
+!!! Time-stamp: <2015-01-28 13:37:16 pbrowne>
 !!!
 !!!    Subroutine to perform SIR filter
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -80,7 +80,7 @@ subroutine sir_filter
 
 
 if(mod(pf%timestep,pf%time_bwn_obs) .eq. 0) then
-   call get_observation_data(y)
+   call get_observation_data(y,pf%timestep)
    !this is the analysis step.
    
    call H(obs_dim,pf%count,fpsi,Hfpsi,pf%timestep)

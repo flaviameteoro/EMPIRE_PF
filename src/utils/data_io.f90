@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-09-29 15:12:27 pbrowne>
+!!! Time-stamp: <2015-01-28 13:35:33 pbrowne>
 !!!
 !!!    Collection of subroutines to deal with i/o
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -29,17 +29,19 @@
 !! \n
 !! Uses pf%timestep to determine which observation to read
 !> @param[out] y The observation
-subroutine get_observation_data(y)
+!! @param[in] t the current timestep
+subroutine get_observation_data(y,t)
 
   use pf_control
   use sizes
   implicit none
   integer, parameter :: rk = kind(1.0D0)
+  integer, intent(in) :: t
   real(kind=rk), dimension(obs_dim), intent(out) :: y
   integer :: obs_number,ios
   character(14) :: filename
 
-  obs_number = ((pf%timestep-1)/pf%time_bwn_obs) + 1
+  obs_number = ((t-1)/pf%time_bwn_obs) + 1
 
   write(filename,'(A,i6.6)') 'obs_num_',obs_number
 

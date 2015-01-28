@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-10-06 12:26:19 pbrowne>
+!!! Time-stamp: <2015-01-28 13:36:31 pbrowne>
 !!!
 !!!    Ensemble transform Kalman filter
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -96,7 +96,7 @@ integer, dimension(npfs) :: start_var,stop_var
 !!$character(6) :: filename
 include 'mpif.h'
 
-call get_observation_data(y)
+call get_observation_data(y,pf%timestep)
 !!$print*,'obs y = ',y
 
 ! Split forecast ensemble into mean and perturbation matrix, inflating
