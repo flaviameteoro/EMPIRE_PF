@@ -1,6 +1,6 @@
 /** \mainpage EMPIRE Data Assimilation Documentation
 \author Philip A. Browne <a href="mailto:p.browne@reading.ac.uk">p.browne@reading.ac.uk</a>
-\date Time-stamp: <2015-01-14 18:25:27 pbrowne>
+\date Time-stamp: <2015-01-28 16:00:20 pbrowne>
 
 \section Methods EMPIRE Methods
 For a list of methods implemented in EMPIRE, please click here: \link methods \endlink
@@ -242,3 +242,86 @@ In \link pf_control::parse_pf_parameters pf_parameters.dat \endlink set the foll
 - \link pf_control::pf_control_type::type type \endlink = 'SE'
 */
 
+/*! \page citing How to Cite EMPIRE
+
+# EMPIRE itself
+
+For all applications that use these codes, please cite the following paper:
+
+PA Browne, S Wilson (2015)
+
+A simple method for integrating a complex model into an ensemble data assimilation system using MPI
+
+<a href="http://scholar.google.com/citations?view_op=view_citation&hl=en&user=fpEth2YAAAAJ&citation_for_view=fpEth2YAAAAJ:9yKSN-GCB0IC">Google scholar link</a>
+
+# Use of different methods within EMPIRE
+
+## Equivalent weights particle filter
+Van Leeuwen (2010)
+
+Nonlinear data assimilation in geosciences: an extremely efficient particle filter
+
+<http://doi.wiley.com/10.1002/qj.699>
+
+## Sequential importance resampling
+Gordon, Salmond and Smith (1993)
+
+Novel approach to nonlinear/non-Gaussian Bayesian state estimation
+
+<http://dx.doi.org/10.1049/ip-f-2.1993.0015>
+
+## Localised Ensemble Transform Kalman Filter
+Hunt, Kostelich and Szunyogh (2007)
+
+Efficient data assimilation for spatiotemporal chaos: A local ensemble transform Kalman filter
+
+<http://dx.doi.org/10.1016/j.physd.2006.11.008>
+
+## 4DEnVar
+Liu, Xian and Wang (2008)
+
+An Ensemble-Based Four-Dimensional Variational Data Assimilation Scheme. Part I: Technical Formulation and Preliminary Test
+
+<http://dx.doi.org/10.1175/2008MWR2312.1>
+
+# Use of different external codes within EMPIRE
+
+## CG+
+Gilbert and Nocedal (1992)
+
+Global Convergence Properties of Conjugate Gradient Methods for Optimization
+
+<http://dx.doi.org/10.1137/0802003>
+
+Software available here: <http://users.iems.northwestern.edu/~nocedal/CG+.html>
+
+
+## L-BFGS-B 
+
+Byrd, Lu and Nocedal (1995)
+
+A Limited Memory Algorithm for Bound Constrained Optimization
+
+<http://dx.doi.org/10.1137/0916069>
+
+and/or
+
+Zhu, Byrd and Nocedal (1997)
+
+L-BFGS-B: Algorithm 778: L-BFGS-B, FORTRAN routines for large scale bound constrained optimization
+
+<http://dx.doi.org/10.1145/279232.279236>
+
+Software available here: <http://users.iems.northwestern.edu/~nocedal/lbfgsb.html>
+
+## MINRES
+
+Paige and Saunders (1975)
+
+Solution of sparse indefinite systems of linear equations
+
+<http://dx.doi.org/10.1137/0712047>
+
+Software available here: <http://web.stanford.edu/group/SOL/software/minres/>
+
+*/
