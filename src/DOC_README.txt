@@ -1,6 +1,6 @@
 /** \mainpage EMPIRE Data Assimilation Documentation
 \author Philip A. Browne <a href="mailto:p.browne@reading.ac.uk">p.browne@reading.ac.uk</a>
-\date Time-stamp: <2015-01-28 16:00:20 pbrowne>
+\date Time-stamp: <2015-02-03 11:46:10 pbrowne>
 
 \section Methods EMPIRE Methods
 For a list of methods implemented in EMPIRE, please click here: \link methods \endlink
@@ -314,14 +314,5 @@ L-BFGS-B: Algorithm 778: L-BFGS-B, FORTRAN routines for large scale bound constr
 
 Software available here: <http://users.iems.northwestern.edu/~nocedal/lbfgsb.html>
 
-## MINRES
-
-Paige and Saunders (1975)
-
-Solution of sparse indefinite systems of linear equations
-
-<http://dx.doi.org/10.1137/0712047>
-
-Software available here: <http://web.stanford.edu/group/SOL/software/minres/>
 
 */
