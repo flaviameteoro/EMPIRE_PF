@@ -62,7 +62,7 @@
 !!$     !passed the test
 !!$     write(6,'(A)',advance='yes') 'passed'
 !!$  else
-!!$     write(6,'(A,es23.17)',advance='yes') 'failed with r = ',r
+!!$     write(6,'(A,es24.17)',advance='yes') 'failed with r = ',r
 !!$  end if
 !!$
 !!$  a = 1.0d0
@@ -75,7 +75,7 @@
 !!$     !passed the test
 !!$     write(6,'(A)',advance='yes') 'passed'
 !!$  else
-!!$     write(6,'(A,es23.17)',advance='yes') 'failed with r = ',r
+!!$     write(6,'(A,es24.17)',advance='yes') 'failed with r = ',r
 !!$  end if
 !!$  
 !!$  a = -1.0d0
@@ -88,7 +88,7 @@
 !!$     !passed the test
 !!$     write(6,'(A)',advance='yes') 'passed'
 !!$  else
-!!$     write(6,'(A,es23.17)',advance='yes') 'failed with r = ',r
+!!$     write(6,'(A,es24.17)',advance='yes') 'failed with r = ',r
 !!$  end if
 !!$
 !!$
@@ -102,7 +102,7 @@
 !!$     !passed the test                                   
 !!$     write(6,'(A)',advance='yes') 'passed'
 !!$  else
-!!$     write(6,'(A,es23.17)',advance='yes') 'failed with r = ',r
+!!$     write(6,'(A,es24.17)',advance='yes') 'failed with r = ',r
 !!$  end if
 !!$
 !!$  write(6,'(A)',advance='yes') 'TESTING H WITH MULTIPLE RIGHT HAND SIDES'
@@ -129,7 +129,7 @@
 !!$           end if
 !!$        else
 !!$           !write(6,'(A)',advance='yes') ''
-!!$           write(6,'(A,es8.2)',advance='yes') 'failed with r = ',r
+!!$           write(6,'(A,es9.2)',advance='yes') 'failed with r = ',r
 !!$        end if
 !!$     end do
 !!$  end do
@@ -158,7 +158,7 @@
 !!$           end if
 !!$        else
 !!$           write(6,'(A)',advance='yes') ''
-!!$           write(6,'(A,es23.17)',advance='yes') 'failed with r = ',r
+!!$           write(6,'(A,es24.17)',advance='yes') 'failed with r = ',r
 !!$        end if
 !!$     end do
 !!$  end do
@@ -186,7 +186,7 @@
 !!$           end if
 !!$        else
 !!$           write(6,'(A)',advance='yes') ''
-!!$           write(6,'(A,es23.17)',advance='yes') 'failed with r = ',r
+!!$           write(6,'(A,es24.17)',advance='yes') 'failed with r = ',r
 !!$        end if
 !!$     end do
 !!$  end do
@@ -216,7 +216,7 @@
 !!$           end if
 !!$        else
 !!$           write(6,'(A)',advance='yes') ''
-!!$           write(6,'(A,es8.2)',advance='yes') 'failed with r = ',r
+!!$           write(6,'(A,es9.2)',advance='yes') 'failed with r = ',r
 !!$        end if
 !!$     end do
 !!$  end do
@@ -289,9 +289,9 @@ subroutine R_tests()
      !passed the test
      write(6,'(A)',advance='yes') 'passed'
   elseif(rr .lt. warn) then
-     write(6,'(A,es23.17)',advance='yes') 'passed with warning rr = ',rr
+     write(6,'(A,es24.17)',advance='yes') 'passed with warning rr = ',rr
   else
-     write(6,'(A,es23.17)',advance='yes') 'failed with rr = ',rr
+     write(6,'(A,es24.17)',advance='yes') 'failed with rr = ',rr
   end if
 
   a = 0.0d0
@@ -303,9 +303,9 @@ subroutine R_tests()
      !passed the test
      write(6,'(A)',advance='yes') 'passed'
   elseif(rr .lt. warn) then
-     write(6,'(A,es23.17)',advance='yes') 'passed with warning rr = ',rr
+     write(6,'(A,es24.17)',advance='yes') 'passed with warning rr = ',rr
   else
-     write(6,'(A,es23.17)',advance='yes') 'failed with rr = ',rr
+     write(6,'(A,es24.17)',advance='yes') 'failed with rr = ',rr
   end if
   
   a = 1.0d0
@@ -327,9 +327,9 @@ subroutine R_tests()
      !passed the test                                   
      write(6,'(A)',advance='yes') 'passed'
   elseif(rr .lt. warn) then
-     write(6,'(A,es23.17)',advance='yes') 'passed with warning rr = ',rr
+     write(6,'(A,es24.17)',advance='yes') 'passed with warning rr = ',rr
   else
-     write(6,'(A,es23.17)',advance='yes') 'failed with rr = ',rr
+     write(6,'(A,es24.17)',advance='yes') 'failed with rr = ',rr
   end if
 
   a = -1.0d0
@@ -344,9 +344,9 @@ subroutine R_tests()
      !passed the test                                   
      write(6,'(A)',advance='yes') 'passed'
   elseif(rr .lt. warn) then
-     write(6,'(A,es23.17)',advance='yes') 'passed with warning rr = ',rr
+     write(6,'(A,es24.17)',advance='yes') 'passed with warning rr = ',rr
   else
-     write(6,'(A,es23.17)',advance='yes') 'failed with rr = ',rr
+     write(6,'(A,es24.17)',advance='yes') 'failed with rr = ',rr
   end if
 
   call NormalRandomNumbers1D(0.0d0,1.0d0,obs_dim,a)
@@ -361,9 +361,9 @@ subroutine R_tests()
      !passed the test                                   
      write(6,'(A)',advance='yes') 'passed'
   elseif(rr .lt. warn) then
-     write(6,'(A,es23.17)',advance='yes') 'passed with warning rr = ',rr
+     write(6,'(A,es24.17)',advance='yes') 'passed with warning rr = ',rr
   else
-     write(6,'(A,es23.17)',advance='yes') 'failed with rr = ',rr
+     write(6,'(A,es24.17)',advance='yes') 'failed with rr = ',rr
   end if
  
   write(6,'(A)',advance='yes') 'TESTING R WITH MULTIPLE RIGHT HAND SIDES'
@@ -418,17 +418,17 @@ subroutine R_tests()
         elseif(rr .lt. warn) then
 
            if(k .eq. 1 .and. i .eq. 1) then
-              write(6,'(A,i2,A,es8.2)',advance='yes') 'passed: ',k,' warn ',rr
+              write(6,'(A,i2,A,es9.2)',advance='yes') 'passed: ',k,' warn ',rr
            elseif(k .eq. 1) then
-              write(6,'(A,i2,A,es8.2)',advance='no') 'passed: ',k,' warn ',rr
+              write(6,'(A,i2,A,es9.2)',advance='no') 'passed: ',k,' warn ',rr
            elseif(k .eq. i) then
-              write(6,'(A,i2,A,es8.2)',advance='yes') ' ',k,' warn ',rr
+              write(6,'(A,i2,A,es9.2)',advance='yes') ' ',k,' warn ',rr
            else
-              write(6,'(A,i2,A,es8.2)',advance='no') ' ',k,' warn ',rr
+              write(6,'(A,i2,A,es9.2)',advance='no') ' ',k,' warn ',rr
            end if
         else
            !write(6,'(A)',advance='yes') ''
-           write(6,'(i2,A,es8.2)',advance='yes') k,' failed with rr = ',rr
+           write(6,'(i2,A,es9.2)',advance='yes') k,' failed with rr = ',rr
         end if
      end do
   end do
@@ -448,9 +448,9 @@ subroutine R_tests()
      !passed the test
      write(6,'(A)',advance='yes') 'passed'
   elseif(rr .lt. warn) then
-     write(6,'(A,es23.17)',advance='yes') 'passed with warning rr = ',rr
+     write(6,'(A,es24.17)',advance='yes') 'passed with warning rr = ',rr
   else
-     write(6,'(A,es23.17)',advance='yes') 'failed with rr = ',rr
+     write(6,'(A,es24.17)',advance='yes') 'failed with rr = ',rr
   end if
 
   do l = 11,13
@@ -476,9 +476,9 @@ subroutine R_tests()
         !passed the test                                   
         write(6,'(A)',advance='yes') 'passed'
      elseif(rr .lt. warn) then
-        write(6,'(A,es23.17)',advance='yes') 'passed with warning rr = ',rr
+        write(6,'(A,es24.17)',advance='yes') 'passed with warning rr = ',rr
      else
-        write(6,'(A,es23.17)',advance='yes') 'failed with rr = ',rr
+        write(6,'(A,es24.17)',advance='yes') 'failed with rr = ',rr
      end if
 
   end do
@@ -520,17 +520,17 @@ subroutine R_tests()
         elseif(rr .lt. warn) then
 
            if(k .eq. 1 .and. i .eq. 1) then
-              write(6,'(A,i2,A,es8.2)',advance='yes') 'passed: ',k,' warn ',rr
+              write(6,'(A,i2,A,es9.2)',advance='yes') 'passed: ',k,' warn ',rr
            elseif(k .eq. 1) then
-              write(6,'(A,i2,A,es8.2)',advance='no') 'passed: ',k,' warn ',rr
+              write(6,'(A,i2,A,es9.2)',advance='no') 'passed: ',k,' warn ',rr
            elseif(k .eq. i) then
-              write(6,'(A,i2,A,es8.2)',advance='yes') ' ',k,' warn ',rr
+              write(6,'(A,i2,A,es9.2)',advance='yes') ' ',k,' warn ',rr
            else
-              write(6,'(A,i2,A,es8.2)',advance='no') ' ',k,' warn ',rr
+              write(6,'(A,i2,A,es9.2)',advance='no') ' ',k,' warn ',rr
            end if
         else
            !write(6,'(A)',advance='yes') ''
-           write(6,'(i2,A,es8.2)',advance='yes') k,' failed with rr = ',rr
+           write(6,'(i2,A,es9.2)',advance='yes') k,' failed with rr = ',rr
         end if
 
 
@@ -554,9 +554,9 @@ subroutine R_tests()
      !passed the test
      write(6,'(A)',advance='yes') 'passed'
   elseif(rr .lt. warn) then
-     write(6,'(A,es23.17)',advance='yes') 'passed with warning rr = ',rr
+     write(6,'(A,es24.17)',advance='yes') 'passed with warning rr = ',rr
   else
-     write(6,'(A,es23.17)',advance='yes') 'failed with rr = ',rr
+     write(6,'(A,es24.17)',advance='yes') 'failed with rr = ',rr
   end if
 
   do l = 18,20
@@ -582,9 +582,9 @@ subroutine R_tests()
         !passed the test                                   
         write(6,'(A)',advance='yes') 'passed'
      elseif(rr .lt. warn) then
-        write(6,'(A,es23.17)',advance='yes') 'passed with warning rr = ',rr
+        write(6,'(A,es24.17)',advance='yes') 'passed with warning rr = ',rr
      else
-        write(6,'(A,es23.17)',advance='yes') 'failed with rr = ',rr
+        write(6,'(A,es24.17)',advance='yes') 'failed with rr = ',rr
      end if
 
   end do
@@ -626,17 +626,17 @@ subroutine R_tests()
         elseif(rr .lt. warn) then
 
            if(k .eq. 1 .and. i .eq. 1) then
-              write(6,'(A,i2,A,es8.2)',advance='yes') 'passed: ',k,' warn ',rr
+              write(6,'(A,i2,A,es9.2)',advance='yes') 'passed: ',k,' warn ',rr
            elseif(k .eq. 1) then
-              write(6,'(A,i2,A,es8.2)',advance='no') 'passed: ',k,' warn ',rr
+              write(6,'(A,i2,A,es9.2)',advance='no') 'passed: ',k,' warn ',rr
            elseif(k .eq. i) then
-              write(6,'(A,i2,A,es8.2)',advance='yes') ' ',k,' warn ',rr
+              write(6,'(A,i2,A,es9.2)',advance='yes') ' ',k,' warn ',rr
            else
-              write(6,'(A,i2,A,es8.2)',advance='no') ' ',k,' warn ',rr
+              write(6,'(A,i2,A,es9.2)',advance='no') ' ',k,' warn ',rr
            end if
         else
            !write(6,'(A)',advance='yes') ''
-           write(6,'(i2,A,es8.2)',advance='yes') k,' failed with rr = ',rr
+           write(6,'(i2,A,es9.2)',advance='yes') k,' failed with rr = ',rr
         end if
 
 
@@ -707,9 +707,9 @@ subroutine Q_tests()
      !passed the test
      write(6,'(A)',advance='yes') 'passed'
   elseif(rr .lt. warn) then
-     write(6,'(A,es23.17)',advance='yes') 'passed with warning rr = ',rr
+     write(6,'(A,es24.17)',advance='yes') 'passed with warning rr = ',rr
   else
-     write(6,'(A,es23.17)',advance='yes') 'failed with rr = ',rr
+     write(6,'(A,es24.17)',advance='yes') 'failed with rr = ',rr
   end if
 
   a = 0.0d0
@@ -721,9 +721,9 @@ subroutine Q_tests()
      !passed the test
      write(6,'(A)',advance='yes') 'passed'
   elseif(rr .lt. warn) then
-     write(6,'(A,es23.17)',advance='yes') 'passed with warning rr = ',rr
+     write(6,'(A,es24.17)',advance='yes') 'passed with warning rr = ',rr
   else
-     write(6,'(A,es23.17)',advance='yes') 'failed with rr = ',rr
+     write(6,'(A,es24.17)',advance='yes') 'failed with rr = ',rr
   end if
   
   a = 1.0d0
@@ -745,9 +745,9 @@ subroutine Q_tests()
      !passed the test                                   
      write(6,'(A)',advance='yes') 'passed'
   elseif(rr .lt. warn) then
-     write(6,'(A,es23.17)',advance='yes') 'passed with warning rr = ',rr
+     write(6,'(A,es24.17)',advance='yes') 'passed with warning rr = ',rr
   else
-     write(6,'(A,es23.17)',advance='yes') 'failed with rr = ',rr
+     write(6,'(A,es24.17)',advance='yes') 'failed with rr = ',rr
   end if
 
   a = -1.0d0
@@ -762,9 +762,9 @@ subroutine Q_tests()
      !passed the test                                   
      write(6,'(A)',advance='yes') 'passed'
   elseif(rr .lt. warn) then
-     write(6,'(A,es23.17)',advance='yes') 'passed with warning rr = ',rr
+     write(6,'(A,es24.17)',advance='yes') 'passed with warning rr = ',rr
   else
-     write(6,'(A,es23.17)',advance='yes') 'failed with rr = ',rr
+     write(6,'(A,es24.17)',advance='yes') 'failed with rr = ',rr
   end if
 
   call NormalRandomNumbers1D(0.0d0,1.0d0,state_dim,a)
@@ -779,9 +779,9 @@ subroutine Q_tests()
      !passed the test                                   
      write(6,'(A)',advance='yes') 'passed'
   elseif(rr .lt. warn) then
-     write(6,'(A,es23.17)',advance='yes') 'passed with warning rr = ',rr
+     write(6,'(A,es24.17)',advance='yes') 'passed with warning rr = ',rr
   else
-     write(6,'(A,es23.17)',advance='yes') 'failed with rr = ',rr
+     write(6,'(A,es24.17)',advance='yes') 'failed with rr = ',rr
   end if
  
   write(6,'(A)',advance='yes') 'TESTING Q WITH MULTIPLE RIGHT HAND SIDES'
@@ -830,17 +830,17 @@ subroutine Q_tests()
         elseif(rr .lt. warn) then
 
            if(k .eq. 1 .and. i .eq. 1) then
-              write(6,'(A,i2,A,es8.2)',advance='yes') 'passed: ',k,' warn ',rr
+              write(6,'(A,i2,A,es9.2)',advance='yes') 'passed: ',k,' warn ',rr
            elseif(k .eq. 1) then
-              write(6,'(A,i2,A,es8.2)',advance='no') 'passed: ',k,' warn ',rr
+              write(6,'(A,i2,A,es9.2)',advance='no') 'passed: ',k,' warn ',rr
            elseif(k .eq. i) then
-              write(6,'(A,i2,A,es8.2)',advance='yes') ' ',k,' warn ',rr
+              write(6,'(A,i2,A,es9.2)',advance='yes') ' ',k,' warn ',rr
            else
-              write(6,'(A,i2,A,es8.2)',advance='no') ' ',k,' warn ',rr
+              write(6,'(A,i2,A,es9.2)',advance='no') ' ',k,' warn ',rr
            end if
         else
            !write(6,'(A)',advance='yes') ''
-           write(6,'(i2,A,es8.2)',advance='yes') k,' failed with rr = ',rr
+           write(6,'(i2,A,es9.2)',advance='yes') k,' failed with rr = ',rr
         end if
      end do
   end do
@@ -912,9 +912,9 @@ write(6,*) 'TESTING (HQH^T+R)^(-1)'
      !passed the test
      write(6,'(A)',advance='yes') 'passed'
   elseif( rr .lt. warn) then
-     write(6,'(A,es23.17)',advance='yes') 'passed with warning rr = ',rr   
+     write(6,'(A,es24.17)',advance='yes') 'passed with warning rr = ',rr   
   else
-     write(6,'(A,es23.17)',advance='yes') 'failed with rr = ',rr
+     write(6,'(A,es24.17)',advance='yes') 'failed with rr = ',rr
   end if
 
 
@@ -946,9 +946,9 @@ write(6,*) 'TESTING (HQH^T+R)^(-1)'
         !passed the test                                   
         write(6,'(A)',advance='yes') 'passed'
      elseif(rr .lt. warn) then
-        write(6,'(A,es8.2)',advance='yes') 'warning rr = ',rr
+        write(6,'(A,es9.2)',advance='yes') 'warning rr = ',rr
      else
-        write(6,'(A,es8.2)',advance='yes') 'failed  rr = ',rr
+        write(6,'(A,es9.2)',advance='yes') 'failed  rr = ',rr
      end if
 
   end do
