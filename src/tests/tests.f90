@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-11-28 11:39:20 pbrowne>
+!!! Time-stamp: <2015-02-05 14:43:25 pbrowne>
 !!!
 !!!    Collection of subroutines to perform checks of user supplied routines
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -698,7 +698,7 @@ subroutine Q_tests()
   !test one - zeros
   a = 0.0d0
   pf%count = 1
-  call Q(1,a,s,1)
+  call Q(1,a,s)
  
   !s should be 0
   rr = dnrm2(state_dim,s,1)
@@ -713,7 +713,7 @@ subroutine Q_tests()
   end if
 
   a = 0.0d0
-  call Qhalf(1,a,s,1)
+  call Qhalf(1,a,s)
   !s should be a
   rr = dnrm2(state_dim,s,1)
   write(6,'(A)',advance='no') 'Test 2: Qhalf(0) ... '
@@ -728,8 +728,8 @@ subroutine Q_tests()
   
   a = 1.0d0
   s = 1.0d0
-  call     Q(1,a,qqq,1)
-  call Qhalf(1,s,w,1)
+  call     Q(1,a,qqq)
+  call Qhalf(1,s,w)
 
   if(all(w .eq. 0.0d0)) then
      write(6,'(A)') 'SERIOUS ERROR: Qhalf*e = 0 i.e. Qhalf is the zero&
@@ -737,7 +737,7 @@ subroutine Q_tests()
      stop 'MEGA FAIL'
   end if
 
-  call Qhalf(1,w,e,1)
+  call Qhalf(1,w,e)
   !q should be e
   rr = dnrm2(state_dim,qqq-e,1)
   write(6,'(A)',advance='no') 'Test 3: [QhalfQhalf(1)]-[Q(1)] ... '
@@ -752,9 +752,9 @@ subroutine Q_tests()
 
   a = -1.0d0
   s = -1.0d0
-  call     Q(1,a,qqq,1)
-  call Qhalf(1,s,w,1)
-  call Qhalf(1,w,e,1)
+  call     Q(1,a,qqq)
+  call Qhalf(1,s,w)
+  call Qhalf(1,w,e)
   !q should be e
   rr = dnrm2(state_dim,qqq-e,1)
   write(6,'(A)',advance='no') 'Test 4: [QhalfQhalf(-1)]-[R(-1)] ... '
@@ -769,9 +769,9 @@ subroutine Q_tests()
 
   call NormalRandomNumbers1D(0.0d0,1.0d0,state_dim,a)
   s = a
-  call     Q(1,a,qqq,1)
-  call Qhalf(1,s,w,1)
-  call Qhalf(1,w,e,1)
+  call     Q(1,a,qqq)
+  call Qhalf(1,s,w)
+  call Qhalf(1,w,e)
   !q should be e
   rr = dnrm2(state_dim,qqq-e,1)
   write(6,'(A)',advance='no') 'Test 5: [QhalfQhalf( N(0,1) )]-[Q( N(0,1) )] ... '
@@ -808,9 +808,9 @@ subroutine Q_tests()
         write(6,'(A,i2,A,i2,A)',advance='no') 'Test 8 ',i,' RHS: Q( N(&
              &0,1) )-Qhalf(Qhalf( N(0,1) )) ... '   
      end if
-     call     Q(i,aa(:,1:i),qq(:,1:i),1)
-     call Qhalf(i,ss(:,1:i),ww(:,1:i),1)
-     call Qhalf(i,ww(:,1:i),ee(:,1:i),1)
+     call     Q(i,aa(:,1:i),qq(:,1:i))
+     call Qhalf(i,ss(:,1:i),ww(:,1:i))
+     call Qhalf(i,ww(:,1:i),ee(:,1:i))
      
      do k = 1,i
         !qq should be ee
