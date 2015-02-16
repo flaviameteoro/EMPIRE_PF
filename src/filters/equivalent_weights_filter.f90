@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-11-26 15:21:21 pbrowne>
+!!! Time-stamp: <2015-02-16 12:17:13 pbrowne>
 !!!
 !!!    {one line to give the program's name and a brief idea of what it does.}
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -95,6 +95,11 @@ subroutine equivalent_weights_filter
              particle-1, tag, CPL_MPI_COMM, mpi_err)
      END DO
 
+     !draw from a mixture density for the random noise then correlate it
+     call MixtureRandomNumbers2D(0.0D0,pf%nfac,pf%ufac,pf%efac&
+          &,state_dim,pf%count,statev,uniform)
+     call Qhalf(pf%count,statev,betan)
+
      DO i = 1,pf%count
         particle = pf%particles(i)
         tag = 1
@@ -147,6 +152,12 @@ subroutine equivalent_weights_filter
         !PRINT*,'Particle filter ',pfrank,'has sent state_vector over mpi at iteratio&
         !    &n',iter,' to ensemble member ',particle
      END DO
+
+     !draw from a mixture density for the random noise then correlate it
+     call MixtureRandomNumbers2D(0.0D0,pf%nfac,pf%ufac,pf%efac&
+          &,state_dim,pf%count,statev,uniform)
+     call Qhalf(pf%count,statev,betan)
+     
      DO i = 1,pf%count
         particle = pf%particles(i)
         tag = 1
@@ -189,9 +200,7 @@ subroutine equivalent_weights_filter
      y_Hfpsin1 = 0.0_rk
   end if !if(.not. pf%gen_data)
 
-  !draw from a mixture density for the random noise then correlate it
-  call MixtureRandomNumbers2D(0.0D0,pf%nfac,pf%ufac,pf%efac,state_dim,pf%count,statev,uniform)
-  call Qhalf(pf%count,statev,betan)
+
 
   !update the weights and the new state
   do i = 1,pf%count

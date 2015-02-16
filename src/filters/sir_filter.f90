@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-11-26 15:03:31 pbrowne>
+!!! Time-stamp: <2015-02-16 12:14:34 pbrowne>
 !!!
 !!!    Subroutine to perform SIR filter
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -49,12 +49,6 @@ subroutine sir_filter
           &,particle-1,tag,CPL_MPI_COMM,mpi_err)
   end do
 
-  DO k = 1,pf%count
-     particle = pf%particles(k)
-     tag = 1
-     CALL MPI_RECV(fpsi(:,k), state_dim, MPI_DOUBLE_PRECISION, &
-          particle-1, tag, CPL_MPI_COMM,mpi_status, mpi_err)
-  END DO
 
 
   !draw from a Gaussian for the random noise
@@ -63,6 +57,14 @@ subroutine sir_filter
   !compute the relaxation term Qkgain, the intermediate
   !term kgain and apply correlation to noise
   call Qhalf(pf%count,normaln,betan)
+
+
+  DO k = 1,pf%count
+     particle = pf%particles(k)
+     tag = 1
+     CALL MPI_RECV(fpsi(:,k), state_dim, MPI_DOUBLE_PRECISION, &
+          particle-1, tag, CPL_MPI_COMM,mpi_status, mpi_err)
+  END DO
 
   
   !update the new state and weights based on these terms

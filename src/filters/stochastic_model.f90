@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-09-29 16:18:17 pbrowne>
+!!! Time-stamp: <2015-02-16 12:13:54 pbrowne>
 !!!
 !!!    subroutine to simply move the model forward in time one timestep
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -55,6 +55,11 @@ subroutine stochastic_model
      call mpi_send(pf%psi(:,k),state_dim,MPI_DOUBLE_PRECISION&
           &,particle-1,tag,CPL_MPI_COMM,mpi_err)
   end do
+
+  call NormalRandomNumbers2D(0.0D0,1.0D0,state_dim,pf%count,normaln)
+
+  call Qhalf(pf%count,normaln,betan)
+
   DO k = 1,pf%count
      particle = pf%particles(k)
      tag = 1
@@ -62,9 +67,7 @@ subroutine stochastic_model
           particle-1, tag, CPL_MPI_COMM,mpi_status, mpi_err)
   END DO
 
-  call NormalRandomNumbers2D(0.0D0,1.0D0,state_dim,pf%count,normaln)
 
-  call Qhalf(pf%count,normaln,betan)
   Qkgain = 0.0_rk
   !$omp parallel do private(particle)
   DO k = 1,pf%count

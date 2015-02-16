@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-09-26 17:31:05 pbrowne>
+!!! Time-stamp: <2015-02-16 12:15:28 pbrowne>
 !!!
 !!!    Subroutine to perform nudging in the proposal step of EWPF
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -82,17 +82,19 @@ subroutine proposal_filter
           &,particle-1,tag,CPL_MPI_COMM,mpi_err)
   end do
   if(time) ti(3) = mpi_wtime()-ti(2)-t
+
+
+  !draw from a Gaussian for the random noise
+  call NormalRandomNumbers2D(0.0D0,1.0D0,state_dim,pf%count,normaln)
+  if(time) ti(4) = mpi_wtime()-ti(3) -t
+
+
   DO k = 1,pf%count
      particle = pf%particles(k)
      tag = 1
      CALL MPI_RECV(fpsi(:,k), state_dim, MPI_DOUBLE_PRECISION, &
           particle-1, tag, CPL_MPI_COMM,mpi_status, mpi_err)
   END DO
-  if(time) ti(4) = mpi_wtime()-ti(3) -t
-
-
-  !draw from a Gaussian for the random noise
-  call NormalRandomNumbers2D(0.0D0,1.0D0,state_dim,pf%count,normaln)
   if(time) ti(5) = mpi_wtime()-ti(4) -t
   
   !compute the relaxation term Qkgain, the intermediate
