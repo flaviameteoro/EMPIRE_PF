@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-01-28 13:36:31 pbrowne>
+!!! Time-stamp: <2015-02-11 16:35:34 pbrowne>
 !!!
 !!!    Ensemble transform Kalman filter
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -82,7 +82,7 @@ integer :: i,j,number_gridpoints
 
 !variables for localisation
 real(kind=rk) :: dist
-real(kind=rk), parameter :: maxscal=1.0d12
+real(kind=rk), parameter :: maxscal=1.0d12!exp(8.0d0)
 real(kind=rk),dimension(obs_dim) :: scal
 logical, dimension(obs_dim) :: yes
 integer :: red_obsdim
