@@ -1,6 +1,6 @@
 /** \mainpage EMPIRE Data Assimilation Documentation
 \author Philip A. Browne <a href="mailto:p.browne@reading.ac.uk">p.browne@reading.ac.uk</a>
-\date Time-stamp: <2015-01-14 18:25:27 pbrowne>
+\date Time-stamp: <2015-02-17 16:24:30 pbrowne>
 
 \section Methods EMPIRE Methods
 For a list of methods implemented in EMPIRE, please click here: \link methods \endlink
@@ -99,6 +99,8 @@ The file model_specific.f90 should be editted for the specific model which you w
 - \link solve_hqht_plus_r \endlink This is a linear solve with the matrix \f$(HQH^T+R)\f$
 
 - \link dist_st_ob \endlink This specifies the distance between a an element of the state vector and an element of the observation vector
+
+- \link bhalf \endlink This is the square root of the background error covariance matrix \f$B^{\frac{1}{2}}\f$
 
 Not all of these subroutines will be required for each filtering method you wish to use, so it may be advantageous to only implement the necessary ones.
 

@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-11-28 10:59:07 pbrowne>
+!!! Time-stamp: <2015-02-17 16:28:29 pbrowne>
 !!!
 !!!    module to hold all the information to control the the main program
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -84,6 +84,9 @@ module pf_control
                               !< - P -- perturb around the model
                               !< initial conditions with random noise
                               !< distributed \f$\mathcal{N}(0,Q)\f$
+                              !< - B -- perturb around the model
+                              !< initial conditions with random noise
+                              !< distributed \f$\mathcal{N}(0,B)\f$
                               !< - R -- read model states from
                               !< rstrt folder where each ensemble member
                               !< is stored in the file rstrt/##.state

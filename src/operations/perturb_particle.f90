@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-10-01 13:45:06 pbrowne>
+!!! Time-stamp: <2015-02-17 16:30:26 pbrowne>
 !!!
 !!!    Collection of routines to perturb and update states
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -25,8 +25,8 @@
 !!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-!> Subroutine to perturb state vector with normal random vector
-!! drawn from \f$\mathcal{N}(0,Q)\f$
+!> Subroutine to perturb state vector 
+!! governed by the \link pf_control::pf_control_type::init init\endlink option
 subroutine perturb_particle(x)
 use sizes
 use comms
@@ -74,6 +74,13 @@ elseif(pf%init .eq. 'S') then
       print*,'pf #',pfrank,' starting from ',filename
    end if
    call get_state(x,filename)
+elseif(pf%init .eq. 'B') then
+   call NormalRandomNumbers1D(0.0D0,1.0D0,state_dim,rdom)
+   call Bhalf(1,rdom,y)
+   rdom = 0.0_rk
+   kgain = 0.0_rk
+   call update_state(rdom,x,kgain,y)
+   x = rdom
 else
    print*,'ERROR: incorrect pf%init selected in perturb_particle'
    stop
