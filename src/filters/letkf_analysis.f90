@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-02-16 15:16:07 pbrowne>
+!!! Time-stamp: <2015-02-19 10:56:18 pbrowne>
 !!!
 !!!    Ensemble transform Kalman filter
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -248,8 +248,8 @@ do j = 1,number_gridpoints
    ! count the total number of observations we shall consider for this
    ! state variable
    red_obsdim = count(yes)
-   print*,'j = ',j,' red_obsdim = ',red_obsdim,scal
-   PRINT*,'var = ',j+start_var(pfrank+1)-1
+   !print*,'j = ',j,' red_obsdim = ',red_obsdim,scal
+   !PRINT*,'var = ',j+start_var(pfrank+1)-1
 
 
    ! if there are no observations in range, treat this as a special case
@@ -339,9 +339,9 @@ do j = 1,number_gridpoints
       do i = 1,pf%nens
          xa(j,i) =  mean_xa(j) + xp(j,i)
       end do
-      print*,'xp ',xp(j,:)
-      print*,'xa ',xa(j,:)
-      print*,'mean_xa ',mean_xa(j)
+      !print*,'xp ',xp(j,:)
+      !print*,'xa ',xa(j,:)
+      !print*,'mean_xa ',mean_xa(j)
    end if
 end do
 !$OMP END PARALLEL DO
