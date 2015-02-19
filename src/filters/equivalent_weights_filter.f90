@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-02-16 12:17:13 pbrowne>
+!!! Time-stamp: <2015-02-19 12:14:13 pbrowne>
 !!!
 !!!    {one line to give the program's name and a brief idea of what it does.}
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -52,31 +52,31 @@ subroutine equivalent_weights_filter
   real(kind=rk), parameter :: pi = 4.0D0*atan(1.0D0)
   logical, dimension(pf%count) :: uniform
   INTEGER, DIMENSION(MPI_STATUS_SIZE) :: mpi_status
-  real(kind=rk), dimension(pf%count) :: weight_temp
+!  real(kind=rk), dimension(pf%count) :: weight_temp
   real(kind=rk) :: ddot
 !  print*,'in equal weight filter the weights are:'
 !  print*,pf%weight
 
   !store in weight_temp only those weights on this mpi thread
-  weight_temp = -huge(1.0d0)
-  do i = 1,pf%count
-     weight_temp(i) = pf%weight(pf%particles(i))
-  end do
+!  weight_temp = -huge(1.0d0)
+!  do i = 1,pf%count
+!     weight_temp(i) = pf%weight(pf%particles(i))
+!  end do
 !  print*,'temporary weight = :'
 !  print*,weight_temp
 
   !communicate the weights of all particles to each mpi thread
-  call mpi_allgatherv(weight_temp,pf%count,mpi_double_precision,pf%weight,gblcount&
-       &,gbldisp,mpi_double_precision,pf_mpi_comm,mpi_err)
+!  call mpi_allgatherv(weight_temp,pf%count,mpi_double_precision,pf%weight,gblcount&
+!       &,gbldisp,mpi_double_precision,pf_mpi_comm,mpi_err)
 
 !  print*,'after allgather, pf%weight = '
 !  print*,pf%weight
 
 
   !normalise the weights
-  pf%weight = exp(-pf%weight+maxval(pf%weight))
-  pf%weight = pf%weight/sum(pf%weight)
-  pf%weight = -log(pf%weight)
+!  pf%weight = exp(-pf%weight+maxval(pf%weight))
+!  pf%weight = pf%weight/sum(pf%weight)
+!  pf%weight = -log(pf%weight)
 !  print*,'weights should be normalised:'
 !  print*,pf%weight
   if(.not. pf%gen_data) then
