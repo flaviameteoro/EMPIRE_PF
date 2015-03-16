@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-01-27 10:42:43 pbrowne>
+!!! Time-stamp: <2015-03-16 16:25:59 pbrowne>
 !!!
 !!!    Program to implement 4dEnVar
 !!!    Copyright (C) 2015  Philip A. Browne
@@ -29,11 +29,11 @@
 program FourDEnVar
   use comms
   use var_data
+  use fourdenvardata
   implicit none
+  include 'mpif.h'
 
-
-  real(kind=kind(1.0d0)), allocatable, dimension(:) :: x0
-  
+  integer :: message,mpi_err
 
   write(6,'(A)') 'PF: Starting PF code'
   call flush(6)
@@ -47,33 +47,45 @@ program FourDEnVar
   call configure_model
   print*,'allocating pf'
   !> allocate space for the filter
-  call allocate_var
+  call allocate_vardata
 
+  call allocate4denvardata
 
-  !get the initial ensemble
+  !get the initial ensemble perturbation matrix
+  call read_ensemble_perturbation_matrix
 
   !get the initial guess
+  call read_background_term
+  vardata%x0 = 0.0d0
 
-  !choose method and particulars
+  !run optimization method
+
+  if(pfrank == 0) then
   
+     select case (vardata%opt_method)
+     case('cg')
+        
+        call subroutine_cg(vardata%cg_method,vardata%n,vardata%cg_eps,vardata%x0)
+        
+     case('lbfgs')
+        call  lbfgs_sub(vardata%n,vardata%lbfgs_factr,vardata%lbfgs_pgtol,vardata%x0)
+        
+     case('lbfgsb')
+        call read_lbfgsb_bounds
+        call lbfgsb_sub(vardata%n,vardata%lbfgs_factr,vardata%lbfgs_pgtol,&
+             vardata%x0,vardata%nbd,vardata%l,vardata%u)
+        
+     case default
+        
+     end select
+     
 
-  select case (vardata%opt_method)
-  case('cg')
-
-     call subroutine_cg(vardata%cg_method,vardata%n,vardata%cg_eps,x0)
-
-  case('lbfgs')
-     call  lbfgs_sub(vardata%n,vardata%lbfgs_factr,vardata%lbfgs_pgtol,x0)
-
-  case('lbfgsb')
-     call read_lbfgs_bounds
-     call lbfgsb_sub(vardata%n,vardata%lbfgs_factr,vardata%lbfgs_pgtol,&
-          x0,vardata%nbd,vardata%l,vardata%u)
-
-  case default
-
-  end select
-
+     !finish other mpi loops with a broadcast
+     message = 0
+     call mpi_bcast(message,1,mpi_integer,0,pf_mpi_comm,mpi_err)
+  else
+     call fourdenvar_fcn
+  end if
 
   !finish model by sending state with tag = 0
 

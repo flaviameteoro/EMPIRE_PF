@@ -1,6 +1,6 @@
 # makefile for CG code
-F77=gfortran
-F90=gfortran
+F77=mpif90
+F90=mpif90
 FILES = main.o cgfam.o cgsearch.o timer.o fcn.o
 MYFILES=call.o cgsub.o cgfam.o cgsearch.o timer.o fcn.o objective_function.o objective_gradient.o
 LIB_LIST=-lblas

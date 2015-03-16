@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-11-12 13:42:46 pbrowne>
+!!! Time-stamp: <2015-03-16 16:46:06 pbrowne>
 !!!
 !!!    Module and subroutine to intitalise EMPIRE coupling to models
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -41,7 +41,10 @@ module comms
   integer, allocatable, dimension(:) :: gbldisp !< the displacements
   !< of each each ensemble member relative to pfrank=0. VERY useful
   !< for mpi_gatherv and mpi_scatterv on pf_mpi_comm
-  
+  integer :: nens !< the total number of ensemble members
+  integer :: cnt !< the number of ensemble members associated with
+  !<this process
+  integer, allocatable, dimension(:) :: particles !< the ensemble members associated with this process
 contains
   
   subroutine allocate_data
@@ -74,8 +77,8 @@ contains
     integer :: myrank !nproc,myrank
 !    integer :: mpi_status(MPI_STATUS_SIZE)
     integer :: nens,i
-    integer :: da
-    integer :: count,pf_colour
+    integer :: da,count
+    integer :: pf_colour
     integer :: world_size
     
     pf_colour = 10000
@@ -99,25 +102,18 @@ contains
     
     
     !lets find the particles:
-    count = 0
-    do particle = 1,nens
-       if( real(particle-1) .ge. real(nens*(pfrank))/real(npfs) .and.&
-            & real(particle-1) .lt. real(nens*(pfrank+1))/real(npfs)) then
-          count = count + 1
-       end if
-    end do
+    
+    count = ceiling(real((myrank-nens+1)*nens)/real(npfs)) -&
+       & ceiling(real((myrank-nens)*nens)/real(npfs))
     
     allocate(pf%particles(count))
-    rtmp = 0
-    do particle = 1,nens
-       if(real(particle-1) .ge. real(nens*(pfrank))/real(npfs) .and.&
-            & real(particle-1) .lt. real(nens*(pfrank+1))/real(npfs))&
-            & then
-          rtmp = rtmp + 1
-          pf%particles(rtmp) = particle
-       end if
-    end do
-    
+    allocate(   particles(count))
+
+    pf%particles = (/ (i, i = ceiling(real((myrank-nens)*nens)&
+         &/real(npfs)),&
+       ceiling(real((myrank-nens+1)*nens)/real(npfs))-1) /)+1
+    particles = pf%particles
+
     allocate(gblcount(npfs))
     allocate(gbldisp(npfs))
 !    print*,'woohoo allgather'
@@ -134,6 +130,7 @@ contains
        end do
     end if
     pf%count = count
+    cnt = count
 
     pf%nens = nens
     PRINT*,'PF_rank = ',pfrank,' and I own particles ',pf%particles

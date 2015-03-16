@@ -269,9 +269,10 @@
                        csave, lsave, isave, dsave )
          
          if (task(1:2) .eq. 'FG') then
-            call objective_function(n,x,f)
+            call fcn(x,n,f,g)
+!            call objective_function(n,x,f)
 !     Compute gradient g for the sample problem.
-            call objective_gradient(n,x,g)
+!            call objective_gradient(n,x,g)
          end if
       end do
 

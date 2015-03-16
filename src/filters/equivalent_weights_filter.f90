@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-01-28 13:36:10 pbrowne>
+!!! Time-stamp: <2015-03-16 10:20:42 pbrowne>
 !!!
 !!!    {one line to give the program's name and a brief idea of what it does.}
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -110,7 +110,7 @@ subroutine equivalent_weights_filter
         particle = pf%particles(i)
         y_Hfpsin1(:,i) = y - Hfpsi(:,i)
         
-        call innerHQHt_plus_R_1(y_Hfpsin1(:,i),w)
+        call innerHQHt_plus_R_1(y_Hfpsin1(:,i),w,pf%timestep)
         
         c(i) = pf%weight(particle) + 0.5*w
      end do

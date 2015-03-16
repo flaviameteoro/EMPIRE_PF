@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-01-26 19:57:19 pbrowne>
+!!! Time-stamp: <2015-03-16 17:16:12 pbrowne>
 !!!
 !!!    Program to implement 4dEnVar
 !!!    Copyright (C) 2015  Philip A. Browne
@@ -98,7 +98,7 @@ contains
 !    integer :: ios
     write(6,'(A)') 'Opening vardata.nml'
     
-    call parse_var_parameters
+    call parse_vardata
     
     write(6,'(A)') 'vardata.nml successfully read to control pf code.'
     
@@ -135,6 +135,7 @@ contains
   !! - \link var_data::var_control_type::opt_method opt_method\endlink
   !!
   subroutine parse_vardata
+    use comms, only : nens
     implicit none
     character(*), parameter :: filename='vardata.nml'
     integer :: ios
@@ -199,7 +200,7 @@ contains
        write(*,*) '4DEnVar ERROR: cg'
        write(*,*) '4DEnVar ERROR: lbfgs'
        write(*,*) '4DEnVar ERROR: lbfgsb'
-       stop 2
+       stop 3
     end select
   
     if(cg_method .lt. 1 .or. cg_method .gt. 3) then
@@ -209,7 +210,7 @@ contains
        write(*,*) '4DEnVar ERROR: 1  FLETCHER-REEVES '
        write(*,*) '4DEnVar ERROR: 2  POLAK-RIBIERE (DEFAULT)'
        write(*,*) '4DEnVar ERROR: 3  POSITIVE POLAK-RIBIERE ( BETA=MAX{BETA,0} )'
-       stop 2
+       stop 4
     end if
 
 
@@ -217,7 +218,7 @@ contains
        if(cg_eps .lt. 0.0d0) then
           write(*,*) '4DEnVar ERROR: cg_eps read as negative: ',cg_eps
           write(*,*) '4DEnVar ERROR: Please make cg_eps positive (small).'
-          stop 2
+          stop 5
        elseif(cg_eps .ge. 0.5d0) then
           write(*,*) '4DEnVar WARNING: cg_eps read as "large": '&
                &,cg_eps
@@ -238,16 +239,18 @@ contains
        vardata%lbfgs_pgtol = lbfgs_pgtol
     end if
 
-    if(n .lt. 1) then
-       write(*,*) '4DEnVar ERROR: n < 1'
-       stop 2
-    else
-       vardata%n = n
-    end if
+!    if(n .lt. 1) then
+!       write(*,*) '4DEnVar ERROR: n < 1'
+!       stop 2
+!    else
+!       vardata%n = n
+!    end if
+    vardata%n = nens-1
+    
 
     if(total_timesteps .lt. 1) then
        write(*,*) '4DEnVar ERROR: total_timesteps < 1'
-       stop 2
+       stop 6
     else
        vardata%total_timesteps = total_timesteps
     end if
@@ -284,4 +287,77 @@ contains
     !> subroutine to somehow read in observation numbers
     subroutine read_observations_numbers
     end subroutine read_observations_numbers
+
+
   end module var_data
+
+
+  !> module holding data specific for 4denvar, not var itself.
+  !> this is necessary because of the difference in x in optimization
+  !> and in the model state.
+  module fourdenvardata
+    implicit none
+    integer :: m !< the number of perturbations, or nens-1
+    real(kind=kind(1.0d0)), allocatable, dimension(:) :: xb !< the background
+    !<guess
+    real(kind=kind(1.0d0)), allocatable, dimension(:,:) :: x0 !< the
+    !<initial ensemble perturbation matrix
+    real(kind=kind(1.0d0)), allocatable, dimension(:,:) :: xt !< the
+    !<current ensemble
+  contains
+    subroutine allocate4denvardata
+      use sizes, only : state_dim
+      use comms, only : cnt,nens,pfrank
+      m = nens-1
+      allocate(xb(state_dim))
+      if(pfrank .ne. 0) then
+         allocate(x0(state_dim,cnt))
+         allocate(xt(state_dim,cnt)) 
+      else
+         allocate(x0(state_dim,cnt-1)) !no perturbation assiociated
+         !with optimization solution
+         allocate(xt(state_dim,cnt))!here we include the optimization
+         !current solution as well as the perturbations
+      end if
+
+    end subroutine allocate4denvardata
+
+    !> subroutine to read xb from file
+    subroutine read_background_term()
+      !read xb from file
+      print*,'READ xb from file not implemented'
+      stop 10      
+    end subroutine read_background_term
+    
+    subroutine deallocate4denvardata
+      deallocate(xb)
+    end subroutine deallocate4denvardata
+
+    !> subroutine to read in the ensemble perturbation matrix
+    !!
+    !! we need to fill in the entries of x0 here
+    !!
+    !! 
+    subroutine read_ensemble_perturbation_matrix
+      use comms, only : cnt,pfrank
+      integer :: particle
+      do particle = 1,cnt
+         if(pfrank .ne. 1) then
+            ! READ x0(particle) from file
+            print*,'READ FROM FILE NOT IMPLEMENTED'
+            stop 7
+         elseif(particle .ne. 1) then!no perturbation                  
+            !associated with optimization solution
+            
+            ! READ x0(particle-1) from file
+            print*,'READ FROM FILE NOT IMPLEMENTED'
+            stop 8
+            
+         end if
+      end do
+    end subroutine read_ensemble_perturbation_matrix
+
+
+
+  end module fourdenvardata
+  

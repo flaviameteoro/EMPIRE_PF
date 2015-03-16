@@ -1,4 +1,4 @@
-FC = gfortran
+FC = mpif90
 
 FFLAGS = -O -Wall -fbounds-check -g -Wno-uninitialized 
 
@@ -15,7 +15,7 @@ LIB_LIST = $(BLAS)
 
 all :  lbfgsb_90_1 lbfgsb_90_2 lbfgsb_90_3 sub
 
-OBS = lbfgsb_sub.o lbfgs_sub.o lbfgsb.o linpack.o timer.o call.o objective_function.o objective_gradient.o
+OBS = lbfgsb_sub.o lbfgs_sub.o lbfgsb.o linpack.o timer.o call.o objective_function.o objective_gradient.o fcn.o
 
 %.o: %.f
 	$(FC) $(FFLAGS) -c -o $@ $<
