@@ -1,6 +1,6 @@
 /** \mainpage EMPIRE Data Assimilation Documentation
 \author Philip A. Browne <a href="mailto:p.browne@reading.ac.uk">p.browne@reading.ac.uk</a>
-\date Time-stamp: <2015-02-03 11:46:10 pbrowne>
+\date Time-stamp: <2015-03-17 10:46:58 pbrowne>
 
 \section Methods EMPIRE Methods
 For a list of methods implemented in EMPIRE, please click here: \link methods \endlink
@@ -252,7 +252,7 @@ PA Browne, S Wilson (2015)
 
 A simple method for integrating a complex model into an ensemble data assimilation system using MPI
 
-<a href="http://scholar.google.com/citations?view_op=view_citation&hl=en&user=fpEth2YAAAAJ&citation_for_view=fpEth2YAAAAJ:9yKSN-GCB0IC">Google scholar link</a>
+<http://dx.doi.org/10.1016/j.envsoft.2015.02.003>
 
 # Use of different methods within EMPIRE
 
