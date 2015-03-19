@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-03-18 10:11:39 pbrowne>
+!!! Time-stamp: <2015-03-16 14:34:02 pbrowne>
 !!!
 !!!    This file must be adapted to the specific model in use.
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -28,7 +28,7 @@
 !> subroutine called initially to set up details and data
 !> for model specific functions
 subroutine configure_model
-  use pf_control
+!  use pf_control
   use sizes
   use Qdata
   use Rdata
@@ -41,8 +41,8 @@ subroutine configure_model
 !  obs_dim = 1
 
   !this is for hadcm3
-  state_dim = 3
-  obs_dim = 3
+  state_dim = 2314430
+  obs_dim = 27370
 
   print*,'#################################'
   print*,'######### SANITY CHECK ##########'
@@ -62,14 +62,28 @@ subroutine configure_model
      print*,'load HQHTR took ',mpi_wtime()-t1,' seconds'
      
 !  end if
-
-     pf%time_bwn_obs = 8 !set this so the obs are picked up corrently
 end subroutine configure_model
 
 
 !>subroutine to reset variables that may change when the observation
 !!network changes
 subroutine reconfigure_model
+!  use pf_control
+  use sizes
+  implicit none
+
+  stop 'reconfigure model not yet implemented'
+
+  !! first set how many observations there will be until the next
+  !! observation
+
+  !pf%time_bwn_obs = 
+
+  !! now reset how many observations will occur at that time
+  !obs_dim = 
+
+
+
 end subroutine reconfigure_model
 
 
@@ -88,9 +102,8 @@ subroutine solve_r(obsDim,nrhs,y,v,t)
   !!result vector where \f$v=R^{-1}y\f$
   integer, intent(in) :: t !<the timestep
 
-  !R==1
-  v = y
-
+  !v = y/(0.3d0**2)
+  stop 'Solve_r not yet implemented'
   
 end subroutine solve_r
 
@@ -109,9 +122,8 @@ subroutine solve_rhalf(obsdim,nrhs,y,v,t)
   !!result vector where \f$v=R^{-\frac{1}{2}}y\f$
   integer, intent(in) :: t !<the timestep
 
-  !R==1
-  v = y
-
+  !v = y/(0.3d0**2)
+  stop 'Solve_r_half not yet implemented'
   
 end subroutine solve_rhalf
 
@@ -130,8 +142,10 @@ subroutine solve_hqht_plus_r(obsdim,y,v,t)
   !! where \f$v = (HQH^T+R)^{-1}y\f$
   integer, intent(in) :: t !<the timestep
   
-  !Q==0, R==1, H=I
-  v = y
+
+  !v = y/(5.3d3**2+0.3d0**2)
+  stop 'solve_hqht_plus_r not yet implemented'
+
 
 end subroutine solve_hqht_plus_r
 
@@ -151,8 +165,11 @@ subroutine Q(nrhs,x,Qx)
   !!resulting vector where Qx \f$= Qx\f$
   real(kind=rk), dimension(state_dim,nrhs) :: temp
 
-  Qx = 0.0d0
+  call Qhalf(nrhs,x,temp)
+
+  call Qhalf(nrhs,temp,Qx)
   
+
 end subroutine Q
 
 
@@ -172,7 +189,8 @@ subroutine Qhalf(nrhs,x,Qx)
   real(kind=rk), dimension(state_dim,nrhs), intent(out) :: qx !< the
   !!resulting vector where Qx \f$= Q^{\frac{1}{2}}x\f$
 
-  qx = 0.0d0
+  !qx = 5.3d3*x
+  stop 'Qhalf not yet implemented'
   
 end subroutine Qhalf
 
@@ -193,8 +211,8 @@ subroutine R(obsDim,nrhs,y,Ry,t)
   integer, intent(in) :: t !< the timestep
 
 
-  !R ==1
-  Ry = y
+  stop 'R not yet implemented'
+  !Ry = 0.3d0**2*y
 
 end subroutine R
 
@@ -215,7 +233,8 @@ subroutine Rhalf(obsDim,nrhs,y,Ry,t)
   integer, intent(in) :: t !<the timestep
 
 
-  Ry = y
+  stop 'Rhalf not yet implemented'
+  !Ry = 0.3d0*y
 
 end subroutine RHALF
 
@@ -238,8 +257,8 @@ subroutine H(obsDim,nrhs,x,hx,t)
   integer, intent(in) :: t !< the timestep
 
 
-  !H = I
-  hx = x
+  stop 'H not yet implemented'
+  !hx(:,:) = x(539617:566986,:)
 
 end subroutine H
 
@@ -260,9 +279,9 @@ subroutine HT(obsDim,nrhs,y,x,t)
   !!resulting vector in state space where x \f$= H^Ty\f$
   integer, intent(in) :: t !< the timestep
 
-  !H = I
-  x = y
-  
+  stop 'HT not yet implemented'
+  !x = 0.0_rk
+  !x(539617:566986,:) = y(:,:)
 
 end subroutine HT
 
@@ -278,34 +297,5 @@ subroutine dist_st_ob(xp,yp,dis,t)
   real(kind=kind(1.0d0)), intent(out) :: dis !<the distance between
                                              !!x(xp) and y(yp)
   integer, intent(in) :: t  !<the current time index for observations
-  
-  dis = 0.0d0
-  
+  stop 'dist not yet implemented'
 end subroutine dist_st_ob
-
-!> subroutine to take a full state vector x and return Qx
-!> in state space.
-!!
-!! Given \f$x\f$ compute \f$b^{1/2}x\f$
-subroutine Bhalf(nrhs,x,Qx)
-
-  use sizes
-  implicit none
-  integer, parameter :: rk=kind(1.0D+0)
-  integer, intent(in) :: nrhs !< the number of right hand sides
-  real(kind=rk), dimension(state_dim,nrhs), intent(in) :: x !< the
-  !!input vector
-  real(kind=rk), dimension(state_dim,nrhs), intent(out) :: Qx !< the
-  !!resulting vector where Qx \f$= B^{1/2}x\f$
-  real(kind=rk), dimension(state_dim,nrhs) :: temp
-  
-  real(kind=rk), dimension(3,3) :: bhalfdat
-
-  bhalfdat(1:3,1) = (/ 2.11314166d-1, 1.33392833d-1,-5.82026139d-3/)
-  bhalfdat(1:3,2) = (/ 1.33392833d-1, 3.79075017d-1,-2.30954705d-4/)
-  bhalfdat(1:3,3) = (/-5.82026139d-3,-2.30954705d-4, 4.26705685d-1/)
-
-  Qx = matmul(bhalfdat,x)
-
-  
-end subroutine Bhalf
