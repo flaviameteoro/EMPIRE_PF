@@ -1,0 +1,7 @@
+&pf_params
+time_obs=3,
+time_bwn_obs=8,
+gen_data=.true.,
+init='B'
+/
+
