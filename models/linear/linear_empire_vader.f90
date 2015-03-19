@@ -1,11 +1,11 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!    Lorenz63_empire.f90 Implements Lorenz 1963 model with EMPIRE
+!    linear_empire_vader.f90 Implements a linear model with EMPIRE
 !    coupling extended to include reverse communication (VADER)
 !
 !
 !The MIT License (MIT)
 !
-!Copyright (c) 2014 Philip A. Browne
+!Copyright (c) 2015 Philip A. Browne
 !
 !Permission is hereby granted, free of charge, to any person obtaining a copy
 !of this software and associated documentation files (the "Software"), to deal
@@ -28,60 +28,93 @@
 !Email: p.browne@reading.ac.uk
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+!> program to implement a simple linear model of no use to anyone
+!! but for testing and debugging purposes :)
+!!
+!! NOTE: THIS PROGRAM ***MUST*** RECIEVE A COUPLET OF INTEGERS
+!!       FROM THE DATA ASSIMILATION CODE CONTAINING 
+!!
+!!       FIRST : THE SIZE OF THE DIMENSION OF THE MODEL
+!!
+!!       SECOND: THE NUMBER OF TIMESTEPS THE MODEL SHOULD DO
+!!
+!!       THIS IS A BIT WEIRD, AS NORMALLY THE MODEL DICTATES
+!!       SUCH THINGS. BUT THIS IS A USELESS TOY MODEL.
+!!       SO WE MIGHT AS WELL MAKE IT EASY TO USE TO TEST DA.
+program linear
+  implicit none
+  include 'mpif.h'
+  real(kind=kind(1.0D0)), dimension(:), allocatable :: x
+  integer :: i,n,maxt
+  integer, dimension(2) :: data
+  integer :: mpi_err,mdl_id,cpl_root,cpl_mpi_comm
+  integer,  dimension(MPI_STATUS_SIZE) :: mpi_status
+  
+  ! SET UP EMPIRE COMMUNICATORS
+  call initialise_mpi(mdl_id,cpl_root,cpl_mpi_comm)
 
-!> program to implement lorenz 1963 system
-program lorenz63
-implicit none
-include 'mpif.h'
-real(kind=kind(1.0D0)) :: t,sigma,rho,beta,dt,tstart,tstop
-real(kind=kind(1.0D0)), dimension(3) :: x,k1,k2,k3,k4
-integer :: mpi_err,mdl_id,cpl_root,cpl_mpi_comm
-integer,  dimension(MPI_STATUS_SIZE) :: mpi_status
-call initialise_mpi(mdl_id,cpl_root,cpl_mpi_comm)
-tstart =0.0D0 ; dt = 0.01D0 ; tstop = real(24)*dt
-sigma = 10.0D0 ; rho = 28.0D0 ; beta = 8.0D0 /3.0D0
-x = (/ -3.12346395, -3.12529803, 20.69823159 /)
-call mpi_send(x,3,MPI_DOUBLE_PRECISION,cpl_root&
-     &,1,cpl_mpi_comm,mpi_err)
-call mpi_recv(x,3,MPI_DOUBLE_PRECISION,cpl_root&
-     &,MPI_ANY_TAG,cpl_mpi_comm,mpi_status,mpi_err)
+  
+  ! GET THE COUPLET FROM THE DATA ASSIMILATION CODE
+  call mpi_recv(data,2,MPI_INTEGER,cpl_root,MPI_ANY_TAG,cpl_mpi_comm&
+       &,mpi_status,mpi_err)
+
+  ! PUT THE DATA INTO THE RIGHT VARIABLES AND ALLOCATE
+  n = data(1)
+  maxt = data(2)
+  allocate(x(n))
+  x = 1.0d0
+
+  
+  ! DO THE INITIAL SEND AND RECIEVES FROM EMPIRE
+  call mpi_send(x,n,MPI_DOUBLE_PRECISION,cpl_root&
+       &,1,cpl_mpi_comm,mpi_err)
+  call mpi_recv(x,n,MPI_DOUBLE_PRECISION,cpl_root&
+       &,MPI_ANY_TAG,cpl_mpi_comm,mpi_status,mpi_err)
 2 continue
-t = tstart
-print*,t,x(1),x(2),x(3)
-do; if ( t .ge. tstop -1.0D-10) exit
-   k1 = f (x                  , sigma , rho , beta )
-   k2 = f (x +0.5D0 * dt * k1 , sigma , rho , beta )
-   k3 = f (x +0.5D0 * dt * k2 , sigma , rho , beta )
-   k4 = f (x +        dt * k3 , sigma , rho , beta )
-   x = x + dt *( k1 + 2.0D0 *( k2 + k3 ) + k4 )/6.0D0
-   call mpi_send(x,3,MPI_DOUBLE_PRECISION,cpl_root&
-        &,1,cpl_mpi_comm,mpi_err)
-   call mpi_recv(x,3,MPI_DOUBLE_PRECISION,cpl_root&
-	&,MPI_ANY_TAG,cpl_mpi_comm,mpi_status,mpi_err)
-   if(mpi_status(MPI_TAG) .eq. 1) then
-      go to 1 !simply continue code
-   elseif(mpi_status(MPI_TAG) .eq. 2) then
-      go to 2 !restart code
-   elseif(mpi_status(MPI_TAG) .eq. 3) then
-      go to 3 !end code
-   else
-      print*,'LORENZ 63 error: unknown MPI_TAG: ',mpi_status(MPI_TAG)
-      stop -1
-   end if
-   1 continue
-   t = t + dt
-   print*,t,x(1),x(2),x(3)
-end do
+
+
+  ! START THE TIMESTEP LOOP
+  do i = 1,maxt
+
+     ! CALL THE SIMPLE LINEAR MODEL AND UPDATE MODEL STATE
+     x = f(n,x)
+
+     ! DO THE TIMESTEP LOOP SEND AND RECIEVES WITH EMPIRE
+     call mpi_send(x,n,MPI_DOUBLE_PRECISION,cpl_root&
+          &,1,cpl_mpi_comm,mpi_err)
+     call mpi_recv(x,n,MPI_DOUBLE_PRECISION,cpl_root&
+          &,MPI_ANY_TAG,cpl_mpi_comm,mpi_status,mpi_err)
+     if(mpi_status(MPI_TAG) .eq. 1) then
+        go to 1 !simply continue code
+     elseif(mpi_status(MPI_TAG) .eq. 2) then
+        go to 2 !restart code
+     elseif(mpi_status(MPI_TAG) .eq. 3) then
+        go to 3 !end code
+     else
+        print*,'Linear model error: unknown MPI_TAG: ',mpi_status(MPI_TAG)
+        stop -1
+     end if
+1    continue
+
+     !END TIMESTEP LOOP
+  end do
 3 continue
-call mpi_finalize(mpi_err)
+  
+  ! END CODE
+  deallocate(x)
+  call mpi_finalize(mpi_err)
 contains
-  function f (x , sigma , rho , beta )
+
+  ! DEFINE A SIMPLE LINEAR MODEL
+  function f (n,x)
     implicit none
-    real(kind=kind(1.0D0)),intent(in),dimension (3) :: x
-    real(kind=kind(1.0D0)),dimension(3) :: f
-    real(kind=kind(1.0D0)),intent(in) :: sigma , rho , beta
-    f = (/sigma *(x(2)-x(1)),x(1)*(rho-x(3)) -x(2),x(1)*x(2)-beta*x(3)/)
+    integer, intent(in) :: n
+    real(kind=kind(1.0D0)),intent(in),dimension (n) :: x
+    real(kind=kind(1.0D0)),dimension(n) :: f
+    f = x
   end function f
+
+  ! STANDARD EMPIRE INITIALISATION SUBROUTINE
   subroutine initialise_mpi(mdl_id,cpl_root,cpl_mpi_comm)
     implicit none
     include 'mpif.h'
@@ -118,4 +151,5 @@ contains
        cpl_root = -1
     end if
   end subroutine initialise_mpi
-end program lorenz63
+
+end program linear

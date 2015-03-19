@@ -7,10 +7,10 @@ FCOPTS = -fimplicit-none -Wall -fbounds-check -fbacktrace -fopenmp
 #set the location of the libraries
 LIB_LIST = -lblas -llapack
 
-all: lorenz63
+all: linear
 
-lorenz63: 
-	$(FC) $(FCOPTS) $(LOADOPTS) -o $(BIN)lorenz63_empire_vader Lorenz63_empire_vader.f90 $(LIB_LIST)
+linear: 
+	$(FC) $(FCOPTS) $(LOADOPTS) -o $(BIN)linear_empire_vader linear_empire_vader.f90 $(LIB_LIST)
 
 clean:
-	rm -rf *.o $(BIN)lorenz63_empire_vader *.mod
+	rm -rf *.o $(BIN)linear_empire_vader *.mod
