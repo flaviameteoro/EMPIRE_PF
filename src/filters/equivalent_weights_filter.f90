@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-03-16 10:20:42 pbrowne>
+!!! Time-stamp: <2015-03-17 23:49:03 pbrowne>
 !!!
 !!!    {one line to give the program's name and a brief idea of what it does.}
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -94,6 +94,7 @@ subroutine equivalent_weights_filter
         CALL MPI_SEND(pf%psi(:,i), state_dim , MPI_DOUBLE_PRECISION, &
              particle-1, tag, CPL_MPI_COMM, mpi_err)
      END DO
+     
 
      DO i = 1,pf%count
         particle = pf%particles(i)
@@ -101,7 +102,6 @@ subroutine equivalent_weights_filter
         CALL MPI_RECV(fpsi(:,i), state_dim, MPI_DOUBLE_PRECISION, &
              particle-1, tag, CPL_MPI_COMM,mpi_status, mpi_err)
      END DO
-     
      
      call H(obs_dim,pf%count,fpsi,Hfpsi,pf%timestep)
      
@@ -138,7 +138,7 @@ subroutine equivalent_weights_filter
      cmax = csorted(nint(pf%keep*pf%nens))
 !     print*,'cmax = ',cmax
   else
-     
+     print*,'was ',pf%psi     
      DO i = 1,pf%count
         particle = pf%particles(i)
         tag = 1
@@ -153,7 +153,8 @@ subroutine equivalent_weights_filter
         CALL MPI_RECV(fpsi(:,i), state_dim, MPI_DOUBLE_PRECISION, &
              particle-1, tag, CPL_MPI_COMM,mpi_status, mpi_err)
      END DO
-
+     print*,'is  ',fpsi
+     cmax = c(1) + 1.0d0
   end if
 
 !  call mpi_barrier(pf_mpi_comm,mpi_err)
@@ -241,5 +242,5 @@ subroutine equivalent_weights_filter
      call resample
   end if !if(pf%gen_data)
   
-  
+  print*,'now ',pf%psi
 end subroutine equivalent_weights_filter

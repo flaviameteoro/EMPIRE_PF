@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-11-26 15:21:46 pbrowne>
+!!! Time-stamp: <2015-03-17 22:09:22 pbrowne>
 !!!
 !!!    {one line to give the program's name and a brief idea of what it does.}
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -174,7 +174,7 @@ program empire
   call flush(6)
 
 
-  tag = 1        
+  tag = 3        
   DO k = 1,pf%count
      particle = pf%particles(k)
      CALL MPI_ISEND(pf%psi(:,k), state_dim , MPI_DOUBLE_PRECISION, &
@@ -198,7 +198,6 @@ program empire
 
   write(6,*) 'PF: finished deallocate_data - off to mpi_finalize'
   call flush(6)
-
 
   call MPI_Finalize(mpi_err)
   deallocate(requests)

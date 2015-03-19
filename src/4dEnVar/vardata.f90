@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-03-16 17:16:12 pbrowne>
+!!! Time-stamp: <2015-03-18 18:17:35 pbrowne>
 !!!
 !!!    Program to implement 4dEnVar
 !!!    Copyright (C) 2015  Philip A. Browne
@@ -156,20 +156,14 @@ contains
          &total_timesteps,&
          &n
 
-    
-!!$    namelist/var_params/time_obs,time_bwn_obs,&
-!!$         &nudgefac,& 
-!!$         &gen_data,gen_Q,&
-!!$         &human_readable,&
-!!$         &nfac,&
-!!$         &keep,&
-!!$         &ufac,&                
-!!$         &Qscale,&
-!!$         &rho,&
-!!$         &len,&
-!!$         &use_talagrand,use_weak,use_mean,use_var,use_traj,use_rmse,&
-!!$         &type,&
-!!$         &init
+    !set defaults:
+    vardata%opt_method = opt_method
+    vardata%cg_method = cg_method
+    vardata%cg_eps = cg_eps
+    vardata%lbfgs_factr = lbfgs_factr
+    vardata%lbfgs_pgtol = lbfgs_pgtol
+    vardata%n = n
+    vardata%total_timesteps = total_timesteps
     
 
     
@@ -211,6 +205,19 @@ contains
        write(*,*) '4DEnVar ERROR: 2  POLAK-RIBIERE (DEFAULT)'
        write(*,*) '4DEnVar ERROR: 3  POSITIVE POLAK-RIBIERE ( BETA=MAX{BETA,0} )'
        stop 4
+    else
+       vardata%cg_method = cg_method
+       if(vardata%opt_method .eq. 'cg') then
+          select case (vardata%cg_method)
+          case(1) 
+             write(*,*) 'CG METHOD 1:  FLETCHER-REEVES '
+          case(2)
+             write(*,*) 'CG METHOD 2:  POLAK-RIBIERE (DEFAULT)'
+          case(3)
+             write(*,*) 'CG METHOD 3:  POSITIVE POLAK-RIBIERE'
+          case default
+          end select
+       end if
     end if
 
 
@@ -227,24 +234,29 @@ contains
           write(*,*) '4DEnVar: CG tolerance read in as ',cg_eps
           vardata%cg_eps = cg_eps
        end if
+    else
+       vardata%cg_eps = 1.0d-5
     end if
 
     if(lbfgs_factr .ne. 1.0d+7) then
        write(*,*) '4DEnVar: LBFGS factr read in as ',lbfgs_factr
-       vardata%lbfgs_factr = lbfgs_factr
+       vardata%lbfgs_factr = lbfgs_factr    
     end if
-    
+
+   
     if(lbfgs_pgtol .ne. 1.0d-5) then
        write(*,*) '4DEnVar: LBFGS pgtol read in as ',lbfgs_pgtol
        vardata%lbfgs_pgtol = lbfgs_pgtol
     end if
 
+       
 !    if(n .lt. 1) then
 !       write(*,*) '4DEnVar ERROR: n < 1'
 !       stop 2
 !    else
 !       vardata%n = n
 !    end if
+    print*,'nens = ',nens
     vardata%n = nens-1
     
 
@@ -285,9 +297,14 @@ contains
     end subroutine read_lbfgsb_bounds
 
     !> subroutine to somehow read in observation numbers
-    subroutine read_observations_numbers
-    end subroutine read_observations_numbers
-
+    subroutine read_observation_numbers
+      vardata%ny = 0
+      vardata%ny(8) = 3
+      vardata%ny(16) = 3
+      vardata%ny(24) = 3
+      print*,'vardata%ny = ',vardata%ny
+    end subroutine read_observation_numbers
+    
 
   end module var_data
 
@@ -314,7 +331,7 @@ contains
          allocate(x0(state_dim,cnt))
          allocate(xt(state_dim,cnt)) 
       else
-         allocate(x0(state_dim,cnt-1)) !no perturbation assiociated
+         allocate(x0(state_dim,cnt-1)) !no perturbation associated
          !with optimization solution
          allocate(xt(state_dim,cnt))!here we include the optimization
          !current solution as well as the perturbations
@@ -324,9 +341,21 @@ contains
 
     !> subroutine to read xb from file
     subroutine read_background_term()
+      real(kind=kind(1.0d0)), dimension(3) :: tempxb
       !read xb from file
       print*,'READ xb from file not implemented'
-      stop 10      
+      !stop 10      
+      !type in a normally distributed random vector
+      call NormalRandomNumbers1d(0.0d0,1.0d0,3,tempxb)
+!      tempxb = (/1.8368174447696750d-1,-1.3102740999288161d-2,  &
+!           &-5.9318375014562030d-1/)
+      call Bhalf(1,tempxb,xb)
+      print*,'background guess pert = '
+      print*,xb
+
+      xb = xb + (/-3.12346395, -3.12529803, 20.69823159/)
+      print*,'background guess xb = '
+      print*,xb
     end subroutine read_background_term
     
     subroutine deallocate4denvardata
@@ -340,21 +369,34 @@ contains
     !! 
     subroutine read_ensemble_perturbation_matrix
       use comms, only : cnt,pfrank
-      integer :: particle
-      do particle = 1,cnt
-         if(pfrank .ne. 1) then
-            ! READ x0(particle) from file
-            print*,'READ FROM FILE NOT IMPLEMENTED'
-            stop 7
-         elseif(particle .ne. 1) then!no perturbation                  
-            !associated with optimization solution
-            
-            ! READ x0(particle-1) from file
-            print*,'READ FROM FILE NOT IMPLEMENTED'
-            stop 8
-            
-         end if
-      end do
+      use sizes
+      real(kind=kind(1.0d0)),allocatable, dimension(:,:) :: tempx0
+
+      if(pfrank .ne. 0) then
+         ! READ x0(particle) from file
+         print*,'READ FROM FILE NOT IMPLEMENTED'
+         !stop 7
+         allocate(tempx0(state_dim,cnt))
+         call NormalRandomNumbers2D(0.0d0,1.0d0,state_dim,cnt,tempx0)
+!         print*,'sup tempx0 = ',tempx0
+         call Bhalf(cnt,tempx0,x0)
+!         print*,'arse x0 = ',x0
+         deallocate(tempx0)
+      else!no perturbation                  
+          !associated with optimization solution
+         
+         ! READ x0(particle-1) from file
+         print*,'READ FROM FILE NOT IMPLEMENTED'
+         !stop 8
+         allocate(tempx0(state_dim,cnt-1))
+         call NormalRandomNumbers2D(0.0d0,1.0d0,state_dim,cnt-1,tempx0)
+!         print*,'sup tempx0 = ',tempx0
+         call Bhalf(cnt-1,tempx0,x0)
+!         print*,'arse x0 = ',x0
+         deallocate(tempx0)
+      end if
+      x0 = x0/(real(m-1,kind(1.0d0))**0.5d0)
+
     end subroutine read_ensemble_perturbation_matrix
 
 

@@ -1,6 +1,6 @@
 # makefile for 4DEnVar
 F90=mpif90
-MYFILES=vardata.o 4dEnVar.o 4denvar_fcn.o ../../obs/model_specific.o ../../obs/sizes.o ../../obs/Rdata.o ../../obs/Qdata.o ../../obs/inner_products.o ../../obs/pf_control.o ../../obs/comms.o ../../obs/histogram.o ../../obs/data_io.o
+MYFILES=vardata.o 4dEnVar.o 4denvar_fcn.o ../../obs/model_specific.o ../../obs/sizes.o ../../obs/Rdata.o ../../obs/Qdata.o ../../obs/inner_products.o ../../obs/pf_control.o ../../obs/comms.o ../../obs/histogram.o ../../obs/data_io.o ../../obs/gen_rand.o ../../obs/random_d.o
 LIB_LIST=-lblas
 OPTS=-O3 -Wall -fimplicit-none -fbounds-check -fbacktrace
 MODFLAG=-J

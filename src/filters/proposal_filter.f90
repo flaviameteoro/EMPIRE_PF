@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-01-28 13:36:46 pbrowne>
+!!! Time-stamp: <2015-03-17 21:57:39 pbrowne>
 !!!
 !!!    Subroutine to perform nudging in the proposal step of EWPF
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -75,12 +75,18 @@ subroutine proposal_filter
   end if
 
   !get the model to provide f(x)
+!  call mpi_finalize(mpi_err)
+!  stop
+
   do k =1,pf%count
      particle = pf%particles(k)
      tag = 1
      call mpi_send(pf%psi(:,k),state_dim,MPI_DOUBLE_PRECISION&
           &,particle-1,tag,CPL_MPI_COMM,mpi_err)
   end do
+!  call mpi_finalize(mpi_err)
+!  stop
+
   if(time) ti(3) = mpi_wtime()-ti(2)-t
   DO k = 1,pf%count
      particle = pf%particles(k)
@@ -88,6 +94,9 @@ subroutine proposal_filter
      CALL MPI_RECV(fpsi(:,k), state_dim, MPI_DOUBLE_PRECISION, &
           particle-1, tag, CPL_MPI_COMM,mpi_status, mpi_err)
   END DO
+!  call mpi_finalize(mpi_err)
+!  stop
+  
   if(time) ti(4) = mpi_wtime()-ti(3) -t
 
 

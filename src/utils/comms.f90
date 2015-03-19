@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-03-16 16:46:06 pbrowne>
+!!! Time-stamp: <2015-03-17 20:35:13 pbrowne>
 !!!
 !!!    Module and subroutine to intitalise EMPIRE coupling to models
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -76,7 +76,7 @@ contains
     integer :: particle,world_id
     integer :: myrank !nproc,myrank
 !    integer :: mpi_status(MPI_STATUS_SIZE)
-    integer :: nens,i
+    integer :: i
     integer :: da,count
     integer :: pf_colour
     integer :: world_size
@@ -120,8 +120,9 @@ contains
 !    print*,count
 !    print*,gblcount
 !    print*,pf_mpi_comm
-    call mpi_allgather(count,1,mpi_integer,gblcount,1,mpi_integer&
-         &,pf_mpi_comm,mpi_err)
+    !call mpi_allgather(count,1,mpi_integer,gblcount,1,mpi_integer&
+    !     &,pf_mpi_comm,mpi_err)
+    gblcount=count
 !    print*,'allgather did not break'
     gbldisp = 0
     if(npfs .gt. 1) then

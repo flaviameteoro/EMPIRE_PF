@@ -5,8 +5,8 @@ real(kind=kind(1.0d0)), dimension(n), intent(in) :: x
 real(kind=kind(1.0d0)), intent(out) :: f
 real(kind=kind(1.0d0)), dimension(n), intent(out) :: g
 
-call fourdenvar_fcn(n,x,f,g)
 
+call fourdenvar_fcn(n,x,f,g)
 
 end subroutine fcn
 
@@ -40,16 +40,16 @@ subroutine fourdenvar_fcn(n, v, f, g )
   real(kind=rk) :: ft
   integer :: message,mpi_err,particle,k
   integer, dimension(mpi_status_size) :: mpi_status
-  
-
+!  print*,'   v = ',v
   if(pfrank == 0) then
      !tell the other mpi processes to continue in this function...
      message = -1
      call mpi_bcast(message,1,mpi_integer,0,pf_mpi_comm,mpi_err)     
-
+     
      !initialise f as background term
      f = 0.5d0*sum(v*v)
 
+ !    print*,0.5d0*sum(v*v)
      !initialise tempg, the gradient, to zero
      tempg = 0.0d0
 
@@ -58,38 +58,43 @@ subroutine fourdenvar_fcn(n, v, f, g )
      
      !convert control variable v into model state:
      call convert_control_to_state(n,v,state_dim,xdet)
+!     print*,'xdet = ',xdet
 
      !now make xt centered on xdet, the optimization state
      xt(:,1) = xdet(:)
-     do particle = 2,cnt
-        xt(:,particle) = x0(:,particle-1) + xdet(:)
-     end do
-
+     if(cnt .gt. 1) then
+        do particle = 2,cnt
+           xt(:,particle) = x0(:,particle-1) + xdet(:)
+        end do
+     end if
 
      
      do t = 1,vardata%total_timesteps
+!        print*,'timestep = ',t
         !advance model to timestep t
         if(t == 1) then
-           tag = -1
+           tag = 2
         else
            tag = 1
         end if
+
 
         do k =1,cnt
            particle = particles(k)
            call mpi_send(xt(:,k),state_dim,MPI_DOUBLE_PRECISION&
                 &,particle-1,tag,CPL_MPI_COMM,mpi_err)
         end do
+
         
         DO k = 1,cnt
            particle = particles(k)
            CALL MPI_RECV(xt(:,k),state_dim, MPI_DOUBLE_PRECISION, &
-                particle-1, tag, CPL_MPI_COMM,mpi_status, mpi_err)
+                particle-1, MPI_ANY_TAG, CPL_MPI_COMM,mpi_status, mpi_err)
         END DO
-        
         
         !check if we have observations this timestep
         if(vardata%ny(t) .gt. 0) then
+
            !if observations exist then allocate data
            allocate(     y(vardata%ny(t)))
            allocate(   hxt(vardata%ny(t),cnt))
@@ -106,31 +111,48 @@ subroutine fourdenvar_fcn(n, v, f, g )
            
            call mpi_allreduce(tempx,xbar,state_dim,MPI_DOUBLE_PRECISION,MPI_SUM,&
                 &pf_mpi_comm,mpi_err)
+
            
            xbar = xbar/real(m,rk)
+!           print*,'xbar=',xbar
 
            !subtract the mean to form the perturbation matrix (not
            ! from the optimization solution
-           xt(:,1) = xdet(:)
-           do particle = 2,cnt
-              xt(:,particle) = xt(:,particle-1) - xbar(:)
-           end do
+!           xt(:,1) = xdet(:)
+           if(cnt .gt. 1) then
+              do particle = 2,cnt
+                 xt(:,particle) = (xt(:,particle) - xbar(:)) /(real(m-1,rk)**0.5d0)
+              end do
+           end if
            
            
            
            !get model equivalent of observations, store
            !in variable hxt
+!           print*,'x=',xt(:,1)
            call H(vardata%ny(t),cnt,xt,hxt,t)
+!           print*,'hx',hxt(:,1)
+
+           !add the mean back to the perturbation matrix (not
+           ! from the optimization solution to regain full ensemble
+           !           xt(:,1) = xdet(:)
+           if(cnt .gt. 1) then
+              do particle = 2,cnt
+                 xt(:,particle) = (real(m-1,rk)**0.5d0)*xt(:,particle) + xbar(:)
+              end do
+           end if
            
+
            !read in the data
            call get_observation_data(y,t)
+!           print*,'y=',y
            
            !compute difference in obs and model obs
            y = y - hxt(:,1)
            
            !compute R_i^{-1}( y_i - H_i M_i X)
            call solve_r(vardata%ny(t),1,y,RY_HMX,t)
-
+           
            !pass this data to all other processes
            call mpi_bcast(RY_HMX,vardata%ny(t),mpi_double_precision,&
                 0,pf_mpi_comm,mpi_err)
@@ -138,15 +160,18 @@ subroutine fourdenvar_fcn(n, v, f, g )
            !compute part of objective function corresponding
            !to the observations
            ft = sum(y*RY_HMX)
+!           print*,ft
 
            !now compute the gradient part
-           ![H_i(X_i)]^TR_i^{-1}[RY_HMX]
-           do particle = 2,cnt
-              tempg(particles(particle)) = tempg(particles(particle)) &
-                   &+ sum(hxt(:,particle)*RY_HMX)
-           end do
-           
-           
+           !-[H_i(X_i)]^TR_i^{-1}[Y_HMX]
+           if(cnt .gt. 1) then
+              do particle = 2,cnt
+                 tempg(particles(particle)-1) =&
+                      & tempg(particles(particle)-1) &
+                      &- sum(hxt(:,particle)*RY_HMX)
+              end do
+           end if
+
            !deallocate data
            deallocate(y)
            deallocate(hxt)
@@ -163,8 +188,12 @@ subroutine fourdenvar_fcn(n, v, f, g )
      !reduce tempg to the master processor
      call mpi_reduce(tempg,g,n,MPI_DOUBLE_PRECISION,MPI_SUM&
           &,0,pf_mpi_comm,mpi_err)
+
      !add gradient of background term to tempg
+!     print*,'v = ',v
+!     print*,'g = ',g
      g = g + v
+!     print*,'n = ',g
      
      
   else !(pfrank != 0)
@@ -223,7 +252,7 @@ subroutine fourdenvar_fcn(n, v, f, g )
                  call mpi_allreduce(tempx,xbar,state_dim&
                       &,MPI_DOUBLE_PRECISION,MPI_SUM,&
                       &pf_mpi_comm,mpi_err)
-                 
+
                  xbar = xbar/real(m,rk)
                  
                  !now subtract xbar from xt...
@@ -245,7 +274,7 @@ subroutine fourdenvar_fcn(n, v, f, g )
                  ![H_i(X_i)]^TR_i^{-1}[RY_HMX]
                  do particle = 2,cnt
                     tempg(particles(particle)) = tempg(particles(particle)) &
-                         &+ sum(hxt(:,particle)*RY_HMX)
+                         &- sum(hxt(:,particle)*RY_HMX)
                  end do
                  
                  
@@ -258,7 +287,6 @@ subroutine fourdenvar_fcn(n, v, f, g )
            !reduce tempg to the master processor
            call mpi_reduce(tempg,g,n,MPI_DOUBLE_PRECISION,MPI_SUM&
                 &,0,pf_mpi_comm,mpi_err)
-           
 
         elseif(message .eq. 0) then
            exit !leave this function
@@ -270,6 +298,9 @@ subroutine fourdenvar_fcn(n, v, f, g )
 
      end do
   end if
+!print*,'f=',f
+!call convert_control_to_state(n,g,state_Dim,xbar)
+!print*,xbar
 end subroutine fourdenvar_fcn
 
 subroutine convert_control_to_state(n,v,stateDim,x)
@@ -286,26 +317,34 @@ subroutine convert_control_to_state(n,v,stateDim,x)
   !<resulting model state
   real(kind=rk), dimension(stateDim) :: tempx
   integer :: particle,mpi_err
+  
+!  print*,'  v1 = ',v
 
   !communicate v to all the mpi processes
   call mpi_bcast(v,n,mpi_double_precision,&
        0,pf_mpi_comm,mpi_err)              
   
+!  print*,'  v2 = ',v
+!  print*,'  x0 = ',x0
   !now do x = X0*v
   tempx = 0.0d0
   do particle = 1,cnt
-     if(pfrank .ne. 1) then
+     if(pfrank .ne. 0) then
         tempx = tempx + x0(:,particle  )*v(particles(particle  ))
      elseif(particle .gt. 1) then
         tempx = tempx + x0(:,particle-1)*v(particles(particle-1))
      end if
   end do
-  
+
+!  print*,'temp = ',tempx
+
   call mpi_allreduce(tempx,x,stateDim,MPI_DOUBLE_PRECISION,MPI_SUM,&
        &pf_mpi_comm,mpi_err)
-  
+
+!  print*,'xxxx = ',x
+
   ! now add the background term
   x = x+xb
-
+!  print*,'xnew = ',x
 end subroutine convert_control_to_state
 

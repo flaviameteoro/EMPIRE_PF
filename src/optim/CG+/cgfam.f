@@ -277,7 +277,7 @@ C
       IF(LP.GT.0) WRITE(LP,100) INFO
       RETURN
   95  IFLAG=-2
-      IF(LP.GT.0) WRITE(LP,135) I
+      IF(LP.GT.0) WRITE(LP,135)
       RETURN
   96  IFLAG= -3
       IF(LP.GT.0) WRITE(LP,140)

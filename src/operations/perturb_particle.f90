@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-10-01 13:45:06 pbrowne>
+!!! Time-stamp: <2015-03-18 18:22:11 pbrowne>
 !!!
 !!!    Collection of routines to perturb and update states
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -60,7 +60,16 @@ elseif(pf%init .eq. 'N') then
    kgain = 0.0_rk
    call update_state(y,x,kgain,rdom)
    x = y
-
+elseif(pf%init .eq. 'B') then
+   call NormalRandomNumbers1D(0.0D0,1.0D0,state_dim,kgain)
+   call Bhalf(1,kgain,rdom)
+   print*,'truth pert = '
+   print*,rdom
+   kgain = 0.0_rk
+   call update_state(y,x,kgain,rdom)
+   x = y
+   print*,'truth is = '
+   print*,x
 elseif(pf%init .eq. 'R') then
    !get ensemble member from the restart folder                  
    write(filename,'(A,i2.2,A)') 'rstrt/',pfrank,'.state'

@@ -261,6 +261,7 @@
  
       do while(task(1:2).eq.'FG'.or.task.eq.'NEW_X'.or. &
                task.eq.'START') 
+
          
 !     This is the call to the L-BFGS-B code.
          
@@ -269,7 +270,7 @@
                        csave, lsave, isave, dsave )
          
          if (task(1:2) .eq. 'FG') then
-            call fcn(x,n,f,g)
+            call fcn(n,x,f,g)
 !            call objective_function(n,x,f)
 !     Compute gradient g for the sample problem.
 !            call objective_gradient(n,x,g)

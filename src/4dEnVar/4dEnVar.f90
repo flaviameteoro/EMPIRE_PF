@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-03-16 16:25:59 pbrowne>
+!!! Time-stamp: <2015-03-18 18:20:51 pbrowne>
 !!!
 !!!    Program to implement 4dEnVar
 !!!    Copyright (C) 2015  Philip A. Browne
@@ -27,41 +27,63 @@
 
 !> the main program to run 4DEnVar
 program FourDEnVar
+  use sizes
   use comms
   use var_data
   use fourdenvardata
+!  use pf_control
   implicit none
   include 'mpif.h'
 
-  integer :: message,mpi_err
+  integer :: message,mpi_err,k,tag,particle
+  integer, dimension(MPI_STATUS_SIZE) :: mpi_status
 
-  write(6,'(A)') 'PF: Starting PF code'
+  print*,'Starting 4DEnVar'
   call flush(6)
   !> set up EMPIRE coupling
   call initialise_mpi
-  print*,'PF: setting controls'
+
+
+  call random_seed_mpi(pfrank)
   !> read in controlling data
   call set_var_controls
-  print*,'PF: configuring model'
+
   !> call user specific routine for initialisation
   call configure_model
-  print*,'allocating pf'
+
   !> allocate space for the filter
+
+
   call allocate_vardata
 
   call allocate4denvardata
 
+  !get initial states from ensemble members
+  DO message = 1,cnt
+     CALL MPI_RECV(xt(:,message),state_dim, MPI_DOUBLE_PRECISION, &
+          particles(message)-1, MPI_ANY_TAG, CPL_MPI_COMM,mpi_status, mpi_err)
+  END DO
+
+
   !get the initial ensemble perturbation matrix
   call read_ensemble_perturbation_matrix
 
+
   !get the initial guess
   call read_background_term
-  vardata%x0 = 0.0d0
 
+
+  vardata%x0 = 0.0d0
+  
+  call read_observation_numbers
+
+!  vardata%ny = 0
+!  call NormalRandomNumbers1d(0.0d0,1.0d0,vardata%n,vardata%x0)
   !run optimization method
 
   if(pfrank == 0) then
-  
+     print*,'vardata%n = ',vardata%n
+
      select case (vardata%opt_method)
      case('cg')
         
@@ -83,11 +105,30 @@ program FourDEnVar
      !finish other mpi loops with a broadcast
      message = 0
      call mpi_bcast(message,1,mpi_integer,0,pf_mpi_comm,mpi_err)
+
   else
      call fourdenvar_fcn
   end if
 
-  !finish model by sending state with tag = 0
+  print*,'optimization solution is:'
+  print*,vardata%x0
+
+  print*,'that means optimal state is:'
+  call convert_control_to_state(vardata%n,vardata%x0,state_dim,xt(:&
+       &,1))
+  print*,xt(:,1)
+  print*,'background state was:'
+  print*,xb
+
+  !finish model by sending state with tag = 3
+  do k =1,cnt
+     particle = particles(k)
+     tag = 3
+     call mpi_send(xt(:,k),state_dim,MPI_DOUBLE_PRECISION&
+          &,particle-1,tag,CPL_MPI_COMM,mpi_err)
+  end do
+
+  call mpi_finalize(mpi_err)
 
 
 end program FourDEnVar

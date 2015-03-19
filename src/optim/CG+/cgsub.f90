@@ -45,8 +45,6 @@ integer :: iprint(2),iflag,icall,i!mp,lp,i
 integer :: iter,nfun,irest
 
 
-
-
 FINISH= .FALSE.
 !
 ! Read problem input information
@@ -77,12 +75,13 @@ if (n .lt. 0) then
    go to 50
 end if
 
+
 !
 ! Print parameters
 !
 if (iprint(1) .ge. 0) then
-   write (*,820)
-   write (*,840) n, method, irest
+   write(*,820)
+   write(*,840) n, method, irest
 end if
 
 ICALL=0
@@ -107,7 +106,6 @@ IFLAG=0
 !
 ! Rosenbrock test function
 call fcn(n,x,f,g)
-
 30 CONTINUE
 !
 ! Call the main optimization code
@@ -153,7 +151,7 @@ ENDIF
 if (iprint(1).ge.0.and.iflag.ge.0) then
    write (*,890) f
 end if
-
+return
 !
 ! Formatting
 !
