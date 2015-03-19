@@ -164,6 +164,13 @@ export
 lorenz63:
 	cd models/lorenz63;make -e
 
+linear:
+	cd models/linear;make -e
+
+4dEnVar:
+	cd src/4dEnVar;make -e
+
+
 doc_latex: doc_html
 	cd doc/latex && make
 

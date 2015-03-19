@@ -58,6 +58,8 @@ do; if ( t .ge. tstop -1.0D-10) exit
         &,1,cpl_mpi_comm,mpi_err)
    call mpi_recv(x,3,MPI_DOUBLE_PRECISION,cpl_root&
 	&,MPI_ANY_TAG,cpl_mpi_comm,mpi_status,mpi_err)
+   t = t + dt
+   print*,t,x(1),x(2),x(3)
    if(mpi_status(MPI_TAG) .eq. 1) then
       go to 1 !simply continue code
    elseif(mpi_status(MPI_TAG) .eq. 2) then
@@ -68,9 +70,7 @@ do; if ( t .ge. tstop -1.0D-10) exit
       print*,'LORENZ 63 error: unknown MPI_TAG: ',mpi_status(MPI_TAG)
       stop -1
    end if
-   1 continue
-   t = t + dt
-   print*,t,x(1),x(2),x(3)
+1  continue
 end do
 3 continue
 call mpi_finalize(mpi_err)

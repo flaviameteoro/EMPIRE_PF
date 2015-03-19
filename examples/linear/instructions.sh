@@ -21,39 +21,34 @@ dir=`pwd`
 ####################################################
 
 F90=mpif90
-mdlex=lorenz63_empire_vader
+mdlex=linear_empire_vader
 empex=empire_4denvar
-n=24
+n=4
 
 
-comment "#move to the root directory"
+comment "#move to the top level directory and build the model:"
 command cd ../../
 cd ../../
-
-comment "#build the model:"
-rm -rf bin/$mdlex
-command make lorenz63
-make lorenz63
+command make linear
+make linear
 echo '#Model built successfully'
 
-
-
-comment '#move the model to a "run folder"'
-command mkdir -p $dir/run/
-mkdir -p $dir/run/
-command mv bin/$mdlex $dir/run/
-mv bin/$mdlex $dir/run/
-
-comment "#move back to original directory"
+comment '#move back to this example directory:'
 command cd $dir
 cd $dir
 
+comment '#move the model to a "run folder"'
+command mkdir -p run/
+mkdir -p run/
+command mv ../../bin/$mdlex run/
+mv ../../bin/$mdlex run/
+
 
 comment '#put an appropriate model specific file in the right place:'
-command cp -n ../../model_specific.f90 model_specific_backup.f90
-cp -n ../../model_specific.f90 model_specific_backup.f90
-command cp model_specific_l63.f90 ../../model_specific.f90
-cp model_specific_l63.f90 ../../model_specific.f90
+command cp -n ../../model_specific.f90 ../../model_specific_backup.f90
+cp -n ../../model_specific.f90 ../../model_specific_backup.f90
+command cp model_specific_linear.f90 ../../model_specific.f90
+cp model_specific_linear.f90 ../../model_specific.f90
 
 
 comment '#move to the root folder:'
@@ -62,8 +57,8 @@ cd ../../
 
 comment '#Build the full empire code:'
 make clean
-make > /dev/null 2>&1
 command make
+make > /dev/null 2>&1
 echo 'Built empire filter codes successfully'
 
 comment '#copy the empire code to the run directory:'
@@ -73,6 +68,7 @@ cp bin/empire $dir/run/
 comment '#move back to this example directory:'
 command cd $dir
 cd $dir
+
 
 comment '#put the fortran namelist file in the correct directory'
 comment '#to generate some observations for the test:'
@@ -145,5 +141,5 @@ cd $dir
 
 
 comment '#put the original model specific file back in place'
-command cp model_specific_backup.f90 ../../model_specific.f90
-cp model_specific_backup.f90 ../../model_specific.f90
+command mv ../../model_specific_backup.f90 ../../model_specific.f90
+mv ../../model_specific_backup.f90 ../../model_specific.f90

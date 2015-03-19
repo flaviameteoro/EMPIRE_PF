@@ -72,7 +72,7 @@ program linear
        &,MPI_ANY_TAG,cpl_mpi_comm,mpi_status,mpi_err)
 2 continue
 
-
+  write(6,*) 0,x
   ! START THE TIMESTEP LOOP
   do i = 1,maxt
 
@@ -84,6 +84,8 @@ program linear
           &,1,cpl_mpi_comm,mpi_err)
      call mpi_recv(x,n,MPI_DOUBLE_PRECISION,cpl_root&
           &,MPI_ANY_TAG,cpl_mpi_comm,mpi_status,mpi_err)
+
+     write(6,*) i,x
      if(mpi_status(MPI_TAG) .eq. 1) then
         go to 1 !simply continue code
      elseif(mpi_status(MPI_TAG) .eq. 2) then
@@ -95,6 +97,7 @@ program linear
         stop -1
      end if
 1    continue
+
 
      !END TIMESTEP LOOP
   end do
