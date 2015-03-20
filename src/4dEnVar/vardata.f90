@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-03-18 18:17:35 pbrowne>
+!!! Time-stamp: <2015-03-20 16:34:41 pbrowne>
 !!!
 !!!    Program to implement 4dEnVar
 !!!    Copyright (C) 2015  Philip A. Browne
@@ -319,6 +319,8 @@ contains
     !<guess
     real(kind=kind(1.0d0)), allocatable, dimension(:,:) :: x0 !< the
     !<initial ensemble perturbation matrix
+    !!
+    !! THIS IS ***NOT*** SCALED!!
     real(kind=kind(1.0d0)), allocatable, dimension(:,:) :: xt !< the
     !<current ensemble
   contains
@@ -395,8 +397,13 @@ contains
 !         print*,'arse x0 = ',x0
          deallocate(tempx0)
       end if
-      x0 = x0/(real(m-1,kind(1.0d0))**0.5d0)
+      x0 = x0!/(real(m-1,kind(1.0d0))**0.5d0)
 
+      print*,'read_ensemble_perturbation_matrix'
+      print*,x0
+      print*,'read_ensemble_perturbation_matrix'
+      print*,'x0(1,3) = ',x0(1,3)
+      print*,'x0(3,2) = ',x0(3,2)
     end subroutine read_ensemble_perturbation_matrix
 
 

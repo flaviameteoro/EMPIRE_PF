@@ -50,8 +50,8 @@ cd $dir
 
 
 comment '#put an appropriate model specific file in the right place:'
-command cp -n ../../model_specific.f90 model_specific_backup.f90
-cp -n ../../model_specific.f90 model_specific_backup.f90
+command cp -n ../../model_specific.f90 ../../model_specific_backup.f90
+cp -n ../../model_specific.f90 ../../model_specific_backup.f90
 command cp model_specific_l63.f90 ../../model_specific.f90
 cp model_specific_l63.f90 ../../model_specific.f90
 
@@ -145,5 +145,5 @@ cd $dir
 
 
 comment '#put the original model specific file back in place'
-command cp model_specific_backup.f90 ../../model_specific.f90
-cp model_specific_backup.f90 ../../model_specific.f90
+command mv ../../model_specific_backup.f90 ../../model_specific.f90
+mv ../../model_specific_backup.f90 ../../model_specific.f90

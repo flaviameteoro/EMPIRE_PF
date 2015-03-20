@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-03-18 18:20:51 pbrowne>
+!!! Time-stamp: <2015-03-20 10:13:23 pbrowne>
 !!!
 !!!    Program to implement 4dEnVar
 !!!    Copyright (C) 2015  Philip A. Browne
@@ -37,7 +37,8 @@ program FourDEnVar
 
   integer :: message,mpi_err,k,tag,particle
   integer, dimension(MPI_STATUS_SIZE) :: mpi_status
-
+  real(kind=kind(1.0d0)), dimension(3) :: xbar
+  
   print*,'Starting 4DEnVar'
   call flush(6)
   !> set up EMPIRE coupling
@@ -74,6 +75,11 @@ program FourDEnVar
 
 
   vardata%x0 = 0.0d0
+
+
+  call convert_control_to_state(vardata%n,vardata%x0,state_dim,xbar)
+  print*,'init guess = ',xbar
+
   
   call read_observation_numbers
 

@@ -29,7 +29,7 @@ LBFGSFILES=../optim/Lbfgsb.3.0/lbfgsb_sub.o ../optim/Lbfgsb.3.0/lbfgs_sub.o ../o
 %.o: %.f90
 	$(FC) $(FCOPTS) -c -o $@ $<
 
-all: $(MYFILES)
+all: clean $(MYFILES)
 	cd ../../;make
 	cd ../optim/CG+;make
 	cd ../optim/Lbfgsb.3.0;make sub
