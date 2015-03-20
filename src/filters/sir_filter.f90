@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-02-16 12:14:34 pbrowne>
+!!! Time-stamp: <2015-03-20 22:13:19 pbrowne>
 !!!
 !!!    Subroutine to perform SIR filter
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -82,7 +82,7 @@ subroutine sir_filter
 
 
 if(mod(pf%timestep,pf%time_bwn_obs) .eq. 0) then
-   call get_observation_data(y)
+   call get_observation_data(y,pf%timestep)
    !this is the analysis step.
    
    call H(obs_dim,pf%count,fpsi,Hfpsi,pf%timestep)
@@ -93,7 +93,7 @@ if(mod(pf%timestep,pf%time_bwn_obs) .eq. 0) then
    end do
    !$omp end parallel do
     
-   call innerR_1(y_Hfpsi,w)
+   call innerR_1(obs_dim,pf%count,y_Hfpsi,w,pf%timestep)
 
    do k = 1,pf%count
       particle = pf%particles(k)

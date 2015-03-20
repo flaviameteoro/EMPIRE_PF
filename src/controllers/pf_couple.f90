@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-11-26 15:21:46 pbrowne>
+!!! Time-stamp: <2015-03-20 19:48:18 pbrowne>
 !!!
 !!!    {one line to give the program's name and a brief idea of what it does.}
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -121,45 +121,56 @@ program empire
      write(6,*) 'PF: observation counter = ',j
      do i = 1,pf%time_bwn_obs-1
         pf%timestep = pf%timestep + 1
-        if(pf%type .eq. 'EW') then
+        
+        select case(pf%filter)
+        case('EW')
            call proposal_filter
-        elseif(pf%type .eq. 'SI') then
+        case('SI')
            call stochastic_model
-        elseif(pf%type .eq. 'SE') then
+        case('SE')
            call stochastic_model
-        elseif(pf%type .eq. 'ET') then
-           !this may not need to be stochastic...
+        case('LE')
+           call stochastic_model
+        case('LD')
            call deterministic_model
-        else
-           print*,'Error -555: Incorrect pf%type'
-        end if
-!        write(6,*) 'PF: timestep = ',pf%timestep, 'after proposal filter'
+        case('DE')
+           call deterministic_model
+        case default
+           print*,'Error -555: Incorrect pf%filter'
+           stop -555
+        end select
         call flush(6)
         if(pf%use_traj) call trajectories
         call output_from_pf
      end do
            
      pf%timestep = pf%timestep + 1
-     write(6,*) 'starting the equivalent weights filter step'
+     write(6,*) 'starting the observation timestep'
      call flush(6)
 
+     select case(pf%filter)
+     case('EW')
+        call equivalent_weights_filter
+     case('SI')
+        call sir_filter
+     case('SE')
+        call stochastic_model
+        call diagnostics
+     case('LE')
+        call stochastic_model
+        call letkf_analysis
+     case('LD')
+        call deterministic_model
+        call letkf_analysis
+     case('DE')
+        call deterministic_model
+     case default
+        print*,'Error -556: Incorrect pf%filter'
+        stop -556
+     end select
+     
 
-     if(pf%type .eq. 'EW') then
-           call equivalent_weights_filter
-        elseif(pf%type .eq. 'SI') then
-           call sir_filter
-        elseif(pf%type .eq. 'SE') then
-           call stochastic_model
-           call diagnostics
-        elseif(pf%type .eq. 'ET') then
-           print*,'starting the letkf'
-           call deterministic_model
-           call letkf_analysis
-           print*,'finished the letkf'
-        else
-           print*,'Error -556: Incorrect pf%type'
-        end if
-     write(6,*) 'PF: timestep = ',pf%timestep, 'after equal weight filter'
+     write(6,*) 'PF: timestep = ',pf%timestep, 'after observation analysis'
      call flush(6)
 
      if(pf%gen_data) call save_truth(pf%psi(:,1))
@@ -174,7 +185,7 @@ program empire
   call flush(6)
 
 
-  tag = 1        
+  tag = 3        
   DO k = 1,pf%count
      particle = pf%particles(k)
      CALL MPI_ISEND(pf%psi(:,k), state_dim , MPI_DOUBLE_PRECISION, &
@@ -198,7 +209,6 @@ program empire
 
   write(6,*) 'PF: finished deallocate_data - off to mpi_finalize'
   call flush(6)
-
 
   call MPI_Finalize(mpi_err)
   deallocate(requests)

@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-02-17 16:28:29 pbrowne>
+!!! Time-stamp: <2015-03-20 22:03:39 pbrowne>
 !!!
 !!!    module to hold all the information to control the the main program
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -67,12 +67,14 @@ module pf_control
      integer, dimension(:,:), allocatable :: talagrand !< storage for rank histograms
      integer :: count         !< number of ensemble members associated with this MPI process
      integer,allocatable, dimension(:) :: particles !< particles associates with this MPI process
-     character(2) :: type     !< which filter to use
+     character(2) :: filter   !< which filter to use
                               !< currently this has a number of
                               !<options:
                               !< - SE -- a stochastic ensemble
+                              !< - DE -- a stochastic ensemble
                               !< - SI -- the SIR filter
-                              !< - ET -- the L-ETKF
+                              !< - LE -- the L-ETKF with noise
+                              !< - LD -- the L-ETKF without noise
                               !< - EW -- the Equivalent Weights
                               !< particle filter
      character(1) :: init     !< which method to initialise ensemble
@@ -153,7 +155,7 @@ contains
     !! - \link pf_control::pf_control_type::len len  \endlink
     !!
     !! 2 Characters:
-    !! - \link pf_control::pf_control_type::type type\endlink
+    !! - \link pf_control::pf_control_type::filter filter\endlink
     !!
     !! 1 Character:
     !! - \link pf_control::pf_control_type::init init\endlink
@@ -184,7 +186,7 @@ contains
       real(kind=kind(1.0D0)) :: keep
       logical :: use_talagrand,use_weak,use_mean,use_var,use_traj&
            &,use_rmse
-      character(2) :: type='++'
+      character(2) :: filter='++'
       character(1) :: init='+'
 
       namelist/pf_params/time_obs,time_bwn_obs,&
@@ -198,7 +200,7 @@ contains
       &rho,&
       &len,&
       &use_talagrand,use_weak,use_mean,use_var,use_traj,use_rmse,&
-      &type,&
+      &filter,&
       &init
 
 
@@ -216,7 +218,6 @@ contains
            &,status='old')
       if(ios .ne. 0) stop 'Cannot open pf_parameters.dat'
       read(32,nml=pf_params) 
-!      print*,time_obs,time_bwn_obs,nudgefac,gen_data
       close(32)
 
       if(time_obs .gt. -1) then
@@ -231,7 +232,7 @@ contains
          print*,'read nudgefac = ',nudgefac
          pf%nudgefac = nudgefac
       end if
-      !logical :: gen_data,gen_Q,human_readable
+
       if(nfac .gt. -1.0d0) then
          print*,'read nfac = ',nfac
          pf%nfac = nfac
@@ -278,50 +279,58 @@ contains
       !use_talagrand,use_weak,use_mean,use_var,use_traj,use_rmse
 
 
-      !ensure that if we are generating the data then the EWPF is selected
+      !ensure that if we are generating the data then SE is selected
       if(gen_data) then
-         type = 'EW'
+         filter = 'SE'
       end if
 
       
-      if(type .ne. '++') then
-         print*,'read type = ',type
-         pf%type = type
+      if(filter .ne. '++') then
+         print*,'read filter = ',filter
+         pf%filter = filter
       end if
 
 
-      
-
-
-            !let us verify pf%type
-      if(    pf%type .eq. 'EW') then
+      !let us verify pf%filter
+      select case(pf%filter)
+      case('EW')
          print*,'Running the equivalent weights particle filter'
-      elseif(pf%type .eq. 'SE') then
+      case('SE')
          print*,'Running a stochastic ensemble'
-      elseif(pf%type .eq. 'SI') then
+      case('SI')
          print*,'Running the SIR particle filter'
-      elseif(pf%type .eq. 'ET') then
-         print*,'Running the Ensemble Transform Kalman Filter'
-         !print*,'Error: The ETKF is not implemented here'
-         !stop
-      elseif(pf%type .eq. 'EA') then
+      case('ET')
+         print*,'filter read as ET. This is depreciated. Changing to L&
+              &E'
+         pf%filter = 'LE'
+         print*,'Running the Local Ensemble Transform Kalman Filter'
+         print*,'With random noise'
+         print*,'For LETKF without random noise set filter="LD"'
+      case('EA')
          print*,'Running the Ensemble Adjustment Kalman Filter'
          print*,'Error: The EAKF is not implemented here yet'
-         stop
-      else
+         stop -557
+      case('LE')
+         print*,'Running the Local Ensemble Transform Kalman Filter'
+         print*,'With random noise'
+      case('LD')
+         print*,'Running the Local Ensemble Transform Kalman Filter'
+         print*,'With NO random noise'
+      case default
          print*,'Error: Incorrect filter type selected'
-         print*,'Please ensure that pf%type in pf_parameters.dat is ei&
+         print*,'Please ensure that pf%filter in pf_parameters.dat is ei&
               &ther:'
-         print*,'EW                  the equivalent weights particle f&
+         print*,'EW        the equivalent weights particle f&
               &ilter'
-         print*,'SE                  a stochastic ensemble'
-         print*,'SI                  the SIR particle filter'
-         print*,'ET                  the Ensemble Transform Kalman Fil&
-              &ter'
-         print*,'EA                  the Ensemble Adjustment Kalman Fi&
-              &lter'
+         print*,'SE        a stochastic ensemble'
+         print*,'DE        a deterministic ensemble'
+         print*,'SI        the SIR particle filter'
+         print*,'LE        the Local Ensemble Transform Kalman Filter'
+         print*,'          with random noise'
+         print*,'LD        the Local Ensemble Transform Kalman Filter'
+         print*,'          without random noise'
          stop
-      end if
+      end select
 
 
       if(init .ne. '+') then

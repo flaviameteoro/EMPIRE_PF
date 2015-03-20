@@ -1,0 +1,7 @@
+&var_params
+opt_method='cg',
+cg_method=1,
+cg_eps=1.0d-5,
+total_timesteps=24,
+/
+

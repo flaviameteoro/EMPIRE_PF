@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-11-12 13:42:46 pbrowne>
+!!! Time-stamp: <2015-03-20 19:51:21 pbrowne>
 !!!
 !!!    Module and subroutine to intitalise EMPIRE coupling to models
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -41,7 +41,10 @@ module comms
   integer, allocatable, dimension(:) :: gbldisp !< the displacements
   !< of each each ensemble member relative to pfrank=0. VERY useful
   !< for mpi_gatherv and mpi_scatterv on pf_mpi_comm
-  
+  integer :: nens !< the total number of ensemble members
+  integer :: cnt !< the number of ensemble members associated with
+  !<this process
+  integer, allocatable, dimension(:) :: particles !< the ensemble members associated with this process
 contains
   
   subroutine allocate_data
@@ -63,19 +66,13 @@ contains
     implicit none
     include 'mpif.h'
     
-    integer :: mpi_err!dummy_colour,mpi_err
-    integer :: couple_colour !DUMMY_MPI_COMMUNICATOR,couple_colour
-    !integer :: couple_mype_id,couple_root
-    integer :: rtmp!,ctmp
-
- !   integer :: tag!,state_dim!,iter
- !   integer :: num_iters
-    integer :: particle,world_id
-    integer :: myrank !nproc,myrank
-!    integer :: mpi_status(MPI_STATUS_SIZE)
-    integer :: nens,i
-    integer :: da
-    integer :: count,pf_colour
+    integer :: mpi_err
+    integer :: couple_colour
+    integer :: world_id
+    integer :: myrank
+    integer :: i
+    integer :: da,count
+    integer :: pf_colour
     integer :: world_size
     
     pf_colour = 10000
@@ -99,34 +96,23 @@ contains
     
     
     !lets find the particles:
-    count = 0
-    do particle = 1,nens
-       if( real(particle-1) .ge. real(nens*(pfrank))/real(npfs) .and.&
-            & real(particle-1) .lt. real(nens*(pfrank+1))/real(npfs)) then
-          count = count + 1
-       end if
-    end do
+    
+    count = ceiling(real((myrank-nens+1)*nens)/real(npfs)) -&
+       & ceiling(real((myrank-nens)*nens)/real(npfs))
     
     allocate(pf%particles(count))
-    rtmp = 0
-    do particle = 1,nens
-       if(real(particle-1) .ge. real(nens*(pfrank))/real(npfs) .and.&
-            & real(particle-1) .lt. real(nens*(pfrank+1))/real(npfs))&
-            & then
-          rtmp = rtmp + 1
-          pf%particles(rtmp) = particle
-       end if
-    end do
-    
+    allocate(   particles(count))
+
+    pf%particles = (/ (i, i = ceiling(real((myrank-nens)*nens)&
+         &/real(npfs)),&
+       ceiling(real((myrank-nens+1)*nens)/real(npfs))-1) /)+1
+    particles = pf%particles
+
     allocate(gblcount(npfs))
     allocate(gbldisp(npfs))
-!    print*,'woohoo allgather'
-!    print*,count
-!    print*,gblcount
-!    print*,pf_mpi_comm
-    call mpi_allgather(count,1,mpi_integer,gblcount,1,mpi_integer&
-         &,pf_mpi_comm,mpi_err)
-!    print*,'allgather did not break'
+
+    gblcount=count
+
     gbldisp = 0
     if(npfs .gt. 1) then
        do i = 2,npfs
@@ -134,6 +120,7 @@ contains
        end do
     end if
     pf%count = count
+    cnt = count
 
     pf%nens = nens
     PRINT*,'PF_rank = ',pfrank,' and I own particles ',pf%particles

@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-02-17 16:31:34 pbrowne>
+!!! Time-stamp: <2015-03-20 22:02:03 pbrowne>
 !!!
 !!!    This file must be adapted to the specific model in use.
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -28,7 +28,7 @@
 !> subroutine called initially to set up details and data
 !> for model specific functions
 subroutine configure_model
-  use pf_control
+!  use pf_control
   use sizes
   use Qdata
   use Rdata
@@ -50,7 +50,7 @@ subroutine configure_model
   print*,'## STATE DIMENSION = ',state_dim
   print*,'##  OBS  DIMENSION = ',obs_dim
   print*,'#################################'
-  if(.not. pf%gen_Q) then
+!  if(.not. pf%gen_Q) then
      t1 = mpi_wtime()
      call loadQ
      print*,'load Q     took ',mpi_wtime()-t1,' seconds'
@@ -61,14 +61,14 @@ subroutine configure_model
 !     call load_HQHTR
      print*,'load HQHTR took ',mpi_wtime()-t1,' seconds'
      
-  end if
+!  end if
 end subroutine configure_model
 
 
 !>subroutine to reset variables that may change when the observation
 !!network changes
 subroutine reconfigure_model
-  use pf_control
+!  use pf_control
   use sizes
   implicit none
 
@@ -244,7 +244,7 @@ end subroutine RHALF
 !!
 !! Given \f$x\f$ compute \f$Hx\f$
 subroutine H(obsDim,nrhs,x,hx,t)
-  use pf_control
+!  use pf_control
   use sizes
   implicit none
   integer, parameter :: rk=kind(1.0D+0)
@@ -267,7 +267,7 @@ end subroutine H
 !!
 !! Given \f$y\f$ compute \f$x=H^T(y)\f$
 subroutine HT(obsDim,nrhs,y,x,t)
-  use pf_control
+!  use pf_control
   use sizes
   implicit none
   integer, parameter :: rk=kind(1.0D+0)

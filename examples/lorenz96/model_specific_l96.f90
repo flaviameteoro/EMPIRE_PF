@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-11-14 14:43:38 pbrowne>
+!!! Time-stamp: <2015-03-20 19:29:47 pbrowne>
 !!!
 !!!    This file must be adapted to the specific model in use.
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -325,3 +325,25 @@ subroutine dist_st_ob(xp,yp,dis,t)
   dis = min(abs(st-ob),1.0d0-abs(st-ob))
   
 end subroutine dist_st_ob
+
+
+!> subroutine to take a full state vector x and return \f$B^{1/2}x\f$
+!> in state space.
+!!
+!! Given \f$x\f$ compute \f$B^{\frac{1}{2}}x\f$
+subroutine Bhalf(nrhs,x,Qx)
+  use sizes
+  use Qdata
+  implicit none
+  integer, parameter :: rk=kind(1.0D+0)
+  integer, intent(in) :: nrhs !< the number of right hand sides
+  real(kind=rk), dimension(state_dim,nrhs), intent(in) :: x !< the
+  !!input vector
+  real(kind=rk), dimension(state_dim,nrhs), intent(out) :: qx !< the
+  !!resulting vector where Bx \f$= B^{\frac{1}{2}}x\f$
+
+  !qx = 5.3d3*x
+  qx = sqrt(0.2d0)*x
+!  stop 'Bhalf not yet implemented'
+  
+end subroutine Bhalf

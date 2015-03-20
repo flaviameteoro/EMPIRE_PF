@@ -15,17 +15,17 @@ MODFLAG=-J
 
 all: EMPIRE ALLTESTS TEST_R TEST_Q TEST_HQHTR #TEST_H
 
-
-OBS=obs/
-BIN=bin/
+current_dir = $(shell pwd)/
+OBS=$(current_dir)obs/
+BIN=$(current_dir)bin/
 MODLOC:=$(OBS)
-SR_FILTS=src/filters/
-SR_UTILS=src/utils/
-SR_CONTS=src/controlers/
-SR_DATAS=src/data/
-SR_TESTS=src/tests/
-SR_OPERS=src/operations/
-OBJSQ= sizes.o pf_couple.o Qdata.o Rdata.o equivalent_weights_filter.o comms.o gen_rand.o random_d.o proposal_filter.o histogram.o pf_control.o data_io.o model_specific.o operator_wrappers.o quicksort.o resample.o diagnostics.o perturb_particle.o genQ.o sir_filter.o stochastic_model.o tests.o letkf_analysis.o deterministic_model.o
+SR_FILTS=$(current_dir)src/filters/
+SR_UTILS=$(current_dir)src/utils/
+SR_CONTS=$(current_dir)src/controllers/
+SR_DATAS=$(current_dir)src/data/
+SR_TESTS=$(current_dir)src/tests/
+SR_OPERS=$(current_dir)src/operations/
+OBJSQ= sizes.o pf_couple.o Qdata.o Rdata.o equivalent_weights_filter.o comms.o gen_rand.o random_d.o proposal_filter.o histogram.o pf_control.o data_io.o model_specific.o operator_wrappers.o quicksort.o resample.o diagnostics.o perturb_particle.o genQ.o sir_filter.o stochastic_model.o tests.o letkf_analysis.o deterministic_model.o inner_products.o
 OBJS=$(addprefix $(OBS),$(OBJSQ))
 FCOPTS+=$(MODFLAG) $(MODLOC)
 
@@ -49,6 +49,9 @@ $(OBS)Qdata.o: $(SR_DATAS)Qdata.f90 $(OBS)sizes.o
 
 $(OBS)Rdata.o: $(SR_DATAS)Rdata.f90
 	$(FC) $(FCOPTS) -c $(SR_DATAS)Rdata.f90 -o $@
+
+$(OBS)inner_products.o: $(SR_OPERS)inner_products.f90
+	$(FC) $(FCOPTS) -c $(SR_OPERS)inner_products.f90 -o $@
 
 $(OBS)model_specific.o: model_specific.f90 $(OBS)sizes.o 
 	$(FC) $(FCOPTS) -c model_specific.f90 -o $@
@@ -153,6 +156,20 @@ docs: doc_latex
 
 doc_html: FORCE
 	doxygen .Doxyfile
+
+models: FORCE
+	cd models;make -e
+
+export
+lorenz63:
+	cd models/lorenz63;make -e
+
+linear:
+	cd models/linear;make -e
+
+4dEnVar:
+	cd src/4dEnVar;make -e
+
 
 doc_latex: doc_html
 	cd doc/latex && make

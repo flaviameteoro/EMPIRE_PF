@@ -1,6 +1,11 @@
+src/optim/*/*.o
+src/optim/*/subroutine_lbfgs
+src/4dEnVar/EMPIRE_4DENVAR
+src/*/*.o
 obs/*.o
 obs/*.mod
 bin/*
+run/*
 *~
 */*~
 */*/*~

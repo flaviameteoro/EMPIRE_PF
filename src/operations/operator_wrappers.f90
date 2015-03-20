@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-09-26 11:13:30 pbrowne>
+!!! Time-stamp: <2015-03-20 20:04:20 pbrowne>
 !!!
 !!!    Collection of combinations of other subroutines
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -41,7 +41,7 @@ subroutine K(y,x)
 
   real(kind=rk), dimension(obs_dim,pf%count) :: v
   real(kind=rk), dimension(state_dim,pf%count) :: vv
-  real(kind=rk) :: dnrm2
+!  real(kind=rk) :: dnrm2
   integer :: i
 !  print*,'||y||_2 = ',dnrm2(obs_dim,y,1)
 
@@ -58,52 +58,6 @@ subroutine K(y,x)
 end subroutine K
 
 
-!>subroutine to compute the inner product with \f$R^{-1}\f$
-!! @param[in] y multiple vectors in observation space (pf\%count of them)
-!! @param[out] w multiple scalars (pf\%count) where w(i) has the value
-!! \f$y(:,i)^TR^{-1}y(:,i)\f$
-subroutine innerR_1(y,w)
-  !subroutine to take an observation vector y and return w = y^T R^(-1) y
-  use sizes
-  use pf_control
-  implicit none
-  integer, parameter :: rk=kind(1.0D+0)
-  real(kind=rk), dimension(obs_dim,pf%count), intent(in) :: y
-  real(kind=rk), dimension(obs_dim,pf%count) :: v
-  real(kind=rk), dimension(pf%count), intent(out) :: w
-  real(kind=rk) :: ddot
-  integer :: i
-
-  call solve_r(obs_dim,pf%count,y,v,pf%timestep)
-
-  !this can defo be done better using BLAS PAB...
-  do i = 1,pf%count
-!!$     w(i) = sum(y(:,i)*v(:,i))
-     w(i) = ddot(obs_dim,y(:,i),1,v(:,i),1)
-  end do
-
-end subroutine innerR_1
-
-
-!>subroutine to compute the inner product with \f$(HQH^T+R)^{-1}\f$      
-!! @param[in] y vector in observation space
-!! @param[out] w scalar with value \f$y^TR^{-1}y\f$
-subroutine innerHQHt_plus_R_1(y,w)
-  !subroutine to take an observation vector y and return w = y^T (HQH^T+R)^(-1) y
-  use sizes
-  use pf_control
-  implicit none
-  integer, parameter :: rk=kind(1.0D+0)
-  real(kind=rk), dimension(obs_dim), intent(in) :: y
-  real(kind=rk), dimension(obs_dim) :: v
-  real(kind=rk), intent(out) :: w
-
-  call solve_hqht_plus_r(obs_dim,y,v,pf%timestep)
-
-  !this can defo be done better using BLAS PAB...
-  w = sum(y*v)
-
-end subroutine innerHQHt_plus_R_1
 
 
 !!$subroutine B(y,x)

@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-09-22 15:45:36 pbrowne>
+!!! Time-stamp: <2015-03-16 16:18:14 pbrowne>
 !!!
 !!!    A subroutine to estimate Q from a long model run
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -38,7 +38,7 @@ subroutine genQ
 !  integer, dimension(a_nxn,a_nyn,a_levels) :: a_u_vec,a_v_vec,a_theta_vec,a_q_vec
 !  integer, dimension(a_nxn,a_nyn) :: a_pstar_vec
 !  integer, dimension(o_nxn,o_nyn,o_levels) :: o_u_vec,o_v_vec,o_theta_vec,o_sal_vec
-  integer :: i,j,k,count,radius,nnz
+  integer :: i,j,k,counter,radius,nnz
   integer, parameter :: n = 426655238
   integer, allocatable, dimension(:) :: row,col
   real(kind=rk), allocatable, dimension(:) :: val
@@ -56,25 +56,25 @@ subroutine genQ
 
   start_t = mpi_wtime()
   !let us calculate the position vectors: put everything in its place:
-  count = 0
+  counter = 0
 !!$  !first is PSTAR (2d)
 !!$  do j = 1,a_nyn
 !!$     do i = 1,a_nxn
-!!$        count = count + 1
-!!$        a_pstar_vec(i,j) = count
+!!$        counter = counter + 1
+!!$        a_pstar_vec(i,j) = counter
 !!$     end do
 !!$  end do
-!!$  print*,'a_pstar finishes on the ',count,' element'
+!!$  print*,'a_pstar finishes on the ',counter,' element'
 !!$  !second is  U
 !!$  do k = 1,a_levels
 !!$     do j = 1,a_nyn
 !!$        do i = 1,a_nxn
-!!$           count = count + 1
-!!$           a_u_vec(i,j,k) = count
+!!$           counter = counter + 1
+!!$           a_u_vec(i,j,k) = counter
 !!$        end do
 !!$     end do
 !!$  end do
-!!$  print*,'a_u finishes on the ',count,' element'
+!!$  print*,'a_u finishes on the ',counter,' element'
 !!$  !FINISHED COMPUTING THE VECTOR POSITIONS OF EACH COMPONENT
 !!$  print*,'FINISHED COMPUTING THE VECTOR POSITIONS OF EACH COMPONENT'
 

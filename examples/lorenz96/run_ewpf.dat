@@ -6,7 +6,7 @@ gen_data=.false.,
 nfac=1.0D-5,
 ufac=1.0D-5,
 keep=0.95D0,
-type='EW',
+filter='EW',
 init='N'
 /
 

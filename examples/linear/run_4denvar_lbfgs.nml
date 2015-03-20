@@ -1,0 +1,7 @@
+&var_params
+opt_method='lbfgs',
+lbfgs_factr=1.0d7,
+lbfgs_pgtol=1.0d-5,
+total_timesteps=24,
+/
+

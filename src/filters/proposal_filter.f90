@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-02-16 12:15:28 pbrowne>
+!!! Time-stamp: <2015-03-20 22:12:28 pbrowne>
 !!!
 !!!    Subroutine to perform nudging in the proposal step of EWPF
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -34,7 +34,7 @@ subroutine proposal_filter
   use pf_control
   use Sizes
   use comms
-
+  
   IMPLICIT NONE
   include 'mpif.h'
   integer, parameter :: rk = kind(1.0D0)
@@ -56,24 +56,21 @@ subroutine proposal_filter
 
 
   !get the next observations and store it in vector y
-  if(.not. pf%gen_data) call get_observation_data(y)
+  call get_observation_data(y,pf%timestep)
 
 
   !compute y - H(x)
-  if(.not. pf%gen_data) then
-     if(time) t = mpi_wtime()
-     call H(obs_dim,pf%count,pf%psi,Hpsi,pf%timestep)
-     if(time) ti(1) = mpi_wtime()-t
-     !$omp parallel do
-     do k = 1,pf%count
-        y_Hpsin1(:,k) = y - Hpsi(:,k)
-     end do
-     !$omp end parallel do
-     if(time) ti(2) = mpi_wtime()-ti(1) -t
-  else
-     y_Hpsin1 = 0.0_rk
-  end if
-
+  if(time) t = mpi_wtime()
+  call H(obs_dim,pf%count,pf%psi,Hpsi,pf%timestep)
+  if(time) ti(1) = mpi_wtime()-t
+  !$omp parallel do
+  do k = 1,pf%count
+     y_Hpsin1(:,k) = y - Hpsi(:,k)
+  end do
+  !$omp end parallel do
+  if(time) ti(2) = mpi_wtime()-ti(1) -t
+  
+  
   !get the model to provide f(x)
   do k =1,pf%count
      particle = pf%particles(k)
@@ -83,11 +80,9 @@ subroutine proposal_filter
   end do
   if(time) ti(3) = mpi_wtime()-ti(2)-t
 
-
   !draw from a Gaussian for the random noise
   call NormalRandomNumbers2D(0.0D0,1.0D0,state_dim,pf%count,normaln)
   if(time) ti(4) = mpi_wtime()-ti(3) -t
-
 
   DO k = 1,pf%count
      particle = pf%particles(k)
@@ -107,11 +102,12 @@ subroutine proposal_filter
   !$omp parallel do private(particle,pweight)
   DO k = 1,pf%count
      particle = pf%particles(k)
-!     print*,'|fpsi-psi|_2 = ',dnrm2(state_dim,(fpsi(:,k)-pf%psi(:,k)),1)
+     !     print*,'|fpsi-psi|_2 = ',dnrm2(state_dim,(fpsi(:,k)-pf%psi(:,k)),1)
      call update_state(pf%psi(:,k),fpsi(:,k),Qkgain(:,k),betan(:,k))
      pweight = sum(Qkgain(:,k)*kgain(:,k))+2.0D0*sum(betan(:,k)*kgain(:,k))
      pf%weight(particle) = pf%weight(particle) + 0.5*pWeight
   end DO
+
   !$omp end parallel do
   if(time) then
      ti(7) = mpi_wtime()-ti(6) -t
