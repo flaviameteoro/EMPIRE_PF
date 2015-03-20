@@ -1,7 +1,8 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-09-29 16:18:17 pbrowne>
+!!! Time-stamp: <2015-03-20 20:24:10 pbrowne>
 !!!
 !!!    subroutine to simply move the model forward in time one timestep
+!!!    then add model error
 !!!    Copyright (C) 2014  Philip A. Browne
 !!!
 !!!    This program is free software: you can redistribute it and/or modify
@@ -48,13 +49,21 @@ subroutine stochastic_model
   integer :: mpi_status( MPI_STATUS_SIZE )
   logical, parameter :: checkscaling=.true.
 
-!  print*,'huh',pf%psi(:,1)
+  real(kind=rk), dimension(obs_dim) :: obsv,obsvv,y
+
+
   do k =1,pf%count
      particle = pf%particles(k)
      tag = 1
      call mpi_send(pf%psi(:,k),state_dim,MPI_DOUBLE_PRECISION&
           &,particle-1,tag,CPL_MPI_COMM,mpi_err)
   end do
+
+  call NormalRandomNumbers2D(0.0D0,1.0D0,state_dim,pf%count,normaln)
+
+  call Qhalf(pf%count,normaln,betan)
+  Qkgain = 0.0_rk
+
   DO k = 1,pf%count
      particle = pf%particles(k)
      tag = 1
@@ -62,10 +71,6 @@ subroutine stochastic_model
           particle-1, tag, CPL_MPI_COMM,mpi_status, mpi_err)
   END DO
 
-  call NormalRandomNumbers2D(0.0D0,1.0D0,state_dim,pf%count,normaln)
-
-  call Qhalf(pf%count,normaln,betan)
-  Qkgain = 0.0_rk
   !$omp parallel do private(particle)
   DO k = 1,pf%count
      particle = pf%particles(k)
@@ -73,6 +78,37 @@ subroutine stochastic_model
 !     if(checkscaling) call check_scaling(pf%psi(:,k),fpsi(:,k),betan(:,k))
   end DO
   !$omp end parallel do
+
+
+  if(pf%gen_data) then
+     if(pf%count .ne. 1 .and. pf%nens .ne. 1) then
+        print*,'OBS GEN ERROR -558: PLEASE RUN WITH ONLY A SINGLE &
+             &ENSEMBLE MEMBER'
+        stop -558
+     end if
+
+     write(6,*) 'generating the data'
+     call flush(6)
+
+     
+     !get model equivalent of observations
+     call H(obs_dim,1,pf%psi,y,pf%timestep)
+
+     !generate uncorrelated random vector obsv
+     call NormalRandomNumbers1D(0.0D0,1.0D0,obs_dim,obsv)
+
+     !turn this into correlated random observation noise
+     call rhalf(obs_dim,1,obsv,obsvv,pf%timestep)
+
+     !add the noise to the model equivalent obs
+     y = y + obsvv
+
+     !output the observation to a file
+     call save_observation_data(y)
+
+     !call diagnostics to save things like the truth etc
+     call diagnostics
+  end if
 
 end subroutine stochastic_model
 
@@ -87,7 +123,7 @@ subroutine check_scaling(x,fx,b,scales)
   integer, parameter :: rk = kind(1.0d0)
   real(kind=rk), dimension(state_dim), intent(in) :: x,fx,b
   REAL(KIND=rk), dimension(9), intent(inout) :: scales
-  real(kind=rk) :: dnrm2,inc,be,rat,scal
+  real(kind=rk) :: dnrm2,inc,be,rat!,scal
   integer :: i
   integer, dimension(9) :: st,sp
 

@@ -1,6 +1,6 @@
 /** \mainpage EMPIRE Data Assimilation Documentation
 \author Philip A. Browne <a href="mailto:p.browne@reading.ac.uk">p.browne@reading.ac.uk</a>
-\date Time-stamp: <2015-03-20 20:10:26 pbrowne>
+\date Time-stamp: <2015-03-20 20:26:50 pbrowne>
 
 \section Methods EMPIRE Methods
 For a list of methods implemented in EMPIRE, please click here: \link methods \endlink
@@ -213,7 +213,6 @@ Model specific operations required: \n
 
 In \link pf_control::parse_pf_parameters pf_parameters.dat \endlink set the following variables:
 - \link pf_control::pf_control_type::gen_data gen_data \endlink = .true.
-- \link pf_control::pf_control_type::filter filter \endlink = 'EW'
 
 The system then should be run with a single ensemble member and a single EMPIRE process, i.e.
 \code{.sh}

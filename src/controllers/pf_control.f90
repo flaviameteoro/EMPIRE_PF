@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-03-20 20:06:39 pbrowne>
+!!! Time-stamp: <2015-03-20 20:25:51 pbrowne>
 !!!
 !!!    module to hold all the information to control the the main program
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -218,7 +218,6 @@ contains
            &,status='old')
       if(ios .ne. 0) stop 'Cannot open pf_parameters.dat'
       read(32,nml=pf_params) 
-!      print*,time_obs,time_bwn_obs,nudgefac,gen_data
       close(32)
 
       if(time_obs .gt. -1) then
@@ -233,7 +232,7 @@ contains
          print*,'read nudgefac = ',nudgefac
          pf%nudgefac = nudgefac
       end if
-      !logical :: gen_data,gen_Q,human_readable
+
       if(nfac .gt. -1.0d0) then
          print*,'read nfac = ',nfac
          pf%nfac = nfac
@@ -280,9 +279,9 @@ contains
       !use_talagrand,use_weak,use_mean,use_var,use_traj,use_rmse
 
 
-      !ensure that if we are generating the data then the EWPF is selected
+      !ensure that if we are generating the data then SE is selected
       if(gen_data) then
-         filter = 'EW'
+         filter = 'SE'
       end if
 
       
