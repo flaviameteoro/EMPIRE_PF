@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-11-28 10:59:07 pbrowne>
+!!! Time-stamp: <2015-03-20 19:32:25 pbrowne>
 !!!
 !!!    module to hold all the information to control the the main program
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -67,7 +67,7 @@ module pf_control
      integer, dimension(:,:), allocatable :: talagrand !< storage for rank histograms
      integer :: count         !< number of ensemble members associated with this MPI process
      integer,allocatable, dimension(:) :: particles !< particles associates with this MPI process
-     character(2) :: type     !< which filter to use
+     character(2) :: filter   !< which filter to use
                               !< currently this has a number of
                               !<options:
                               !< - SE -- a stochastic ensemble
@@ -150,7 +150,7 @@ contains
     !! - \link pf_control::pf_control_type::len len  \endlink
     !!
     !! 2 Characters:
-    !! - \link pf_control::pf_control_type::type type\endlink
+    !! - \link pf_control::pf_control_type::filter filter\endlink
     !!
     !! 1 Character:
     !! - \link pf_control::pf_control_type::init init\endlink
@@ -181,7 +181,7 @@ contains
       real(kind=kind(1.0D0)) :: keep
       logical :: use_talagrand,use_weak,use_mean,use_var,use_traj&
            &,use_rmse
-      character(2) :: type='++'
+      character(2) :: filter='++'
       character(1) :: init='+'
 
       namelist/pf_params/time_obs,time_bwn_obs,&
@@ -195,7 +195,7 @@ contains
       &rho,&
       &len,&
       &use_talagrand,use_weak,use_mean,use_var,use_traj,use_rmse,&
-      &type,&
+      &filter,&
       &init
 
 
@@ -277,37 +277,37 @@ contains
 
       !ensure that if we are generating the data then the EWPF is selected
       if(gen_data) then
-         type = 'EW'
+         filter = 'EW'
       end if
 
       
-      if(type .ne. '++') then
-         print*,'read type = ',type
-         pf%type = type
+      if(filter .ne. '++') then
+         print*,'read filter = ',filter
+         pf%filter = filter
       end if
 
 
       
 
 
-            !let us verify pf%type
-      if(    pf%type .eq. 'EW') then
+            !let us verify pf%filter
+      if(    pf%filter .eq. 'EW') then
          print*,'Running the equivalent weights particle filter'
-      elseif(pf%type .eq. 'SE') then
+      elseif(pf%filter .eq. 'SE') then
          print*,'Running a stochastic ensemble'
-      elseif(pf%type .eq. 'SI') then
+      elseif(pf%filter .eq. 'SI') then
          print*,'Running the SIR particle filter'
-      elseif(pf%type .eq. 'ET') then
+      elseif(pf%filter .eq. 'ET') then
          print*,'Running the Ensemble Transform Kalman Filter'
          !print*,'Error: The ETKF is not implemented here'
          !stop
-      elseif(pf%type .eq. 'EA') then
+      elseif(pf%filter .eq. 'EA') then
          print*,'Running the Ensemble Adjustment Kalman Filter'
          print*,'Error: The EAKF is not implemented here yet'
          stop
       else
          print*,'Error: Incorrect filter type selected'
-         print*,'Please ensure that pf%type in pf_parameters.dat is ei&
+         print*,'Please ensure that pf%filter in pf_parameters.dat is ei&
               &ther:'
          print*,'EW                  the equivalent weights particle f&
               &ilter'

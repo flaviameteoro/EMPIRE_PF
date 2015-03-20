@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-03-17 22:09:22 pbrowne>
+!!! Time-stamp: <2015-03-20 19:25:17 pbrowne>
 !!!
 !!!    {one line to give the program's name and a brief idea of what it does.}
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -121,17 +121,17 @@ program empire
      write(6,*) 'PF: observation counter = ',j
      do i = 1,pf%time_bwn_obs-1
         pf%timestep = pf%timestep + 1
-        if(pf%type .eq. 'EW') then
+        if(pf%filter .eq. 'EW') then
            call proposal_filter
-        elseif(pf%type .eq. 'SI') then
+        elseif(pf%filter .eq. 'SI') then
            call stochastic_model
-        elseif(pf%type .eq. 'SE') then
+        elseif(pf%filter .eq. 'SE') then
            call stochastic_model
-        elseif(pf%type .eq. 'ET') then
+        elseif(pf%filter .eq. 'ET') then
            !this may not need to be stochastic...
            call deterministic_model
         else
-           print*,'Error -555: Incorrect pf%type'
+           print*,'Error -555: Incorrect pf%filter'
         end if
 !        write(6,*) 'PF: timestep = ',pf%timestep, 'after proposal filter'
         call flush(6)
@@ -144,20 +144,20 @@ program empire
      call flush(6)
 
 
-     if(pf%type .eq. 'EW') then
+     if(pf%filter .eq. 'EW') then
            call equivalent_weights_filter
-        elseif(pf%type .eq. 'SI') then
+        elseif(pf%filter .eq. 'SI') then
            call sir_filter
-        elseif(pf%type .eq. 'SE') then
+        elseif(pf%filter .eq. 'SE') then
            call stochastic_model
            call diagnostics
-        elseif(pf%type .eq. 'ET') then
+        elseif(pf%filter .eq. 'ET') then
            print*,'starting the letkf'
            call deterministic_model
            call letkf_analysis
            print*,'finished the letkf'
         else
-           print*,'Error -556: Incorrect pf%type'
+           print*,'Error -556: Incorrect pf%filter'
         end if
      write(6,*) 'PF: timestep = ',pf%timestep, 'after equal weight filter'
      call flush(6)
