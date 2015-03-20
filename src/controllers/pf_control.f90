@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-03-20 20:03:32 pbrowne>
+!!! Time-stamp: <2015-03-20 20:06:39 pbrowne>
 !!!
 !!!    module to hold all the information to control the the main program
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -71,8 +71,10 @@ module pf_control
                               !< currently this has a number of
                               !<options:
                               !< - SE -- a stochastic ensemble
+                              !< - DE -- a stochastic ensemble
                               !< - SI -- the SIR filter
-                              !< - ET -- the L-ETKF
+                              !< - LE -- the L-ETKF with noise
+                              !< - LD -- the L-ETKF without noise
                               !< - EW -- the Equivalent Weights
                               !< particle filter
      character(1) :: init     !< which method to initialise ensemble
@@ -84,6 +86,9 @@ module pf_control
                               !< - P -- perturb around the model
                               !< initial conditions with random noise
                               !< distributed \f$\mathcal{N}(0,Q)\f$
+                              !< - B -- perturb around the model
+                              !< initial conditions with random noise
+                              !< distributed \f$\mathcal{N}(0,B)\f$
                               !< - R -- read model states from
                               !< rstrt folder where each ensemble member
                               !< is stored in the file rstrt/##.state

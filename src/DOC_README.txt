@@ -1,6 +1,6 @@
 /** \mainpage EMPIRE Data Assimilation Documentation
 \author Philip A. Browne <a href="mailto:p.browne@reading.ac.uk">p.browne@reading.ac.uk</a>
-\date Time-stamp: <2015-03-20 19:37:32 pbrowne>
+\date Time-stamp: <2015-03-20 20:10:26 pbrowne>
 
 \section Methods EMPIRE Methods
 For a list of methods implemented in EMPIRE, please click here: \link methods \endlink
@@ -231,7 +231,6 @@ EMPIRE can simply integrate forward in time an ensemble of models.
 
 In \link pf_control::parse_pf_parameters pf_parameters.dat \endlink set the following variables:
 - \link pf_control::pf_control_type::filter filter \endlink = 'DE'
-\todo ADD THIS
 
 \section stochens Running a stochastic ensemble
 
@@ -242,6 +241,14 @@ Model specific operations required: \n
 
 In \link pf_control::parse_pf_parameters pf_parameters.dat \endlink set the following variables:
 - \link pf_control::pf_control_type::filter filter \endlink = 'SE'
+
+\section rankhistograms Outputting rank histograms
+
+\todo Discuss this here.
+
+\section trajectories Outputting trajectories of model variables
+
+\todo Discuss this here.
 */
 
 /*! \page citing How to Cite EMPIRE
