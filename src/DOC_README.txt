@@ -1,6 +1,6 @@
 /** \mainpage EMPIRE Data Assimilation Documentation
 \author Philip A. Browne <a href="mailto:p.browne@reading.ac.uk">p.browne@reading.ac.uk</a>
-\date Time-stamp: <2015-03-20 22:17:26 pbrowne>
+\date Time-stamp: <2015-03-20 22:30:40 pbrowne>
 
 \section Methods EMPIRE Methods
 For a list of methods implemented in EMPIRE, please click here: \link methods \endlink
@@ -195,6 +195,10 @@ Coming at some point in the future: LETKS (Please contact us if you want us to d
 
 
 \section methods_var Variational Methods
+
+\subsection 4dEnVar 4dEnVar
+
+Currently there is the basic functionality to do 4dEnVar so long as EMPIRE-VADER is used for reverse communication. This is work in progress.
 
 \todo Add some stuff about how to use this.
 
