@@ -1,6 +1,6 @@
 /** \mainpage EMPIRE Data Assimilation Documentation
 \author Philip A. Browne <a href="mailto:p.browne@reading.ac.uk">p.browne@reading.ac.uk</a>
-\date Time-stamp: <2015-03-20 22:06:42 pbrowne>
+\date Time-stamp: <2015-03-20 22:17:26 pbrowne>
 
 \section Methods EMPIRE Methods
 For a list of methods implemented in EMPIRE, please click here: \link methods \endlink
@@ -186,7 +186,7 @@ The LETKF has a number of free parameters to be chosen. \n
    - \link pf_control::pf_control_type::rho rho \endlink
    - \link pf_control::pf_control_type::len len \endlink \n 
 To select the LETKF, in \link pf_control::parse_pf_parameters pf_parameters.dat \endlink set the following variables:
-   - \link pf_control::pf_control_type::filter filter \endlink = 'ET'
+   - \link pf_control::pf_control_type::filter filter \endlink = 'LE' or 'LD' with LE including model error but LD being deterministic
 
 
 \section methods_smoothers Smoothers
