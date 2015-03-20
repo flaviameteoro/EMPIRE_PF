@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-03-16 10:19:32 pbrowne>
+!!! Time-stamp: <2015-03-20 20:04:20 pbrowne>
 !!!
 !!!    Collection of combinations of other subroutines
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -41,7 +41,7 @@ subroutine K(y,x)
 
   real(kind=rk), dimension(obs_dim,pf%count) :: v
   real(kind=rk), dimension(state_dim,pf%count) :: vv
-  real(kind=rk) :: dnrm2
+!  real(kind=rk) :: dnrm2
   integer :: i
 !  print*,'||y||_2 = ',dnrm2(obs_dim,y,1)
 

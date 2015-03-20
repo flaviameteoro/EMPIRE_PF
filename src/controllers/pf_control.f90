@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-03-20 19:32:25 pbrowne>
+!!! Time-stamp: <2015-03-20 20:03:32 pbrowne>
 !!!
 !!!    module to hold all the information to control the the main program
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -287,38 +287,46 @@ contains
       end if
 
 
-      
-
-
-            !let us verify pf%filter
-      if(    pf%filter .eq. 'EW') then
+      !let us verify pf%filter
+      select case(pf%filter)
+      case('EW')
          print*,'Running the equivalent weights particle filter'
-      elseif(pf%filter .eq. 'SE') then
+      case('SE')
          print*,'Running a stochastic ensemble'
-      elseif(pf%filter .eq. 'SI') then
+      case('SI')
          print*,'Running the SIR particle filter'
-      elseif(pf%filter .eq. 'ET') then
-         print*,'Running the Ensemble Transform Kalman Filter'
-         !print*,'Error: The ETKF is not implemented here'
-         !stop
-      elseif(pf%filter .eq. 'EA') then
+      case('ET')
+         print*,'filter read as ET. This is depreciated. Changing to L&
+              &E'
+         pf%filter = 'LE'
+         print*,'Running the Local Ensemble Transform Kalman Filter'
+         print*,'With random noise'
+         print*,'For LETKF without random noise set filter="LD"'
+      case('EA')
          print*,'Running the Ensemble Adjustment Kalman Filter'
          print*,'Error: The EAKF is not implemented here yet'
-         stop
-      else
+         stop -557
+      case('LE')
+         print*,'Running the Local Ensemble Transform Kalman Filter'
+         print*,'With random noise'
+      case('LD')
+         print*,'Running the Local Ensemble Transform Kalman Filter'
+         print*,'With NO random noise'
+      case default
          print*,'Error: Incorrect filter type selected'
          print*,'Please ensure that pf%filter in pf_parameters.dat is ei&
               &ther:'
-         print*,'EW                  the equivalent weights particle f&
+         print*,'EW        the equivalent weights particle f&
               &ilter'
-         print*,'SE                  a stochastic ensemble'
-         print*,'SI                  the SIR particle filter'
-         print*,'ET                  the Ensemble Transform Kalman Fil&
-              &ter'
-         print*,'EA                  the Ensemble Adjustment Kalman Fi&
-              &lter'
+         print*,'SE        a stochastic ensemble'
+         print*,'DE        a deterministic ensemble'
+         print*,'SI        the SIR particle filter'
+         print*,'LE        the Local Ensemble Transform Kalman Filter'
+         print*,'          with random noise'
+         print*,'LD        the Local Ensemble Transform Kalman Filter'
+         print*,'          without random noise'
          stop
-      end if
+      end select
 
 
       if(init .ne. '+') then

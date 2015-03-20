@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-03-20 19:25:17 pbrowne>
+!!! Time-stamp: <2015-03-20 19:48:18 pbrowne>
 !!!
 !!!    {one line to give the program's name and a brief idea of what it does.}
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -121,45 +121,56 @@ program empire
      write(6,*) 'PF: observation counter = ',j
      do i = 1,pf%time_bwn_obs-1
         pf%timestep = pf%timestep + 1
-        if(pf%filter .eq. 'EW') then
+        
+        select case(pf%filter)
+        case('EW')
            call proposal_filter
-        elseif(pf%filter .eq. 'SI') then
+        case('SI')
            call stochastic_model
-        elseif(pf%filter .eq. 'SE') then
+        case('SE')
            call stochastic_model
-        elseif(pf%filter .eq. 'ET') then
-           !this may not need to be stochastic...
+        case('LE')
+           call stochastic_model
+        case('LD')
            call deterministic_model
-        else
+        case('DE')
+           call deterministic_model
+        case default
            print*,'Error -555: Incorrect pf%filter'
-        end if
-!        write(6,*) 'PF: timestep = ',pf%timestep, 'after proposal filter'
+           stop -555
+        end select
         call flush(6)
         if(pf%use_traj) call trajectories
         call output_from_pf
      end do
            
      pf%timestep = pf%timestep + 1
-     write(6,*) 'starting the equivalent weights filter step'
+     write(6,*) 'starting the observation timestep'
      call flush(6)
 
+     select case(pf%filter)
+     case('EW')
+        call equivalent_weights_filter
+     case('SI')
+        call sir_filter
+     case('SE')
+        call stochastic_model
+        call diagnostics
+     case('LE')
+        call stochastic_model
+        call letkf_analysis
+     case('LD')
+        call deterministic_model
+        call letkf_analysis
+     case('DE')
+        call deterministic_model
+     case default
+        print*,'Error -556: Incorrect pf%filter'
+        stop -556
+     end select
+     
 
-     if(pf%filter .eq. 'EW') then
-           call equivalent_weights_filter
-        elseif(pf%filter .eq. 'SI') then
-           call sir_filter
-        elseif(pf%filter .eq. 'SE') then
-           call stochastic_model
-           call diagnostics
-        elseif(pf%filter .eq. 'ET') then
-           print*,'starting the letkf'
-           call deterministic_model
-           call letkf_analysis
-           print*,'finished the letkf'
-        else
-           print*,'Error -556: Incorrect pf%filter'
-        end if
-     write(6,*) 'PF: timestep = ',pf%timestep, 'after equal weight filter'
+     write(6,*) 'PF: timestep = ',pf%timestep, 'after observation analysis'
      call flush(6)
 
      if(pf%gen_data) call save_truth(pf%psi(:,1))

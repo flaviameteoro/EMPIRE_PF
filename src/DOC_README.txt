@@ -1,6 +1,6 @@
 /** \mainpage EMPIRE Data Assimilation Documentation
 \author Philip A. Browne <a href="mailto:p.browne@reading.ac.uk">p.browne@reading.ac.uk</a>
-\date Time-stamp: <2015-03-17 10:46:58 pbrowne>
+\date Time-stamp: <2015-03-20 19:37:32 pbrowne>
 
 \section Methods EMPIRE Methods
 For a list of methods implemented in EMPIRE, please click here: \link methods \endlink
@@ -152,7 +152,7 @@ Model specific operations required: \n
   - \link solve_r \endlink \n
 The SIR filter has no parameters to be chosen. \n
 To select the SIR filter, in \link pf_control::parse_pf_parameters pf_parameters.dat \endlink set the following variables:
-   - \link pf_control::pf_control_type::type type \endlink = 'SI'
+   - \link pf_control::pf_control_type::filter filter \endlink = 'SI'
 \subsubsection EWPF Equivalent Weights Particle Filter 
 See files @ref proposal_filter @ref equivalent_weights_filter\n
 <a href="http://doi.wiley.com/10.1002/qj.699">Van Leeuwen (2010)</a>.\n
@@ -170,7 +170,7 @@ The Equivalent Weights particle filter has a number of free parameters to be cho
    - \link pf_control::pf_control_type::ufac ufac \endlink
    - \link pf_control::pf_control_type::keep keep \endlink \n
 To select the EWPF, in \link pf_control::parse_pf_parameters pf_parameters.dat \endlink set the following variables:
-   - \link pf_control::pf_control_type::type type \endlink = 'EW'
+   - \link pf_control::pf_control_type::filter filter \endlink = 'EW'
 \subsection methods_enkfs Ensemble Kalman filters
 
 \subsubsection LETKF LETKF (The Localised Ensemble Transform Kalman Filter)
@@ -184,7 +184,7 @@ The LETKF has a number of free parameters to be chosen. \n
    - \link pf_control::pf_control_type::rho rho \endlink
    - \link pf_control::pf_control_type::len len \endlink \n 
 To select the LETKF, in \link pf_control::parse_pf_parameters pf_parameters.dat \endlink set the following variables:
-   - \link pf_control::pf_control_type::type type \endlink = 'ET'
+   - \link pf_control::pf_control_type::filter filter \endlink = 'ET'
 
 
 \section methods_smoothers Smoothers
@@ -193,6 +193,8 @@ Coming at some point in the future: LETKS (Please contact us if you want us to d
 
 
 \section methods_var Variational Methods
+
+\todo Add some stuff about how to use this.
 
 Coming at some point in the future: 4DEnVar (Please contact us if you want us to develop this sooner rather than later)
 
@@ -211,7 +213,7 @@ Model specific operations required: \n
 
 In \link pf_control::parse_pf_parameters pf_parameters.dat \endlink set the following variables:
 - \link pf_control::pf_control_type::gen_data gen_data \endlink = .true.
-- \link pf_control::pf_control_type::type type \endlink = 'EW'
+- \link pf_control::pf_control_type::filter filter \endlink = 'EW'
 
 The system then should be run with a single ensemble member and a single EMPIRE process, i.e.
 \code{.sh}
@@ -228,7 +230,7 @@ When called, \link get_observation_data get_observation_data\endlink must return
 EMPIRE can simply integrate forward in time an ensemble of models.
 
 In \link pf_control::parse_pf_parameters pf_parameters.dat \endlink set the following variables:
-- \link pf_control::pf_control_type::type type \endlink = 'DE'
+- \link pf_control::pf_control_type::filter filter \endlink = 'DE'
 \todo ADD THIS
 
 \section stochens Running a stochastic ensemble
@@ -239,7 +241,7 @@ Model specific operations required: \n
  - \link qhalf \endlink
 
 In \link pf_control::parse_pf_parameters pf_parameters.dat \endlink set the following variables:
-- \link pf_control::pf_control_type::type type \endlink = 'SE'
+- \link pf_control::pf_control_type::filter filter \endlink = 'SE'
 */
 
 /*! \page citing How to Cite EMPIRE

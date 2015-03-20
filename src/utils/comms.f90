@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-03-17 20:35:13 pbrowne>
+!!! Time-stamp: <2015-03-20 19:51:21 pbrowne>
 !!!
 !!!    Module and subroutine to intitalise EMPIRE coupling to models
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -66,16 +66,10 @@ contains
     implicit none
     include 'mpif.h'
     
-    integer :: mpi_err!dummy_colour,mpi_err
-    integer :: couple_colour !DUMMY_MPI_COMMUNICATOR,couple_colour
-    !integer :: couple_mype_id,couple_root
-    integer :: rtmp!,ctmp
-
- !   integer :: tag!,state_dim!,iter
- !   integer :: num_iters
-    integer :: particle,world_id
-    integer :: myrank !nproc,myrank
-!    integer :: mpi_status(MPI_STATUS_SIZE)
+    integer :: mpi_err
+    integer :: couple_colour
+    integer :: world_id
+    integer :: myrank
     integer :: i
     integer :: da,count
     integer :: pf_colour
@@ -116,14 +110,9 @@ contains
 
     allocate(gblcount(npfs))
     allocate(gbldisp(npfs))
-!    print*,'woohoo allgather'
-!    print*,count
-!    print*,gblcount
-!    print*,pf_mpi_comm
-    !call mpi_allgather(count,1,mpi_integer,gblcount,1,mpi_integer&
-    !     &,pf_mpi_comm,mpi_err)
+
     gblcount=count
-!    print*,'allgather did not break'
+
     gbldisp = 0
     if(npfs .gt. 1) then
        do i = 2,npfs
