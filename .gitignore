@@ -10,3 +10,4 @@ run/*
 */*~
 */*/*~
 update_web.sh
+doc/latex/refman.pdf

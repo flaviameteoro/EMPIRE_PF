@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-03-16 16:18:14 pbrowne>
+!!! Time-stamp: <2015-03-20 22:25:34 pbrowne>
 !!!
 !!!    A subroutine to estimate Q from a long model run
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -38,7 +38,7 @@ subroutine genQ
 !  integer, dimension(a_nxn,a_nyn,a_levels) :: a_u_vec,a_v_vec,a_theta_vec,a_q_vec
 !  integer, dimension(a_nxn,a_nyn) :: a_pstar_vec
 !  integer, dimension(o_nxn,o_nyn,o_levels) :: o_u_vec,o_v_vec,o_theta_vec,o_sal_vec
-  integer :: i,j,k,counter,radius,nnz
+  integer :: i,counter,radius,nnz!,j,k
   integer, parameter :: n = 426655238
   integer, allocatable, dimension(:) :: row,col
   real(kind=rk), allocatable, dimension(:) :: val
