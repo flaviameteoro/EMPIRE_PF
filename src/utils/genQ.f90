@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-03-20 22:25:34 pbrowne>
+!!! Time-stamp: <2015-03-23 15:54:58 pbrowne>
 !!!
 !!!    A subroutine to estimate Q from a long model run
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -29,8 +29,6 @@ subroutine genQ
   use sizes
   use pf_control
   use comms
-  use Qdata
-  use hqht_plus_r
   implicit none
   include 'mpif.h'
   integer, parameter :: rk=(kind(1.0d0))

@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-03-20 22:03:39 pbrowne>
+!!! Time-stamp: <2015-03-23 10:44:35 pbrowne>
 !!!
 !!!    module to hold all the information to control the the main program
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -149,7 +149,7 @@ contains
     !! - \link pf_control::pf_control_type::nudgefac nudgefac\endlink
     !! - \link pf_control::pf_control_type::nfac nfac\endlink
     !! - \link pf_control::pf_control_type::ufac ufac\endlink
-    !! - \link pf_control::pf_control_type::Qscale Qscale \endlink
+    !! - \link pf_control::pf_control_type::qscale Qscale \endlink
     !! - \link pf_control::pf_control_type::keep keep  \endlink
     !! - \link pf_control::pf_control_type::rho rho  \endlink
     !! - \link pf_control::pf_control_type::len len  \endlink
@@ -161,7 +161,7 @@ contains
     !! - \link pf_control::pf_control_type::init init\endlink
     !!
     !! Logicals:
-    !! - \link pf_control::pf_control_type::gen_Q gen_Q\endlink
+    !! - \link pf_control::pf_control_type::gen_q gen_Q\endlink
     !! - \link pf_control::pf_control_type::gen_data gen_data\endlink
     !! - \link pf_control::pf_control_type::use_talagrand use_talagrand\endlink
     !! - \link pf_control::pf_control_type::use_weak use_weak\endlink

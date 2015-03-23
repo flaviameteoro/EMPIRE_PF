@@ -54,7 +54,7 @@ end subroutine fcn
 !!
 !! Then the objective function can be re-written as a function of v,
 !!
-!! \f$f=J(x) = \frac{1}{2}(m-1)v^Tv +
+!! \f$f=J(x)=J(v) = \frac{1}{2}(m-1)v^Tv +
 !! \frac{1}{2}\sum_i(y_i-H_i(M_i(X_0v+x_b)))^T R_i^{-1} (y_i -
 !! H_i(M_i(X_0v+x_b)) )\f$.
 !!
@@ -83,9 +83,9 @@ subroutine fourdenvar_fcn(n, v, f, g )
   include 'mpif.h'
   integer, parameter :: rk = kind(1.0d0)
   integer, intent(in) :: n !< this is the dimension of the
-  !optimization control variable, so the number of ensemble members-1
+  !!optimization control variable, so the number of ensemble members-1
   real(kind=rk), dimension(n), intent(in) :: v!< this is the
-  !optimization control variable
+  !!optimization control variable
   real(kind=rk), intent(out) :: f !< the 4dvar objective function
   real(kind=kind(1.0d0)), dimension(n), intent(out) :: g !< the
   !<gradient of the 4dvar objective function
