@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-03-23 15:55:20 pbrowne>
+!!! Time-stamp: <2015-03-23 16:17:18 pbrowne>
 !!!
 !!!    subroutine to simply move the model forward in time one timestep
 !!!    then add model error
@@ -79,7 +79,7 @@ subroutine stochastic_model
   !$omp end parallel do
 
 
-  if(pf%gen_data) then
+  if(pf%gen_data .and. mod(pf%timestep,pf%time_bwn_obs) .eq. 0) then
      if(pf%count .ne. 1 .and. pf%nens .ne. 1) then
         print*,'OBS GEN ERROR -558: PLEASE RUN WITH ONLY A SINGLE &
              &ENSEMBLE MEMBER'
