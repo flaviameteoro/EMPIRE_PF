@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-03-24 10:58:42 pbrowne>
+!!! Time-stamp: <2015-03-24 11:32:49 pbrowne>
 !!!
 !!!    Subroutine to output trajectories of state variables
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -30,12 +30,24 @@ module traj_data
   integer, allocatable, dimension(:) :: trajvar
   character(28), parameter :: traj_list='traj_list.dat'
   contains
-    !>
+    !> subroutine to read in which trajectories are required
+    !!
+    !! this requires that the directory traj/ exists before runtime.
+    !!
+    !! Then this reads the file @ref traj_list .
+    !!
+    !! The format for @ref traj_list is a list of K+1 integers,
+    !! 
+    !! where the first integer is K
+    !!
+    !! and the following K integers are the index in the state
+    !! dimension for which the trajectories are required.    
     subroutine setup_traj
+      use sizes, only : state_dim
       logical :: dir_e,file_e
       integer :: i
       !first check that the traj directory exists:
-      ! a trick to be sure traj is a di
+      ! a trick to be sure traj is a dir
       inquire( file="./traj/.", exist=dir_e )
       if ( .not. dir_e ) then
          write(*,*) 'EMPIRE ERROR -559: ./traj/ directory does not exi&
@@ -63,6 +75,19 @@ module traj_data
 
       do i = 1,trajn
          read(12,*) trajvar(i)
+         if(trajvar(i) .le. 0) then
+            print*,'EMPIRE ERROR -561: trajectory variable ',i,' less &
+                 &than 0'
+            print*,'                 : variable read as',trajvar(i),' &
+                 &STOP.'
+            stop -561
+         elseif(trajvar(i) .gt. state_dim) then
+            print*,'EMPIRE ERROR -562: trajectory variable ',i,' larger &
+                 &than the state dimension ',state_dim
+            print*,'                 : variable read as',trajvar(i),' &
+                 &STOP.'
+            stop -562
+         end if
       end do
 
       close(12)
@@ -76,6 +101,8 @@ end module traj_data
 
 
 !> subroutine to output trajectories
+!!
+
 subroutine trajectories
   use traj_data
   use pf_control

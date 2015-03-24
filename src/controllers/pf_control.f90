@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-03-23 10:44:35 pbrowne>
+!!! Time-stamp: <2015-03-24 11:24:04 pbrowne>
 !!!
 !!!    module to hold all the information to control the the main program
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -58,7 +58,8 @@ module pf_control
      !! are multiplied by the function
      !! \f$ \exp\left(\frac{\mathrm{dist}^2}{2 \mathrm{len}^2}\right) \f$
      integer :: couple_root                        !< empire master processor
-     logical :: use_talagrand !< switch if true outputs rank histograms
+     logical :: use_talagrand !< switch if true outputs rank
+     !!histograms. See @ref trajectories.f90 for details.
      logical :: use_weak      !< switch unused
      logical :: use_mean      !< switch if true outputs ensemble mean
      logical :: use_var       !< switch if true outputs ensemble variance

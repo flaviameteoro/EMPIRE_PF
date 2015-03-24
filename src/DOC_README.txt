@@ -1,6 +1,6 @@
 /** \mainpage EMPIRE Data Assimilation Documentation
 \author Philip A. Browne <a href="mailto:p.browne@reading.ac.uk">p.browne@reading.ac.uk</a>
-\date Time-stamp: <2015-03-23 10:14:47 pbrowne>
+\date Time-stamp: <2015-03-24 11:41:35 pbrowne>
 
 \section Methods EMPIRE Methods
 For a list of methods implemented in EMPIRE, please click here: \link methods \endlink
@@ -258,7 +258,7 @@ In \link pf_control::parse_pf_parameters pf_parameters.dat \endlink set the foll
 
 \section trajectories Outputting trajectories of model variables
 
-\todo Discuss this here.
+This is controlled by \link pf_control::pf_control_type::use_traj use_traj \endlink in \link pf_control::parse_pf_parameters pf_parameters.dat \endlink  and for more information see \link traj_data::setup_traj setup_traj \endlink.
 */
 
 /*! \page citing How to Cite EMPIRE
