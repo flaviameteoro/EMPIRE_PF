@@ -1,7 +1,7 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-03-20 16:34:41 pbrowne>
+!!! Time-stamp: <2015-03-24 11:15:41 pbrowne>
 !!!
-!!!    Program to implement 4dEnVar
+!!!    module to store data for variational methods
 !!!    Copyright (C) 2015  Philip A. Browne
 !!!
 !!!    This program is free software: you can redistribute it and/or modify
@@ -25,6 +25,7 @@
 !!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+!> module holding data for variational problems
 module var_data
 
   implicit none

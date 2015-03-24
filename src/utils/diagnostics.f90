@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-09-26 12:19:36 pbrowne>
+!!! Time-stamp: <2015-03-24 10:59:13 pbrowne>
 !!!
 !!!    Subroutine to give output diagnositics such as rank histograms
 !!!    and trajectories
@@ -199,41 +199,3 @@ subroutine diagnostics
   end if
 end subroutine diagnostics
 
-!> subroutine to output trajectories
-subroutine trajectories
-  use pf_control
-  use sizes
-  implicit none
-  integer, parameter :: rk = kind(1.0D0)
-  integer :: particle,i,j
-  character(28) :: filename
-  integer, parameter :: n=10
-  integer, dimension(n) :: trajvar
-
-  stop 'Trajectories have not be specified for this specific model'
-
-  !             ap   au    av    at      aq    ot       ot     os     ou      ov
-  trajvar = (/2721,10099,145949,278007,410009,547011,558240,998895,1480094,1900706/)
-
-  do i = 1,pf%count
-     particle = pf%particles(i)
-     
-     do j = 1,n
-        if(pf%gen_data) then
-           write(filename,'(A,i7.7)') 'traj/truth_var',trajvar(j)
-        else
-           write(filename,'(A,i7.7,A,i5.5)') 'traj/var',trajvar(j),'particle',particle
-        end if
-        if(pf%timestep .eq. 0) then
-!           print*,'i = ',i,' particle = ',particle,' trajvar(j) = '&
-!                &,trajvar(j),' filename = ',filename
-           open(41,file=filename,action='write',status='replace')
-        else
-           open(41,file=filename,action='write',status='old',position='append')
-        end if
-        write(41,'(es22.15)') pf%psi(trajvar(j),i)
-        close(41)
-        
-     end do
-  end do
-end subroutine trajectories

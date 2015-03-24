@@ -25,9 +25,12 @@ SR_CONTS=$(current_dir)src/controllers/
 SR_DATAS=$(current_dir)src/data/
 SR_TESTS=$(current_dir)src/tests/
 SR_OPERS=$(current_dir)src/operations/
-OBJSQ= sizes.o pf_couple.o Qdata.o Rdata.o equivalent_weights_filter.o comms.o gen_rand.o random_d.o proposal_filter.o histogram.o pf_control.o data_io.o model_specific.o operator_wrappers.o quicksort.o resample.o diagnostics.o perturb_particle.o genQ.o sir_filter.o stochastic_model.o tests.o letkf_analysis.o deterministic_model.o inner_products.o
+OBJSQ= sizes.o pf_couple.o Qdata.o Rdata.o equivalent_weights_filter.o comms.o gen_rand.o random_d.o proposal_filter.o histogram.o pf_control.o data_io.o model_specific.o operator_wrappers.o quicksort.o resample.o diagnostics.o perturb_particle.o genQ.o sir_filter.o stochastic_model.o tests.o letkf_analysis.o deterministic_model.o inner_products.o trajectories.o
 OBJS=$(addprefix $(OBS),$(OBJSQ))
 FCOPTS+=$(MODFLAG) $(MODLOC)
+
+$(OBS)trajectories.o: $(SR_UTILS)trajectories.f90
+	$(FC) $(FCOPTS) -c $(SR_UTILS)trajectories.f90 -o $@
 
 $(OBS)histogram.o: $(SR_UTILS)histogram.f90
 	$(FC) $(FCOPTS) -c $(SR_UTILS)histogram.f90 -o $@

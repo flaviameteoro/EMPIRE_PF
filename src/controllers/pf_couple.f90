@@ -1,7 +1,7 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-03-20 19:48:18 pbrowne>
+!!! Time-stamp: <2015-03-24 10:39:28 pbrowne>
 !!!
-!!!    {one line to give the program's name and a brief idea of what it does.}
+!!!    The main program to run EMPIRE
 !!!    Copyright (C) 2014  Philip A. Browne
 !!!
 !!!    This program is free software: you can redistribute it and/or modify
@@ -51,17 +51,26 @@ program empire
 
   write(6,'(A)') 'PF: Starting PF code'
   call flush(6)
+
+
   !> set up EMPIRE coupling
   call initialise_mpi
+
+
   print*,'PF: setting controls'
   !> read in controlling data
   call set_pf_controls
+
+
   print*,'PF: configuring model'
   !> call user specific routine for initialisation
   call configure_model
+
+
   print*,'allocating pf'
   !> allocate space for the filter
   call allocate_pf
+
 
   !> ensure random seed is set across mpi processes
   call random_seed_mpi(pfrank)
@@ -73,8 +82,6 @@ program empire
   allocate(mpi_statuses(mpi_status_size,pf%count))
   allocate(received(pf%count))
 
-  !HADCM3 MODEL SPECIFIC...
-  !let us spin the model up for one day, or 72 timesteps
   start_t = mpi_wtime() 
   pf%time=mpi_wtime()
 
@@ -86,23 +93,17 @@ program empire
      CALL MPI_IRECV(pf%psi(:,k), state_dim, MPI_DOUBLE_PRECISION, &
           particle-1, tag, CPL_MPI_COMM,requests(k), mpi_err)
   end DO
-  print*,'receives launched'
+
   k = 0
   received = .false.
   do
      k = mod(k,pf%count)+1
-!     print*,k
      if(.not. received(k)) then
         particle = pf%particles(k)
-!        print*,particle ,'not received so testing it'
         call MPI_TEST(requests(k), mpi_flag, mpi_statuses(:,k), mpi_err)
         
         if(mpi_flag) then
-!           PRINT*,'Particle filter ',pfrank,'has received initial state_v&
-!                &ector over mpi from ensemble member ',particle
            received(k) = .true.
-!           if(.not. pf%gen_data) call perturb_particle(pf%psi(:,k))
-!           print*,pf%psi(:,k)
            call perturb_particle(pf%psi(:,k))
         end if
      end if
@@ -111,12 +112,14 @@ program empire
   write(6,*) 'PF: All models received in pf couple' 
   call flush(6)
 
-!  if(pf%gen_data) call save_truth(pf%psi(:,1))
+
   call output_from_pf
   if(pf%gen_data) call save_truth(pf%psi(:,1))
   if(pf%use_traj) call trajectories
   start_t = mpi_wtime()
 
+  
+  !start the timestep loop
   do j=1,pf%time_obs
      write(6,*) 'PF: observation counter = ',j
      do i = 1,pf%time_bwn_obs-1
@@ -185,6 +188,8 @@ program empire
   call flush(6)
 
 
+
+  !send the final state to the model to allow it to finish cleanly
   tag = 3        
   DO k = 1,pf%count
      particle = pf%particles(k)
