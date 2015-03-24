@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-03-16 10:19:28 pbrowne>
+!!! Time-stamp: <2015-03-24 13:16:51 pbrowne>
 !!!
 !!!    Collection of inner product wrappers
 !!!    Copyright (C) 2015  Philip A. Browne
@@ -27,13 +27,13 @@
 
 
 !>subroutine to compute the inner product with \f$R^{-1}\f$
-!! @param[in] y multiple vectors in observation space (pf\%count of them)
 !! @param[in] n length of each vector in y
 !! @param[in] c number of vectors in y
-!! @param[in] t current timestep
+!! @param[in] y multiple vectors in observation space (pf\%count of them)
 !! @param[out] w multiple scalars (pf\%count) where w(i) has the value
 !! \f$y(:,i)^TR^{-1}y(:,i)\f$
-subroutine innerR_1(y,n,c,w,t)
+!! @param[in] t current timestep
+subroutine innerR_1(n,c,y,w,t)
   !subroutine to take an observation vector y and return w = y^T R^(-1) y
 !  use sizes
 !  use pf_control
