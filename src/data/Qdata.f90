@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-03-24 11:13:23 pbrowne>
+!!! Time-stamp: <2015-03-25 13:53:27 pbrowne>
 !!!
 !!!    A module to store data for the model error covariance matrix.
 !!!    The user should change according to their own needs
@@ -30,24 +30,13 @@
 
 module Qdata
 implicit none
-integer :: Qn,Qne
-integer, allocatable, dimension(:) :: Qrow,Qcol
-real(kind=kind(1.0D0)), allocatable, dimension(:) :: Qval,Qdiag
-real(kind=kind(1.0d0)) :: Qscale
 contains
   !> Subroutine to load in user data for Q
   subroutine loadQ
-    use sizes
-    use pf_control
-
   end subroutine loadQ
 
+  !> SUbroutine to deallocate user data for Q
   subroutine killQ
-    !> SUbroutine to deallocate user data for Q
-    if(allocated(Qrow)) deallocate(Qrow)
-    if(allocated(Qcol)) deallocate(Qcol)
-    if(allocated(Qval)) deallocate(Qval)
-    if(allocated(Qdiag)) deallocate(Qdiag)
   end subroutine killQ
 
 end module Qdata

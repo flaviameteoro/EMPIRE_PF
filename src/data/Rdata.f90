@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-03-24 11:12:50 pbrowne>
+!!! Time-stamp: <2015-03-25 13:54:08 pbrowne>
 !!!
 !!!    A module to store data about the observation error covariance
 !!!    matrix
@@ -30,30 +30,13 @@
 !> observation error covariance matrix
 module Rdata
 implicit none
-integer :: Rn,Rne
-integer, allocatable, dimension(:) :: Rrow,Rcol
-real(kind=kind(1.0D0)), allocatable, dimension(:) :: Rval,Rdiag
 contains
   !> Subroutine to load data for R
   subroutine loadR
-    use sizes
-    integer :: i
-    Rn = obs_dim
-    Rne = 1
-    allocate(Rrow(Rne),Rcol(Rne),Rval(Rne))
-    allocate(Rdiag(Rn))
-    Rrow = (/ (i, i = 1,Rne) /)
-    Rcol = (/ (i, i = 1,Rne) /)
-    Rval = 0.0D0
-    Rdiag = 0.3D0
   end subroutine loadR
 
+  !> SUbroutine to deallocate R data
   subroutine killR
-    !> SUbroutine to deallocate R data
-    if(allocated(Rrow)) deallocate(Rrow)
-    if(allocated(Rcol)) deallocate(Rcol)
-    if(allocated(Rval)) deallocate(Rval)
-    if(allocated(Rdiag)) deallocate(Rdiag)
   end subroutine killR
 
 end module Rdata
