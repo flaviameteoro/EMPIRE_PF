@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-04-02 00:33:20 pbrowne>
+!!! Time-stamp: <2015-04-02 00:51:21 pbrowne>
 !!!
 !!!    Module and subroutine to intitalise EMPIRE coupling to models
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -54,7 +54,7 @@ module comms
        & !<displacements of the various parts of the state vector
   integer :: mdl_num_proc !< number of processes of each ensemble
   !!member
-  integer, parameter :: empire_version=2
+  integer, parameter :: empire_version=1
 
 contains
 
@@ -85,16 +85,21 @@ contains
     integer :: pf_colour
     integer :: world_size
 
+    if(empire_version .eq. 2) then
+       call initialise_mpi_v2
+       return
+    end if
+
     pf_colour = 10000
     couple_colour=9999
     call MPI_INIT (mpi_err)
 
     da = 1
-    call MPI_COMM_RANK (MPI_COMM_WORLD,world_rank,     mpi_err)
+    call MPI_COMM_RANK (MPI_COMM_WORLD,world_rank,   mpi_err)
     call mpi_comm_size (mpi_comm_world,world_size,   mpi_err)
     call mpi_comm_split(mpi_comm_world,da,           world_rank,  pf_mpi_comm, mpi_err)
     call mpi_comm_rank (pf_mpi_comm,   pfrank,       mpi_err)
-    call mpi_comm_size (pf_mpi_comm,   npfs,          mpi_err)
+    call mpi_comm_size (pf_mpi_comm,   npfs,         mpi_err)
     call MPI_COMM_SPLIT(MPI_COMM_WORLD,couple_colour,world_size,CPL_MPI_COMM,mpi_err)
     call MPI_COMM_RANK (CPL_MPI_COMM,  myRank,       mpi_err)
     call MPI_COMM_SIZE (CPL_MPI_COMM,  nens,         mpi_err)
@@ -121,7 +126,10 @@ contains
     allocate(gblcount(npfs))
     allocate(gbldisp(npfs))
 
-    gblcount=count
+
+    call mpi_allgather(count,1,mpi_integer,gblcount,1,mpi_integer&
+         &,pf_mpi_comm,mpi_err)
+    
 
     gbldisp = 0
     if(npfs .gt. 1) then
@@ -141,6 +149,7 @@ contains
 
   !> subroutine to initialise new version of empire
   subroutine initialise_mpi_v2
+    use pf_control
     implicit none
     include 'mpif.h'
 
@@ -262,8 +271,31 @@ contains
     print*,'total state_dim = ',state_dim
 
 
+    !compute counts and displacements of particles associated with da
+    !processes
+    allocate(gblcount(npfs))
+    allocate(gbldisp(npfs))
 
 
+    call mpi_allgather(cnt,1,mpi_integer,gblcount,1,mpi_integer&
+         &,pf_mpi_comm,mpi_err)
+    
+
+    gbldisp = 0
+    if(npfs .gt. 1) then
+       do i = 2,npfs
+          gbldisp(i) = gbldisp(i-1) + gblcount(i-1)
+       end do
+    end if    
+
+
+
+
+
+
+    pf%particles = particles
+    pf%count = cnt
+    pf%nens = nens
   end subroutine initialise_mpi_v2
 
 
