@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-03-20 10:13:23 pbrowne>
+!!! Time-stamp: <2015-04-01 22:47:50 pbrowne>
 !!!
 !!!    Program to implement 4dEnVar
 !!!    Copyright (C) 2015  Philip A. Browne
@@ -35,8 +35,7 @@ program FourDEnVar
   implicit none
   include 'mpif.h'
 
-  integer :: message,mpi_err,k,tag,particle
-  integer, dimension(MPI_STATUS_SIZE) :: mpi_status
+  integer :: message,mpi_err
   real(kind=kind(1.0d0)), dimension(3) :: xbar
   
   print*,'Starting 4DEnVar'
@@ -60,10 +59,7 @@ program FourDEnVar
   call allocate4denvardata
 
   !get initial states from ensemble members
-  DO message = 1,cnt
-     CALL MPI_RECV(xt(:,message),state_dim, MPI_DOUBLE_PRECISION, &
-          particles(message)-1, MPI_ANY_TAG, CPL_MPI_COMM,mpi_status, mpi_err)
-  END DO
+  call recv_all_models(state_dim,cnt,xt)
 
 
   !get the initial ensemble perturbation matrix
@@ -127,12 +123,7 @@ program FourDEnVar
   print*,xb
 
   !finish model by sending state with tag = 3
-  do k =1,cnt
-     particle = particles(k)
-     tag = 3
-     call mpi_send(xt(:,k),state_dim,MPI_DOUBLE_PRECISION&
-          &,particle-1,tag,CPL_MPI_COMM,mpi_err)
-  end do
+  call send_all_models(state_dim,cnt,xt,3)
 
   call mpi_finalize(mpi_err)
 

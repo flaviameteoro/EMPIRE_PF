@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-03-24 11:16:35 pbrowne>
+!!! Time-stamp: <2015-04-01 22:52:22 pbrowne>
 !!!
 !!!    subroutine to provide objective function and gradient for var
 !!!    Copyright (C) 2015  Philip A. Browne
@@ -125,8 +125,7 @@ subroutine fourdenvar_fcn(n, v, f, g )
   real(kind=rk), dimension(state_dim) :: xdet
   real(kind=rk), dimension(:), allocatable :: RY_HMX
   real(kind=rk) :: ft
-  integer :: message,mpi_err,particle,k
-  integer, dimension(mpi_status_size) :: mpi_status
+  integer :: message,mpi_err,particle
 
 
   if(pfrank == 0) then
@@ -165,19 +164,20 @@ subroutine fourdenvar_fcn(n, v, f, g )
            tag = 1
         end if
 
-
-        do k =1,cnt
-           particle = particles(k)
-           call mpi_send(xt(:,k),state_dim,MPI_DOUBLE_PRECISION&
-                &,particle-1,tag,CPL_MPI_COMM,mpi_err)
-        end do
+        call send_all_models(state_dim,cnt,xt,tag)
+!!$        do k =1,cnt
+!!$           particle = particles(k)
+!!$           call mpi_send(xt(:,k),state_dim,MPI_DOUBLE_PRECISION&
+!!$                &,particle-1,tag,CPL_MPI_COMM,mpi_err)
+!!$        end do
         
+        call recv_all_models(state_dim,cnt,xt)
         
-        DO k = 1,cnt
-           particle = particles(k)
-           CALL MPI_RECV(xt(:,k),state_dim, MPI_DOUBLE_PRECISION, &
-                particle-1, MPI_ANY_TAG, CPL_MPI_COMM,mpi_status, mpi_err)
-        END DO
+!!$        DO k = 1,cnt
+!!$           particle = particles(k)
+!!$           CALL MPI_RECV(xt(:,k),state_dim, MPI_DOUBLE_PRECISION, &
+!!$                particle-1, MPI_ANY_TAG, CPL_MPI_COMM,mpi_status, mpi_err)
+!!$        END DO
         
 
         !check if we have observations this timestep
@@ -301,19 +301,20 @@ subroutine fourdenvar_fcn(n, v, f, g )
                  tag = 1
               end if
 
+              call send_all_models(state_dim,cnt,xt,tag)
+!!$              do k =1,cnt
+!!$                 particle = particles(k)
+!!$                 call mpi_send(xt(:,k),state_dim,MPI_DOUBLE_PRECISION&
+!!$                      &,particle-1,tag,CPL_MPI_COMM,mpi_err)
+!!$              end do
 
-              do k =1,cnt
-                 particle = particles(k)
-                 call mpi_send(xt(:,k),state_dim,MPI_DOUBLE_PRECISION&
-                      &,particle-1,tag,CPL_MPI_COMM,mpi_err)
-              end do
 
-              
-              DO k = 1,cnt
-                 particle = particles(k)
-                 CALL MPI_RECV(xt(:,k),state_dim, MPI_DOUBLE_PRECISION, &
-                      particle-1, tag, CPL_MPI_COMM,mpi_status, mpi_err)
-              END DO
+              call recv_all_models(state_dim,cnt,xt)
+!!$              DO k = 1,cnt
+!!$                 particle = particles(k)
+!!$                 CALL MPI_RECV(xt(:,k),state_dim, MPI_DOUBLE_PRECISION, &
+!!$                      particle-1, tag, CPL_MPI_COMM,mpi_status, mpi_err)
+!!$              END DO
 
 
               !check if we have observations this timestep

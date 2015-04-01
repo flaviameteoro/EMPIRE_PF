@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-03-20 22:13:19 pbrowne>
+!!! Time-stamp: <2015-04-01 22:18:18 pbrowne>
 !!!
 !!!    Subroutine to perform SIR filter
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -31,24 +31,24 @@ subroutine sir_filter
   use pf_control
   implicit none
   include 'mpif.h'
-  integer :: k,tag,particle
+  integer :: k,particle!,tag
   real(kind=kind(1.0d0)), dimension(state_dim) :: zeros
   real(kind=kind(1.0d0)), dimension(pf%count) :: w
   real(kind=kind(1.0d0)), dimension(state_dim,pf%count) :: fpsi,normaln,betan
   real(kind=kind(1.0d0)), dimension(obs_dim) :: y
   real(kind=kind(1.0d0)), dimension(obs_dim,pf%count) :: y_Hfpsi,Hfpsi
-  integer, dimension(mpi_status_size) :: mpi_status
-  integer :: mpi_err
+!  integer, dimension(mpi_status_size) :: mpi_status
+!  integer :: mpi_err
   zeros = 0.0d0
 
   !get the model to provide f(x)
-  do k =1,pf%count
-     particle = pf%particles(k)
-     tag = 1
-     call mpi_send(pf%psi(:,k),state_dim,MPI_DOUBLE_PRECISION&
-          &,particle-1,tag,CPL_MPI_COMM,mpi_err)
-  end do
-
+!  do k =1,pf%count
+!     particle = pf%particles(k)
+!     tag = 1
+!     call mpi_send(pf%psi(:,k),state_dim,MPI_DOUBLE_PRECISION&
+!          &,particle-1,tag,CPL_MPI_COMM,mpi_err)
+!  end do
+  call send_all_models(state_dim,pf%count,pf%psi,1)
 
 
   !draw from a Gaussian for the random noise
@@ -59,12 +59,14 @@ subroutine sir_filter
   call Qhalf(pf%count,normaln,betan)
 
 
-  DO k = 1,pf%count
-     particle = pf%particles(k)
-     tag = 1
-     CALL MPI_RECV(fpsi(:,k), state_dim, MPI_DOUBLE_PRECISION, &
-          particle-1, tag, CPL_MPI_COMM,mpi_status, mpi_err)
-  END DO
+!  DO k = 1,pf%count
+!     particle = pf%particles(k)
+!     tag = 1
+!     CALL MPI_RECV(fpsi(:,k), state_dim, MPI_DOUBLE_PRECISION, &
+!          particle-1, tag, CPL_MPI_COMM,mpi_status, mpi_err)
+!  END DO
+
+  call recv_all_models(state_dim,pf%count,fpsi)
 
   
   !update the new state and weights based on these terms

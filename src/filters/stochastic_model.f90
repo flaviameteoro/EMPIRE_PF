@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-03-23 16:17:18 pbrowne>
+!!! Time-stamp: <2015-04-01 22:19:49 pbrowne>
 !!!
 !!!    subroutine to simply move the model forward in time one timestep
 !!!    then add model error
@@ -45,31 +45,32 @@ subroutine stochastic_model
 !  real(kind=rk), dimension(state_dim,pf%count) :: kgain       !QH^T(HQH^T+R)^(-1)(y-H(psi^(n-1)))
   real(kind=rk), dimension(state_dim,pf%count) :: Qkgain
 !  real(kind=rk) :: t,dnrm2
-  integer :: particle,k,tag,mpi_err
-  integer :: mpi_status( MPI_STATUS_SIZE )
+  integer :: particle,k!,tag,mpi_err
+!  integer :: mpi_status( MPI_STATUS_SIZE )
   logical, parameter :: checkscaling=.true.
 
   real(kind=rk), dimension(obs_dim) :: obsv,obsvv,y
 
-
-  do k =1,pf%count
-     particle = pf%particles(k)
-     tag = 1
-     call mpi_send(pf%psi(:,k),state_dim,MPI_DOUBLE_PRECISION&
-          &,particle-1,tag,CPL_MPI_COMM,mpi_err)
-  end do
+  call send_all_models(state_dim,pf%count,pf%psi,1)
+!  do k =1,pf%count
+!     particle = pf%particles(k)
+!     tag = 1
+!     call mpi_send(pf%psi(:,k),state_dim,MPI_DOUBLE_PRECISION&
+!          &,particle-1,tag,CPL_MPI_COMM,mpi_err)
+!  end do
 
   call NormalRandomNumbers2D(0.0D0,1.0D0,state_dim,pf%count,normaln)
 
   call Qhalf(pf%count,normaln,betan)
   Qkgain = 0.0_rk
 
-  DO k = 1,pf%count
-     particle = pf%particles(k)
-     tag = 1
-     CALL MPI_RECV(fpsi(:,k), state_dim, MPI_DOUBLE_PRECISION, &
-          particle-1, tag, CPL_MPI_COMM,mpi_status, mpi_err)
-  END DO
+!  DO k = 1,pf%count
+!     particle = pf%particles(k)
+!     tag = 1
+!     CALL MPI_RECV(fpsi(:,k), state_dim, MPI_DOUBLE_PRECISION, &
+!          particle-1, tag, CPL_MPI_COMM,mpi_status, mpi_err)
+!  END DO
+  call recv_all_models(state_dim,pf%count,fpsi)
 
   !$omp parallel do private(particle)
   DO k = 1,pf%count

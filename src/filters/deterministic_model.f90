@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-01-14 18:11:17 pbrowne>
+!!! Time-stamp: <2015-04-01 22:11:52 pbrowne>
 !!!
 !!!    subroutine to simply move the model forward in time one timestep
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -39,8 +39,8 @@ subroutine deterministic_model
   include 'mpif.h'
   integer, parameter :: rk = kind(1.0D0)
 
-  integer :: particle,k,tag,mpi_err
-  integer :: mpi_status( MPI_STATUS_SIZE )
+!  integer :: particle,k,tag,mpi_err
+!  integer :: mpi_status( MPI_STATUS_SIZE )
   logical, parameter :: nan_check=.false.
 
   if(nan_check) then
@@ -50,18 +50,22 @@ subroutine deterministic_model
      end if
   end if
 
-  do k =1,pf%count
-     particle = pf%particles(k)
-     tag = 1
-     call mpi_send(pf%psi(:,k),state_dim,MPI_DOUBLE_PRECISION&
-          &,particle-1,tag,CPL_MPI_COMM,mpi_err)
-  end do
-  DO k = 1,pf%count
-     particle = pf%particles(k)
-     tag = 1
-     CALL MPI_RECV(pf%psi(:,k), state_dim, MPI_DOUBLE_PRECISION, &
-          particle-1, tag, CPL_MPI_COMM,mpi_status, mpi_err)
-  END DO
+  call send_all_models(state_dim,pf%count,pf%psi,1)
+
+!!$  do k =1,pf%count
+!!$     particle = pf%particles(k)
+!!$     tag = 1
+!!$     call mpi_send(pf%psi(:,k),state_dim,MPI_DOUBLE_PRECISION&
+!!$          &,particle-1,tag,CPL_MPI_COMM,mpi_err)
+!!$  end do
+!!$  DO k = 1,pf%count
+!!$     particle = pf%particles(k)
+!!$     tag = 1
+!!$     CALL MPI_RECV(pf%psi(:,k), state_dim, MPI_DOUBLE_PRECISION, &
+!!$          particle-1, tag, CPL_MPI_COMM,mpi_status, mpi_err)
+!!$  END DO
+
+  call recv_all_models(state_dim,pf%count,pf%psi)
 
   if(nan_check) then
      if(.not. all(pf%psi .eq. pf%psi)) then

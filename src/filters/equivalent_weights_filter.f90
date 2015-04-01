@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-03-20 22:10:16 pbrowne>
+!!! Time-stamp: <2015-04-01 22:14:06 pbrowne>
 !!!
 !!!    Computes the equivalent weights step in the EWPF
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -37,7 +37,7 @@ subroutine equivalent_weights_filter
   real(kind=rk), dimension(pf%count) :: a,b,alpha,c
   real(kind=rk), dimension(pf%nens) :: csorted !<sorted vector of c
   real(kind=rk) :: cmax
-  integer :: particle,i,tag,mpi_err
+  integer :: particle,i,mpi_err!,tag
   real(kind=rk), dimension(obs_dim) :: y     !y, !//!<the observations
   real(kind=rk), dimension(obs_dim,pf%count) :: Hfpsi           !H(f(psi^(n-1))) !< \f$H(f(x^{n-1}))\f$
   real(kind=rk), dimension(obs_dim,pf%count) :: y_Hfpsin1  !y-H(f(psi^(n-1))) !< \f$y-H(f(x^{n-1}))\f$
@@ -51,11 +51,14 @@ subroutine equivalent_weights_filter
   real(kind=rk), dimension(pf%count) :: e                     !e = d_i^t R^(-1) d_i
   real(kind=rk), parameter :: pi = 4.0D0*atan(1.0D0)
   logical, dimension(pf%count) :: uniform
-  INTEGER, DIMENSION(MPI_STATUS_SIZE) :: mpi_status
+!  INTEGER, DIMENSION(MPI_STATUS_SIZE) :: mpi_status
   real(kind=rk), dimension(pf%count) :: weight_temp
   real(kind=rk) :: ddot
 !  print*,'in equal weight filter the weights are:'
 !  print*,pf%weight
+
+  call send_all_models(state_dim,pf%count,pf%psi,1)
+
 
   !store in weight_temp only those weights on this mpi thread
   weight_temp = -huge(1.0d0)
@@ -88,20 +91,23 @@ subroutine equivalent_weights_filter
   !     enddo
   
   !get the model to return f(x)
-  DO i = 1,pf%count
-     particle = pf%particles(i)
-     tag = 1
-     CALL MPI_SEND(pf%psi(:,i), state_dim , MPI_DOUBLE_PRECISION, &
-          particle-1, tag, CPL_MPI_COMM, mpi_err)
-  END DO
+!  DO i = 1,pf%count
+!     particle = pf%particles(i)
+!     tag = 1
+!     CALL MPI_SEND(pf%psi(:,i), state_dim , MPI_DOUBLE_PRECISION, &
+!          particle-1, tag, CPL_MPI_COMM, mpi_err)
+!  END DO
   
   
-  DO i = 1,pf%count
-     particle = pf%particles(i)
-     tag = 1
-     CALL MPI_RECV(fpsi(:,i), state_dim, MPI_DOUBLE_PRECISION, &
-          particle-1, tag, CPL_MPI_COMM,mpi_status, mpi_err)
-  END DO
+!  DO i = 1,pf%count
+!     particle = pf%particles(i)
+!     tag = 1
+!     CALL MPI_RECV(fpsi(:,i), state_dim, MPI_DOUBLE_PRECISION, &
+!          particle-1, tag, CPL_MPI_COMM,mpi_status, mpi_err)
+!  END DO
+
+  call recv_all_models(state_dim,pf%count,fpsi)
+
   
   call H(obs_dim,pf%count,fpsi,Hfpsi,pf%timestep)
   

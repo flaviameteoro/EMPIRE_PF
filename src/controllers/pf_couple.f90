@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-03-24 10:39:28 pbrowne>
+!!! Time-stamp: <2015-04-01 22:32:58 pbrowne>
 !!!
 !!!    The main program to run EMPIRE
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -87,12 +87,15 @@ program empire
 
   if(.not. pf%gen_Q) then
 
-  DO k = 1,pf%count
-     particle = pf%particles(k)
-     print*,'receiving  from ',particle
-     CALL MPI_IRECV(pf%psi(:,k), state_dim, MPI_DOUBLE_PRECISION, &
-          particle-1, tag, CPL_MPI_COMM,requests(k), mpi_err)
-  end DO
+!!$  DO k = 1,pf%count
+!!$     particle = pf%particles(k)
+!!$     print*,'receiving  from ',particle
+!!$     CALL MPI_IRECV(pf%psi(:,k), state_dim, MPI_DOUBLE_PRECISION, &
+!!$          particle-1, tag, CPL_MPI_COMM,requests(k), mpi_err)
+!!$  end DO
+
+  call irecv_all_models(state_dim,pf%count,pf%psi,requests)
+
 
   k = 0
   received = .false.
