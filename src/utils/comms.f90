@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-04-02 00:25:36 pbrowne>
+!!! Time-stamp: <2015-04-02 00:33:20 pbrowne>
 !!!
 !!!    Module and subroutine to intitalise EMPIRE coupling to models
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -290,7 +290,9 @@ contains
           do k = 1,cnt
              call mpi_scatterv(x(:,k),state_dims,state_displacements&
                   &,MPI_DOUBLE_PRECISION,send_null,0,MPI_DOUBLE_PRECISION&
-               &,cpl_rank,cpl_mpi_comms(k),mpi_err)         
+               &,cpl_rank,cpl_mpi_comms(k),mpi_err)
+             call mpi_bcast(tag,1,mpi_integer,cpl_rank,cpl_mpi_comms(k)&
+                  &,mpi_err)
           end do
        case default
           print*,'EMPIRE ERROR: THIS ISNT BACK TO THE FUTURE. empire_v&
