@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-04-02 00:51:21 pbrowne>
+!!! Time-stamp: <2015-04-02 14:34:16 pbrowne>
 !!!
 !!!    Module and subroutine to intitalise EMPIRE coupling to models
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -54,7 +54,7 @@ module comms
        & !<displacements of the various parts of the state vector
   integer :: mdl_num_proc !< number of processes of each ensemble
   !!member
-  integer, parameter :: empire_version=1
+  integer, parameter :: empire_version=2
 
 contains
 
@@ -174,8 +174,15 @@ contains
     !get the number of processes per model
     call mpi_allreduce(0,mdl_num_proc,1,MPI_INTEGER,MPI_MAX&
          &,MPI_COMM_WORLD,mpi_err)
-    print*,'mdl_num_proc = ',mdl_num_proc
 
+    if(mdl_num_proc .lt. 1) then
+       print*,'EMPIRE COMMS v2 ERROR: mdl_num_proc < 1'
+       print*,'mdl_num_proc = ',mdl_num_proc
+       print*,'THIS SUGGESTS YOU HAVE NOT LINKED TO A MODEL. STOP.'
+       stop
+    else
+       print*,'mdl_num_proc = ',mdl_num_proc
+    end if
 
     !split into models and da processes. create pf_mpi_comm
     call mpi_comm_split(MPI_COMM_WORLD,da,world_rank,pf_mpi_comm,mpi_err)
@@ -185,6 +192,7 @@ contains
     !compute number of model processes
     mdl_procs = world_size-npfs
     print*,'npfs = ',npfs
+
     print*,'mdl_procs = ',mdl_procs
 
 
@@ -279,6 +287,13 @@ contains
 
     call mpi_allgather(cnt,1,mpi_integer,gblcount,1,mpi_integer&
          &,pf_mpi_comm,mpi_err)
+    if(mpi_err .eq. 0) then
+       print*,'mpi_allgather successful: gblcount known on all da proc&
+            &esses'
+       print*,'gblcount = ',gblcount
+    else
+       print*,'mpi_allgather unsucessful'
+    end if
     
 
     gbldisp = 0

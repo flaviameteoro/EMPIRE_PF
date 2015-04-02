@@ -183,3 +183,5 @@ FORCE:
 clean:
 	rm -f obs/* bin/*
 
+minimal:
+	cd examples/;make minimal
