@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-04-02 14:34:16 pbrowne>
+!!! Time-stamp: <2015-04-02 15:40:15 pbrowne>
 !!!
 !!!    Module and subroutine to intitalise EMPIRE coupling to models
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -217,10 +217,9 @@ contains
     ! count the number of particles associated with this process
     cnt = final_ptcl-first_ptcl+1
     if(cnt .lt. 1) then
-       print*,'EMPIRE WARNING: YOU HAVE LAUNCHED MORE EMPIRE DA PROCESSES'
-       print*,'EMPIRE WARNING: THAN MODELS. I AM REDUDANT AND STOPPING.'
-       print*,'EMPIRE WARNING: RECONSIDER HOW YOU EXECUTE NEXT TIME. xx'
-       call mpi_finalize(mpi_err)
+       print*,'EMPIRE ERROR: YOU HAVE LAUNCHED MORE EMPIRE DA PROCESSES'
+       print*,'EMPIRE ERROR: THAN MODELS. I AM REDUDANT AND STOPPING.'
+       print*,'EMPIRE ERROR: RECONSIDER HOW YOU EXECUTE NEXT TIME. xx'
        stop
     end if
 
