@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-04-02 15:40:15 pbrowne>
+!!! Time-stamp: <2015-04-03 11:03:29 pbrowne>
 !!!
 !!!    Module and subroutine to intitalise EMPIRE coupling to models
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -54,7 +54,7 @@ module comms
        & !<displacements of the various parts of the state vector
   integer :: mdl_num_proc !< number of processes of each ensemble
   !!member
-  integer, parameter :: empire_version=2
+  integer, parameter :: empire_version=1
 
 contains
 
