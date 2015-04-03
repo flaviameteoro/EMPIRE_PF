@@ -25,7 +25,7 @@ SR_CONTS=$(current_dir)src/controllers/
 SR_DATAS=$(current_dir)src/data/
 SR_TESTS=$(current_dir)src/tests/
 SR_OPERS=$(current_dir)src/operations/
-OBJSQ= sizes.o pf_couple.o Qdata.o Rdata.o equivalent_weights_filter.o comms.o gen_rand.o random_d.o proposal_filter.o histogram.o pf_control.o data_io.o model_specific.o operator_wrappers.o quicksort.o resample.o diagnostics.o perturb_particle.o genQ.o sir_filter.o stochastic_model.o tests.o letkf_analysis.o deterministic_model.o inner_products.o trajectories.o
+OBJSQ= sizes.o pf_couple.o Qdata.o Rdata.o equivalent_weights_filter.o comms.o gen_rand.o random_d.o proposal_filter.o histogram.o pf_control.o data_io.o model_specific.o operator_wrappers.o quicksort.o resample.o diagnostics.o perturb_particle.o update_state.o genQ.o sir_filter.o stochastic_model.o tests.o letkf_analysis.o deterministic_model.o inner_products.o trajectories.o
 OBJS=$(addprefix $(OBS),$(OBJSQ))
 FCOPTS+=$(MODFLAG) $(MODLOC)
 
@@ -67,6 +67,9 @@ $(OBS)pf_control.o: $(SR_CONTS)pf_control.f90 $(OBS)sizes.o $(OBS)histogram.o
 
 $(OBS)perturb_particle.o: $(SR_OPERS)perturb_particle.f90 $(OBS)sizes.o
 	$(FC) $(FCOPTS) -c $(SR_OPERS)perturb_particle.f90 -o $@
+
+$(OBS)update_state.o: $(SR_OPERS)update_state.f90 $(OBS)sizes.o
+	$(FC) $(FCOPTS) -c $(SR_OPERS)update_state.f90 -o $@
 
 $(OBS)data_io.o: $(SR_UTILS)data_io.f90 $(OBS)pf_control.o $(OBS)sizes.o
 	$(FC) $(FCOPTS) -c $(SR_UTILS)data_io.f90 -o $@
