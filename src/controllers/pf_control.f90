@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-03-24 11:24:04 pbrowne>
+!!! Time-stamp: <2015-04-03 10:57:16 pbrowne>
 !!!
 !!!    module to hold all the information to control the the main program
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -96,6 +96,9 @@ module pf_control
                               !< - S -- read model states from
                               !< start folder where each ensemble member
                               !< is stored in the file start/##.state
+                              !< - Z -- do not perturb particles.
+                              !< This will assume each model is 
+                              !< received with initial spread
      
   end type pf_control_type
   type(pf_control_type), save :: pf !< the derived data type holding all controlling data
