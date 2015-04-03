@@ -106,7 +106,7 @@ echo "Running comms initialise tests"
 
 
 
-
+rm -rf stuff
 for mdls in {1..5}
 do
     mdlprocs=$(($mdls * 5))
@@ -129,7 +129,6 @@ done
 
 echo "Running comms sending tests"
 echo 2 > timesteps
-rm stuff
 for mdls in {1..5}
 do
     mdlprocs=$(($mdls * 5))
