@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-03-20 22:02:03 pbrowne>
+!!! Time-stamp: <2015-04-03 10:32:24 pbrowne>
 !!!
 !!!    This file must be adapted to the specific model in use.
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -319,3 +319,23 @@ subroutine Bhalf(nrhs,x,bx)
   stop 'Bhalf not yet implemented'
   
 end subroutine Bhalf
+
+!> Subroutine to read observation from a file
+!! \n
+!> @param[out] y The observation
+!! @param[in] t the current timestep
+subroutine get_observation_data(y,t)
+
+  use sizes
+  implicit none
+  integer, parameter :: rk = kind(1.0D0)
+  integer, intent(in) :: t
+  real(kind=rk), dimension(obs_dim), intent(out) :: y
+
+
+  !This is set up tp call the routine written which will
+  !work to do twin experiments. If you want to use your own
+  !observations you should implement your own method of reading
+  !in the observations
+  call default_get_observation_data(y,t)
+end subroutine get_observation_data

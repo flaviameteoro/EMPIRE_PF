@@ -1,6 +1,6 @@
 /** \mainpage EMPIRE Data Assimilation Documentation
 \author Philip A. Browne <a href="mailto:p.browne@reading.ac.uk">p.browne@reading.ac.uk</a>
-\date Time-stamp: <2015-03-24 11:41:35 pbrowne>
+\date Time-stamp: <2015-04-03 10:41:35 pbrowne>
 
 \section Methods EMPIRE Methods
 For a list of methods implemented in EMPIRE, please click here: \link methods \endlink
@@ -101,6 +101,8 @@ The file model_specific.f90 should be editted for the specific model which you w
 - \link dist_st_ob \endlink This specifies the distance between a an element of the state vector and an element of the observation vector
 
 - \link bhalf \endlink This is the square root of the background error covariance matrix \f$B^{\frac{1}{2}}\f$
+
+- \link get_observation_data \endlink This subroutine must return the observation data at, or subsequently to, the given timestep. This routine only needs to be editted if you wish to use your own observations. It is set up to work automatically with pseudo-observations for running twin experiments.
 
 Not all of these subroutines will be required for each filtering method you wish to use, so it may be advantageous to only implement the necessary ones.
 
@@ -231,9 +233,9 @@ mpirun -np 1 model : -np 1 empire
 \endcode
 
 \section Observations Observations
-To use real observations (i.e. those not generated automatically in twin experiment mode) the user must change the subroutine \link get_observation_data get_observation_data\endlink in data_io.f90.
+To use real observations (i.e. those not generated automatically in twin experiment mode) the user must change the subroutine \link get_observation_data get_observation_data\endlink in model_specific.f90.
 
-When called, \link get_observation_data get_observation_data\endlink must return the vector of observations \f$y\f$ that corresponds to the observation on, subsequently to, the current timestep which is stored in the variable \link pf_control::pf_control_type::timestep pf\%timestep\endlink within the module pf_control.
+When called, \link get_observation_data get_observation_data\endlink must return the vector of observations \f$y\f$ that corresponds to the observation on, subsequently to, the current timestep.
 
 \section detens Running a deterministic ensemble
 

@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-03-17 22:52:08 pbrowne>
+!!! Time-stamp: <2015-04-03 10:29:19 pbrowne>
 !!!
 !!!    Collection of subroutines to deal with i/o
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -30,7 +30,7 @@
 !! Uses pf%timestep to determine which observation to read
 !> @param[out] y The observation
 !! @param[in] t the current timestep
-subroutine get_observation_data(y,t)
+subroutine default_get_observation_data(y,t)
 
   use pf_control
   use sizes
@@ -53,7 +53,7 @@ subroutine get_observation_data(y,t)
   end if
   read(67) y
   close(67)
-end subroutine get_observation_data
+end subroutine default_get_observation_data
 
 !> Subroutine to save observation to a file              
 !! \n              

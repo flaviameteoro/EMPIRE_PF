@@ -184,4 +184,4 @@ clean:
 	rm -f obs/* bin/*
 
 minimal:
-	cd examples/;make minimal
+	cd examples/;make -e minimal
