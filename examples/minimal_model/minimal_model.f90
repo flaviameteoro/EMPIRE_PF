@@ -28,23 +28,52 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 program minimal_model_comms
-implicit none
-include 'mpif.h'
-integer :: mpi_err,mdl_id,cpl_root,cpl_mpi_comm
-integer :: total_timesteps,i
-call initialise_mpi(mdl_id,cpl_root,cpl_mpi_comm)
+  implicit none
+  include 'mpif.h'
+  integer :: mpi_err,mdl_id,cpl_root,cpl_mpi_comm
+  integer :: total_timesteps,i
+  integer, dimension(MPI_STATUS_SIZE) :: mpi_status
+  real(kind=kind(1.0d0)), dimension(3) :: x
+  call initialise_mpi(mdl_id,cpl_root,cpl_mpi_comm)
 
-print*,'Reading total_timesteps from standard input: '
-read*,total_timesteps
+  print*,'Reading total_timesteps from file timesteps: '
+  open(11,file='timesteps',action='read',status='old')
+  read(11,*) total_timesteps
+  close(11)
+
+  
+
+  !send the state to da code with mpi_send
+  if(mdl_id .eq. 0) then
+     call mpi_send(x,3,MPI_DOUBLE_PRECISION,cpl_root&
+          &,1,cpl_mpi_comm,mpi_err)
+     
+     !get the state back from da code with mpi_recv
+     call mpi_recv(x,3,MPI_DOUBLE_PRECISION,cpl_root&
+          &,MPI_ANY_TAG,cpl_mpi_comm,mpi_status,mpi_err)
+     print*,'Received tag = ',mpi_status(MPI_TAG)
+  end if
+  
+  do i = 1,total_timesteps
+     print*,'Timestep = ',i
+     
+     if(mdl_id .eq. 0) then
+        !send the state to da code with mpi_send
+        call mpi_send(x,3,MPI_DOUBLE_PRECISION,cpl_root&
+             &,1,cpl_mpi_comm,mpi_err)
+        
+        !get the state back from da code with mpi_recv
+        call mpi_recv(x,3,MPI_DOUBLE_PRECISION,cpl_root&
+             &,MPI_ANY_TAG,cpl_mpi_comm,mpi_status,mpi_err)
+        print*,'Received tag = ',mpi_status(MPI_TAG)
+     end if
+  end do
+  
 
 
-do i = 1,total_timesteps
-
-end do
 
 
-
-call mpi_finalize(mpi_err)
+  call mpi_finalize(mpi_err)
 contains
   subroutine initialise_mpi(mdl_id,cpl_root,cpl_mpi_comm)
     implicit none
@@ -144,7 +173,7 @@ contains
        else
           print*,'mpi_comm_size unsuccessful'
        end if
-    
+
        call mpi_comm_rank(cpl_mpi_comm,particle_id,mpi_err)
        if(mpi_err .eq. 0) then    
           print*,'mpi_comm_rank successful'
@@ -152,7 +181,7 @@ contains
        else
           print*,'mpi_comm_rank unsuccessful'
        end if
-       
+
        nda = world_size-models_size;nens = nens - nda
        cpl_root = ((nda*particle_id)/nens)+nens
     else

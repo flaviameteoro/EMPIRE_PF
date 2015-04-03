@@ -68,19 +68,25 @@ outcheck()
 grep=/bin/grep
 NC='\033[0m'
 dir=`pwd`
+MPIRUN=/usr/bin/mpirun
+MPIRUNOPTS="--output-filename out"
+
+commsfile=../src/utils/comms.f90
 
 
-
-
-
-
-
-
-
-
-
-
-
+version=$($grep empire_version= $commsfile | cut -f2 -d=)
+red EMPIRE VERSION detected as $version in $commsfile
+if [[ "$version" = "1" ]]; then
+    minmdl=../bin/minimal_model
+    minmdlcomm=../bin/minimal_model_comms
+    echo 3 > state_dim
+elif [[ "$version" = "2" ]]; then
+    minmdl=../bin/minimal_model_v2
+    minmdlcomm=../bin/minimal_model_comms_v2
+else
+    red ERROR: version not supported by these tests.
+    exit -1
+fi
 
 
 echo "Moving to empire base directory"
@@ -97,8 +103,8 @@ echo "Moving back to test directory"
 test cd $dir
 
 echo "Running comms initialise tests"
-MPIRUN=/usr/bin/mpirun
-MPIRUNOPTS="--output-filename out"
+
+
 
 
 for mdls in {1..5}
@@ -108,7 +114,7 @@ do
     do
 	for i in $(eval echo {1..$mdls})
 	do
-	    echo "-np 5 ../bin/minimal_model_comms_v2 : " >> stuff
+	    echo "-np 5 $minmdlcomm : " >> stuff
 	done
 	for j in $(eval echo {1..$emps})
 	do
@@ -123,6 +129,7 @@ done
 
 echo "Running comms sending tests"
 echo 2 > timesteps
+rm stuff
 for mdls in {1..5}
 do
     mdlprocs=$(($mdls * 5))
@@ -130,7 +137,7 @@ do
     do
 	for i in $(eval echo {1..$mdls})
 	do
-	    echo "-np 5 ../bin/minimal_model_v2 : " >> stuff
+	    echo "-np 5 $minmdl : " >> stuff
 	done
 	for j in $(eval echo {1..$emps})
 	do
@@ -143,7 +150,7 @@ do
     done
 done
 rm timesteps
-
+rm state_dim
 
 echo All tests of comms completed successfully.
 
