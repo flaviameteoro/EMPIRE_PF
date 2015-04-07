@@ -1,9 +1,9 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!    Lorenz63_empire.f90 Implements Lorenz 1963 model with EMPIRE coupling
+!    Lorenz96_empire.f90 Implements Lorenz 1996 model with EMPIRE coupling
 !
 !The MIT License (MIT)
 !
-!Copyright (c) 2014 Philip A. Browne
+!Copyright (c) 2015 Philip A. Browne
 !
 !Permission is hereby granted, free of charge, to any person obtaining a copy
 !of this software and associated documentation files (the "Software"), to deal
@@ -26,52 +26,80 @@
 !Email: p.browne@reading.ac.uk
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-program lorenz63_v2
+program lorenz96_v2
   implicit none
   include 'mpif.h'
-  real(kind=kind(1.0D0)) :: t,sigma,rho,beta,dt,tstart,tstop
-  real(kind=kind(1.0D0)), dimension(3) :: x,k1,k2,k3,k4
+  real(kind=kind(1.0D0)) :: dt=1.0d-2
+  real(kind=kind(1.0D0)), allocatable, dimension(:) :: x,k1,k2,k3,k4
+  real(kind=kind(1.0d0)) :: F=8.0d0
+  integer :: N=40
+  integer :: total_timesteps=100
+  integer :: t
   integer :: mpi_err,mdl_rank,cpl_root,cpl_mpi_comm
-  integer :: tag
   real(kind=kind(1.0d0)), dimension(0) :: send_null
-  call initialise_mpi_v2(mdl_rank,cpl_root,cpl_mpi_comm,3)
-  tstart =0.0D0 ; dt = 0.01D0 ; tstop = real(40*100)*dt
-  sigma = 10.0D0 ; rho = 28.0D0 ; beta = 8.0D0 /3.0D0
-  x = (/ 1.508870D0, -1.531271D0 , 25.46091D0 /)
+  integer :: tag
+  integer :: ios
+  logical :: l96_exists
+
+  namelist/l96/N,&
+       &total_timesteps,&
+       &F,&
+       &dt
+
+  inquire(file='l96.nml', exist=l96_exists)
+  if(l96_exists) then
+     open(32,file='l96.nml',iostat=ios,action='read'&
+          &,status='old')
+     if(ios .ne. 0) stop 'Cannot open l96.nml'
+     read(32,nml=l96) 
+     close(32)
+  end if
+
+
+  call initialise_mpi_v2(mdl_rank,cpl_root,cpl_mpi_comm)
+
+  call empire_process_dimensions(N,cpl_root,cpl_mpi_comm)
+  allocate(x(N),k1(N),k2(N),k3(N),k4(N))
+  x = F
+  x(N/2) = F+0.05
+  print*,x
+
+
   !send the state to da code with mpi_gatherv
-  call mpi_gatherv(x,3,MPI_DOUBLE_PRECISION,x&
-       &,3,3,MPI_DOUBLE_PRECISION,cpl_root&
+  call mpi_gatherv(x,N,MPI_DOUBLE_PRECISION,x&
+       &,N,N,MPI_DOUBLE_PRECISION,cpl_root&
        &,cpl_mpi_comm,mpi_err)
 
 
   !get the state back from da code with mpi_gatherv
   call mpi_scatterv(send_null,0,0,MPI_DOUBLE_PRECISION,x&
-       &,3,MPI_DOUBLE_PRECISION,cpl_root,cpl_mpi_comm,mpi_err)
+       &,N,MPI_DOUBLE_PRECISION,cpl_root,cpl_mpi_comm,mpi_err)
   !get the tag from the da code
   call mpi_bcast(tag,1,mpi_integer,cpl_root,cpl_mpi_comm,mpi_err)
 2 continue
-  t = tstart
-  do; if ( t .ge. tstop -1.0D-10) exit
-     k1 = f (x                  , sigma , rho , beta )
-     k2 = f (x +0.5D0 * dt * k1 , sigma , rho , beta )
-     k3 = f (x +0.5D0 * dt * k2 , sigma , rho , beta )
-     k4 = f (x +        dt * k3 , sigma , rho , beta )
+
+
+  do t = 1,total_timesteps
+     k1 = g (x                  , N , F )
+     k2 = g (x +0.5D0 * dt * k1 , N , F )
+     k3 = g (x +0.5D0 * dt * k2 , N , F )
+     k4 = g (x +        dt * k3 , N , F )
      x = x + dt *( k1 + 2.0D0 *( k2 + k3 ) + k4 )/6.0D0
 
-     !send the state to da code with mpi_gatherv
-     call mpi_gatherv(x,3,MPI_DOUBLE_PRECISION,x&
-          &,3,3,MPI_DOUBLE_PRECISION,cpl_root&
-          &,cpl_mpi_comm,mpi_err)
 
+     !send the state to da code with mpi_gatherv
+     call mpi_gatherv(x,N,MPI_DOUBLE_PRECISION,x&
+          &,N,N,MPI_DOUBLE_PRECISION,cpl_root&
+          &,cpl_mpi_comm,mpi_err)
 
      !get the state back from da code with mpi_gatherv
      call mpi_scatterv(send_null,0,0,MPI_DOUBLE_PRECISION,x&
-          &,3,MPI_DOUBLE_PRECISION,cpl_root,cpl_mpi_comm,mpi_err)
+          &,N,MPI_DOUBLE_PRECISION,cpl_root,cpl_mpi_comm,mpi_err)
      !get the tag from the da code
-     call mpi_bcast(tag,1,mpi_integer,cpl_root,cpl_mpi_comm,mpi_err)   
+     call mpi_bcast(tag,1,mpi_integer,cpl_root,cpl_mpi_comm,mpi_err)
 
-     t = t + dt
-     print*,x(1),x(2),x(3)
+     print*,x
+
      select case(tag)
      case(2)
         go to 2
@@ -80,19 +108,26 @@ program lorenz63_v2
      case default
      end select
 
+
+
   end do
 3 continue
   call mpi_finalize(mpi_err)
-contains
-  function f (x , sigma , rho , beta )
-    implicit none
-    real(kind=kind(1.0D0)),intent(in),dimension (3) :: x
-    real(kind=kind(1.0D0)),dimension(3) :: f
-    real(kind=kind(1.0D0)),intent(in) :: sigma , rho , beta
-    f = (/sigma *(x(2)-x(1)),x(1)*(rho-x(3)) -x(2),x(1)*x(2)-beta*x(3)/)
-  end function f
 
-  subroutine initialise_mpi_v2(mdl_rank,cpl_root,cpl_mpi_comm,state_dim)
+contains
+  function g (x , N, F )
+    implicit none
+    real(kind=kind(1.0D0)),intent(in),dimension(0:N-1) :: x
+    integer, intent(in) :: N
+    real(kind=kind(1.0D0)),dimension(0:N-1) :: g
+    real(kind=kind(1.0D0)),intent(in) :: F
+    integer :: j
+    do j = 0,N-1
+       g(j) = ( x(modulo(j+1,N)) -x( modulo(j-2,N)) )*&
+            &x(modulo(j-1,N)) - x(j) + F
+    end do
+  end function g
+  subroutine initialise_mpi_v2(mdl_rank,cpl_root,cpl_mpi_comm)
 
 
     implicit none
@@ -101,7 +136,6 @@ contains
     integer, intent(out) :: mdl_rank
     integer, intent(out) :: cpl_root    
     integer, intent(out) :: cpl_mpi_comm
-    integer, intent(in) :: state_dim
 
     integer, parameter :: mdl_num_proc=1
     integer :: mdl_mpi_comm
@@ -288,14 +322,24 @@ contains
 
 
 
-    if(msg) print*,'doing a gather on cpl_mpi_comm'
-    call mpi_gather(state_dim,1,MPI_INTEGER,state_dim&
-         &,1,MPI_INTEGER,cpl_root,cpl_mpi_comm,mpi_err)
-    if(msg) print*,'finished the gather on cpl_mpi_comm'
-
-
 
   end subroutine initialise_mpi_v2
 
+  subroutine empire_process_dimensions(N,cpl_root,cpl_mpi_comm)
+    implicit none
+    include 'mpif.h'
+    integer, intent(in) :: N
+    integer, intent(in) :: cpl_root
+    integer, intent(in) :: cpl_mpi_comm
+    integer :: mpi_err
+    logical :: msg = .true.
+    
+    if(msg) print*,'called empire_process_dimensions'
+    call mpi_gather(N,1,MPI_INTEGER,N&
+         &,1,MPI_INTEGER,cpl_root,cpl_mpi_comm,mpi_err)
+    if(msg) print*,'finished the gather on cpl_mpi_comm for empire_process_dimensions'  
+  end subroutine empire_process_dimensions
 
-end program lorenz63_v2
+
+
+end program lorenz96_v2

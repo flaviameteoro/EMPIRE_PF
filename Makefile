@@ -170,6 +170,11 @@ export
 lorenz63:
 	cd models/lorenz63;make -e
 
+lorenz96:
+	cd models/lorenz96;make -e
+
+lorenz: lorenz63 lorenz96
+
 linear:
 	cd models/linear;make -e
 

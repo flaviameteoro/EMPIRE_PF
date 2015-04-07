@@ -11,6 +11,9 @@ all: linear
 
 linear: 
 	$(FC) $(FCOPTS) $(LOADOPTS) -o $(BIN)linear_empire_vader linear_empire_vader.f90 $(LIB_LIST)
+	@echo Created file executable $(BIN)linear_empire_vader
+	$(FC) $(FCOPTS) $(LOADOPTS) -o $(BIN)linear_empire_vader_v2 linear_empire_vader_v2.f90 $(LIB_LIST)
+	@echo Created file executable $(BIN)linear_empire_vader_v2
 
 clean:
-	rm -rf *.o $(BIN)linear_empire_vader *.mod
+	rm -rf *.o $(BIN)linear_empire_vader *.mod$(BIN)linear_empire_vader_v2

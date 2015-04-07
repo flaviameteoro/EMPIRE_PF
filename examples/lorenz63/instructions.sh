@@ -21,7 +21,7 @@ dir=`pwd`
 ####################################################
 
 F90=mpif90
-mdlex=lorenz63_empire_vader
+mdlex=lorenz63
 empex=empire_4denvar
 n=24
 

@@ -1,5 +1,7 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!    Lorenz96_empire.f90 Implements Lorenz 1996 model with EMPIRE coupling
+!    linear_empire_vader.f90 Implements a linear model with EMPIRE
+!    coupling extended to include reverse communication (VADER)
+!
 !
 !The MIT License (MIT)
 !
@@ -26,108 +28,113 @@
 !Email: p.browne@reading.ac.uk
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-program lorenz96_v2
+!> program to implement a simple linear model of no use to anyone
+!! but for testing and debugging purposes :)
+!!
+!! NOTE: THIS PROGRAM ***MUST*** RECIEVE A COUPLET OF INTEGERS
+!!       FROM THE DATA ASSIMILATION CODE CONTAINING 
+!!
+!!       FIRST : THE SIZE OF THE DIMENSION OF THE MODEL
+!!
+!!       SECOND: THE NUMBER OF TIMESTEPS THE MODEL SHOULD DO
+!!
+!!       THIS IS A BIT WEIRD, AS NORMALLY THE MODEL DICTATES
+!!       SUCH THINGS. BUT THIS IS A USELESS TOY MODEL.
+!!       SO WE MIGHT AS WELL MAKE IT EASY TO USE TO TEST DA.
+program linear
   implicit none
   include 'mpif.h'
-  real(kind=kind(1.0D0)) :: dt=1.0d-2
-  real(kind=kind(1.0D0)), allocatable, dimension(:) :: x,k1,k2,k3,k4
-  real(kind=kind(1.0d0)) :: F=8.0d0
-  integer :: N=40
-  integer :: total_timesteps=100
-  integer :: t
+  real(kind=kind(1.0D0)), dimension(:), allocatable :: x
+  integer :: i,n,maxt
+  integer, dimension(2) :: data
   integer :: mpi_err,mdl_rank,cpl_root,cpl_mpi_comm
+  integer, dimension(MPI_STATUS_SIZE) :: mpi_status
   real(kind=kind(1.0d0)), dimension(0) :: send_null
   integer :: tag
-  integer :: ios
-  logical :: l96_exists
+  
+  ! SET UP EMPIRE COMMUNICATORS
+  call initialise_mpi_v2(mdl_rank,cpl_root,cpl_mpi_comm)
+  
+  ! GET THE COUPLET FROM THE DATA ASSIMILATION CODE
+  call mpi_recv(data,2,MPI_INTEGER,cpl_root,MPI_ANY_TAG,cpl_mpi_comm&
+       &,mpi_status,mpi_err)
 
-  namelist/l96/N,&
-       &total_timesteps,&
-       &F,&
-       &dt
-
-  inquire(file='l96.nml', exist=l96_exists)
-  if(l96_exists) then
-     open(32,file='l96.nml',iostat=ios,action='read'&
-          &,status='old')
-     if(ios .ne. 0) stop 'Cannot open l96.nml'
-     read(32,nml=l96) 
-     close(32)
-  end if
+  ! PUT THE DATA INTO THE RIGHT VARIABLES AND ALLOCATE
+  n = data(1)
+  maxt = data(2)
+  allocate(x(n))
+  x = 1.0d0
 
 
-  call initialise_mpi_v2(mdl_rank,cpl_root,cpl_mpi_comm,N)
+  call empire_process_dimensions(n,cpl_root,cpl_mpi_comm)
 
-
-  allocate(x(N),k1(N),k2(N),k3(N),k4(N))
-  x = F
-  x(N/2) = F+0.05
-  print*,x
-
-
-  !send the state to da code with mpi_gatherv
-  call mpi_gatherv(x,N,MPI_DOUBLE_PRECISION,x&
-       &,N,N,MPI_DOUBLE_PRECISION,cpl_root&
+  
+  ! DO THE INITIAL SEND AND RECIEVES FROM EMPIRE
+  call mpi_gatherv(x,3,MPI_DOUBLE_PRECISION,x&
+       &,3,3,MPI_DOUBLE_PRECISION,cpl_root&
        &,cpl_mpi_comm,mpi_err)
-
 
   !get the state back from da code with mpi_gatherv
   call mpi_scatterv(send_null,0,0,MPI_DOUBLE_PRECISION,x&
-       &,N,MPI_DOUBLE_PRECISION,cpl_root,cpl_mpi_comm,mpi_err)
+       &,3,MPI_DOUBLE_PRECISION,cpl_root,cpl_mpi_comm,mpi_err)
   !get the tag from the da code
   call mpi_bcast(tag,1,mpi_integer,cpl_root,cpl_mpi_comm,mpi_err)
+
+
 2 continue
 
+  write(6,*) 0,x
+  ! START THE TIMESTEP LOOP
+  do i = 1,maxt
 
-  do t = 1,total_timesteps
-     k1 = g (x                  , N , F )
-     k2 = g (x +0.5D0 * dt * k1 , N , F )
-     k3 = g (x +0.5D0 * dt * k2 , N , F )
-     k4 = g (x +        dt * k3 , N , F )
-     x = x + dt *( k1 + 2.0D0 *( k2 + k3 ) + k4 )/6.0D0
+     ! CALL THE SIMPLE LINEAR MODEL AND UPDATE MODEL STATE
+     x = f(n,x)
 
-
-     !send the state to da code with mpi_gatherv
-     call mpi_gatherv(x,N,MPI_DOUBLE_PRECISION,x&
-          &,N,N,MPI_DOUBLE_PRECISION,cpl_root&
+     ! DO THE TIMESTEP LOOP SEND AND RECIEVES WITH EMPIRE
+     call mpi_gatherv(x,3,MPI_DOUBLE_PRECISION,x&
+          &,3,3,MPI_DOUBLE_PRECISION,cpl_root&
           &,cpl_mpi_comm,mpi_err)
 
      !get the state back from da code with mpi_gatherv
      call mpi_scatterv(send_null,0,0,MPI_DOUBLE_PRECISION,x&
-          &,N,MPI_DOUBLE_PRECISION,cpl_root,cpl_mpi_comm,mpi_err)
+          &,3,MPI_DOUBLE_PRECISION,cpl_root,cpl_mpi_comm,mpi_err)
      !get the tag from the da code
-     call mpi_bcast(tag,1,mpi_integer,cpl_root,cpl_mpi_comm,mpi_err)
+     call mpi_bcast(tag,1,mpi_integer,cpl_root,cpl_mpi_comm,mpi_err)   
 
-     print*,x
+     write(6,*) i,x
+     if(tag .eq. 1) then
+        go to 1 !simply continue code
+     elseif(tag .eq. 2) then
+        go to 2 !restart code
+     elseif(tag .eq. 3) then
+        go to 3 !end code
+     else
+        print*,'Linear model error: unknown MPI_TAG: ',tag
+        stop -1
+     end if
+1    continue
 
-     select case(tag)
-     case(2)
-        go to 2
-     case(3)
-        go to 3
-     case default
-     end select
 
-
-
+     !END TIMESTEP LOOP
   end do
 3 continue
+  
+  ! END CODE
+  deallocate(x)
   call mpi_finalize(mpi_err)
-
 contains
-  function g (x , N, F )
+
+  ! DEFINE A SIMPLE LINEAR MODEL
+  function f (n,x)
     implicit none
-    real(kind=kind(1.0D0)),intent(in),dimension(0:N-1) :: x
-    integer, intent(in) :: N
-    real(kind=kind(1.0D0)),dimension(0:N-1) :: g
-    real(kind=kind(1.0D0)),intent(in) :: F
-    integer :: j
-    do j = 0,N-1
-       g(j) = ( x(modulo(j+1,N)) -x( modulo(j-2,N)) )*&
-            &x(modulo(j-1,N)) - x(j) + F
-    end do
-  end function g
-  subroutine initialise_mpi_v2(mdl_rank,cpl_root,cpl_mpi_comm,state_dim)
+    integer, intent(in) :: n
+    real(kind=kind(1.0D0)),intent(in),dimension (n) :: x
+    real(kind=kind(1.0D0)),dimension(n) :: f
+    f = x
+  end function f
+
+  ! STANDARD EMPIRE INITIALISATION SUBROUTINE
+  subroutine initialise_mpi_v2(mdl_rank,cpl_root,cpl_mpi_comm)
 
 
     implicit none
@@ -136,7 +143,6 @@ contains
     integer, intent(out) :: mdl_rank
     integer, intent(out) :: cpl_root    
     integer, intent(out) :: cpl_mpi_comm
-    integer, intent(in) :: state_dim
 
     integer, parameter :: mdl_num_proc=1
     integer :: mdl_mpi_comm
@@ -323,13 +329,24 @@ contains
 
 
 
-    if(msg) print*,'doing a gather on cpl_mpi_comm'
-    call mpi_gather(state_dim,1,MPI_INTEGER,state_dim&
-         &,1,MPI_INTEGER,cpl_root,cpl_mpi_comm,mpi_err)
-    if(msg) print*,'finished the gather on cpl_mpi_comm'
 
 
 
   end subroutine initialise_mpi_v2
 
-end program lorenz96_v2
+  subroutine empire_process_dimensions(N,cpl_root,cpl_mpi_comm)
+    implicit none
+    include 'mpif.h'
+    integer, intent(in) :: N
+    integer, intent(in) :: cpl_root
+    integer, intent(in) :: cpl_mpi_comm
+    integer :: mpi_err
+    logical :: msg = .true.
+    
+    if(msg) print*,'called empire_process_dimensions'
+    call mpi_gather(N,1,MPI_INTEGER,N&
+         &,1,MPI_INTEGER,cpl_root,cpl_mpi_comm,mpi_err)
+    if(msg) print*,'finished the gather on cpl_mpi_comm for empire_process_dimensions'  
+  end subroutine empire_process_dimensions
+
+end program linear

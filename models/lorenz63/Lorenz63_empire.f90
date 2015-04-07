@@ -34,7 +34,7 @@ program lorenz63
   integer :: mpi_err,mdl_id,cpl_root,cpl_mpi_comm
   integer, dimension(MPI_STATUS_SIZE) :: mpi_status
   call initialise_mpi(mdl_id,cpl_root,cpl_mpi_comm)
-  tstart =0.0D0 ; dt = 0.01D0 ; tstop = real(40*100)*dt
+  tstart =0.0D0 ; dt = 0.01D0 ; tstop = real(24)*dt
   sigma = 10.0D0 ; rho = 28.0D0 ; beta = 8.0D0 /3.0D0
   x = (/ 1.508870D0, -1.531271D0 , 25.46091D0 /)
   call mpi_send(x,3,MPI_DOUBLE_PRECISION,cpl_root&
@@ -43,6 +43,7 @@ program lorenz63
        &,MPI_ANY_TAG,cpl_mpi_comm,mpi_status,mpi_err)
 2 continue
   t = tstart
+  print*,t,x
   do; if ( t .ge. tstop -1.0D-10) exit
      k1 = f (x                  , sigma , rho , beta )
      k2 = f (x +0.5D0 * dt * k1 , sigma , rho , beta )
@@ -54,15 +55,18 @@ program lorenz63
      call mpi_recv(x,3,MPI_DOUBLE_PRECISION,cpl_root&
           &,MPI_ANY_TAG,cpl_mpi_comm,mpi_status,mpi_err)
      t = t + dt
-     print*,x(1),x(2),x(3)
+     print*,t,x(1),x(2),x(3)
      select case(mpi_status(MPI_TAG))
+     case(1)
+        continue
      case(2)
         go to 2
      case(3)
         go to 3
      case default
+        print*,'Unknown mpi tag received: ',mpi_status(MPI_TAG)
+        stop 4
      end select
-
   end do
 3 continue
   call mpi_finalize(mpi_err)
