@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-04-01 22:32:58 pbrowne>
+!!! Time-stamp: <2015-04-09 14:49:04 pbrowne>
 !!!
 !!!    The main program to run EMPIRE
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -193,16 +193,7 @@ program empire
 
 
   !send the final state to the model to allow it to finish cleanly
-  tag = 3        
-  DO k = 1,pf%count
-     particle = pf%particles(k)
-     CALL MPI_ISEND(pf%psi(:,k), state_dim , MPI_DOUBLE_PRECISION, &
-          particle-1, tag, CPL_MPI_COMM, requests(k), mpi_err)
-     PRINT*,'Particle filter ',pfrank,'has sent final state_vector over mpi &
-          &to ensemble member ',particle
-  END DO
-  CALL MPI_WAITALL(pf%count,requests,mpi_statuses, mpi_err)
-
+  call send_all_models(state_dim,pf%count,pf%psi,3)
 
   else
 
