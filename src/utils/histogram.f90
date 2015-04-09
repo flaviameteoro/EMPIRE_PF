@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-09-22 15:46:43 pbrowne>
+!!! Time-stamp: <2015-04-09 16:15:07 pbrowne>
 !!!
 !!!    Module to control what variables are used to generate rank histograms
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -33,7 +33,43 @@ module histogram_data
 
 contains
   !> subroutine to read from variables_hist.dat which 
-  !! variables to be used to make the rank histograms
+  !! holds the variables to be used to make the rank histograms
+  !!
+  !! In order for histograms to be output, the file
+  !! "variables_hist.dat" must contain the following infomation:
+  !!
+  !! - rhn_n -- the number of different rank histograms to be output
+  !!
+  !! - the numbers of variables to be included in each rank histogram
+  !!
+  !! - the index of the state vector for each different variable in
+  !! each different rank histogram, grouped by the different histograms
+  !!
+  !! So as an example, suppose we wanted to produce 3 rank histograms,
+  !! the first relating to the 10th, and 16th variables in the
+  !! state vector, the second containing the 1st, 2nd, 56th and 98th
+  !! variables of the state vector and the final rank histogram
+  !! relating to the 6th, 11th, 19th, 45th and 32nd variables. Then
+  !! variables_hist.dat would look as follows:
+  !!
+  !! \verbatim
+  !! 3
+  !! 2
+  !! 4
+  !! 5
+  !! 10
+  !! 16
+  !! 1
+  !! 2
+  !! 56
+  !! 98
+  !! 6
+  !! 11
+  !! 19
+  !! 45
+  !! 32
+  !! \endverbatim
+
   subroutine load_histogram_data
     implicit none
     integer :: i

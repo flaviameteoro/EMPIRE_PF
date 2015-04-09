@@ -1,6 +1,6 @@
 /** \mainpage EMPIRE Data Assimilation Documentation
 \author Philip A. Browne <a href="mailto:p.browne@reading.ac.uk">p.browne@reading.ac.uk</a>
-\date Time-stamp: <2015-04-03 10:41:35 pbrowne>
+\date Time-stamp: <2015-04-09 16:12:41 pbrowne>
 
 \section Methods EMPIRE Methods
 For a list of methods implemented in EMPIRE, please click here: \link methods \endlink
@@ -256,7 +256,7 @@ In \link pf_control::parse_pf_parameters pf_parameters.dat \endlink set the foll
 
 \section rankhistograms Outputting rank histograms
 
-\todo Discuss this here.
+This is controlled by \link pf_control::pf_control_type::use_talagrand use_talagrand \endlink in \link pf_control::parse_pf_parameters pf_parameters.dat \endlink  and for more information see \link histogram_data::load_histogram_data load_histogram_data \endlink.
 
 \section trajectories Outputting trajectories of model variables
 
