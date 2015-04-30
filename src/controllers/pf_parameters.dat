@@ -15,7 +15,7 @@ use_var=.false.,
 use_rmse=.true.,
 gen_Q=.false.,
 use_traj=.true.,
-type='EW',
+filter='EW',
 init='S'
 /
 
