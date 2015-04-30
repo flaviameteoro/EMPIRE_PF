@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-04-03 15:04:44 pbrowne>
+!!! Time-stamp: <2015-04-30 14:44:09 pbrowne>
 !!!
 !!!    Module and subroutine to intitalise EMPIRE coupling to models
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -307,7 +307,7 @@ contains
 
 
 
-    pf%particles = particles
+    pf%particles = particles+1
     pf%count = cnt
     pf%nens = nens
   end subroutine initialise_mpi_v2
