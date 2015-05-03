@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-04-09 16:03:30 pbrowne>
+!!! Time-stamp: <2015-05-03 15:30:44 pbrowne>
 !!!
 !!!    module to hold all the information to control the the main program
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -73,7 +73,7 @@ module pf_control
                               !< currently this has a number of
                               !<options:
                               !< - SE -- a stochastic ensemble
-                              !< - DE -- a stochastic ensemble
+                              !< - DE -- a deterministic ensemble
                               !< - SI -- the SIR filter
                               !< - LE -- the L-ETKF with noise
                               !< - LD -- the L-ETKF without noise
