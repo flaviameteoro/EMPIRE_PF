@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-05-03 15:30:44 pbrowne>
+!!! Time-stamp: <2015-05-03 15:39:38 pbrowne>
 !!!
 !!!    module to hold all the information to control the the main program
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -302,6 +302,8 @@ contains
          print*,'Running the equivalent weights particle filter'
       case('SE')
          print*,'Running a stochastic ensemble'
+      case('DE')
+         print*,'Running a deterministic ensemble'
       case('SI')
          print*,'Running the SIR particle filter'
       case('ET')
