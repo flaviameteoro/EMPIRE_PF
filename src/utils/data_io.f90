@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-04-03 10:29:19 pbrowne>
+!!! Time-stamp: <2015-05-05 12:25:40 pbrowne>
 !!!
 !!!    Collection of subroutines to deal with i/o
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -280,7 +280,7 @@ subroutine save_state(state,filename)
 end subroutine save_state
 
 
-!> subroutine to write the state vector to a named file
+!> subroutine to read the state vector from a named file
 !! as an unformatted fortran file
 subroutine get_state(state,filename)
   use sizes
