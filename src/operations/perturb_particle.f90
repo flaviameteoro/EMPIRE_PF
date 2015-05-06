@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-04-03 10:54:44 pbrowne>
+!!! Time-stamp: <2015-05-06 10:12:57 pbrowne>
 !!!
 !!!    Collection of routines to perturb states
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -69,6 +69,8 @@ subroutine perturb_particle(x)
      kgain = 0.0_rk
      call update_state(rdom,x,kgain,y)
      x = rdom
+  case('U')
+     call user_perturb_particle(state_dim,x)
   case('Z')
      !no perturbation. x remains as is
   case default

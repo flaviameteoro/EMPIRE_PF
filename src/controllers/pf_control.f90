@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-05-03 15:39:38 pbrowne>
+!!! Time-stamp: <2015-05-06 10:18:36 pbrowne>
 !!!
 !!!    module to hold all the information to control the the main program
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -97,6 +97,11 @@ module pf_control
                               !< - S -- read model states from
                               !< start folder where each ensemble member
                               !< is stored in the file start/##.state
+                              !< - U -- call user defined
+                              !< perturbation routine. This assumes
+                              !< the user has implemented their own
+                              !< perturbation in \link
+                              !< user_perturb_particle \endlink
                               !< - Z -- do not perturb particles.
                               !< This will assume each model is 
                               !< received with initial spread

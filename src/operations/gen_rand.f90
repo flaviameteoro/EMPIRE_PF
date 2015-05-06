@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-10-01 11:30:16 pbrowne>
+!!! Time-stamp: <2015-05-06 10:24:00 pbrowne>
 !!!
 !!!    Collection of subroutines to make multidimensional random arrays
 !!!    Copyright (C) 2014  Philip A. Browne
