@@ -1,0 +1,13 @@
+#modify the following options:
+#set FC to be the fortran compiler (mpi wrapper generally)
+FC=mpif90
+
+#set the compiliation options for the fortran compiler
+FCOPTS = -O3 -fopenmp
+FCOPTS = -fimplicit-none -Wall -fbounds-check -fbacktrace -fopenmp
+
+#set the location of the libraries
+LIB_LIST = -L$(METISDIR) -l$(METISLIB) -lblas -llapack
+
+#set the option for placing module files
+MODFLAG=-J
