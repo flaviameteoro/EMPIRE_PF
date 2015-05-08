@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-05-06 10:18:36 pbrowne>
+!!! Time-stamp: <2015-05-08 13:23:28 pbrowne>
 !!!
 !!!    module to hold all the information to control the the main program
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -114,12 +114,12 @@ contains
   !> subroutine to ensure pf_control data is ok
   subroutine set_pf_controls
       integer :: ios
-      write(6,'(A)') 'Opening pf_parameters.dat'
+      write(6,'(A)') 'Opening empire namelist file:'
 
       call parse_pf_parameters
 
       pf%efac = 0.001/pf%nens
-      write(6,'(A)') 'pf_parameters.dat successfully read to control pf code.'
+      write(6,'(A)') 'empire namelist successfully read to control pf code.'
       call flush(6)
       if(pf%human_readable .and. pf%gen_data) then
          open(64,file='pf_data',iostat=ios,action='read',status='replace')
@@ -134,9 +134,9 @@ contains
 
 
     !>subroutine to read the namelist file and save it to pf datatype
-    !!Here we read pf_parameters.dat
+    !!Here we read pf_parameters.dat or empire.nml
     !!
-    !! pf_parameters.dat is a fortran namelist file. As such, within
+    !! pf_parameters.dat or empire.nml is a fortran namelist file. As such, within
     !! it there must be a line beginning
     !!
     !! &pf_params
@@ -147,7 +147,8 @@ contains
     !! This is just the fortran standard for namelists though.
     !!
     !!
-    !! On to the content...in any order, the pf_parameters.dat may
+    !! On to the content...in any order, the pf_parameters.dat (or
+    !! empire.nml) file may
     !! contain the following things:
     !! 
     !! Integers:
@@ -181,7 +182,6 @@ contains
     !! - \link pf_control::pf_control_type::human_readable human_readable\endlink
     subroutine parse_pf_parameters
       implicit none
-      character(*), parameter :: filename='pf_parameters.dat'
       integer :: ios
 
       integer :: time_obs=-1
@@ -198,6 +198,8 @@ contains
            &,use_rmse
       character(2) :: filter='++'
       character(1) :: init='+'
+
+      logical :: file_exists
 
       namelist/pf_params/time_obs,time_bwn_obs,&
       &nudgefac,& 
@@ -224,9 +226,24 @@ contains
       use_traj = .false.
       use_rmse = .false.
 
-      open(32,file=filename,iostat=ios,action='read'&
-           &,status='old')
-      if(ios .ne. 0) stop 'Cannot open pf_parameters.dat'
+
+      inquire(file='pf_parameters.dat',exist=file_exists)
+      if(file_exists) then
+         open(32,file='pf_parameters.dat',iostat=ios,action='read'&
+              &,status='old')
+         if(ios .ne. 0) stop 'Cannot open pf_parameters.dat'
+      else
+         inquire(file='empire.nml',exist=file_exists)
+         if(file_exists) then
+            open(32,file='empire.nml',iostat=ios,action='read'&
+                 &,status='old')
+            if(ios .ne. 0) stop 'Cannot open empire.nml'
+         else
+            print*,'ERROR: cannot find pf_parameters.dat or empire.nml'
+            stop -1
+         end if
+      end if
+         
       read(32,nml=pf_params) 
       close(32)
 

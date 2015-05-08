@@ -22,7 +22,7 @@ cp bin/* run/
 # move location to the run directory
 cd run
 # copy the default input file to the same location as the executables
-cp ../src/controlers/pf_parameters.dat pf_parameters.dat
+cp ../src/controllers/pf_parameters.dat pf_parameters.dat
 # now lets run the tests to ensure that the model_specific routines 
 # are consistent. look out for fails and/or warnings in the output
 alltests
