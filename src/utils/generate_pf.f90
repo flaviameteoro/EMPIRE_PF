@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-05-07 18:18:13 pbrowne>
+!!! Time-stamp: <2015-05-08 14:43:16 pbrowne>
 !!!
 !!!    Subroutine to generate Pf matrix given ensemble members on a communicator
 !!!    Copyright (C) 2014  Philip A. Browne
