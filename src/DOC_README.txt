@@ -1,6 +1,6 @@
 /** \mainpage EMPIRE Data Assimilation Documentation
 \author Philip A. Browne <a href="mailto:p.browne@reading.ac.uk">p.browne@reading.ac.uk</a>
-\date Time-stamp: <2015-04-09 16:12:41 pbrowne>
+\date Time-stamp: <2015-05-08 10:57:22 pbrowne>
 
 \section Methods EMPIRE Methods
 For a list of methods implemented in EMPIRE, please click here: \link methods \endlink
@@ -24,7 +24,7 @@ git pull https://www.bitbucket.org/pbrowne/empire-data-assimilation.git
 
 \subsection Compiling_code Compilation of the source code
 
-The Makefile must be editted for the specific compiler setup. In the main directory you will find the file \c Makefile.
+The Makefile must be edited for the specific compiler setup. In the main directory you will find the file \c Makefile.in.
 
 Edit the variables as follows:
 - \c FC The fortran compiler
