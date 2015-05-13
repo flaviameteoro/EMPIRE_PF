@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-04-03 10:52:14 pbrowne>
+!!! Time-stamp: <2015-05-13 12:01:23 pbrowne>
 !!!
 !!!    Routines to update states
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -46,6 +46,7 @@
 
 subroutine update_state(state,fpsi,kgain,betan)
 use sizes
+implicit none
 integer, parameter :: rk=kind(1.0D0)
 real(kind=rk), dimension(state_dim), intent(out) :: state
 real(kind=rk), dimension(state_dim), intent(in) :: fpsi,kgain

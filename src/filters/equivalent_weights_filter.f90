@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-04-01 22:14:06 pbrowne>
+!!! Time-stamp: <2015-05-13 12:00:21 pbrowne>
 !!!
 !!!    Computes the equivalent weights step in the EWPF
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -196,7 +196,8 @@ subroutine equivalent_weights_filter
         
         !now do the following
         !x^n = f(x^(n-1)) + alpha(i) K (y-Hf(x_i^n-1)) + beta
-        call update_state(pf%psi(:,i),fpsi(:,i),alpha(i)*kgain,betan)
+        call update_state(pf%psi(:,i),fpsi(:,i),alpha(i)*kgain(:,i)&
+             &,betan(:,i))
         psimean = psimean + pf%psi(:,i)
      else
         pf%weight(pf%particles(i)) = huge(1.0D0)
