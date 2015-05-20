@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-05-13 12:00:21 pbrowne>
+!!! Time-stamp: <2015-05-20 16:24:54 pbrowne>
 !!!
 !!!    Computes the equivalent weights step in the EWPF
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -60,28 +60,28 @@ subroutine equivalent_weights_filter
   call send_all_models(state_dim,pf%count,pf%psi,1)
 
 
-  !store in weight_temp only those weights on this mpi thread
-  weight_temp = -huge(1.0d0)
-  do i = 1,pf%count
-     weight_temp(i) = pf%weight(pf%particles(i))
-  end do
-!  print*,'temporary weight = :'
-!  print*,weight_temp
-
-  !communicate the weights of all particles to each mpi thread
-  call mpi_allgatherv(weight_temp,pf%count,mpi_double_precision,pf%weight,gblcount&
-       &,gbldisp,mpi_double_precision,pf_mpi_comm,mpi_err)
-
-!  print*,'after allgather, pf%weight = '
-!  print*,pf%weight
-
-
-  !normalise the weights
-  pf%weight = exp(-pf%weight+maxval(pf%weight))
-  pf%weight = pf%weight/sum(pf%weight)
-  pf%weight = -log(pf%weight)
-!  print*,'weights should be normalised:'
-!  print*,pf%weight
+!!$  !store in weight_temp only those weights on this mpi thread
+!!$  weight_temp = -huge(1.0d0)
+!!$  do i = 1,pf%count
+!!$     weight_temp(i) = pf%weight(pf%particles(i))
+!!$  end do
+!!$!  print*,'temporary weight = :'
+!!$!  print*,weight_temp
+!!$
+!!$  !communicate the weights of all particles to each mpi thread
+!!$  call mpi_allgatherv(weight_temp,pf%count,mpi_double_precision,pf%weight,gblcount&
+!!$       &,gbldisp,mpi_double_precision,pf_mpi_comm,mpi_err)
+!!$
+!!$!  print*,'after allgather, pf%weight = '
+!!$!  print*,pf%weight
+!!$
+!!$
+!!$  !normalise the weights
+!!$  pf%weight = exp(-pf%weight+maxval(pf%weight))
+!!$  pf%weight = pf%weight/sum(pf%weight)
+!!$  pf%weight = -log(pf%weight)
+!!$!  print*,'weights should be normalised:'
+!!$!  print*,pf%weight
   
   !get the next observation and store it in vector y
   call get_observation_data(y,pf%timestep)
