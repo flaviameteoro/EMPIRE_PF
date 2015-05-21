@@ -1,6 +1,9 @@
 /** \mainpage EMPIRE Data Assimilation Documentation
 \author Philip A. Browne <a href="mailto:p.browne@reading.ac.uk">p.browne@reading.ac.uk</a>
-\date Time-stamp: <2015-05-08 10:57:22 pbrowne>
+\date Time-stamp: <2015-05-21 14:18:33 pbrowne>
+
+\b Contributors
+ - Mengbin Zhu - zhumengbin @ gmail.com
 
 \section Methods EMPIRE Methods
 For a list of methods implemented in EMPIRE, please click here: \link methods \endlink
@@ -102,6 +105,8 @@ The file model_specific.f90 should be editted for the specific model which you w
 
 - \link bhalf \endlink This is the square root of the background error covariance matrix \f$B^{\frac{1}{2}}\f$
 
+- \link phalf \endlink This is the application of the matrix \f$P^{\frac{1}{2}} = (Q^{-1} +H^TR^{-1}H)^{-1/2}\f$ 
+
 - \link get_observation_data \endlink This subroutine must return the observation data at, or subsequently to, the given timestep. This routine only needs to be editted if you wish to use your own observations. It is set up to work automatically with pseudo-observations for running twin experiments.
 
 Not all of these subroutines will be required for each filtering method you wish to use, so it may be advantageous to only implement the necessary ones.
@@ -175,6 +180,21 @@ The Equivalent Weights particle filter has a number of free parameters to be cho
    - \link pf_control::pf_control_type::keep keep \endlink \n
 To select the EWPF, in \link pf_control::parse_pf_parameters pf_parameters.dat \endlink set the following variables:
    - \link pf_control::pf_control_type::filter filter \endlink = 'EW'
+
+\subsubsection EZPF The Zhu and Van Leeuwen Equivalent Weights Particle Filter 
+See files @ref proposal_filter @ref equivalent_weights_filter_zhu\n
+Model specific operations required:
+ - \link q \endlink
+ - \link h \endlink
+ - \link ht \endlink
+ - \link solve_hqht_plus_r \endlink
+ - \link phalf \endlink \n
+The Zhu Equivalent Weights particle filter has a number of free parameters to be chosen. \n
+   - \link pf_control::pf_control_type::nudgefac nudgefac\endlink \n
+To select the EZPF, in \link pf_control::parse_pf_parameters pf_parameters.dat \endlink set the following variables:
+   - \link pf_control::pf_control_type::filter filter \endlink = 'EZ'
+
+
 \subsection methods_enkfs Ensemble Kalman filters
 
 \subsubsection LETKF LETKF (The Localised Ensemble Transform Kalman Filter)

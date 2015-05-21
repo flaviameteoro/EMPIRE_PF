@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-05-08 13:23:28 pbrowne>
+!!! Time-stamp: <2015-05-21 13:49:39 pbrowne>
 !!!
 !!!    module to hold all the information to control the the main program
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -77,7 +77,8 @@ module pf_control
                               !< - SI -- the SIR filter
                               !< - LE -- the L-ETKF with noise
                               !< - LD -- the L-ETKF without noise
-                              !< - EW -- the Equivalent Weights
+                              !< - EW -- the Equivalent Weights filter
+                              !< - EZ -- the Zhu equal weights filter
                               !< particle filter
      character(1) :: init     !< which method to initialise ensemble
                               !< currently this has a number of
@@ -322,6 +323,8 @@ contains
       select case(pf%filter)
       case('EW')
          print*,'Running the equivalent weights particle filter'
+      case('EZ')
+         print*,'Running the Zhu equal weights particle filter'
       case('SE')
          print*,'Running a stochastic ensemble'
       case('DE')
@@ -350,6 +353,8 @@ contains
          print*,'Please ensure that pf%filter in pf_parameters.dat is ei&
               &ther:'
          print*,'EW        the equivalent weights particle f&
+              &ilter'
+         print*,'EZ        the Zhu equal weights particle f&
               &ilter'
          print*,'SE        a stochastic ensemble'
          print*,'DE        a deterministic ensemble'

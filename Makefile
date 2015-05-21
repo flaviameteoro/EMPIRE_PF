@@ -26,7 +26,7 @@ SR_CONTS=$(current_dir)src/controllers/
 SR_USERS=$(current_dir)src/user/
 SR_TESTS=$(current_dir)src/tests/
 SR_OPERS=$(current_dir)src/operations/
-OBJSQ= sizes.o pf_couple.o Qdata.o Rdata.o equivalent_weights_filter.o comms.o gen_rand.o random_d.o proposal_filter.o histogram.o pf_control.o data_io.o model_specific.o operator_wrappers.o quicksort.o resample.o diagnostics.o perturb_particle.o update_state.o genQ.o sir_filter.o stochastic_model.o tests.o letkf_analysis.o deterministic_model.o inner_products.o trajectories.o user_perturb_particle.o generate_pf.o output_mat_tri.o matrix_pf.o
+OBJSQ= sizes.o pf_couple.o Qdata.o Rdata.o equivalent_weights_filter.o comms.o gen_rand.o random_d.o proposal_filter.o histogram.o pf_control.o data_io.o model_specific.o operator_wrappers.o quicksort.o resample.o diagnostics.o perturb_particle.o update_state.o genQ.o sir_filter.o stochastic_model.o tests.o letkf_analysis.o deterministic_model.o inner_products.o trajectories.o user_perturb_particle.o generate_pf.o output_mat_tri.o matrix_pf.o equivalent_weights_filter_zhu.o lambertw.o randperm.o
 OBJS=$(addprefix $(OBS),$(OBJSQ))
 FCOPTS+=$(MODFLAG) $(MODLOC)
 
@@ -35,6 +35,12 @@ $(OBS)output_mat_tri.o: $(SR_UTILS)output_mat_tri.f90
 
 $(OBS)matrix_pf.o: $(SR_UTILS)matrix_pf.f90
 	$(FC) $(FCOPTS) -c $(SR_UTILS)matrix_pf.f90 -o $@
+
+$(OBS)lambertw.o: $(SR_UTILS)lambertw.f90
+	$(FC) $(FCOPTS) -c $(SR_UTILS)lambertw.f90 -o $@
+
+$(OBS)randperm.o: $(SR_UTILS)randperm.f90
+	$(FC) $(FCOPTS) -c $(SR_UTILS)randperm.f90 -o $@
 
 $(OBS)generate_pf.o: $(SR_UTILS)generate_pf.f90
 	$(FC) $(FCOPTS) -c $(SR_UTILS)generate_pf.f90 -o $@
@@ -98,6 +104,9 @@ $(OBS)comms.o: $(SR_UTILS)comms.f90 $(OBS)sizes.o $(OBS)pf_control.o
 
 $(OBS)equivalent_weights_filter.o: $(SR_FILTS)equivalent_weights_filter.f90 $(OBS)random_d.o
 	$(FC) $(FCOPTS) -c $(SR_FILTS)equivalent_weights_filter.f90 -o $@
+
+$(OBS)equivalent_weights_filter_zhu.o: $(SR_FILTS)equivalent_weights_filter_zhu.f90 $(OBS)random_d.o
+	$(FC) $(FCOPTS) -c $(SR_FILTS)equivalent_weights_filter_zhu.f90 -o $@
 
 $(OBS)random_d.o: $(SR_UTILS)random_d.f90
 	$(FC) $(FCOPTS) -c $(SR_UTILS)random_d.f90 -o $@

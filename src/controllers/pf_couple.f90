@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-04-09 14:49:04 pbrowne>
+!!! Time-stamp: <2015-05-21 13:52:53 pbrowne>
 !!!
 !!!    The main program to run EMPIRE
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -24,7 +24,6 @@
 !!!	      RG6 6BB
 !!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2014-08-13 15:10:45 pbrowne>
 
 !program to run the particle filter on the model HadCM3.
 !this shall hopefully have minimal changes specific to the model.
@@ -41,11 +40,7 @@ program empire
   implicit none
   include 'mpif.h'
   integer :: i,j,k
-  integer :: mpi_err,particle,tag
-  INTEGER, DIMENSION(:), ALLOCATABLE  :: requests
-  INTEGER, DIMENSION(:,:), ALLOCATABLE  :: mpi_statuses
-  logical :: mpi_flag
-  logical, dimension(:), ALLOCATABLE :: received
+  integer :: mpi_err
   real(kind=kind(1.0d0)) :: start_t,end_t
 
 
@@ -77,44 +72,20 @@ program empire
   write(6,*) 'PF: starting to receive from model'
 
 
-  tag = 1        
-  allocate(requests(pf%count))
-  allocate(mpi_statuses(mpi_status_size,pf%count))
-  allocate(received(pf%count))
 
   start_t = mpi_wtime() 
   pf%time=mpi_wtime()
 
   if(.not. pf%gen_Q) then
 
-!!$  DO k = 1,pf%count
-!!$     particle = pf%particles(k)
-!!$     print*,'receiving  from ',particle
-!!$     CALL MPI_IRECV(pf%psi(:,k), state_dim, MPI_DOUBLE_PRECISION, &
-!!$          particle-1, tag, CPL_MPI_COMM,requests(k), mpi_err)
-!!$  end DO
+  call recv_all_models(state_dim,pf%count,pf%psi)
 
-  call irecv_all_models(state_dim,pf%count,pf%psi,requests)
-
-
-  k = 0
-  received = .false.
-  do
-     k = mod(k,pf%count)+1
-     if(.not. received(k)) then
-        particle = pf%particles(k)
-        call MPI_TEST(requests(k), mpi_flag, mpi_statuses(:,k), mpi_err)
-        
-        if(mpi_flag) then
-           received(k) = .true.
-           call perturb_particle(pf%psi(:,k))
-        end if
-     end if
-     if(all(received)) exit
+  do k = 1,pf%count
+      call perturb_particle(pf%psi(:,k))
   end do
+
   write(6,*) 'PF: All models received in pf couple' 
   call flush(6)
-
 
   call output_from_pf
   if(pf%gen_data) call save_truth(pf%psi(:,1))
@@ -130,6 +101,8 @@ program empire
         
         select case(pf%filter)
         case('EW')
+           call proposal_filter
+        case('EZ')
            call proposal_filter
         case('SI')
            call stochastic_model
@@ -157,6 +130,8 @@ program empire
      select case(pf%filter)
      case('EW')
         call equivalent_weights_filter
+     case('EZ')
+        call equivalent_weights_filter_zhu
      case('SI')
         call sir_filter
      case('SE')
@@ -210,9 +185,6 @@ program empire
   call flush(6)
 
   call MPI_Finalize(mpi_err)
-  deallocate(requests)
-  deallocate(mpi_statuses)
-  deallocate(received)
   write(*,*) 'Program couple_pf terminated successfully.'
   write(*,*) 'Time taken in running the model = ',end_t-start_t
 
