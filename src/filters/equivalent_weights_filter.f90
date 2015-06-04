@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-05-20 16:24:54 pbrowne>
+!!! Time-stamp: <2015-06-04 17:24:50 pbrowne>
 !!!
 !!!    Computes the equivalent weights step in the EWPF
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -118,7 +118,7 @@ subroutine equivalent_weights_filter
      
      call innerHQHt_plus_R_1(y_Hfpsin1(:,i),w,pf%timestep)
      
-     c(i) = pf%weight(particle) + 0.5*w
+     c(i) = pf%weight(particle) + 0.5d0*w
   end do
      
   !print*,'all models received by particle filter'
@@ -155,7 +155,7 @@ subroutine equivalent_weights_filter
   
   !compute a for each particle on this mpi thread
   do i = 1,pf%count
-     a(i) = 0.5*ddot(obs_dim,obsvv(:,i),1,y_Hfpsin1(:,i),1)
+     a(i) = 0.5d0*ddot(obs_dim,obsvv(:,i),1,y_Hfpsin1(:,i),1)
   end do
   
   call innerR_1(obs_dim,pf%count,y_Hfpsin1,e,pf%timestep)
@@ -163,9 +163,12 @@ subroutine equivalent_weights_filter
   !compute alpha for each particle on this mpi thread
   do i = 1,pf%count
      particle = pf%particles(i)
-     b(i) = 0.5*e(i) - cmax + pf%weight(particle)
+     b(i) = 0.5d0*e(i) - cmax + pf%weight(particle)
      !note the plus sign in the below equation. See Ades & van Leeuwen 2012.
-     alpha(i) = 1.0 + sqrt(1.0 - b(i)/a(i) + 1.0D-6)
+     alpha(i) = 1.0d0 + sqrt(1.0d0 - b(i)/a(i) + 1.0D-6)
+
+     if(alpha(i) .ne. alpha(i)) alpha(i) = 1.0d0 !ensure that
+     !alpha(i) is not a NaN because of roundoff errors.
      
      !        print*,'i a  b alpha'
      !        print*,i,a(i),b(i),alpha(i)
