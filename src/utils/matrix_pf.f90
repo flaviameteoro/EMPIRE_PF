@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-06-17 14:28:13 pbrowne>
+!!! Time-stamp: <2015-06-17 14:36:39 pbrowne>
 !!!
 !!!    module to deal with generating and outputting pf matrix
 !!!    Copyright (C) 2015 Philip A. Browne
@@ -35,15 +35,14 @@ module matrix_pf
      logical :: analysis      !< if true, output at all analysis times
      logical :: frequency     !< if true, output at all timesteps
      !!                          that are 0 mod k
-     integer :: output_type   !< output file type. 
-                              !!
+     integer :: output_type   !< output file type. \n
                               !! -  0 - undefined
                               !! -  1 - standard packed format (TP)
                               !! -  2 - rectangular full packed
                               !!                        format (TF)
-                              !!
+                              !! \n
                               !! Negative values will be formatted.
-                              !!
+                              !! \n
                               !! Positive values will be unformatted.
 
   end type matrix_pf_data

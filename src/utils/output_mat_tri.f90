@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-06-17 14:26:12 pbrowne>
+!!! Time-stamp: <2015-06-17 14:38:39 pbrowne>
 !!!
 !!!    Subroutine to output triangular matrix
 !!!    Copyright (C) 2015  Philip A. Browne
@@ -36,14 +36,13 @@ subroutine output_mat_tri(n,A,filename,output_type)
   character(40), intent(in) :: filename !<   the name of the file to
   !!                                          be output
   integer, intent(in) :: output_type !< output file type. 
-                              !!
                               !! -  0 - undefined
                               !! -  1 - standard packed format (TP)
                               !! -  2 - rectangular full packed
                               !!                        format (TF)
-                              !!
+                              !! \n
                               !! Negative values will be formatted.
-                              !!
+                              !! \n
                               !! Positive values will be unformatted.
 
 
@@ -80,7 +79,7 @@ subroutine output_mat_tri(n,A,filename,output_type)
   select case(abs(output_type))
   case(1) ! standard packed format (TP)
      call dtfttp('N','U',n,A,Aout,err)
-  case(2) ! rectangular full packed format (TP)
+  case(2) ! rectangular full packed format (TF)
      Aout = A
   case default
      write(*,*) 'Error in output_mat_tri, unsupported output_type'

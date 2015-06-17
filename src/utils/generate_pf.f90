@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-06-17 13:43:58 pbrowne>
+!!! Time-stamp: <2015-06-17 14:39:01 pbrowne>
 !!!
 !!!    Subroutine to generate Pf matrix given ensemble members on a communicator
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -42,7 +42,7 @@ subroutine generate_pf(stateDim,cnt,comm,x,pf)
   !< i.e. the upper triangular part of the ensemble covariance matrix stored 
   !! rectangular full packed form (see
   !! http://www.netlib.org/lapack/explore-html/db/d37/dtfttp_8f.html)
-!  !! upper triangular form (see http://www.netlib.org/lapack/lug/node123.html)
+
   
   
   real(kind=rk), dimension(stateDim) :: mean
