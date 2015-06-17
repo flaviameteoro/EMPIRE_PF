@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-06-17 14:11:54 pbrowne>
+!!! Time-stamp: <2015-06-17 14:26:12 pbrowne>
 !!!
 !!!    Subroutine to output triangular matrix
 !!!    Copyright (C) 2015  Philip A. Browne
@@ -25,7 +25,7 @@
 !!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-!> subroutine to output triangluar matrix in packed storage form
+!> subroutine to output triangluar matrix various formats
 subroutine output_mat_tri(n,A,filename,output_type)
   implicit none
   integer, parameter :: rk = kind(1.0d0)
@@ -70,7 +70,7 @@ subroutine output_mat_tri(n,A,filename,output_type)
   do
      inquire(unit=outunit,opened=opend)
      if(.not. opend) then
-        open(outunit,file=filename,action='write',form='unformatted')
+        open(outunit,file=filename,action='write',form=fm)
         exit
      else
         outunit=outunit-1

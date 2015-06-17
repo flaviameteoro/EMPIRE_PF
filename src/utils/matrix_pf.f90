@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-06-17 14:12:17 pbrowne>
+!!! Time-stamp: <2015-06-17 14:28:13 pbrowne>
 !!!
 !!!    module to deal with generating and outputting pf matrix
 !!!    Copyright (C) 2015 Philip A. Browne
@@ -74,14 +74,14 @@ contains
           if(ios .ne. 0) stop 'Cannot open empire.nml'
        else
           print*,'ERROR: cannot find pf_parameters.dat or empire.nml'
-          stop -1
+          stop '-1'
        end if
     end if
 
     read(32,nml=mat_pf) 
     close(32)
 
-    matpf%prefix=prefix
+    matpf%prefix=trim(prefix)
     matpf%analysis = analysis
     matpf%frequency= frequency
     matpf%output_type=output_type
@@ -92,7 +92,7 @@ contains
        print*,'ERROR: k in matrix_pf_data read in less than 0'
        print*,'ERROR: k should be a natural number'
        print*,'STOPPING'
-       stop -1
+       stop '-1'
     end if
 
   end subroutine read_matrix_pf_infomation
@@ -123,7 +123,7 @@ contains
     
     if(actually_output) then
 
-       write(filename,'(A,i10.10)') matpf%prefix,time
+       write(filename,'(A,i10.10)') trim(matpf%prefix),time
        
        call generate_pf(n,m,comm,x,pf)
        
