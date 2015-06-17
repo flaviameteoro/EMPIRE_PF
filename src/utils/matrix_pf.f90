@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-05-08 14:54:25 pbrowne>
+!!! Time-stamp: <2015-06-17 14:12:17 pbrowne>
 !!!
 !!!    module to deal with generating and outputting pf matrix
 !!!    Copyright (C) 2015 Philip A. Browne
@@ -35,6 +35,17 @@ module matrix_pf
      logical :: analysis      !< if true, output at all analysis times
      logical :: frequency     !< if true, output at all timesteps
      !!                          that are 0 mod k
+     integer :: output_type   !< output file type. 
+                              !!
+                              !! -  0 - undefined
+                              !! -  1 - standard packed format (TP)
+                              !! -  2 - rectangular full packed
+                              !!                        format (TF)
+                              !!
+                              !! Negative values will be formatted.
+                              !!
+                              !! Positive values will be unformatted.
+
   end type matrix_pf_data
   type(matrix_pf_data), save :: matpf
 contains
@@ -45,10 +56,10 @@ contains
     integer :: k=0
     logical :: analysis=.false.
     logical :: frequency=.false.
-    
+    integer :: output_type=0
     logical :: file_exists
     integer :: ios
-    namelist/mat_pf/k,analysis,frequency,prefix
+    namelist/mat_pf/k,analysis,frequency,prefix,output_type
 
     inquire(file='pf_parameters.dat',exist=file_exists)
     if(file_exists) then
@@ -73,6 +84,7 @@ contains
     matpf%prefix=prefix
     matpf%analysis = analysis
     matpf%frequency= frequency
+    matpf%output_type=output_type
 
     if(k.gt.0) then
        matpf%k=k
@@ -116,7 +128,7 @@ contains
        call generate_pf(n,m,comm,x,pf)
        
        call MPI_COMM_RANK(comm,rank,mpi_err)
-       if(rank .eq. root) call output_mat_tri(n,pf,filename)
+       if(rank .eq. root) call output_mat_tri(n,pf,filename,matpf%output_type)
 
     end if
 

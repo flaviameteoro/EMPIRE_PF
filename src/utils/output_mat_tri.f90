@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-05-08 14:55:02 pbrowne>
+!!! Time-stamp: <2015-06-17 14:11:54 pbrowne>
 !!!
 !!!    Subroutine to output triangular matrix
 !!!    Copyright (C) 2015  Philip A. Browne
@@ -26,18 +26,45 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 !> subroutine to output triangluar matrix in packed storage form
-subroutine output_mat_tri(n,A,filename)
+subroutine output_mat_tri(n,A,filename,output_type)
   implicit none
   integer, parameter :: rk = kind(1.0d0)
   integer, intent(in) :: n !< number of columns of matrix A
-  real(kind=rk), dimension(n*(n+1)/2) :: A !< matrix to be output in
-  !!                                          packed storage
+  real(kind=rk), intent(in), dimension(n*(n+1)/2) :: A !< matrix to be output in
+  !!                                          rectangular full packed
+  !!                                          format (TF)
   character(40), intent(in) :: filename !<   the name of the file to
   !!                                          be output
+  integer, intent(in) :: output_type !< output file type. 
+                              !!
+                              !! -  0 - undefined
+                              !! -  1 - standard packed format (TP)
+                              !! -  2 - rectangular full packed
+                              !!                        format (TF)
+                              !!
+                              !! Negative values will be formatted.
+                              !!
+                              !! Positive values will be unformatted.
 
+
+  real(kind=rk), dimension(n*(n+1)/2) :: Aout
   integer :: outunit=99
   logical :: opend
+  character(11) :: fm
+  integer :: err
+
+  if(output_type .eq. 0) then
+     write(*,*) 'Error in output_mat_tri. output_type = 0&
+          & unsupported. Stopping.'
+     stop '-4'
+  elseif(output_type .gt. 0) then
+     fm='unformatted'
+  else
+     fm='formatted'
+  end if
+
   
+
 
   !ensure unit is not opened then open file=filename
   do
@@ -50,7 +77,23 @@ subroutine output_mat_tri(n,A,filename)
      end if
   end do
 
-  write(outunit) A
+  select case(abs(output_type))
+  case(1) ! standard packed format (TP)
+     call dtfttp('N','U',n,A,Aout,err)
+  case(2) ! rectangular full packed format (TP)
+     Aout = A
+  case default
+     write(*,*) 'Error in output_mat_tri, unsupported output_type'
+     write(*,*) 'output_type=',output_type,'. Stopping'
+     stop '-4'
+  end select
+
+
+  if(output_type .gt. 0) then
+     write(outunit) Aout
+  else
+     write(outunit,*) Aout
+  end if
 
   close(outunit)
 

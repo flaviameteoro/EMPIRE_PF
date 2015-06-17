@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-05-08 14:43:16 pbrowne>
+!!! Time-stamp: <2015-06-17 13:43:58 pbrowne>
 !!!
 !!!    Subroutine to generate Pf matrix given ensemble members on a communicator
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -39,13 +39,15 @@ subroutine generate_pf(stateDim,cnt,comm,x,pf)
   real(kind=rk), dimension(stateDim,cnt), intent(in) :: x !< the
   !< ensemble members on this process
   real(kind=rk), dimension(stateDim*(stateDim+1)/2), intent(out) :: Pf !< the Pf matrix
-  !< i.e. the ensemble covariance matrix stored in packed storage in
-  !! upper triangular form (see http://www.netlib.org/lapack/lug/node123.html)
+  !< i.e. the upper triangular part of the ensemble covariance matrix stored 
+  !! rectangular full packed form (see
+  !! http://www.netlib.org/lapack/explore-html/db/d37/dtfttp_8f.html)
+!  !! upper triangular form (see http://www.netlib.org/lapack/lug/node123.html)
   
   
   real(kind=rk), dimension(stateDim) :: mean
   real(kind=rk), dimension(stateDim,cnt) :: xp !< ensemble
-  !perturbation matrix of those members only on this process
+  !! perturbation matrix of those members only on this process
 
   integer :: m !< the total number of ensemble members
   integer :: i ! counter
@@ -76,16 +78,17 @@ subroutine generate_pf(stateDim,cnt,comm,x,pf)
   end do
 
   !form pf with only ensemble members on this process
-  call dsyrk('U',&      !UPLO  upper part of matrix formed
-             'N',&      !TRANS no transposed done
-             stateDim,& !N     dim of output matrix [square]
-             cnt,&      !K     number of columns in input
-             1.0d0,&    !ALPHA alpha scalar
-             xp,&       !A     input matrix
-             stateDim,& !LDA   leading dimension of A
-             0.0d0,&    !BETA  add to empty array
-             Pf,&       !C     output matrix
-             stateDim&  !LDC   dimension of output matrix
+  call dsfrk('N',&      !TRANSR The normal form of RFP A is stored
+             'U',&      !UPLO   upper part of matrix formed
+             'N',&      !TRANS  no transposed done
+             stateDim,& !N      dim of output matrix [square]
+             cnt,&      !K      number of columns in input
+             1.0d0,&    !ALPHA  alpha scalar
+             xp,&       !A      input matrix
+             stateDim,& !LDA    leading dimension of A
+             0.0d0,&    !BETA   add to empty array
+             Pf,&       !C      output matrix
+             stateDim&  !LDC    dimension of output matrix
              )
 
   ! get pf on all processors
@@ -98,6 +101,6 @@ subroutine generate_pf(stateDim,cnt,comm,x,pf)
   
   !scale pf appropriately
   ! use BLAS to perform pf = pf/(m-1)
-  call dscal(stateDim**2,1.0d0/real(m-1,rk),pf,1)
+  call dscal(stateDim*(stateDim+1)/2,1.0d0/real(m-1,rk),pf,1)
   
 end subroutine generate_pf
