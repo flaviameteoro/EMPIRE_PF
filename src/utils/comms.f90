@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-05-08 14:43:14 pbrowne>
+!!! Time-stamp: <2015-06-18 15:18:56 pbrowne>
 !!!
 !!!    Module and subroutine to intitalise EMPIRE coupling to models
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -54,7 +54,7 @@ module comms
        & !<displacements of the various parts of the state vector
   integer :: mdl_num_proc !< number of processes of each ensemble
   !!member
-  integer, parameter :: empire_version=1
+  integer, parameter :: empire_version=0
 
 contains
 
@@ -69,9 +69,29 @@ contains
 
   end subroutine deallocate_data
 
+  !> subroutine to select which mpi comms to use
+  subroutine initialise_mpi
+    implicit none
+
+    select case(empire_version)
+    case(0)
+       call user_initialise_mpi
+    case(1)
+       call initialise_mpi_v1
+    case(2)
+       call initialise_mpi_v2
+    case default
+       print*,'ERROR: empire_version ',empire_version,' not implemente&
+            &d.'
+       print*,'STOPPING.'
+       stop '-6'
+    end select
+
+  end subroutine initialise_mpi
+
   !> subroutine to make EMPIRE connections and saves details into
   !! pf_control module
-  subroutine initialise_mpi
+  subroutine initialise_mpi_v1
 
     use pf_control
     implicit none
@@ -144,7 +164,7 @@ contains
     PRINT*,'PF_rank = ',pfrank,' and I own particles ',pf%particles
 
 
-  end subroutine initialise_mpi
+  end subroutine initialise_mpi_v1
 
 
   !> subroutine to initialise new version of empire

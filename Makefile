@@ -26,7 +26,7 @@ SR_CONTS=$(current_dir)src/controllers/
 SR_USERS=$(current_dir)src/user/
 SR_TESTS=$(current_dir)src/tests/
 SR_OPERS=$(current_dir)src/operations/
-OBJSQ= sizes.o pf_couple.o Qdata.o Rdata.o equivalent_weights_filter.o comms.o gen_rand.o random_d.o proposal_filter.o histogram.o pf_control.o data_io.o model_specific.o operator_wrappers.o quicksort.o resample.o diagnostics.o perturb_particle.o update_state.o genQ.o sir_filter.o stochastic_model.o tests.o letkf_analysis.o deterministic_model.o inner_products.o trajectories.o user_perturb_particle.o generate_pf.o output_mat_tri.o matrix_pf.o equivalent_weights_filter_zhu.o lambertw.o randperm.o
+OBJSQ= sizes.o pf_couple.o Qdata.o Rdata.o equivalent_weights_filter.o comms.o gen_rand.o random_d.o proposal_filter.o histogram.o pf_control.o data_io.o model_specific.o operator_wrappers.o quicksort.o resample.o diagnostics.o perturb_particle.o update_state.o genQ.o sir_filter.o stochastic_model.o tests.o letkf_analysis.o deterministic_model.o inner_products.o trajectories.o user_perturb_particle.o generate_pf.o output_mat_tri.o matrix_pf.o equivalent_weights_filter_zhu.o lambertw.o randperm.o user_initialise_mpi.o
 OBJS=$(addprefix $(OBS),$(OBJSQ))
 FCOPTS+=$(MODFLAG) $(MODLOC)
 
@@ -71,6 +71,9 @@ $(OBS)Rdata.o: $(SR_USERS)Rdata.f90
 
 $(OBS)user_perturb_particle.o: $(SR_USERS)user_perturb_particle.f90
 	$(FC) $(FCOPTS) -c $(SR_USERS)user_perturb_particle.f90 -o $@
+
+$(OBS)user_initialise_mpi.o: $(SR_USERS)user_initialise_mpi.f90
+	$(FC) $(FCOPTS) -c $(SR_USERS)user_initialise_mpi.f90 -o $@
 
 $(OBS)inner_products.o: $(SR_OPERS)inner_products.f90
 	$(FC) $(FCOPTS) -c $(SR_OPERS)inner_products.f90 -o $@
