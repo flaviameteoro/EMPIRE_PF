@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-06-18 15:18:56 pbrowne>
+!!! Time-stamp: <2015-06-19 13:08:47 pbrowne>
 !!!
 !!!    Module and subroutine to intitalise EMPIRE coupling to models
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -54,7 +54,7 @@ module comms
        & !<displacements of the various parts of the state vector
   integer :: mdl_num_proc !< number of processes of each ensemble
   !!member
-  integer, parameter :: empire_version=0
+  integer, parameter :: empire_version=1
 
 contains
 
@@ -346,6 +346,8 @@ contains
     integer :: particle
     real(kind=kind(1.0d0)), dimension(0) :: send_null
     select case(empire_version)
+       case(0)
+          call user_mpi_send(statedim,nrhs,x,tag)
        case(1)
           do k =1,cnt
              particle = particles(k)
@@ -382,6 +384,8 @@ contains
     integer :: particle
     real(kind=kind(1.0d0)), dimension(0) :: send_null
     select case(empire_version)
+       case(0)
+          call user_mpi_recv(statedim,nrhs,x)
        case(1)
           DO k = 1,cnt
              particle = particles(k)
@@ -411,13 +415,15 @@ contains
     integer, intent(in) :: stateDim
     integer, intent(in) :: nrhs
     real(kind=kind(1.0d0)), intent(out), dimension(stateDim,nrhs) :: x
-    integer, dimension(nrhs) :: requests
+    integer, dimension(nrhs), intent(inout) :: requests
     integer :: k
     integer :: mpi_err
     integer :: particle
     real(kind=kind(1.0d0)), dimension(0) :: send_null
     integer, dimension(MPI_STATUS_SIZE) :: mpi_status
     select case(empire_version)
+       case(0)
+          call user_mpi_irecv(statedim,nrhs,x,requests)
        case(1)
           DO k = 1,cnt
              particle = particles(k)
