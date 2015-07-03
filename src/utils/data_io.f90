@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-05-05 12:25:40 pbrowne>
+!!! Time-stamp: <2015-06-19 16:21:20 pbrowne>
 !!!
 !!!    Collection of subroutines to deal with i/o
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -124,6 +124,7 @@ end subroutine save_truth
 
 !>subroutine to ouput data from the filter
 subroutine output_from_pf
+  use matrix_pf
   use pf_control
   use sizes
   use comms
@@ -139,6 +140,8 @@ subroutine output_from_pf
         write(*,*) 'Very strange that I couldnt open it. Im going to stop now.'
         stop
      end if
+
+     call read_matrix_pf_information
   end if
 !  print*,'output: ',pf%timestep,pf%weight
 !  write(68,*) pf%timestep,pf%particles,pf%weight(:)
@@ -249,7 +252,7 @@ subroutine output_from_pf
 
 
 
-
+  
 
 
 end subroutine output_from_pf

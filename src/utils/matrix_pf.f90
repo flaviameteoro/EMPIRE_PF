@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-06-17 14:36:39 pbrowne>
+!!! Time-stamp: <2015-06-19 16:23:59 pbrowne>
 !!!
 !!!    module to deal with generating and outputting pf matrix
 !!!    Copyright (C) 2015 Philip A. Browne
@@ -49,7 +49,7 @@ module matrix_pf
   type(matrix_pf_data), save :: matpf
 contains
   !> subroutine to read namelist to control this output
-  subroutine read_matrix_pf_infomation
+  subroutine read_matrix_pf_information
     implicit none
     character(30) :: prefix
     integer :: k=0
@@ -77,24 +77,32 @@ contains
        end if
     end if
 
-    read(32,nml=mat_pf) 
+    read(32,nml=mat_pf,iostat=ios) 
     close(32)
 
-    matpf%prefix=trim(prefix)
-    matpf%analysis = analysis
-    matpf%frequency= frequency
-    matpf%output_type=output_type
-
-    if(k.gt.0) then
-       matpf%k=k
+    if(ios .ne. 0) then
+       print*,'mat_pf not found in namelist file.'
+       print*,'no matrix_pf information will be computed'
     else
-       print*,'ERROR: k in matrix_pf_data read in less than 0'
-       print*,'ERROR: k should be a natural number'
-       print*,'STOPPING'
-       stop '-1'
+
+       matpf%prefix=trim(prefix)
+       matpf%analysis = analysis
+       matpf%frequency= frequency
+       matpf%output_type=output_type
+
+       if(k.gt.0) then
+          matpf%k=k
+       else
+          print*,'ERROR: k in matrix_pf_data read in less than 0'
+          print*,'ERROR: k should be a natural number'
+          print*,'STOPPING'
+          stop '-1'
+       end if
     end if
 
-  end subroutine read_matrix_pf_infomation
+
+    call flush(6)
+  end subroutine read_matrix_pf_information
   
   !>subroutine to generate and output matrix Pf
   subroutine matrix_pf_output(root,comm,n,m,x,time,is_analysis)
