@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-05-21 13:49:39 pbrowne>
+!!! Time-stamp: <2015-07-06 23:05:02 pbrowne>
 !!!
 !!!    module to hold all the information to control the the main program
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -307,16 +307,18 @@ contains
       !use_talagrand,use_weak,use_mean,use_var,use_traj,use_rmse
 
 
-      !ensure that if we are generating the data then SE is selected
-      if(gen_data) then
-         filter = 'SE'
-      end if
-
       
       if(filter .ne. '++') then
          print*,'read filter = ',filter
          pf%filter = filter
       end if
+
+
+      !ensure that if we are generating the data then SE is selected
+      if(gen_data) then
+         filter = 'SE'
+      end if
+
 
 
       !let us verify pf%filter

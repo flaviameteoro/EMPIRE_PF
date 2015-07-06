@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-03-20 22:11:27 pbrowne>
+!!! Time-stamp: <2015-07-03 23:58:01 pbrowne>
 !!!
 !!!    Ensemble transform Kalman filter
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -24,14 +24,12 @@
 !!!	      RG6 6BB
 !!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-! $RCSfile: etkf_analysis.f90,v $
-! $Revision: 1.6 $
-! $Date: 2013/12/12 03:58:54 $
 
 !> subroutine to perform the ensemble transform Kalman filter as part
 !! of L-ETKF
 !>
-!> 
+!> @todo update to allow for non-diagonal R matrices to be used. 
+!! @todo include multiple localisation functions
 subroutine letkf_analysis
 use comms
 use pf_control
