@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-05-21 14:06:50 pbrowne>
+!!! Time-stamp: <2015-07-13 14:43:31 pbrowne>
 !!!
 !!!    This file must be adapted to the specific model in use.
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -346,7 +346,8 @@ end subroutine get_observation_data
 !!
 !! Given \f$x\f$ compute \f$P^{\frac{1}{2}}x\f$
 !!
-!! where \f$P = (Q^{-1} +H^TR^{-1}H)^{-1}\f$ 
+!! where \f$P = (Q^{-1} +H^TR^{-1}H)^{-1} = Q^{\frac{1}{2}}(I +
+!! Q^{\frac{1}{2}}H^TR^{-1}HQ^{\frac{1}{2}})^{-1}Q^{\frac{1}{2}}\f$ 
 !!
 !! This is required for the Zhu Equal weights particle filter
 !! @ref equivalent_weights_filter_zhu
