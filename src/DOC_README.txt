@@ -1,6 +1,6 @@
 /** \mainpage EMPIRE Data Assimilation Documentation
 \author Philip A. Browne <a href="mailto:p.browne@reading.ac.uk">p.browne@reading.ac.uk</a>
-\date Time-stamp: <2015-06-19 13:08:47 pbrowne>
+\date Time-stamp: <2015-07-14 10:05:55 pbrowne>
 
 \b Contributors
  - Mengbin Zhu - zhumengbin @ gmail.com
@@ -9,8 +9,6 @@
 For a list of methods implemented in EMPIRE, please click here: \link methods \endlink
 
 \section Download Downloading
-
-The current version is an *academic version*, and the user interface may be subject to change.
 
 These codes are hosted on www.bitbucket.org and can be obtained with the following commands:
 \code{.sh}
@@ -128,7 +126,7 @@ For example, to run \b N_MDL copies of the model with \b N_DA copies of empire, 
 
 \code{.sh}aprun -n N_MDL -N N_MDL model_executable : -n N_DA -N N_DA empire\endcode
 
-The empire executable is controlled by the namelist data file \link pf_control::parse_pf_parameters pf_parameters.dat\endlink. As such, this file should be put in the directory where empire is executed.
+The empire executable is controlled by the namelist data file \link pf_control::parse_pf_parameters empire.nml\endlink. As such, this file should be put in the directory where empire is executed.
 
 \section Examples Examples
 In the directory \c examples there is currently one example of how to use EMPIRE, specifically with the Lorenz 1996 model. In the directory you will find an example model_specific.f90 file setup for that model, along with a file \c instructions.txt which will lead you step by step through how to run a twin experiment.
@@ -160,7 +158,7 @@ Model specific operations required: \n
   - \link h \endlink
   - \link solve_r \endlink \n
 The SIR filter has no parameters to be chosen. \n
-To select the SIR filter, in \link pf_control::parse_pf_parameters pf_parameters.dat \endlink set the following variables:
+To select the SIR filter, in \link pf_control::parse_pf_parameters empire.nml \endlink set the following variables:
    - \link pf_control::pf_control_type::filter filter \endlink = 'SI'
 \subsubsection EWPF Equivalent Weights Particle Filter 
 See files @ref proposal_filter @ref equivalent_weights_filter\n
@@ -178,7 +176,7 @@ The Equivalent Weights particle filter has a number of free parameters to be cho
    - \link pf_control::pf_control_type::nfac nfac \endlink
    - \link pf_control::pf_control_type::ufac ufac \endlink
    - \link pf_control::pf_control_type::keep keep \endlink \n
-To select the EWPF, in \link pf_control::parse_pf_parameters pf_parameters.dat \endlink set the following variables:
+To select the EWPF, in \link pf_control::parse_pf_parameters empire.nml \endlink set the following variables:
    - \link pf_control::pf_control_type::filter filter \endlink = 'EW'
 
 \subsubsection EZPF The Zhu and Van Leeuwen Equivalent Weights Particle Filter 
@@ -191,7 +189,7 @@ Model specific operations required:
  - \link phalf \endlink \n
 The Zhu Equivalent Weights particle filter has a number of free parameters to be chosen. \n
    - \link pf_control::pf_control_type::nudgefac nudgefac\endlink \n
-To select the EZPF, in \link pf_control::parse_pf_parameters pf_parameters.dat \endlink set the following variables:
+To select the EZPF, in \link pf_control::parse_pf_parameters empire.nml \endlink set the following variables:
    - \link pf_control::pf_control_type::filter filter \endlink = 'EZ'
 
 
@@ -207,7 +205,7 @@ Model specific operations required: \n
 The LETKF has a number of free parameters to be chosen. \n
    - \link pf_control::pf_control_type::rho rho \endlink
    - \link pf_control::pf_control_type::len len \endlink \n 
-To select the LETKF, in \link pf_control::parse_pf_parameters pf_parameters.dat \endlink set the following variables:
+To select the LETKF, in \link pf_control::parse_pf_parameters empire.nml \endlink set the following variables:
    - \link pf_control::pf_control_type::filter filter \endlink = 'LE' or 'LD' with LE including model error but LD being deterministic
 
 
@@ -244,7 +242,7 @@ Model specific operations required: \n
  - \link rhalf \endlink
  - \link qhalf \endlink
 
-In \link pf_control::parse_pf_parameters pf_parameters.dat \endlink set the following variables:
+In \link pf_control::parse_pf_parameters empire.nml \endlink set the following variables:
 - \link pf_control::pf_control_type::gen_data gen_data \endlink = .true.
 
 The system then should be run with a single ensemble member and a single EMPIRE process, i.e.
@@ -261,7 +259,7 @@ When called, \link get_observation_data get_observation_data\endlink must return
 
 EMPIRE can simply integrate forward in time an ensemble of models.
 
-In \link pf_control::parse_pf_parameters pf_parameters.dat \endlink set the following variables:
+In \link pf_control::parse_pf_parameters empire.nml \endlink set the following variables:
 - \link pf_control::pf_control_type::filter filter \endlink = 'DE'
 
 \section stochens Running a stochastic ensemble
@@ -271,16 +269,16 @@ EMPIRE can integrate forward in time an ensemble of models whilst adding stochas
 Model specific operations required: \n
  - \link qhalf \endlink
 
-In \link pf_control::parse_pf_parameters pf_parameters.dat \endlink set the following variables:
+In \link pf_control::parse_pf_parameters empire.nml \endlink set the following variables:
 - \link pf_control::pf_control_type::filter filter \endlink = 'SE'
 
 \section rankhistograms Outputting rank histograms
 
-This is controlled by \link pf_control::pf_control_type::use_talagrand use_talagrand \endlink in \link pf_control::parse_pf_parameters pf_parameters.dat \endlink  and for more information see \link histogram_data::load_histogram_data load_histogram_data \endlink.
+This is controlled by \link pf_control::pf_control_type::use_talagrand use_talagrand \endlink in \link pf_control::parse_pf_parameters empire.nml \endlink  and for more information see \link histogram_data::load_histogram_data load_histogram_data \endlink.
 
 \section trajectories Outputting trajectories of model variables
 
-This is controlled by \link pf_control::pf_control_type::use_traj use_traj \endlink in \link pf_control::parse_pf_parameters pf_parameters.dat \endlink  and for more information see \link traj_data::setup_traj setup_traj \endlink.
+This is controlled by \link pf_control::pf_control_type::use_traj use_traj \endlink in \link pf_control::parse_pf_parameters empire.nml \endlink  and for more information see \link traj_data::setup_traj setup_traj \endlink.
 */
 
 /*! \page citing How to Cite EMPIRE
