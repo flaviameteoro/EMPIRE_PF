@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-05-21 13:52:53 pbrowne>
+!!! Time-stamp: <2015-07-14 14:05:07 pbrowne>
 !!!
 !!!    The main program to run EMPIRE
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -34,6 +34,7 @@
 !> the main program
 !!
 program empire
+  use output_empire
   use comms
   use pf_control
   use sizes
@@ -51,18 +52,20 @@ program empire
   !> set up EMPIRE coupling
   call initialise_mpi
 
+  !> define output files
+  call open_emp_o(pfrank)
 
-  print*,'PF: setting controls'
+  write(emp_o,*) 'PF: setting controls'
   !> read in controlling data
   call set_pf_controls
 
 
-  print*,'PF: configuring model'
+  write(emp_o,*) 'PF: configuring model'
   !> call user specific routine for initialisation
   call configure_model
 
 
-  print*,'allocating pf'
+  write(emp_o,*) 'allocating pf'
   !> allocate space for the filter
   call allocate_pf
 
@@ -115,7 +118,7 @@ program empire
         case('DE')
            call deterministic_model
         case default
-           print*,'Error -555: Incorrect pf%filter'
+           write(emp_o,*) 'Error -555: Incorrect pf%filter'
            stop -555
         end select
         call flush(6)
@@ -146,7 +149,7 @@ program empire
      case('DE')
         call deterministic_model
      case default
-        print*,'Error -556: Incorrect pf%filter'
+        write(emp_o,*) 'Error -556: Incorrect pf%filter'
         stop -556
      end select
      
@@ -187,7 +190,8 @@ program empire
   call MPI_Finalize(mpi_err)
   write(*,*) 'Program couple_pf terminated successfully.'
   write(*,*) 'Time taken in running the model = ',end_t-start_t
-
+  
+  call close_emp_o
 
 end program empire
 

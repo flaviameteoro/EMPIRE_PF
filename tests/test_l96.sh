@@ -17,6 +17,7 @@ testp()
     $*
     if [[ $? != 0 ]]; then
 	echo "ERROR in that command. Return code $?. Stopping tests."
+	mv $empdir/$ms_backup $empdir/model_specific.f90
 	exit -1
     fi
 }
@@ -79,6 +80,9 @@ dir=`pwd`
 MPIRUN=/usr/bin/mpirun
 MPIRUNOPTS="--output-filename out"
 commsfile=../src/utils/comms.f90
+ms_backup=model_specific.f90_real
+
+
 
 
 version=$($grep empire_version= $commsfile | cut -f2 -d=)
@@ -102,16 +106,28 @@ echo $minmdl
 echo "Moving to empire base directory"
 test cd ../
 
+empdir=$(pwd)
+if [ -f $ms_backup ]; then
+    echo "file $ms_backup exists"
+    echo "will not continue unless this is removed"
+    exit -1
+fi
+
+echo "backing up model_specific.f90"
+cp $empdir/model_specific.f90 $empdir/$ms_backup
+
+white "copying the lorenz96 model_specfic file into place"
+testp cp examples/lorenz96/model_specific_l96.f90 model_specific.f90
 
 echo "Making empire codes"
-test make > /dev/null
+testp make > /dev/null
 
 echo "Making lorenz96 model"
-test make lorenz96 > /dev/null
+testp make lorenz96 > /dev/null
 
 echo "Moving back to temporary test directory"
 tempdir=$(mktemp -d)
-test cd $tempdir
+testp cd $tempdir
 
 
 
@@ -125,7 +141,7 @@ gen_data=.true.,
 init='N'
 /
 EOF
-test $MPIRUN $MPIRUNOPTS $line
+testp $MPIRUN $MPIRUNOPTS $line
 
 
 cat <<EOF > empire.nml
@@ -138,7 +154,7 @@ init='N'
 EOF
 echo "running LETKF"
 line="-np 8 $minmdl : -np 2 $empire"
-test $MPIRUN $MPIRUNOPTS $line
+testp $MPIRUN $MPIRUNOPTS $line
 
 echo All tests of lorenz96 completed successfully.
-
+mv $empdir/$ms_backup $empdir/model_specific.f90

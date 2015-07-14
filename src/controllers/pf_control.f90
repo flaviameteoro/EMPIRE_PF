@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-07-06 23:05:02 pbrowne>
+!!! Time-stamp: <2015-07-14 14:28:12 pbrowne>
 !!!
 !!!    module to hold all the information to control the the main program
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -316,7 +316,7 @@ contains
 
       !ensure that if we are generating the data then SE is selected
       if(gen_data) then
-         filter = 'SE'
+         pf%filter = 'SE'
       end if
 
 
@@ -351,7 +351,7 @@ contains
          print*,'Running the Local Ensemble Transform Kalman Filter'
          print*,'With NO random noise'
       case default
-         print*,'Error: Incorrect filter type selected'
+         print*,'Error: Incorrect filter type selected:', pf%filter
          print*,'Please ensure that pf%filter in pf_parameters.dat is ei&
               &ther:'
          print*,'EW        the equivalent weights particle f&
