@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-07-14 14:28:12 pbrowne>
+!!! Time-stamp: <2015-07-16 16:32:53 pbrowne>
 !!!
 !!!    module to hold all the information to control the the main program
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -37,7 +37,6 @@ module pf_control
      logical :: gen_data !< true generates synthetic obs for a twin experiment
      logical :: gen_Q    !< true attempts to build up \f$Q\f$ from
      !<long model run
-     logical :: human_readable !< unused
      integer :: timestep=0     !< the current timestep as the model progresses
      real(kind=kind(1.0D0)), allocatable, dimension(:,:) :: psi !< state vector of ensemble members on this mpi process
      real(kind=kind(1.0D0)), allocatable, dimension(:) :: mean !< mean state vector
@@ -114,7 +113,7 @@ module pf_control
 contains
   !> subroutine to ensure pf_control data is ok
   subroutine set_pf_controls
-      integer :: ios
+
       write(6,'(A)') 'Opening empire namelist file:'
 
       call parse_pf_parameters
@@ -122,14 +121,7 @@ contains
       pf%efac = 0.001/pf%nens
       write(6,'(A)') 'empire namelist successfully read to control pf code.'
       call flush(6)
-      if(pf%human_readable .and. pf%gen_data) then
-         open(64,file='pf_data',iostat=ios,action='read',status='replace')
-         if(ios .ne. 0) stop 'Error checking pf_data'
-         close(64)
-      end if
-
-
-         
+       
 
     end subroutine set_pf_controls
 
@@ -180,7 +172,6 @@ contains
     !! - \link pf_control::pf_control_type::use_var use_var\endlink
     !! - \link pf_control::pf_control_type::use_traj use_traj\endlink
     !! - \link pf_control::pf_control_type::use_rmse use_rmse\endlink
-    !! - \link pf_control::pf_control_type::human_readable human_readable\endlink
     subroutine parse_pf_parameters
       implicit none
       integer :: ios
@@ -188,7 +179,7 @@ contains
       integer :: time_obs=-1
       integer :: time_bwn_obs=-1 
       real(kind=kind(1.0D0)) :: nudgefac=-1.0d0
-      logical :: gen_data,gen_Q,human_readable
+      logical :: gen_data,gen_Q
       real(kind=kind(1.0D0)) :: nfac=-1.0d0                
       real(kind=kind(1.0D0)) :: ufac=-1.0d0
       real(kind=kind(1.0D0)) :: Qscale=-1.0d0
@@ -205,7 +196,6 @@ contains
       namelist/pf_params/time_obs,time_bwn_obs,&
       &nudgefac,& 
       &gen_data,gen_Q,&
-      &human_readable,&
       &nfac,&
       &keep,&
       &ufac,&                
@@ -219,7 +209,6 @@ contains
 
       gen_data = .false.
       gen_Q = .false.
-      human_readable = .false.
       use_talagrand = .false.
       use_weak = .false.
       use_mean = .false.
@@ -376,7 +365,6 @@ contains
 
       pf%gen_data = gen_data
       pf%gen_Q = gen_Q
-      pf%human_readable = human_readable
       pf%use_talagrand = use_talagrand
       pf%use_weak = use_weak
       pf%use_mean = use_mean

@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-07-14 14:41:58 pbrowne>
+!!! Time-stamp: <2015-07-16 14:23:46 pbrowne>
 !!!
 !!!    This file must be adapted to the specific model in use.
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -29,6 +29,7 @@
 !> for model specific functions
 subroutine configure_model
   use pf_control
+  use timestep_data
   use sizes
   use Qdata
   use Rdata
@@ -43,6 +44,8 @@ subroutine configure_model
   !this is for hadcm3
   state_dim = 3
   obs_dim = 3
+
+  call timestep_data_set_total(pf%time_bwn_obs*pf%time_obs)
 
   print*,'#################################'
   print*,'######### SANITY CHECK ##########'

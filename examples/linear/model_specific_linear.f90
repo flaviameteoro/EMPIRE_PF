@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-07-14 14:41:40 pbrowne>
+!!! Time-stamp: <2015-07-16 14:24:13 pbrowne>
 !!!
 !!!    This file must be adapted to the specific model in use.
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -29,6 +29,7 @@
 !> for model specific functions
 subroutine configure_model
   use pf_control
+  use timestep_data
   use sizes
   use Qdata
   use Rdata
@@ -54,6 +55,7 @@ subroutine configure_model
   data(1) = state_dim
   data(2) = pf%time_bwn_obs*pf%time_obs
 
+  call timestep_data_set_total(pf%time_bwn_obs*pf%time_obs)
 
   do k =1,pf%count
      particle = pf%particles(k)

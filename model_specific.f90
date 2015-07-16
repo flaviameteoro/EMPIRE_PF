@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-07-13 14:43:31 pbrowne>
+!!! Time-stamp: <2015-07-16 14:14:04 pbrowne>
 !!!
 !!!    This file must be adapted to the specific model in use.
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -27,8 +27,16 @@
 
 !> subroutine called initially to set up details and data
 !> for model specific functions
+!>
+!> By the end of this subroutine, the following must be set:
+!> - \link sizes::state_dim state_dim \endlink in @ref sizes
+!> - \link sizes::obs_dim obs_dim \endlink in @ref sizes for the
+!>   first observation 
+!> - \link total_timesteps \endlink in @ref timestep_data
+!>
+!> This is a very good place to load in data for the matrices B,Q,R,H etc
 subroutine configure_model
-!  use pf_control
+  use timestep_data
   use sizes
   use Qdata
   use Rdata
@@ -44,11 +52,14 @@ subroutine configure_model
   state_dim = 2314430
   obs_dim = 27370
 
+  call timestep_data_set_total(72*180)
+
   print*,'#################################'
   print*,'######### SANITY CHECK ##########'
   print*,'#################################'
   print*,'## STATE DIMENSION = ',state_dim
   print*,'##  OBS  DIMENSION = ',obs_dim
+  print*,'## TOTAL TIMESTEPS = ',TSdata%total_timesteps
   print*,'#################################'
 !  if(.not. pf%gen_Q) then
      t1 = mpi_wtime()

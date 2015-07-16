@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-07-14 14:05:07 pbrowne>
+!!! Time-stamp: <2015-07-16 17:07:26 pbrowne>
 !!!
 !!!    The main program to run EMPIRE
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -35,6 +35,7 @@
 !!
 program empire
   use output_empire
+  use timestep_data
   use comms
   use pf_control
   use sizes
@@ -95,12 +96,19 @@ program empire
   if(pf%use_traj) call trajectories
   start_t = mpi_wtime()
 
+
+  call timestep_data_allocate_obs_times(pf%time_obs)
   
   !start the timestep loop
   do j=1,pf%time_obs
      write(6,*) 'PF: observation counter = ',j
+     call timestep_data_set_obs_times(j,pf%timestep+pf%time_bwn_obs)
+
      do i = 1,pf%time_bwn_obs-1
         pf%timestep = pf%timestep + 1
+        call timestep_data_set_current(pf%timestep)
+        call timestep_data_set_do_no_analysis
+        call timestep_data_set_tau(i)
         
         select case(pf%filter)
         case('EW')
@@ -121,6 +129,7 @@ program empire
            write(emp_o,*) 'Error -555: Incorrect pf%filter'
            stop -555
         end select
+        call timestep_data_set_completed(pf%timestep)
         call flush(6)
         if(pf%use_traj) call trajectories
         call output_from_pf
@@ -128,6 +137,10 @@ program empire
            
      pf%timestep = pf%timestep + 1
      write(6,*) 'starting the observation timestep'
+     call timestep_data_set_current(pf%timestep)
+     call timestep_data_set_do_analysis
+     call timestep_data_set_tau(pf%time_bwn_obs)
+
      call flush(6)
 
      select case(pf%filter)
@@ -153,7 +166,7 @@ program empire
         stop -556
      end select
      
-
+     call timestep_data_set_completed(pf%timestep)
      write(6,*) 'PF: timestep = ',pf%timestep, 'after observation analysis'
      call flush(6)
 
@@ -182,7 +195,7 @@ program empire
 
 
   
-  call deallocate_data
+  call deallocate_pf
 
   write(6,*) 'PF: finished deallocate_data - off to mpi_finalize'
   call flush(6)

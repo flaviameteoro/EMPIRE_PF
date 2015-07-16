@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-03-24 11:32:49 pbrowne>
+!!! Time-stamp: <2015-07-16 16:39:45 pbrowne>
 !!!
 !!!    Subroutine to output trajectories of state variables
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -102,7 +102,6 @@ end module traj_data
 
 !> subroutine to output trajectories
 !!
-
 subroutine trajectories
   use traj_data
   use pf_control

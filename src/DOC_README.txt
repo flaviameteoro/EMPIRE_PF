@@ -1,6 +1,6 @@
 /** \mainpage EMPIRE Data Assimilation Documentation
 \author Philip A. Browne <a href="mailto:p.browne@reading.ac.uk">p.browne@reading.ac.uk</a>
-\date Time-stamp: <2015-07-14 10:56:54 pbrowne>
+\date Time-stamp: <2015-07-14 14:28:12 pbrowne>
 
 \b Contributors
  - Mengbin Zhu - zhumengbin @ gmail.com

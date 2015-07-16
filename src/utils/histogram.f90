@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-04-09 16:15:07 pbrowne>
+!!! Time-stamp: <2015-07-16 16:36:37 pbrowne>
 !!!
 !!!    Module to control what variables are used to generate rank histograms
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -91,7 +91,7 @@ contains
 
   !>subroutine to clean up arrays used in rank histograms
   subroutine kill_histogram_data
-    deallocate(rank_hist_list)
-    deallocate(rank_hist_nums)
+    if(allocated(rank_hist_list)) deallocate(rank_hist_list)
+    if(allocated(rank_hist_nums)) deallocate(rank_hist_nums)
   end subroutine kill_histogram_data
 end module histogram_data

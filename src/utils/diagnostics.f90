@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-03-24 10:59:13 pbrowne>
+!!! Time-stamp: <2015-07-16 16:32:03 pbrowne>
 !!!
 !!!    Subroutine to give output diagnositics such as rank histograms
 !!!    and trajectories
@@ -29,6 +29,7 @@
 !> Subroutine to give output diagnositics such as rank histograms  
 !!    and trajectories                                             
 subroutine diagnostics
+  use timestep_data
   use pf_control
   use sizes
   use comms
@@ -47,24 +48,25 @@ subroutine diagnostics
   if(.not. pf%gen_data) then
      if(pf%use_talagrand) then
         
-!        call H(pf%psi,Hpsi)
         inquire(iolength=length) pf%psi(1,1)
 
-!        pf%timestep = -72
         do particle = 1,pf%count
-           write(filename,'(A,i6.6,A,i5.5)') 'hist/timestep',((pf%timestep)/pf&
-                &%time_bwn_obs) ,'particle',pf%particles(particle)
+           !write(filename,'(A,i6.6,A,i5.5)') 'hist/timestep',((pf%timestep)/pf&
+           !     &%time_bwn_obs) ,'particle',pf%particles(particle)
+           write(filename,'(A,i7.7,A,i5.5)') 'hist/timestep',&
+                &pf%timestep,'particle',pf%particles(particle)
            open(12,file=filename,action='write',status='replace',form='unforma&
                 &tted',access='direct',recl=length)
-!           call H(pf%psi(:,particle),Hpsi)
+
            do i = 1,rhl_n
               write(12,rec=i) pf%psi(rank_hist_list(i),particle)
            end do
            close(12)
         end do
 
-!        pf%timestep = 0
-        if(pf%timestep .eq. pf%time_obs*pf%time_bwn_obs) then
+
+!        if(pf%timestep .eq. pf%time_obs*pf%time_bwn_obs) then
+        if(TSdata%completed_timesteps .eq. TSdata%total_timesteps) then
            pf%talagrand = 0
            call mpi_barrier(pf_mpi_comm,mpi_err)
            
@@ -72,28 +74,31 @@ subroutine diagnostics
               !              print*,'time = ',time
               if(mod(time,npfs) .eq. pfrank) then
                  !cock cock cock adjusted the below to make it sensible
-                 pf%timestep = time*pf%time_bwn_obs
+                 !pf%timestep = time*pf%time_bwn_obs
+                 pf%timestep = TSData%obs_times(time)
 !                 print*,'pfrank = ',pfrank,'picking up truth at ',pf%timestep
 
-                 write(filename,'(A,i6.6,A,i5.5)') 'hist/timestep',((pf%timestep)/pf&
-                      &%time_bwn_obs) ,'truth'
-                 !print*,'filename = ',filename
+                 !write(filename,'(A,i6.6,A,i5.5)') 'hist/timestep',((pf%timestep)/pf&
+                 !     &%time_bwn_obs) ,'truth'
+                 write(filename,'(A,i7.7,A,i5.5)') 'hist/timestep',&
+                      &pf%timestep,'truth'
+
                  open(12,file=filename,action='read',status='old',form='unforma&
                       &tted',access='direct',recl=length)
-                 !           call H(pf%psi(:,particle),Hpsi)
+
                  do i = 1,rhl_n
-                    !print*,'pfrank = ',pfrank,' i = ',i
+
                     read(12,rec=i) y(i)
-                    !print*,'pfrank = ',pfrank,' i = ',i,' y(i) = ',y(i)
+
                  end do
                  close(12)
 
-                 !call get_truth(y)
-                 !              print*,'got obs data at timestep ',pf%timestep
                  do particle = 1,pf%nens
-                    write(filename,'(A,i6.6,A,i5.5)') 'hist/timestep',pf&
-                         &%timestep/pf%time_bwn_obs,'&
-                         &particle',particle
+                    !write(filename,'(A,i6.6,A,i5.5)') 'hist/timestep',pf&
+                    !     &%timestep/pf%time_bwn_obs,'&
+                    !     &particle',particle
+                    write(filename,'(A,i7.7,A,i5.5)') 'hist/timestep',&
+                         &pf%timestep,'particle',particle
                     open(13, file=filename,action='read',status='old',form='un&
                          &for&
                          &matted',access='direct',recl=length)
@@ -102,7 +107,7 @@ subroutine diagnostics
                     end do
                     close(13)
                  end do
-                 !             print*,'read HHpsi'
+
 
 
                  do j = 1,rhn_n !for each histogram we want to make
@@ -131,7 +136,7 @@ subroutine diagnostics
                           exit
                        end if
                     end do
-                    !                    print*,'did we place?'
+
 
                     if(.not. placed) then
                        if(y(i) .ge. bin_marker(pf%nens)) then
@@ -168,28 +173,25 @@ subroutine diagnostics
               end do
               !now output the image
            end if
-           pf%timestep = pf%time_obs*pf%time_bwn_obs
+           !pf%timestep = pf%time_obs*pf%time_bwn_obs
+           pf%timestep = TSData%total_timesteps
         end if !end of if we are the last step in the pf
 
      end if
 
-     if(pf%use_rmse) then
-        
-
-     end if
 
   else
      if(pf%use_talagrand) then
         !     print*,'in diagnostics at timestep ',pf%timestep
         inquire(iolength=length) pf%psi(1,1)
-        
-        !        pf%timestep = -72
+
         do particle = 1,pf%count
-           write(filename,'(A,i6.6,A)') 'hist/timestep',((pf%timestep)/pf&
-                &%time_bwn_obs) ,'truth'
+           !write(filename,'(A,i6.6,A)') 'hist/timestep',((pf%timestep)/pf&
+           !     &%time_bwn_obs) ,'truth'
+           write(filename,'(A,i7.7,A)') 'hist/timestep',pf%timestep,'truth'
            open(12,file=filename,action='write',status='replace',form='unforma&
                 &tted',access='direct',recl=length)
-           !           call H(pf%psi(:,particle),Hpsi)
+
            do i = 1,rhl_n
               write(12,rec=i) pf%psi(rank_hist_list(i),particle)
            end do

@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-06-04 17:24:50 pbrowne>
+!!! Time-stamp: <2015-07-16 16:33:20 pbrowne>
 !!!
 !!!    Computes the equivalent weights step in the EWPF
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -52,7 +52,7 @@ subroutine equivalent_weights_filter
   real(kind=rk), parameter :: pi = 4.0D0*atan(1.0D0)
   logical, dimension(pf%count) :: uniform
 !  INTEGER, DIMENSION(MPI_STATUS_SIZE) :: mpi_status
-  real(kind=rk), dimension(pf%count) :: weight_temp
+!  real(kind=rk), dimension(pf%count) :: weight_temp
   real(kind=rk) :: ddot
 !  print*,'in equal weight filter the weights are:'
 !  print*,pf%weight

@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-05-19 10:33:27 pbrowne>
+!!! Time-stamp: <2015-07-16 17:08:39 pbrowne>
 !!!
 !!!    Collection of combinations of other subroutines
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -108,6 +108,7 @@ end subroutine K
 !! betan(:,i) \f$\sim \mathcal{N}(0,Q)\f$
 subroutine Bprime(y,x,QHtR_1y,normaln,betan)
   !this is B but with separate Q multiplication
+  use timestep_data
   use pf_control
   use sizes
   implicit none
@@ -128,9 +129,7 @@ subroutine Bprime(y,x,QHtR_1y,normaln,betan)
   if(time) t = mpi_wtime()
   freetime = 0.6_rk
 
-  tau = real(modulo(pf%timestep,pf%time_bwn_obs),rk)/real(pf&
-       &%time_bwn_obs,rk)
-
+  tau = real(TSData%tau,rk)/real(pf%time_bwn_obs,rk)
 
   !this is the atmosphere section
   if(tau .le. freetime) then

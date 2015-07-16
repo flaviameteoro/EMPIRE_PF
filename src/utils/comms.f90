@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-06-19 13:08:47 pbrowne>
+!!! Time-stamp: <2015-07-16 10:53:39 pbrowne>
 !!!
 !!!    Module and subroutine to intitalise EMPIRE coupling to models
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -373,6 +373,7 @@ contains
   !> subroutine to receive all the model states from the models after
   !it has updated them one timestep
   subroutine recv_all_models(stateDim,nrhs,x)
+    use timestep_data
     implicit none
     include 'mpif.h'
     integer, intent(in) :: stateDim
@@ -384,26 +385,30 @@ contains
     integer :: particle
     real(kind=kind(1.0d0)), dimension(0) :: send_null
     select case(empire_version)
-       case(0)
-          call user_mpi_recv(statedim,nrhs,x)
-       case(1)
-          DO k = 1,cnt
-             particle = particles(k)
-             CALL MPI_RECV(x(:,k), stateDim, MPI_DOUBLE_PRECISION, &
-                  particle-1, MPI_ANY_TAG, CPL_MPI_COMM,mpi_status, mpi_err)
-          END DO
-       case(2)
-          do k = 1,cnt
-             call mpi_gatherv(send_null,0,MPI_DOUBLE_PRECISION,x(:,k)&
-                  &,state_dims,state_displacements,MPI_DOUBLE_PRECISION,cpl_rank&
-                  &,cpl_mpi_comms(k),mpi_err)
-          end do
-       case default
-          print*,'EMPIRE ERROR: THIS ISNT BACK TO THE FUTURE PART 2. empire_v&
-               &ersion not yet implemented'
-          stop
-       end select
-       
+    case(0)
+       call user_mpi_recv(statedim,nrhs,x)
+    case(1)
+       DO k = 1,cnt
+          particle = particles(k)
+          CALL MPI_RECV(x(:,k), stateDim, MPI_DOUBLE_PRECISION, &
+               particle-1, MPI_ANY_TAG, CPL_MPI_COMM,mpi_status, mpi_err)
+       END DO
+    case(2)
+       do k = 1,cnt
+          call mpi_gatherv(send_null,0,MPI_DOUBLE_PRECISION,x(:,k)&
+               &,state_dims,state_displacements,MPI_DOUBLE_PRECISION,cpl_rank&
+               &,cpl_mpi_comms(k),mpi_err)
+       end do
+    case default
+       print*,'EMPIRE ERROR: THIS ISNT BACK TO THE FUTURE PART 2. empire_v&
+            &ersion not yet implemented'
+       stop
+    end select
+    
+    
+    !at this point the ensemble has been updated by the model so is
+    !no longer an analysis
+    call timestep_data_set_no_analysis
   end subroutine recv_all_models
 
 
