@@ -1,6 +1,6 @@
 /** \mainpage EMPIRE Data Assimilation Documentation
 \author Philip A. Browne <a href="mailto:p.browne@reading.ac.uk">p.browne@reading.ac.uk</a>
-\date Time-stamp: <2015-07-14 14:28:12 pbrowne>
+\date Time-stamp: <2015-07-17 10:38:38 pbrowne>
 
 \b Contributors
  - Mengbin Zhu - zhumengbin @ gmail.com
@@ -281,6 +281,14 @@ This is controlled by \link pf_control::pf_control_type::use_talagrand use_talag
 \section trajectories Outputting trajectories of model variables
 
 This is controlled by \link pf_control::pf_control_type::use_traj use_traj \endlink in \link pf_control::parse_pf_parameters empire.nml \endlink  and for more information see \link traj_data::setup_traj setup_traj \endlink.
+
+\section ensemble_covariances Outputting covariances of the ensemble
+
+EMPIRE has the ability to output the ensemble covariance matrices throughout the run. This is controlled by the optional namelist &mat_pf in @ref empire.nml. For more information see @ref matrix_pf::matrix_pf_data. Note however, that this will output a large matrix -- if the state dimension of the model is large, this is likely not a good thing to compute!
+
+
+
+
 */
 
 /*! \page citing How to Cite EMPIRE

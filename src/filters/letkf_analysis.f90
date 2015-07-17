@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-07-14 10:56:10 pbrowne>
+!!! Time-stamp: <2015-07-17 11:12:36 pbrowne>
 !!!
 !!!    Ensemble transform Kalman filter
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -30,6 +30,7 @@
 !>
 !> @todo update to allow for non-diagonal R matrices to be used. 
 subroutine letkf_analysis
+  use timestep_data
   use comms
   use pf_control
   use sizes
@@ -299,4 +300,5 @@ subroutine letkf_analysis
   deallocate(Xp)
   deallocate(Xa)
 
+  call timestep_data_set_is_analysis
 end subroutine letkf_analysis

@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-05-21 13:57:36 pbrowne>
+!!! Time-stamp: <2015-07-17 11:11:24 pbrowne>
 !!!
 !!!    Computes the equal weights step in the New Schem Equal Weights Particle Filter
 !!!    Copyright (C) 2015  Mengbin Zhu
@@ -30,6 +30,7 @@
 !! structure of code loosely based on original equivalent weights
 !! scheme @ref equivalent_weights_filter
 subroutine equivalent_weights_filter_zhu
+  use timestep_data
   use pf_control
   use sizes
   use random
@@ -178,6 +179,8 @@ subroutine equivalent_weights_filter_zhu
   pf%weight = -log(pf%weight)
   !=========================================================================
 
+
+  call timestep_data_set_is_analysis
   if(pf%use_talagrand) call diagnostics
 
 end subroutine equivalent_weights_filter_zhu

@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-07-16 16:33:20 pbrowne>
+!!! Time-stamp: <2015-07-17 11:09:55 pbrowne>
 !!!
 !!!    Computes the equivalent weights step in the EWPF
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -27,6 +27,7 @@
 !> subroutine to do the equivalent weights step
 !!
 subroutine equivalent_weights_filter
+  use timestep_data
   use pf_control
   use sizes
   use random
@@ -218,5 +219,5 @@ subroutine equivalent_weights_filter
   call flush(6)
   call resample
   
-  
+  call timestep_data_set_is_analysis
 end subroutine equivalent_weights_filter

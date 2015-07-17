@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-06-19 16:23:59 pbrowne>
+!!! Time-stamp: <2015-07-17 11:21:59 pbrowne>
 !!!
 !!!    module to deal with generating and outputting pf matrix
 !!!    Copyright (C) 2015 Philip A. Browne
@@ -29,7 +29,7 @@
 module matrix_pf
   implicit none
   type, public :: matrix_pf_data
-     character(30) :: prefix !< the prefix of the filename to be
+     character(30) :: prefix  !< the prefix of the filename to be
      !!                          output
      integer :: k             !< the frequency to output the matrix
      logical :: analysis      !< if true, output at all analysis times
@@ -93,14 +93,14 @@ contains
        if(k.gt.0) then
           matpf%k=k
        else
-          print*,'ERROR: k in matrix_pf_data read in less than 0'
+          print*,'ERROR: k in matrix_pf_data read in less than 1'
           print*,'ERROR: k should be a natural number'
           print*,'STOPPING'
           stop '-1'
        end if
     end if
 
-
+    print*,'matpf=',matpf
     call flush(6)
   end subroutine read_matrix_pf_information
   
@@ -123,10 +123,14 @@ contains
     real(kind=rk), dimension(n*(n+1)/2) :: pf
     integer :: rank,mpi_err
 
+    actually_output = .false.
+
     !check if we should output:
     if(matpf%analysis .and. is_analysis) actually_output = .true.
 
     if(matpf%frequency .and. mod(time,matpf%k) .eq. 0) actually_output=.true.
+
+    if(matpf%k .gt. 0) print*,'hello: mod(time,matpf%k) = ',mod(time,matpf%k)
     
     if(actually_output) then
 
@@ -138,7 +142,6 @@ contains
        if(rank .eq. root) call output_mat_tri(n,pf,filename,matpf%output_type)
 
     end if
-
 
   end subroutine matrix_pf_output
 end module matrix_pf

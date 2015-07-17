@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-07-16 16:32:53 pbrowne>
+!!! Time-stamp: <2015-07-17 09:53:05 pbrowne>
 !!!
 !!!    module to hold all the information to control the the main program
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -60,7 +60,6 @@ module pf_control
      logical :: use_talagrand !< switch if true outputs rank
      !!histograms. See \link histogram_data::load_histogram_data
      !!load_histogram_data \endlink for details.
-     logical :: use_weak      !< switch unused
      logical :: use_mean      !< switch if true outputs ensemble mean
      logical :: use_var       !< switch if true outputs ensemble variance
      logical :: use_traj      !< switch if true outputs trajectories
@@ -168,7 +167,6 @@ contains
     !! - \link pf_control::pf_control_type::gen_q gen_Q\endlink
     !! - \link pf_control::pf_control_type::gen_data gen_data\endlink
     !! - \link pf_control::pf_control_type::use_talagrand use_talagrand\endlink
-    !! - \link pf_control::pf_control_type::use_weak use_weak\endlink
     !! - \link pf_control::pf_control_type::use_var use_var\endlink
     !! - \link pf_control::pf_control_type::use_traj use_traj\endlink
     !! - \link pf_control::pf_control_type::use_rmse use_rmse\endlink
@@ -186,7 +184,7 @@ contains
       real(kind=kind(1.0D0)) :: rho=0.0d0
       real(kind=kind(1.0d0)) :: len=-1.0d0
       real(kind=kind(1.0D0)) :: keep
-      logical :: use_talagrand,use_weak,use_mean,use_var,use_traj&
+      logical :: use_talagrand,use_mean,use_var,use_traj&
            &,use_rmse
       character(2) :: filter='++'
       character(1) :: init='+'
@@ -202,7 +200,7 @@ contains
       &Qscale,&
       &rho,&
       &len,&
-      &use_talagrand,use_weak,use_mean,use_var,use_traj,use_rmse,&
+      &use_talagrand,use_mean,use_var,use_traj,use_rmse,&
       &filter,&
       &init
 
@@ -210,7 +208,6 @@ contains
       gen_data = .false.
       gen_Q = .false.
       use_talagrand = .false.
-      use_weak = .false.
       use_mean = .false.
       use_var = .false.
       use_traj = .false.
@@ -293,7 +290,7 @@ contains
 
 
       !logical ::
-      !use_talagrand,use_weak,use_mean,use_var,use_traj,use_rmse
+      !use_talagrand,use_mean,use_var,use_traj,use_rmse
 
 
       
@@ -366,7 +363,6 @@ contains
       pf%gen_data = gen_data
       pf%gen_Q = gen_Q
       pf%use_talagrand = use_talagrand
-      pf%use_weak = use_weak
       pf%use_mean = use_mean
       pf%use_var = use_var
       pf%use_traj = use_traj

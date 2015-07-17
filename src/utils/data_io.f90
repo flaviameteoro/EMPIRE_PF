@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-07-16 15:50:46 pbrowne>
+!!! Time-stamp: <2015-07-17 10:50:18 pbrowne>
 !!!
 !!!    Collection of subroutines to deal with i/o
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -67,7 +67,7 @@ subroutine save_observation_data(y)
   integer :: ios
   character(14) :: filename
 
-  write(filename,'(A,i6.6)') 'obs_ts_',pf%timestep
+  write(filename,'(A,i7.7)') 'obs_ts_',pf%timestep
 
   open(67,file=filename,iostat=ios,action='write',status='replace',form='unformatted')
   if(ios .ne. 0)  then
@@ -162,6 +162,11 @@ subroutine output_from_pf
      !if(pf%timestep .eq. pf%time_obs*pf%time_bwn_obs) close(61)
      if(TSdata%completed_timesteps .eq. TSdata%total_timesteps) close(61)
   end if
+
+
+
+  call matrix_pf_output(npfs-1,pf_mpi_comm,state_dim,cnt,pf%psi&
+       &,pf%timestep,TSData%is_analysis)
 
 end subroutine output_from_pf
 

@@ -96,6 +96,12 @@ else
     exit -1
 fi
 empire=$(readlink -e ../bin/empire)
+
+if [[ "$minmdl" = "" ]]; then
+    echo "for some reason minmdl was not found. Stopping tests early"
+    exit -2
+fi
+
 echo $empire
 echo $minmdl
 
@@ -151,6 +157,15 @@ time_bwn_obs=4,
 filter='LD',
 init='N'
 /
+
+&mat_pf
+prefix='testpf',
+k=2,
+analysis=.false.,
+frequency=.true.,
+output_type=-1
+/
+
 EOF
 echo "running LETKF"
 line="-np 8 $minmdl : -np 2 $empire"
