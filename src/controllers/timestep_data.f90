@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-07-16 17:10:36 pbrowne>
+!!! Time-stamp: <2015-07-22 11:47:22 pbrowne>
 !!!
 !!!    Module that stores information about timestepping
 !!!    Copyright (C) 2015  Philip A. Browne
@@ -27,7 +27,6 @@
 
 !> @brief Module that stores the information about the timestepping
 !!process
-!! @todo incorporate this into the main code. 
 Module timestep_data
   implicit none
   type, public :: timestep_data_type
