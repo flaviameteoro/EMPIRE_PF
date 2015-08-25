@@ -1,6 +1,6 @@
 /** \mainpage EMPIRE Data Assimilation Documentation
 \author Philip A. Browne <a href="mailto:p.browne@reading.ac.uk">p.browne@reading.ac.uk</a>
-\date Time-stamp: <2015-08-25 10:33:38 pbrowne>
+\date Time-stamp: <2015-08-25 10:26:50 pbrowne>
 
 \b Contributors
  - Mengbin Zhu - zhumengbin @ gmail.com
@@ -11,6 +11,8 @@ For a list of methods implemented in EMPIRE, please click here: \link methods \e
 \section Download Downloading
 
 For standalone downloads of the code, please visit https://bitbucket.org/pbrowne/empire-data-assimilation/downloads#tag-downloads, click on "Tags" and download the version of your choosing.
+
+\htmlinclude src/DOC_VERSIONS.txt
 
 For the most up-to-date versions of the code, they are hosted on www.bitbucket.org and can be obtained with the following commands:
 \code{.sh}
