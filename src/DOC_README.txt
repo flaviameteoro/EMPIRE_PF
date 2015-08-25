@@ -1,6 +1,6 @@
 /** \mainpage EMPIRE Data Assimilation Documentation
 \author Philip A. Browne <a href="mailto:p.browne@reading.ac.uk">p.browne@reading.ac.uk</a>
-\date Time-stamp: <2015-07-22 11:47:22 pbrowne>
+\date Time-stamp: <2015-08-25 10:33:38 pbrowne>
 
 \b Contributors
  - Mengbin Zhu - zhumengbin @ gmail.com
@@ -105,8 +105,6 @@ The file model_specific.f90 should be editted for the specific model which you w
 
 - \link bhalf \endlink This is the square root of the background error covariance matrix \f$B^{\frac{1}{2}}\f$
 
-- \link phalf \endlink This is the application of the matrix \f$P^{\frac{1}{2}} = (Q^{-1} +H^TR^{-1}H)^{-1/2}\f$ 
-
 - \link get_observation_data \endlink This subroutine must return the observation data at, or subsequently to, the given timestep. This routine only needs to be editted if you wish to use your own observations. It is set up to work automatically with pseudo-observations for running twin experiments.
 
 Not all of these subroutines will be required for each filtering method you wish to use, so it may be advantageous to only implement the necessary ones.
@@ -172,7 +170,6 @@ Model specific operations required:
  - \link ht \endlink
  - \link solve_r \endlink
  - \link solve_hqht_plus_r \endlink
- - \link rhalf \endlink \n
 The Equivalent Weights particle filter has a number of free parameters to be chosen. \n
    - \link pf_control::pf_control_type::nudgefac nudgefac\endlink
    - \link pf_control::pf_control_type::nfac nfac \endlink
@@ -184,11 +181,12 @@ To select the EWPF, in \link pf_control::parse_pf_parameters empire.nml \endlink
 \subsubsection EZPF The Zhu and Van Leeuwen Equivalent Weights Particle Filter 
 See files @ref proposal_filter @ref equivalent_weights_filter_zhu\n
 Model specific operations required:
+ - \link qhalf \endlink
  - \link q \endlink
  - \link h \endlink
  - \link ht \endlink
+ - \link solve_r \endlink
  - \link solve_hqht_plus_r \endlink
- - \link phalf \endlink \n
 The Zhu Equivalent Weights particle filter has a number of free parameters to be chosen. \n
    - \link pf_control::pf_control_type::nudgefac nudgefac\endlink \n
 To select the EZPF, in \link pf_control::parse_pf_parameters empire.nml \endlink set the following variables:
