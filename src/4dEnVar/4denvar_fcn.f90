@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-04-01 22:52:22 pbrowne>
+!!! Time-stamp: <2015-09-02 10:59:21 pbrowne>
 !!!
 !!!    subroutine to provide objective function and gradient for var
 !!!    Copyright (C) 2015  Philip A. Browne
@@ -106,6 +106,7 @@ subroutine fourdenvar_fcn(n, v, f, g )
   use comms
   use var_data
   use fourdenvardata
+  use timestep_data
   use sizes, only : state_dim
   implicit none
   include 'mpif.h'
@@ -183,6 +184,7 @@ subroutine fourdenvar_fcn(n, v, f, g )
         !check if we have observations this timestep
         if(vardata%ny(t) .gt. 0) then
 
+           call timestep_data_set_next_ob_time(t)
            
            !if observations exist then allocate data
            allocate(     y(vardata%ny(t)))
