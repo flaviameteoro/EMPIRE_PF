@@ -188,6 +188,7 @@ Model specific operations required:
  - \link h \endlink
  - \link ht \endlink
  - \link solve_r \endlink
+ - \link solve_rhalf \endlink
  - \link solve_hqht_plus_r \endlink
 The Zhu Equivalent Weights particle filter has a number of free parameters to be chosen. \n
    - \link pf_control::pf_control_type::nudgefac nudgefac\endlink \n

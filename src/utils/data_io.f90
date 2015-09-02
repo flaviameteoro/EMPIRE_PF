@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-07-17 10:50:18 pbrowne>
+!!! Time-stamp: <2015-09-02 10:32:55 pbrowne>
 !!!
 !!!    Collection of subroutines to deal with i/o
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -31,7 +31,7 @@
 !> @param[out] y The observation
 !! @param[in] t the current timestep
 subroutine default_get_observation_data(y,t)
-
+  use timestep_data
   use pf_control
   use sizes
   implicit none
@@ -39,9 +39,10 @@ subroutine default_get_observation_data(y,t)
   integer, intent(in) :: t
   real(kind=rk), dimension(obs_dim), intent(out) :: y
   integer :: ios
+  integer :: obs_timestep
   character(14) :: filename
 
-  write(filename,'(A,i7.7)') 'obs_ts_',t
+  write(filename,'(A,i7.7)') 'obs_ts_',TSData%next_ob_timestep
 
   open(67,file=filename,iostat=ios,action='read',status='old',form='unformatted')
   if(ios .ne. 0)  then

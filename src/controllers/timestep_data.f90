@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-07-22 11:47:22 pbrowne>
+!!! Time-stamp: <2015-09-02 10:27:09 pbrowne>
 !!!
 !!!    Module that stores information about timestepping
 !!!    Copyright (C) 2015  Philip A. Browne
@@ -36,6 +36,7 @@ Module timestep_data
                                     !! empire is running 
      integer :: completed_timesteps !< the number of timesteps that
                                     !! empire has so far finished
+     integer :: next_ob_timestep    !< the timestep of the next observation
      logical :: is_analysis         !< if true, then the current ensemble is
                                     !! an analysis. If false then the
                                     !! current ensemble is not an analysis
@@ -84,6 +85,14 @@ Module timestep_data
       TSData%obs_times(obs_num_in_time) = timestep
     end subroutine timestep_data_set_obs_times
 
+    !> subroutine to set the next observation timestep
+    subroutine timestep_data_set_next_ob_time(ob_time)
+      implicit none
+      integer, intent(in) :: ob_time
+      
+      TSData%next_ob_timestep = ob_time
+    end subroutine timestep_data_set_next_ob_time
+    
     !> subroutine to extract the timestep corresponding to the
     !! observation number in time
     subroutine timestep_data_get_obs_times(obs_num_in_time,timestep)

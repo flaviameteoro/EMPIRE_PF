@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-07-17 11:13:23 pbrowne>
+!!! Time-stamp: <2015-09-02 10:27:55 pbrowne>
 !!!
 !!!    The main program to run EMPIRE
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -103,6 +103,7 @@ program empire
   do j=1,pf%time_obs
      write(6,*) 'PF: observation counter = ',j
      call timestep_data_set_obs_times(j,pf%timestep+pf%time_bwn_obs)
+     call timestep_data_set_next_ob_time(pf%timestep+pf%time_bwn_obs)
 
      do i = 1,pf%time_bwn_obs-1
         pf%timestep = pf%timestep + 1
