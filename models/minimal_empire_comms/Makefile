@@ -10,8 +10,7 @@ LIB_LIST=-lblas
 FCOPTS=-O3 -Wall -fimplicit-none -fbounds-check -fbacktrace
 FCOPTS+=$(MODFLAG) $(MODLOC)
 
-OBJECTS_EMPIRE_COMMS=minimal_empire_comms.o $(OBS)comms.o $(OBS)pf_control.o $(OBS)sizes.o $(OBS)histogram.o
-
+OBJECTS_EMPIRE_COMMS=minimal_empire_comms.o $(OBS)comms.o $(OBS)pf_control.o $(OBS)sizes.o $(OBS)histogram.o $(OBS)timestep_data.o
 
 
 # let's use the special macros $@ and $^, which are the

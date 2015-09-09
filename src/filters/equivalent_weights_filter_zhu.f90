@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-07-17 11:11:24 pbrowne>
+!!! Time-stamp: <2015-09-09 14:12:43 pbrowne>
 !!!
 !!!    Computes the equal weights step in the New Schem Equal Weights Particle Filter
 !!!    Copyright (C) 2015  Mengbin Zhu
@@ -54,14 +54,30 @@ subroutine equivalent_weights_filter_zhu
   real(kind=rk), dimension(state_dim,pf%count)   :: betan         !the random variable
   real(kind=rk), dimension(state_dim,pf%count)   :: statev        !<temporary state space vector 
   real(kind=rk)                                  :: w
-  ! real(kind=rk), dimension(pf%count)             :: e          !e = d_i^t R^(-1) d_i
+
   real(kind=rk), parameter                       :: pi = 4.0D0*atan(1.0D0)
-  ! INTEGER, DIMENSION(MPI_STATUS_SIZE)           :: mpi_status
+
   real(kind=rk), dimension(pf%count)             :: weight_temp2
   real(kind=rk)                                  :: ddot
 
+  integer :: ensemble_comm
+  real(kind=rk) :: gammaitemp
+
   percentage = 0.5
   rc=1
+
+
+
+  if(empire_version .eq. 1 .or. empire_version .eq. 2) then
+     ensemble_comm = pf_mpi_comm
+  elseif(empire_version .eq. 3) then
+     ensemble_comm = pf_ens_comm
+  else
+     print*,'EMPIRE VERSION ',empire_version,' NOT SUPPORTED IN propos&
+          &al_filter'
+     print*,'THIS IS AN ERROR. STOPPING'
+     stop '-24'
+  end if
 
   !start the model integration
   call send_all_models(state_dim,pf%count,pf%psi,1)
@@ -81,13 +97,13 @@ subroutine equivalent_weights_filter_zhu
 
      call innerHQHt_plus_R_1(y_Hfpsin1(:,i),w,pf%timestep)
 
-     c(i) = 2*pf%weight(particle) + w
+     c(i) = 2.0*pf%weight(particle) + w
   end do
 
 
   !communicate c to all the mpi threads
-  call mpi_allgatherv(c,pf%count,mpi_double_precision,csorted,gblcount&
-       &,gbldisp,mpi_double_precision,pf_mpi_comm,mpi_err)
+  call mpi_allgatherv(c,pf%count,MPI_DOUBLE_PRECISION,csorted,gblcount&
+       &,gbldisp,MPI_DOUBLE_PRECISION,ensemble_comm,mpi_err)
 
   !calculate cmax
   call quicksort_d(csorted,pf%nens)
@@ -108,25 +124,41 @@ subroutine equivalent_weights_filter_zhu
   xs2=2.1D0
   do i = 1,pf%count
      gammai(i) = ddot(state_dim,statev(:,i),1,statev(:,i),1)
+     if(empire_version .eq. 3) then
+        !need to perform the sum across all parts of the state vector          
+        gammaitemp=gammai(i)
+        call mpi_allreduce(gammaitemp,gammai(i),1,MPI_DOUBLE_PRECISION,MPI_SUM&
+             &,pf_member_comm,mpi_err)
+     end if
+
+
      ce(i) = cmax - c(i)
 
-     win(i) = (-gammai(i)/state_dim)*exp(-gammai(i)/state_dim)*exp(-ce(i)/state_dim)
+     win(i) = (-gammai(i)/state_dim_g)*exp(-gammai(i)/state_dim_g)*exp(-ce(i)/state_dim_g)
      call LambertW(0,win(i),wsolve(i))
      if(ce(i) .eq. 0.0) then
-        wsolve(i) = -(gammai(i)/state_dim)
+        wsolve(i) = -(gammai(i)/state_dim_g)
      end if
-     epsilon_n(i) = (-state_dim/gammai(i))*wsolve(i) - 1
+     epsilon_n(i) = (-state_dim_g/gammai(i))*wsolve(i) - 1
 
      !call newton(xs1,gammai(i),state_dim,c(i),cmax,epsilon_n(i))
 
      call LambertW(-1,win(i),wsolve(i))
-     epsilon_p(i) = (-state_dim/gammai(i))*wsolve(i) - 1
+     epsilon_p(i) = (-state_dim_g/gammai(i))*wsolve(i) - 1
 
      !call newton(xs2,gammai(i),state_dim,c(i),cmax,epsilon_p(i))
   end do
 
   do i = 1,pf%count
-     call random_number(randc)
+     if(empire_version .eq. 1 .or. empire_version .eq. 2) then
+        call random_number(randc)
+     else
+        if(pf_member_rank .eq. 0) then
+           call random_number(randc)
+        end if
+        call mpi_scatter(randc,1,MPI_DOUBLE_PRECISION,randc,1&
+             &,MPI_DOUBLE_PRECISION,0,pf_member_rank,mpi_err)
+     end if
      if(randc .ge. 0.5) then
         epsiloni(i) = epsilon_p(i)
      else
@@ -150,7 +182,7 @@ subroutine equivalent_weights_filter_zhu
      if(alpha(i) .eq. 0.0) then
         alpha(i) = alpha(i) + 1.0E-16
      end if
-     weight_an(particle) = gammai(i)*epsiloni(i)-state_dim*log(alpha(i))+c(i)
+     weight_an(particle) = gammai(i)*epsiloni(i)-state_dim_g*log(alpha(i))+c(i)
      weight_an(particle) = 0.5*weight_an(particle)
      if(alpha(i) .eq. 1.0E-16) then
         weight_an(particle) = 0.5*cmax
@@ -170,8 +202,8 @@ subroutine equivalent_weights_filter_zhu
   end do
 
   !communicate the weights of all particles to each mpi thread
-  call mpi_allgatherv(weight_temp2,pf%count,mpi_double_precision,pf%weight,gblcount&
-       &,gbldisp,mpi_double_precision,pf_mpi_comm,mpi_err)
+  call mpi_allgatherv(weight_temp2,pf%count,MPI_DOUBLE_PRECISION,pf%weight,gblcount&
+       &,gbldisp,MPI_DOUBLE_PRECISION,ensemble_comm,mpi_err)
 
   !normalise the weights
   pf%weight = exp(-pf%weight+maxval(pf%weight))

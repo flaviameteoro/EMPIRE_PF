@@ -14,7 +14,9 @@ MODFLAG=-J
 
 -include Makefile.in
 
-all: EMPIRE ALLTESTS TEST_R TEST_Q TEST_HQHTR #TEST_H
+default: EMPIRE ALLTESTS TEST_R TEST_Q TEST_HQHTR 
+
+all: EMPIRE ALLTESTS TEST_R TEST_Q TEST_HQHTR models 4dEnVar
 
 current_dir = $(shell pwd)/
 OBS=$(current_dir)obs/
@@ -26,7 +28,7 @@ SR_CONTS=$(current_dir)src/controllers/
 SR_USERS=$(current_dir)src/user/
 SR_TESTS=$(current_dir)src/tests/
 SR_OPERS=$(current_dir)src/operations/
-OBJSQ= timestep_data.o output_empire.o sizes.o empire_main.o Qdata.o Rdata.o equivalent_weights_filter.o comms.o gen_rand.o random_d.o proposal_filter.o histogram.o pf_control.o  matrix_pf.o data_io.o model_specific.o operator_wrappers.o quicksort.o resample.o diagnostics.o perturb_particle.o update_state.o genQ.o sir_filter.o stochastic_model.o tests.o letkf_analysis.o deterministic_model.o inner_products.o trajectories.o user_perturb_particle.o generate_pf.o output_mat_tri.o equivalent_weights_filter_zhu.o lambertw.o randperm.o user_initialise_mpi.o loc_function.o phalf_etkf.o phalf.o
+OBJSQ= timestep_data.o output_empire.o sizes.o empire_main.o Qdata.o Rdata.o equivalent_weights_filter.o comms.o gen_rand.o random_d.o proposal_filter.o histogram.o allocate_pf.o pf_control.o  matrix_pf.o data_io.o model_specific.o operator_wrappers.o quicksort.o resample.o diagnostics.o perturb_particle.o update_state.o genQ.o sir_filter.o stochastic_model.o tests.o letkf_analysis.o deterministic_model.o inner_products.o trajectories.o user_perturb_particle.o generate_pf.o output_mat_tri.o equivalent_weights_filter_zhu.o lambertw.o randperm.o user_initialise_mpi.o loc_function.o phalf_etkf.o phalf.o
 OBJS=$(addprefix $(OBS),$(OBJSQ))
 FCOPTS+=$(MODFLAG) $(MODLOC)
 
@@ -93,7 +95,7 @@ $(OBS)model_specific.o: model_specific.f90 $(OBS)sizes.o
 $(OBS)operator_wrappers.o: $(SR_OPERS)operator_wrappers.f90 $(OBS)pf_control.o $(OBS)sizes.o
 	$(FC) $(FCOPTS) -c $(SR_OPERS)operator_wrappers.f90 -o $@
 
-$(OBS)pf_control.o: $(SR_CONTS)pf_control.f90 $(OBS)sizes.o $(OBS)histogram.o
+$(OBS)pf_control.o: $(SR_CONTS)pf_control.f90
 	$(FC) $(FCOPTS) -c $(SR_CONTS)pf_control.f90 -o $@
 
 $(OBS)perturb_particle.o: $(SR_OPERS)perturb_particle.f90 $(OBS)sizes.o
@@ -104,6 +106,9 @@ $(OBS)update_state.o: $(SR_OPERS)update_state.f90 $(OBS)sizes.o
 
 $(OBS)data_io.o: $(SR_UTILS)data_io.f90 $(OBS)pf_control.o $(OBS)sizes.o
 	$(FC) $(FCOPTS) -c $(SR_UTILS)data_io.f90 -o $@
+
+$(OBS)allocate_pf.o: $(SR_UTILS)allocate_pf.f90
+	$(FC) $(FCOPTS) -c $(SR_UTILS)allocate_pf.f90 -o $@
 
 $(OBS)proposal_filter.o: $(SR_FILTS)proposal_filter.f90 $(OBS)random_d.o
 	$(FC) $(FCOPTS) -c $(SR_FILTS)proposal_filter.f90 -o $@
@@ -233,4 +238,16 @@ clean:
 	rm -f obs/* bin/*
 
 minimal:
-	cd examples/;make -e minimal
+	cd models/minimal_empire;make -e
+	cd models/minimal_empire_comms;make -e
+	cd models/minimal_model;make -e
+	cd models/minimal_model_comms;make -e
+
+v1:
+	sed -i 's/empire_version=.*/empire_version=1/1' src/utils/comms.f90
+
+v2:
+	sed -i 's/empire_version=.*/empire_version=2/1' src/utils/comms.f90
+
+v3:
+	sed -i 's/empire_version=.*/empire_version=3/1' src/utils/comms.f90

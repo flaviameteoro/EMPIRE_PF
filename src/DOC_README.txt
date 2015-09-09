@@ -1,6 +1,6 @@
 /** \mainpage EMPIRE Data Assimilation Documentation
 \author Philip A. Browne <a href="mailto:p.browne@reading.ac.uk">p.browne@reading.ac.uk</a>
-\date Time-stamp: <2015-08-25 10:26:50 pbrowne>
+\date Time-stamp: <2015-09-09 17:16:02 pbrowne>
 
 \b Contributors
  - Mengbin Zhu - zhumengbin @ gmail.com
@@ -285,7 +285,7 @@ This is controlled by \link pf_control::pf_control_type::use_traj use_traj \endl
 
 \section ensemble_covariances Outputting covariances of the ensemble
 
-EMPIRE has the ability to output the ensemble covariance matrices throughout the run. This is controlled by the optional namelist &mat_pf in @ref empire.nml. For more information see @ref matrix_pf::matrix_pf_data. Note however, that this will output a large matrix -- if the state dimension of the model is large, this is likely not a good thing to compute!
+EMPIRE has the ability to output the ensemble covariance matrices throughout the run. This is controlled by the optional namelist &mat_pf in @ref empire.nml. For more information see @ref matrix_pf::matrix_pf_data. Note however, that this will output a large matrix -- if the state dimension of the model is large, this is likely not a good thing to compute! This feature is not available with empire version 3 communications.
 
 
 

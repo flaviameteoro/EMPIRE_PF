@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-07-17 11:21:59 pbrowne>
+!!! Time-stamp: <2015-09-09 17:14:48 pbrowne>
 !!!
 !!!    module to deal with generating and outputting pf matrix
 !!!    Copyright (C) 2015 Philip A. Browne
@@ -29,6 +29,9 @@
 module matrix_pf
   implicit none
   type, public :: matrix_pf_data
+     !< Note: this feature is not accessible with empire version 3
+     !! communications; the matrices in question are simply too
+     !! large to compute the full \f$ P_f \f$ matrix.
      character(30) :: prefix  !< the prefix of the filename to be
      !!                          output
      integer :: k             !< the frequency to output the matrix
@@ -46,7 +49,11 @@ module matrix_pf
                               !! Positive values will be unformatted.
 
   end type matrix_pf_data
-  type(matrix_pf_data), save :: matpf
+  type(matrix_pf_data), save :: matpf !< module holding data for
+  !! generating and outputting \f$ P_f  \f$ matrix. \n
+  !! Note: this feature is not accessible with empire version 3
+  !! communications; the matrices in question are simply too
+  !! large to compute the full \f$ P_f \f$ matrix.
 contains
   !> subroutine to read namelist to control this output
   subroutine read_matrix_pf_information

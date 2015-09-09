@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-07-16 16:36:37 pbrowne>
+!!! Time-stamp: <2015-09-09 18:45:28 pbrowne>
 !!!
 !!!    Module to control what variables are used to generate rank histograms
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -71,8 +71,12 @@ contains
   !! \endverbatim
 
   subroutine load_histogram_data
+    use comms
+    use sizes
     implicit none
     integer :: i
+    integer :: counter,lowerbound,upperbound
+    integer, allocatable, dimension(:) :: tempvar
 
 !    rhn_n = 9
     open(2,file='variables_hist.dat',action='read',status='old')
@@ -87,6 +91,43 @@ contains
        read(2,'(i7.7)') rank_hist_list(i)
     end do
     close(2)
+
+
+    if(empire_version .eq. 3) then
+
+       lowerbound = state_displacements(pf_member_rank+1)
+       if(pf_member_rank .eq. pf_member_size-1) then
+          upperbound = state_dim_g
+       else
+          upperbound = state_displacements(pf_member_rank+2)
+       end if
+       
+       counter = 0
+       do i = 1,rhl_n
+          if(rank_hist_list(i) .gt. lowerbound .and. rank_hist_list(i) .le.&
+            & upperbound) then
+             counter = counter + 1
+          end if
+       end do
+       
+       allocate(tempvar(rhl_n))
+       tempvar = rank_hist_list
+       deallocate(rank_hist_list)
+       allocate(rank_hist_list(counter))
+       
+       counter = 0
+       do i = 1,rhl_n
+          if(tempvar(i) .gt. lowerbound .and. tempvar(i) .le.&
+               & upperbound) then
+             counter = counter + 1
+             rank_hist_list(counter) = tempvar(i)
+          end if
+       end do
+       
+       deallocate(tempvar)
+       rank_hist_list = rank_hist_list - lowerbound
+    end if
+    
   end subroutine load_histogram_data
 
   !>subroutine to clean up arrays used in rank histograms

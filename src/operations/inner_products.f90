@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-03-24 13:16:51 pbrowne>
+!!! Time-stamp: <2015-09-09 11:47:54 pbrowne>
 !!!
 !!!    Collection of inner product wrappers
 !!!    Copyright (C) 2015  Philip A. Browne
@@ -35,9 +35,10 @@
 !! @param[in] t current timestep
 subroutine innerR_1(n,c,y,w,t)
   !subroutine to take an observation vector y and return w = y^T R^(-1) y
-!  use sizes
-!  use pf_control
+
+  use comms
   implicit none
+  include 'mpif.h'
   integer, parameter :: rk=kind(1.0D+0)
   integer, intent(in) :: n
   integer, intent(in) :: c
@@ -45,16 +46,25 @@ subroutine innerR_1(n,c,y,w,t)
   real(kind=rk), dimension(n,c), intent(in) :: y
   real(kind=rk), dimension(n,c) :: v
   real(kind=rk), dimension(c), intent(out) :: w
+  real(kind=rk), dimension(c) :: wtemp
   real(kind=rk) :: ddot
   integer :: i
+  integer :: mpi_err
 
   call solve_r(n,c,y,v,t)
-
-  !this can defo be done better using BLAS PAB...
+  
+  w = 0.0_rk
+  
   do i = 1,c
-!!$     w(i) = sum(y(:,i)*v(:,i))
      w(i) = ddot(n,y(:,i),1,v(:,i),1)
   end do
+
+  if(empire_version .eq. 3) then
+     !need to perform the sum across all parts of the observation vector
+     wtemp = w
+     call mpi_allreduce(wtemp,w,c,MPI_DOUBLE_PRECISION,MPI_SUM&
+          &,pf_member_comm,mpi_err)
+  end if
 
 end subroutine innerR_1
 
@@ -65,17 +75,31 @@ end subroutine innerR_1
 !! @param[in] t current timestep
 subroutine innerHQHt_plus_R_1(y,w,t)
   !subroutine to take an observation vector y and return w = y^T (HQH^T+R)^(-1) y
+  use comms
   use sizes
   implicit none
+  include 'mpif.h'
   integer, parameter :: rk=kind(1.0D+0)
   real(kind=rk), dimension(obs_dim), intent(in) :: y
   real(kind=rk), dimension(obs_dim) :: v
   real(kind=rk), intent(out) :: w
+  real(kind=rk) :: wtemp,ddot
   integer, intent(in) :: t
+  integer :: mpi_err
 
   call solve_hqht_plus_r(obs_dim,y,v,t)
 
-  !this can defo be done better using BLAS PAB...
-  w = sum(y*v)
+  w = 0.0_rk
+
+  w = ddot(obs_dim,y,1,v,1)
+  
+
+  if(empire_version .eq. 3) then
+     !need to perform the sum across all parts of the observation vector
+     wtemp = w
+     call mpi_allreduce(wtemp,w,1,MPI_DOUBLE_PRECISION,MPI_SUM&
+          &,pf_member_comm,mpi_err)
+  end if
+
 
 end subroutine innerHQHt_plus_R_1

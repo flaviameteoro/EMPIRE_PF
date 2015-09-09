@@ -1,8 +1,8 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-09-09 10:08:37 pbrowne>
+!!! Time-stamp: <2015-09-09 18:53:42 pbrowne>
 !!!
-!!!    Module that stores the dimension of observation and state spaces
-!!!    Copyright (C) 2014  Philip A. Browne
+!!!    Subroutine to allocate space for the filtering code
+!!!    Copyright (C) 2015  Philip A. Browne
 !!!
 !!!    This program is free software: you can redistribute it and/or modify
 !!!    it under the terms of the GNU General Public License as published by
@@ -24,22 +24,22 @@
 !!!	      RG6 6BB
 !!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-!> @brief Module that stores the dimension of observation and state spaces
-Module Sizes
+!> subroutine to allocate space for the filtering code        
+subroutine allocate_pf
+  use pf_control
+  use sizes
+  use histogram_data
+  integer :: st
+  allocate(pf%weight(pf%nens),stat=st)
+  if(st .ne. 0) stop 'Error in allocating pf%weight'
+  pf%weight = -log(1.0D0/pf%nens)
+  allocate(pf%psi(state_dim,pf%count),stat=st)
+  if(st .ne. 0) stop 'Error in allocating pf%psi'
   
-  integer :: obs_dim     !< size of the observations held on this
-                         !! process. For empire versions 1 and 2,
-                         !! this is the total number of observations
+  if(pf%use_talagrand) then
+     allocate(pf%talagrand(rhn_n,pf%nens+1),stat=st)
+     if(st .ne. 0) stop 'Error in allocating pf%talagrand'
+     pf%talagrand = 0
+  end if
   
-  integer :: state_dim   !< size of the state held on this process. 
-                         !! For empire versions 1 and 2,
-                         !! this is the total size of the state vector
-  
-  integer :: obs_dim_g   !< global size of  obs  dim over all processes
-  integer :: state_dim_g !< global size of state dim over all processes
-
-End Module Sizes
-
-
-
+end subroutine allocate_pf

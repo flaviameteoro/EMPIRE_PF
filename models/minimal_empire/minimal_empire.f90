@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-04-03 14:57:56 pbrowne>
+!!! Time-stamp: <2015-09-09 10:25:55 pbrowne>
 !!!
 !!!    minimal code to setup and test empire comms
 !!!    Copyright (C) 2015  Philip A. Browne
@@ -40,13 +40,17 @@ program minimal_empire
 
   print*,'RUNNING MINIMAL_EMPIRE'
   print*,'EMPIRE COUPLING VERSION ',empire_version
-  !> set up EMPIRE coupling
-  call initialise_mpi
+
 
   print*,'Reading state_dim from file state_dim: '
   open(11,file='state_dim',action='read',status='old')
   read(11,*) state_dim
   close(11)
+
+
+  !> set up EMPIRE coupling
+  call initialise_mpi
+
 
   print*,'allocating space for state vector (',state_dim,',',cnt,'):'
   allocate(x(state_dim,cnt))

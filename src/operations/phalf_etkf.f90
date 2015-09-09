@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-08-25 10:26:50 pbrowne>
+!!! Time-stamp: <2015-09-09 17:28:31 pbrowne>
 !!!
 !!!    Routine to change an ensemble N(0,I) to N(0,P)
 !!!    Copyright (C) 2015 Philip A. Browne
@@ -45,6 +45,7 @@ subroutine phalf_etkf(nrhs,x,px)
   real(kind=rk), dimension(state_dim,pf%count) :: Xp_loc
   real(kind=rk), dimension(obs_dim,pf%count) :: yf_loc
   real(kind=rk), dimension(obs_dim,pf%nens) :: yf,Ysf
+  real(kind=rk), dimension(obs_dim_g,pf%nens) :: Ysf_g
   real(kind=rk), dimension(obs_dim) :: mean_yf
   integer, dimension(npfs) :: start_var,stop_var
   !real(kind=rk), dimension(stateDimension,N) :: Xp
@@ -68,8 +69,20 @@ subroutine phalf_etkf(nrhs,x,px)
   !real(kind=rk), dimension(stateDimension,N), intent(inout) :: x
   real(kind=rk), dimension(state_dim,pf%count) :: x_loc
   
+  integer :: ensemble_comm
+
   !first lets make something N(0,Q):
   call Qhalf(nrhs,x,Xp_loc)
+
+  if(empire_version .eq. 1 .or. empire_version .eq. 2) then
+     ensemble_comm = pf_mpi_comm
+  elseif(empire_version .eq. 3) then
+     ensemble_comm = pf_ens_comm
+  else
+     print*,'EMPIRE VERSION ',empire_version,' NOT SUPPORTED IN phalf_etkf'
+     print*,'THIS IS AN ERROR. STOPPING'
+     stop '-24'
+  end if
 
 
   !now go into the LETKF code:
@@ -90,7 +103,7 @@ subroutine phalf_etkf(nrhs,x,px)
   ! need to send round all yf_loc and store in yf on all processes
   call mpi_allgatherv(yf_loc,pf%count*obs_dim,MPI_DOUBLE_PRECISION,yf&
        &,gblcount*obs_dim,gbldisp*obs_dim,MPI_DOUBLE_PRECISION&
-       &,pf_mpi_comm,mpi_err)
+       &,ensemble_comm,mpi_err)
 
   ! compute the mean of yf
   mean_yf = sum(yf,dim=2)/real(pf%nens,rk)
@@ -127,7 +140,7 @@ subroutine phalf_etkf(nrhs,x,px)
           gbldisp*number_gridpoints,&                      !displs
           MPI_DOUBLE_PRECISION,&                           !recvtype
           i-1,&                                            !root
-          pf_mpi_comm,&                                    !comm
+          ensemble_comm,&                                    !comm
           mpi_err)                                         !ierror
   end do
 
@@ -135,7 +148,15 @@ subroutine phalf_etkf(nrhs,x,px)
   !PAB  d = y - mean_yf
   !PAB  call solve_rhalf(obs_dim,1,d,dd,pf%timestep)
 
-
+  if(empire_version .eq. 1 .or. empire_version .eq. 2) then
+     Ysf_g = Ysf
+  elseif(empire_version .eq. 3) then
+     call mpi_allgatherv(Ysf,obs_dim*pf%nens,MPI_DOUBLE_PRECISION&
+          &,Ysf_g,obs_dims*pf%nens,obs_displacements*pf%nens&
+          &,MPI_DOUBLE_PRECISION,pf_member_comm,mpi_err)
+  else
+     print*,'should not enter here. error. stopping :o('
+  end if
 
   !this is for serial processing
   number_gridpoints = stop_var(pfrank+1)-start_var(pfrank+1)+1
@@ -148,14 +169,14 @@ subroutine phalf_etkf(nrhs,x,px)
 
      ! count the total number of observations we shall consider for this
      ! state variable
-     red_obsdim = obs_dim
+     red_obsdim = obs_dim_g
 
 
      allocate(Ysf_red(red_obsdim,pf%nens))
      ! reduce the forecast ensemble to only the observations in range
      ! and scale by the distance function
      do i = 1,pf%nens
-        Ysf_red(:,i) = Ysf(:,i)
+        Ysf_red(:,i) = Ysf_g(:,i)
      end do
 
      ! Compute the SVD
@@ -209,11 +230,11 @@ subroutine phalf_etkf(nrhs,x,px)
           gblcount*number_gridpoints,&                     !sendcounts  
           gbldisp*number_gridpoints,&                      !displs
           MPI_DOUBLE_PRECISION,&                           !sendtype    
-          px(start_var(i):stop_var(i),:),&             !recvbuf  
+          px(start_var(i):stop_var(i),:),&                 !recvbuf  
           pf%count*number_gridpoints,&                     !recvcount  
           MPI_DOUBLE_PRECISION,&                           !recvtype    
           i-1,&                                            !root     
-          pf_mpi_comm,&                                    !comm     
+          ensemble_comm,&                                    !comm     
           mpi_err)                                         !ierror 
   end do
 

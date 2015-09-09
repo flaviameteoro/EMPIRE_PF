@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-07-17 09:53:05 pbrowne>
+!!! Time-stamp: <2015-09-09 18:54:50 pbrowne>
 !!!
 !!!    module to hold all the information to control the the main program
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -375,27 +375,6 @@ contains
     end subroutine parse_pf_parameters
 
 
-    !> subroutine to allocate space for the filtering code
-    subroutine allocate_pf
-      use sizes
-      use histogram_data
-      integer :: st
-      allocate(pf%weight(pf%nens),stat=st)
-      if(st .ne. 0) stop 'Error in allocating pf%weight'
-      pf%weight = -log(1.0D0/pf%nens)
-      allocate(pf%psi(state_dim,pf%count),stat=st)
-      if(st .ne. 0) stop 'Error in allocating pf%psi'
-
-      if(pf%use_talagrand) then
-         allocate(pf%talagrand(rhn_n,pf%nens+1),stat=st)
-         if(st .ne. 0) stop 'Error in allocating pf%talagrand'
-         pf%talagrand = 0
-      end if
-      
-!      allocate(pf%particles(pf%count),stat=st)
-!      if(st .ne. 0) stop 'Error in allocating pf%particles'
-
-    end subroutine allocate_pf
     
     !> subroutine to deallocate space for the filtering code
     subroutine deallocate_pf

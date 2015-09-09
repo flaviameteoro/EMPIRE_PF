@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-04-01 22:15:55 pbrowne>
+!!! Time-stamp: <2015-09-09 13:37:50 pbrowne>
 !!!
 !!!    Subroutine to perform nudging in the proposal step of EWPF
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -39,7 +39,7 @@ subroutine proposal_filter
   include 'mpif.h'
   integer, parameter :: rk = kind(1.0D0)
 
-  real(kind=rk) :: pWeight!, qWeight
+  real(kind=rk) :: pWeight
   real(kind=rk), dimension(state_dim,pf%count) :: normaln     !vector to store uncorrelated random error
   real(kind=rk), dimension(state_dim,pf%count) :: betan       !vector to store sqrtQ correlated random error
   real(kind=rk), dimension(obs_dim) :: y             !y, the observations
@@ -48,11 +48,12 @@ subroutine proposal_filter
   real(kind=rk), dimension(state_dim,pf%count) :: fpsi        !f(psi^(n-1))
   real(kind=rk), dimension(state_dim,pf%count) :: kgain       !QH^T(HQH^T+R)^(-1)(y-H(psi^(n-1)))
   real(kind=rk), dimension(state_dim,pf%count) :: Qkgain
-  real(kind=rk) :: t
-  integer :: particle,k!,tag,mpi_err
-!  integer :: mpi_status( MPI_STATUS_SIZE )
-  real(kind=rk), dimension(7) :: ti
-  logical, parameter :: time = .false.
+  integer :: particle,k
+  integer :: mpi_err
+  real(kind=rk) :: pweighttemp,ddot
+
+  !get the model to provide f(x)
+  call send_all_models(state_dim,pf%count,pf%psi,1)
 
 
   !get the next observations and store it in vector y
@@ -60,49 +61,24 @@ subroutine proposal_filter
 
 
   !compute y - H(x)
-  if(time) t = mpi_wtime()
   call H(obs_dim,pf%count,pf%psi,Hpsi,pf%timestep)
-  if(time) ti(1) = mpi_wtime()-t
+
   !$omp parallel do
   do k = 1,pf%count
      y_Hpsin1(:,k) = y - Hpsi(:,k)
   end do
   !$omp end parallel do
-  if(time) ti(2) = mpi_wtime()-ti(1) -t
-  
-  
-  !get the model to provide f(x)
-!  do k =1,pf%count
-!     particle = pf%particles(k)
-!     tag = 1
-!     call mpi_send(pf%psi(:,k),state_dim,MPI_DOUBLE_PRECISION&
-!          &,particle-1,tag,CPL_MPI_COMM,mpi_err)
-!  end do
-  
-  call send_all_models(state_dim,pf%count,pf%psi,1)
 
-
-  if(time) ti(3) = mpi_wtime()-ti(2)-t
 
   !draw from a Gaussian for the random noise
   call NormalRandomNumbers2D(0.0D0,1.0D0,state_dim,pf%count,normaln)
-  if(time) ti(4) = mpi_wtime()-ti(3) -t
-
-!  DO k = 1,pf%count
-!     particle = pf%particles(k)
-!     tag = 1
-!     CALL MPI_RECV(fpsi(:,k), state_dim, MPI_DOUBLE_PRECISION, &
-!          particle-1, tag, CPL_MPI_COMM,mpi_status, mpi_err)
-!  END DO
 
   call recv_all_models(state_dim,pf%count,fpsi)
 
-  if(time) ti(5) = mpi_wtime()-ti(4) -t
   
   !compute the relaxation term Qkgain, the intermediate
   !term kgain and apply correlation to noise
   call Bprime(y_Hpsin1,kgain,Qkgain,normaln,betan)
-  if(time) ti(6) = mpi_wtime()-ti(5) -t
 
 
   !update the new state and weights based on these terms
@@ -111,13 +87,20 @@ subroutine proposal_filter
      particle = pf%particles(k)
      !     print*,'|fpsi-psi|_2 = ',dnrm2(state_dim,(fpsi(:,k)-pf%psi(:,k)),1)
      call update_state(pf%psi(:,k),fpsi(:,k),Qkgain(:,k),betan(:,k))
-     pweight = sum(Qkgain(:,k)*kgain(:,k))+2.0D0*sum(betan(:,k)*kgain(:,k))
+
+!     pweight = sum(Qkgain(:,k)*kgain(:,k))+2.0D0*sum(betan(:,k)*kgain(:,k))
+     pweight = ddot(state_dim,Qkgain(:,k),1,kgain(:,k),1) + 2.0D0&
+             &*ddot(state_dim, betan(:,k),1,kgain(:,k),1)
+
+     if(empire_version .eq. 3) then
+        !need to perform the sum across all parts of the state vector
+        pweighttemp=pweight
+        call mpi_allreduce(pweighttemp,pweight,1,MPI_DOUBLE_PRECISION,MPI_SUM&
+             &,pf_member_comm,mpi_err)
+     end if
+
      pf%weight(particle) = pf%weight(particle) + 0.5*pWeight
   end DO
-
   !$omp end parallel do
-  if(time) then
-     ti(7) = mpi_wtime()-ti(6) -t
-     print*,ti
-  end if
+
 end subroutine proposal_filter

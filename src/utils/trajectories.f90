@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-07-16 16:39:45 pbrowne>
+!!! Time-stamp: <2015-09-09 18:43:19 pbrowne>
 !!!
 !!!    Subroutine to output trajectories of state variables
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -43,9 +43,12 @@ module traj_data
     !! and the following K integers are the index in the state
     !! dimension for which the trajectories are required.    
     subroutine setup_traj
-      use sizes, only : state_dim
+      use comms
+      use sizes, only : state_dim_g
       logical :: dir_e,file_e
       integer :: i
+      integer :: counter,lowerbound,upperbound
+      integer, allocatable, dimension(:) :: tempvar
       !first check that the traj directory exists:
       ! a trick to be sure traj is a dir
       inquire( file="./traj/.", exist=dir_e )
@@ -81,9 +84,9 @@ module traj_data
             print*,'                 : variable read as',trajvar(i),' &
                  &STOP.'
             stop -561
-         elseif(trajvar(i) .gt. state_dim) then
+         elseif(trajvar(i) .gt. state_dim_g) then
             print*,'EMPIRE ERROR -562: trajectory variable ',i,' larger &
-                 &than the state dimension ',state_dim
+                 &than the state dimension ',state_dim_g
             print*,'                 : variable read as',trajvar(i),' &
                  &STOP.'
             stop -562
@@ -91,6 +94,42 @@ module traj_data
       end do
 
       close(12)
+
+
+      if(empire_version .eq. 3) then
+
+         lowerbound = state_displacements(pf_member_rank+1)
+         if(pf_member_rank .eq. pf_member_size-1) then
+            upperbound = state_dim_g
+         else
+            upperbound = state_displacements(pf_member_rank+2)
+         end if
+
+         counter = 0
+         do i = 1,trajn
+            if(trajvar(i) .gt. lowerbound .and. trajvar(i) .le.&
+                 & upperbound) then
+               counter = counter + 1
+            end if
+         end do
+
+         allocate(tempvar(trajn))
+         tempvar = trajvar
+         deallocate(trajvar)
+         allocate(trajvar(counter))
+         
+         counter = 0
+         do i = 1,trajn
+            if(tempvar(i) .gt. lowerbound .and. tempvar(i) .le.&
+                 & upperbound) then
+               counter = counter + 1
+               trajvar(counter) = tempvar(i)
+            end if
+         end do
+         deallocate(tempvar)
+         trajvar = trajvar - lowerbound
+
+      end if
       
     end subroutine setup_traj
     

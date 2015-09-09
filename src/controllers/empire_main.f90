@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-09-02 10:27:55 pbrowne>
+!!! Time-stamp: <2015-09-09 13:59:13 pbrowne>
 !!!
 !!!    The main program to run EMPIRE
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -64,7 +64,7 @@ program empire
   write(emp_o,*) 'PF: configuring model'
   !> call user specific routine for initialisation
   call configure_model
-
+  call verify_sizes
 
   write(emp_o,*) 'allocating pf'
   !> allocate space for the filter
@@ -176,7 +176,7 @@ program empire
      call output_from_pf
 
      call reconfigure_model
-
+     call verify_sizes
   end do
   call diagnostics
   write(6,*) 'PF: finished the loop - now to tidy up'

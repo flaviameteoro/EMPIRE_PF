@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-07-16 10:53:39 pbrowne>
+!!! Time-stamp: <2015-09-09 18:23:04 pbrowne>
 !!!
 !!!    Module and subroutine to intitalise EMPIRE coupling to models
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -27,6 +27,7 @@
 
 
 !> Module containing EMPIRE coupling data
+!! @todo Need to see what happens if some process has no observations
 module comms
   integer :: CPL_MPI_COMM !< the communicator between the empire
   !< codes and the model master nodes
@@ -47,14 +48,31 @@ module comms
   integer, allocatable, dimension(:) :: particles !< the ensemble
   !!members associated with this process
   integer, allocatable, dimension(:) :: cpl_mpi_comms !<communicators
-  !! for if we are using empire v2
+  !! for if we are using empire v2 or v3
   integer, allocatable, dimension(:) :: state_dims !<state dimensions
-  !!on each model process
-  integer, allocatable, dimension(:) :: state_displacements&
-       & !<displacements of the various parts of the state vector
+  !!on each model process for empire v2
+  integer, allocatable, dimension(:) :: state_displacements
+                                !< displacements of the various parts 
+                                !! of the state vector for empire v2
+  integer, allocatable, dimension(:) :: obs_dims !<obs dimensions
+                                !! on each model process for empire v3
+  integer, allocatable, dimension(:) :: obs_displacements
+                                !< displacements of the various parts 
+                                !! of the obs vector for empire v3
   integer :: mdl_num_proc !< number of processes of each ensemble
-  !!member
-  integer, parameter :: empire_version=1
+                          !! member
+  integer :: pf_member_comm !< communicator for empire v3 which
+                            !! contains all processes of individual
+                            !! ensemble members
+  integer :: pf_ens_comm    !< communicator for empire v3 which
+                            !! contains all ensemble members for that
+                            !! specific part of the state vector
+  integer :: pf_ens_rank    !< rank of the process on pf_ens_comm
+  integer :: pf_member_rank !< rank of the process on pf_member_comm
+                            !! for empire v3
+  integer :: pf_member_size !< size of pf_member_comm
+                            !! for empire v3
+  integer, parameter :: empire_version=3
 
 contains
 
@@ -80,6 +98,8 @@ contains
        call initialise_mpi_v1
     case(2)
        call initialise_mpi_v2
+    case(3)
+       call initialise_mpi_v3
     case default
        print*,'ERROR: empire_version ',empire_version,' not implemente&
             &d.'
@@ -147,7 +167,7 @@ contains
     allocate(gbldisp(npfs))
 
 
-    call mpi_allgather(count,1,mpi_integer,gblcount,1,mpi_integer&
+    call mpi_allgather(count,1,MPI_INTEGER,gblcount,1,MPI_INTEGER&
          &,pf_mpi_comm,mpi_err)
     
 
@@ -304,7 +324,7 @@ contains
     allocate(gbldisp(npfs))
 
 
-    call mpi_allgather(cnt,1,mpi_integer,gblcount,1,mpi_integer&
+    call mpi_allgather(cnt,1,MPI_INTEGER,gblcount,1,MPI_INTEGER&
          &,pf_mpi_comm,mpi_err)
     if(mpi_err .eq. 0) then
        print*,'mpi_allgather successful: gblcount known on all da proc&
@@ -331,6 +351,213 @@ contains
     pf%count = cnt
     pf%nens = nens
   end subroutine initialise_mpi_v2
+
+  !> subroutine to initialise even newer version of empire
+  subroutine initialise_mpi_v3
+    use sizes
+    use pf_control
+    implicit none
+    include 'mpif.h'
+
+    integer :: mpi_err
+    integer :: world_size
+    integer,parameter :: da=1
+    integer, parameter :: rk = kind(1.0d0)
+    integer :: i
+    integer :: mdl_procs
+    integer :: first_ptcl
+    integer :: final_ptcl
+    integer :: tmp_cpl_comm
+    integer :: tmp_cpl_comm2
+    integer :: tmp_cpl_rank
+    integer :: tmp_cpl_colour2
+    integer :: pf_member_colour
+    integer :: pf_ens_colour
+    integer :: pf_ens_size
+    integer :: status(MPI_STATUS_SIZE)
+
+
+    call mpi_init(mpi_err)
+    call mpi_comm_rank(mpi_comm_world,world_rank,mpi_err)
+    call mpi_comm_size(mpi_comm_world,world_size,mpi_err)
+    print*,'EMPIRE:  rank = ',world_rank,' on mpi_comm_world which has size ',world_size
+
+
+    !get the number of processes per model
+    call mpi_allreduce(0,mdl_num_proc,1,MPI_INTEGER,MPI_MAX&
+         &,MPI_COMM_WORLD,mpi_err)
+
+    if(mdl_num_proc .lt. 1) then
+       print*,'EMPIRE COMMS v3 ERROR: mdl_num_proc < 1'
+       print*,'mdl_num_proc = ',mdl_num_proc
+       print*,'THIS SUGGESTS YOU HAVE NOT LINKED TO A MODEL. STOP.'
+       stop
+    else
+       print*,'mdl_num_proc = ',mdl_num_proc
+    end if
+!!!==================================================!!!
+!!!================ BRUCE LEE =======================!!!
+!!!==================================================!!!
+    
+
+    !split into models and da processes. create pf_mpi_comm
+    call mpi_comm_split(MPI_COMM_WORLD,da,world_rank,pf_mpi_comm,mpi_err)
+    call mpi_comm_size(pf_mpi_comm,npfs,mpi_err)
+    call mpi_comm_rank(pf_mpi_comm,pfrank,mpi_err)
+    
+!!!==================================================!!!
+!!!================ JEAN CLAUDE VAN DAMME ===========!!!
+!!!==================================================!!!
+    
+
+    !split pf_mpi_comm into communicator for ensemble member
+    pf_member_colour= pfrank/mdl_num_proc
+    call mpi_comm_split(pf_mpi_comm,pf_member_colour,pfrank&
+         &,pf_member_comm,mpi_err)
+    call mpi_comm_rank(pf_member_comm,pf_member_rank,mpi_err)
+    
+    !split pf_mpi_comm into communicator for ensemble (local to this
+    !part of the state vector)
+    pf_ens_colour = mod(pfrank,mdl_num_proc)
+    call mpi_comm_split(pf_mpi_comm,pf_ens_colour,pfrank,pf_ens_comm&
+         &,mpi_err)
+    call mpi_comm_size(pf_ens_comm,pf_ens_size,mpi_err)
+    call mpi_comm_rank(pf_ens_comm,pf_ens_rank,mpi_err)
+
+    npfs = pf_ens_size
+    
+
+    !compute number of model processes
+    mdl_procs = world_size-npfs
+    print*,'npfs = ',npfs
+    print*,'mdl_procs = ',mdl_procs
+
+
+    !compute number of ensemble members
+    nens = mdl_procs/mdl_num_proc
+    print*,'nens = ',nens
+
+
+    !compute range of particles that this mpi process communicates with
+    first_ptcl = ceiling(real(pf_member_colour)*real(nens)/real(pf_ens_size))
+    final_ptcl = ceiling(real(pf_member_colour+1)*real(nens)/real(pf_ens_size))-1
+    particles = (/ (i, i = first_ptcl,final_ptcl) /)
+    print*,'range of particles = ',first_ptcl,final_ptcl
+   
+
+    ! count the number of particles associated with this process
+    cnt = final_ptcl-first_ptcl+1
+    if(cnt .lt. 1) then
+       print*,'EMPIRE ERROR: YOU HAVE LAUNCHED MORE EMPIRE DA PROCESSES'
+       print*,'EMPIRE ERROR: THAN MODELS. I AM REDUDANT AND STOPPING.'
+       print*,'EMPIRE ERROR: RECONSIDER HOW YOU EXECUTE NEXT TIME. xx'
+       stop
+    end if
+
+    !!!==================================================!!!
+    !!!============== STEVEN SEGAL ======================!!!
+    !!!==================================================!!!
+
+    !create a temporary communicator with all associated model processes
+    call mpi_comm_split(mpi_comm_world,pf_member_colour,world_size+pf_member_colour&
+         &,tmp_cpl_comm,mpi_err)
+    print*,'split and created tmp_cpl_comm'
+    
+!!!==================================================!!!
+!!!============== CHUCK NORRIS ======================!!!
+!!!==================================================!!! 
+
+    !get the rank and set the colour across the model mpi processes
+    call mpi_comm_rank(tmp_cpl_comm,tmp_cpl_rank,mpi_err)
+    tmp_cpl_colour2 = mod(tmp_cpl_rank,mdl_num_proc)
+    
+    !split this temp communicator into a new temporary one
+    call mpi_comm_split(tmp_cpl_comm,tmp_cpl_colour2,tmp_cpl_rank&
+         &,tmp_cpl_comm2,mpi_err)
+  
+!!!==================================================!!!
+!!!=============== JACKIE CHAN ======================!!!
+!!!==================================================!!!
+
+    !allocate a communicator for each ensemble member
+    allocate(cpl_mpi_comms(cnt))
+
+
+    !split the second temporary communicator into individual ones for each
+    !ensemble member
+    do i = 1,cnt
+       call mpi_comm_split(tmp_cpl_comm2,1,world_size,cpl_mpi_comms(i)&
+            &,mpi_err)
+       write(*,'(A,i3.3,A,i0)') 'created cpl_mpi_comms(',i,') ',cpl_mpi_comms(i)
+    end do
+
+    !the rank of this mpi process each of cpl_mpi_comms(:) is the highest
+    cpl_rank = 1
+
+    
+!!!==================================================!!!
+!!!=============== MICHELLE YEOH ====================!!!
+!!!==================================================!!! 
+    
+    !free up the temporary communicators
+    call mpi_comm_free(tmp_cpl_comm ,mpi_err)
+    call mpi_comm_free(tmp_cpl_comm2,mpi_err)
+    
+    state_dim = 0
+
+    
+    !for each ensemble member, gather the number of variables stored
+    !on each process
+    do i = 1,cnt
+       call mpi_recv(state_dim,1,MPI_INTEGER,0,MPI_ANY_TAG&
+            &,cpl_mpi_comms(i),status,mpi_err)
+    end do
+    print*,'state_dim = ',state_dim
+    
+!!!==================================================!!!
+!!!=============== SCARLETT JOHANSSON ===============!!!
+!!!==================================================!!! 
+
+    !compute the total state dimension:
+    call mpi_allreduce(state_dim,state_dim_g,1,MPI_INTEGER,MPI_SUM&
+         &,pf_member_comm,mpi_err)
+    print*,'total state vector size = ',state_dim_g
+
+   
+    !compute counts and displacements of particles associated with da
+    !processes
+    allocate(gblcount(pf_ens_size))
+    allocate(gbldisp(pf_ens_size))
+
+
+    call mpi_allgather(cnt,1,MPI_INTEGER,gblcount,1,MPI_INTEGER&
+         &,pf_ens_comm,mpi_err)
+    if(mpi_err .eq. 0) then
+       print*,'mpi_allgather successful: gblcount known on all da proc&
+            &esses'
+       print*,'gblcount = ',gblcount
+    else
+       print*,'mpi_allgather unsucessful'
+    end if
+    
+
+    gbldisp = 0
+    if(npfs .gt. 1) then
+       do i = 2,pf_ens_size
+          gbldisp(i) = gbldisp(i-1) + gblcount(i-1)
+       end do
+    end if    
+
+
+
+
+
+
+    pf%particles = particles+1
+    pf%count = cnt
+    pf%nens = nens
+  end subroutine initialise_mpi_v3
+
 
 
   !> subroutine to send all the model states to the models
@@ -359,8 +586,13 @@ contains
              call mpi_scatterv(x(:,k),state_dims,state_displacements&
                   &,MPI_DOUBLE_PRECISION,send_null,0,MPI_DOUBLE_PRECISION&
                &,cpl_rank,cpl_mpi_comms(k),mpi_err)
-             call mpi_bcast(tag,1,mpi_integer,cpl_rank,cpl_mpi_comms(k)&
+             call mpi_bcast(tag,1,MPI_INTEGER,cpl_rank,cpl_mpi_comms(k)&
                   &,mpi_err)
+          end do
+       case(3)
+          do k = 1,cnt
+             call mpi_send(x(:,k),stateDim,MPI_DOUBLE_PRECISION&
+                  &,0,tag,cpl_mpi_comms(k),mpi_err)
           end do
        case default
           print*,'EMPIRE ERROR: THIS ISNT BACK TO THE FUTURE. empire_v&
@@ -399,6 +631,11 @@ contains
                &,state_dims,state_displacements,MPI_DOUBLE_PRECISION,cpl_rank&
                &,cpl_mpi_comms(k),mpi_err)
        end do
+    case(3)
+       DO k = 1,cnt
+          CALL MPI_RECV(x(:,k), stateDim, MPI_DOUBLE_PRECISION, &
+               0, MPI_ANY_TAG, cpl_mpi_comms(k),mpi_status, mpi_err)
+       END DO
     case default
        print*,'EMPIRE ERROR: THIS ISNT BACK TO THE FUTURE PART 2. empire_v&
             &ersion not yet implemented'
@@ -454,6 +691,11 @@ contains
                   &,1,cpl_mpi_comms(k),mpi_status, mpi_err)
 
           end do
+       case(3)
+          DO k = 1,cnt
+             CALL MPI_IRECV(x(:,k), stateDim, MPI_DOUBLE_PRECISION, &
+                  0, MPI_ANY_TAG, cpl_mpi_comms(k),requests(k), mpi_err)
+          end DO
        case default
           print*,'EMPIRE ERROR: THIS ISNT BACK TO THE FUTURE PART 3. empire_v&
                &ersion not yet implemented'
@@ -463,6 +705,54 @@ contains
   end subroutine irecv_all_models
 
 
+  subroutine verify_sizes
+    use sizes
+    implicit none
+    include 'mpif.h'
+    integer :: mpi_err,i
 
+    if(empire_version .eq. 1 .or. empire_version .eq. 2) then
+       state_dim_g = state_dim
+       obs_dim_g = obs_dim
+       pf_ens_rank = pfrank
+    end if
+    
+    if(empire_version .eq. 3) then
+       if(allocated(obs_dims)) deallocate(obs_dims)
+       allocate(obs_dims(pf_member_size))
+       if(allocated(obs_displacements)) deallocate(obs_displacements)
+       allocate(obs_displacements(pf_member_size))
+       
+       call mpi_allgather(obs_dim,1,MPI_INTEGER,obs_dims,1&
+            &,MPI_INTEGER,pf_member_comm,mpi_err)
+       
+       obs_displacements(1) = 0
+       if(pf_member_size .gt. 1) then
+          do i = 2,pf_member_size
+             obs_displacements(i) = obs_displacements(i-1) + obs_dims(i&
+                  &-1)
+          end do
+       end if
+
+
+       if(.not. allocated(state_dims)) then
+          allocate(state_dims(pf_member_size))
+          allocate(state_displacements(pf_member_size))
+
+          call mpi_allgather(state_dim,1,MPI_INTEGER,state_dims,1&
+               &,MPI_INTEGER,pf_member_comm,mpi_err)
+          
+          state_displacements(1) = 0
+          if(pf_member_size .gt. 1) then
+             do i = 2,pf_member_size
+                state_displacements(i) = state_displacements(i-1) +&
+                     & state_dims(i-1)
+             end do
+          end if
+       end if
+
+    end if
+
+  end subroutine verify_sizes
 
 end module comms

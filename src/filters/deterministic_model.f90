@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-04-01 22:11:52 pbrowne>
+!!! Time-stamp: <2015-09-09 11:05:33 pbrowne>
 !!!
 !!!    subroutine to simply move the model forward in time one timestep
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -51,19 +51,6 @@ subroutine deterministic_model
   end if
 
   call send_all_models(state_dim,pf%count,pf%psi,1)
-
-!!$  do k =1,pf%count
-!!$     particle = pf%particles(k)
-!!$     tag = 1
-!!$     call mpi_send(pf%psi(:,k),state_dim,MPI_DOUBLE_PRECISION&
-!!$          &,particle-1,tag,CPL_MPI_COMM,mpi_err)
-!!$  end do
-!!$  DO k = 1,pf%count
-!!$     particle = pf%particles(k)
-!!$     tag = 1
-!!$     CALL MPI_RECV(pf%psi(:,k), state_dim, MPI_DOUBLE_PRECISION, &
-!!$          particle-1, tag, CPL_MPI_COMM,mpi_status, mpi_err)
-!!$  END DO
 
   call recv_all_models(state_dim,pf%count,pf%psi)
 

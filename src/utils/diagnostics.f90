@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-07-16 16:32:03 pbrowne>
+!!! Time-stamp: <2015-09-09 18:30:05 pbrowne>
 !!!
 !!!    Subroutine to give output diagnositics such as rank histograms
 !!!    and trajectories
@@ -44,7 +44,7 @@ subroutine diagnostics
   character(32) :: filename
   integer, dimension(rhn_n,pf%nens+1) :: reduced_talagrand
   include 'mpif.h'
-  
+
   if(.not. pf%gen_data) then
      if(pf%use_talagrand) then
         
@@ -53,8 +53,13 @@ subroutine diagnostics
         do particle = 1,pf%count
            !write(filename,'(A,i6.6,A,i5.5)') 'hist/timestep',((pf%timestep)/pf&
            !     &%time_bwn_obs) ,'particle',pf%particles(particle)
+           if(empire_version .eq. 1 .or. empire_version .eq. 2) then
            write(filename,'(A,i7.7,A,i5.5)') 'hist/timestep',&
                 &pf%timestep,'particle',pf%particles(particle)
+           else
+              write(filename,'(A,i7.7,A,i5.5,A,i0)') 'hist/timestep',&
+                &pf%timestep,'particle',pf%particles(particle),'.',pf_member_rank
+           end if
            open(12,file=filename,action='write',status='replace',form='unforma&
                 &tted',access='direct',recl=length)
 
@@ -72,7 +77,7 @@ subroutine diagnostics
            
            do time = 1,pf%time_obs
               !              print*,'time = ',time
-              if(mod(time,npfs) .eq. pfrank) then
+              if(mod(time,npfs) .eq. pf_ens_rank) then
                  !cock cock cock adjusted the below to make it sensible
                  !pf%timestep = time*pf%time_bwn_obs
                  pf%timestep = TSData%obs_times(time)
@@ -80,8 +85,13 @@ subroutine diagnostics
 
                  !write(filename,'(A,i6.6,A,i5.5)') 'hist/timestep',((pf%timestep)/pf&
                  !     &%time_bwn_obs) ,'truth'
-                 write(filename,'(A,i7.7,A,i5.5)') 'hist/timestep',&
-                      &pf%timestep,'truth'
+                 if(empire_version .eq. 1 .or. empire_version .eq. 2) then
+                    write(filename,'(A,i7.7,A)') 'hist/timestep',&
+                         &pf%timestep,'truth'
+                 else
+                    write(filename,'(A,i7.7,A,i0)') 'hist/timestep',&
+                         &pf%timestep,'truth.',pf_member_rank
+                 end if
 
                  open(12,file=filename,action='read',status='old',form='unforma&
                       &tted',access='direct',recl=length)
@@ -94,11 +104,16 @@ subroutine diagnostics
                  close(12)
 
                  do particle = 1,pf%nens
-                    !write(filename,'(A,i6.6,A,i5.5)') 'hist/timestep',pf&
-                    !     &%timestep/pf%time_bwn_obs,'&
-                    !     &particle',particle
-                    write(filename,'(A,i7.7,A,i5.5)') 'hist/timestep',&
-                         &pf%timestep,'particle',particle
+
+                    if(empire_version .eq. 1 .or. empire_version .eq. 2) then
+                       write(filename,'(A,i7.7,A,i5.5)') 'hist/timestep',&
+                            &pf%timestep,'particle',pf%particles(particle)
+                    else
+                       write(filename,'(A,i7.7,A,i5.5,A,i0)') 'hist/timestep',&
+                            &pf%timestep,'particle',pf&
+                            &%particles(particle),'.',pf_member_rank
+                    end if
+                    
                     open(13, file=filename,action='read',status='old',form='un&
                          &for&
                          &matted',access='direct',recl=length)
@@ -158,7 +173,7 @@ subroutine diagnostics
 
            !now let us reduce the information to the master processor:
            call mpi_reduce(pf%talagrand,reduced_talagrand,rhn_n*(pf%nens+1)&
-                &,mpi_integer,mpi_sum,0,pf_mpi_comm,mpi_err)
+                &,MPI_INTEGER,MPI_SUM,0,pf_mpi_comm,mpi_err)
 
            !           print*,'some reduction just happened'
 
@@ -188,7 +203,13 @@ subroutine diagnostics
         do particle = 1,pf%count
            !write(filename,'(A,i6.6,A)') 'hist/timestep',((pf%timestep)/pf&
            !     &%time_bwn_obs) ,'truth'
-           write(filename,'(A,i7.7,A)') 'hist/timestep',pf%timestep,'truth'
+           if(empire_version .eq. 1 .or. empire_version .eq. 2) then
+              write(filename,'(A,i7.7,A)') 'hist/timestep',pf&
+                   &%timestep,'truth'
+           else
+              write(filename,'(A,i7.7,A,i0)') 'hist/timestep',pf&
+                   &%timestep,'truth.',pf_member_rank
+           end if
            open(12,file=filename,action='write',status='replace',form='unforma&
                 &tted',access='direct',recl=length)
 

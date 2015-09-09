@@ -79,10 +79,17 @@ red EMPIRE VERSION detected as $version in $commsfile
 if [[ "$version" = "1" ]]; then
     minmdl=../bin/minimal_model
     minmdlcomm=../bin/minimal_model_comms
+    minmdlnum=1
     echo 3 > state_dim
 elif [[ "$version" = "2" ]]; then
     minmdl=../bin/minimal_model_v2
     minmdlcomm=../bin/minimal_model_comms_v2
+    minmdlnum=1
+elif [[ "$version" = "3" ]]; then
+    minmdl=../bin/minimal_model_v3
+    minmdlcomm=../bin/minimal_model_comms_v3
+    minmdlnum=5
+    echo 3 > state_dim
 else
     red ERROR: version not supported by these tests.
     exit -1
@@ -118,7 +125,7 @@ do
 	done
 	for j in $(eval echo {1..$emps})
 	do
-	    echo "-np 1 ../bin/minimal_empire_comms : " >> stuff
+	    echo "-np $minmdlnum ../bin/minimal_empire_comms : " >> stuff
 	done
 	line=$(cat stuff | shuf | tr '\n' ' ' | rev | cut -c 4- | rev)
 	test $MPIRUN $MPIRUNOPTS $line
@@ -140,7 +147,7 @@ do
 	done
 	for j in $(eval echo {1..$emps})
 	do
-	    echo "-np 1 ../bin/minimal_empire : " >> stuff
+	    echo "-np $minmdlnum ../bin/minimal_empire : " >> stuff
 	done
 	line=$(cat stuff | shuf | tr '\n' ' ' | rev | cut -c 4- | rev)
 	testp $MPIRUN $MPIRUNOPTS $line

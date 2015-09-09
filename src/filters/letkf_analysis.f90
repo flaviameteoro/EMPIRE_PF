@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-07-17 11:12:36 pbrowne>
+!!! Time-stamp: <2015-09-09 17:24:39 pbrowne>
 !!!
 !!!    Ensemble transform Kalman filter
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -60,15 +60,17 @@ subroutine letkf_analysis
   real(kind=rk), dimension(:,:), allocatable :: Xp
   real(kind=rk), dimension(:,:), allocatable :: Xa
   real(kind=rk), dimension(obs_dim) :: mean_yf,d,dd
+  real(kind=rk), dimension(obs_dim_g) :: dd_g
   real(kind=rk), dimension(obs_dim,pf%nens) :: yf,Ysf
+  real(kind=rk), dimension(obs_dim_g,pf%nens) :: Ysf_g
   real(kind=rk), dimension(obs_dim,pf%count) :: yf_loc
   integer :: i,j,number_gridpoints
 
   !variables for localisation
   real(kind=rk) :: dist
   real(kind=rk), parameter :: maxscal=exp(8.0d0)
-  real(kind=rk),dimension(obs_dim) :: scal
-  logical, dimension(obs_dim) :: yes
+  real(kind=rk),dimension(obs_dim_g) :: scal
+  logical, dimension(obs_dim_g) :: yes
   integer :: red_obsdim
   real(kind=rk), allocatable, dimension(:,:) :: Ysf_red
   real(kind=rk), allocatable, dimension(:) :: dd_red
@@ -77,7 +79,19 @@ subroutine letkf_analysis
   !variables for mpi
   integer :: mpi_err
   integer, dimension(npfs) :: start_var,stop_var
+  integer :: ensemble_comm
   include 'mpif.h'
+
+  if(empire_version .eq. 1 .or. empire_version .eq. 2) then
+     ensemble_comm = pf_mpi_comm
+  elseif(empire_version .eq. 3) then
+     ensemble_comm = pf_ens_comm
+  else
+     print*,'EMPIRE VERSION ',empire_version,' NOT SUPPORTED IN letkf_analysis'
+     print*,'THIS IS AN ERROR. STOPPING'
+     stop '-24'
+  end if
+
 
   call get_observation_data(y,pf%timestep)
 
@@ -88,7 +102,7 @@ subroutine letkf_analysis
 
   !send mean_x to all processes and add up to get global sum
   call mpi_allreduce(MPI_IN_PLACE,mean_x,state_dim,MPI_DOUBLE_PRECISION&
-       &,MPI_SUM,pf_mpi_comm,mpi_err)
+       &,MPI_SUM,ensemble_comm,mpi_err)
 
   !now divide by the total number of ensemble members to make it a true
   !mean
@@ -123,7 +137,7 @@ subroutine letkf_analysis
   ! need to send round all yf_loc and store in yf on all processes
   call mpi_allgatherv(yf_loc,pf%count*obs_dim,MPI_DOUBLE_PRECISION,yf&
        &,gblcount*obs_dim,gbldisp*obs_dim,MPI_DOUBLE_PRECISION&
-       &,pf_mpi_comm,mpi_err)
+       &,ensemble_comm,mpi_err)
 
   ! compute the mean of yf
   mean_yf = sum(yf,dim=2)/real(pf%nens,rk)
@@ -162,7 +176,7 @@ subroutine letkf_analysis
           gbldisp*number_gridpoints,&                      !displs
           MPI_DOUBLE_PRECISION,&                           !recvtype
           i-1,&                                            !root
-          pf_mpi_comm,&                                    !comm
+          ensemble_comm,&                                    !comm
           mpi_err)                                         !ierror
   end do
 
@@ -170,7 +184,19 @@ subroutine letkf_analysis
   d = y - mean_yf
   call solve_rhalf(obs_dim,1,d,dd,pf%timestep)
 
-
+  if(empire_version .eq. 1 .or. empire_version .eq. 2) then
+     dd_g = dd
+     Ysf_g = Ysf
+  elseif(empire_version .eq. 3) then
+     call mpi_allgatherv(dd,obs_dim,MPI_DOUBLE_PRECISION,dd_g,obs_dims&
+          &,obs_displacements,MPI_DOUBLE_PRECISION,pf_member_comm&
+          &,mpi_err)
+     call mpi_allgatherv(Ysf,obs_dim*pf%nens,MPI_DOUBLE_PRECISION&
+          &,Ysf_g,obs_dims*pf%nens,obs_displacements*pf%nens&
+          &,MPI_DOUBLE_PRECISION,pf_member_comm,mpi_err)
+  else
+     print*,'should not enter here. error. stopping :('
+  end if
 
   !this is for serial processing
   number_gridpoints = stop_var(pfrank+1)-start_var(pfrank+1)+1
@@ -182,7 +208,7 @@ subroutine letkf_analysis
      stateDim = 1
      yes = .false.
      !let us process the observations here:
-     do i = 1,obs_dim
+     do i = 1,obs_dim_g
         ! get the distance between the current state variable
         ! j+start_var(pfrank+1)-1
         ! and the observation i
@@ -207,7 +233,7 @@ subroutine letkf_analysis
         ! reduce the forecast ensemble to only the observations in range
         ! and scale by the distance function
         do i = 1,pf%nens
-           Ysf_red(:,i) = pack(Ysf(:,i),yes)*pack(scal,yes)
+           Ysf_red(:,i) = pack(Ysf_g(:,i),yes)*pack(scal,yes)
         end do
 
         ! Compute the SVD
@@ -237,7 +263,7 @@ subroutine letkf_analysis
         ! because we shall be reusing X shortly
 
         allocate(dd_red(red_obsDim))
-        dd_red = pack(dd,yes)*pack(scal,yes)
+        dd_red = pack(dd_g,yes)*pack(scal,yes)
 
         ! Only the first r elements of d are in use from here on
         call dgemv('T',red_obsDim,r,1.0d0,V,red_obsDim,dd_red,1,0.0d0,d,1)
@@ -291,7 +317,7 @@ subroutine letkf_analysis
           pf%count*number_gridpoints,&                     !recvcount  
           MPI_DOUBLE_PRECISION,&                           !recvtype    
           i-1,&                                            !root     
-          pf_mpi_comm,&                                    !comm     
+          ensemble_comm,&                                    !comm     
           mpi_err)                                         !ierror 
   end do
 

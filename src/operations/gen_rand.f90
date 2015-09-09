@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-05-06 10:24:00 pbrowne>
+!!! Time-stamp: <2015-09-09 14:08:17 pbrowne>
 !!!
 !!!    Collection of subroutines to make multidimensional random arrays
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -88,16 +88,30 @@ End Subroutine NormalRandomNumbers2D
 !! @param[out] uniform True if mixture drawn from uniform. False if
 !! drawn from normal
 subroutine MixtureRandomNumbers1D(mean,stdev,ufac,epsi,n,phi,uniform)
-
+use comms
 use random
 implicit none
+include 'mpif.h'
 real(kind=kind(1.0D0)), intent(in) :: mean,stdev,ufac,epsi
 integer, intent(in) :: n
 real(kind=kind(1.0D0)), dimension(n), intent(out) :: phi
 logical, intent(out) :: uniform
 real(kind=kind(1.0D0)) :: draw
+integer :: mpi_err
 
-call random_number(draw)
+if(empire_version .eq. 1 .or. empire_version .eq. 2) then
+   call random_number(draw)
+elseif(empire_version .eq. 3) then
+   if(pf_member_rank .eq. 0) then
+      call random_number(draw)
+   end if
+   call mpi_scatter(draw,1,MPI_DOUBLE_PRECISION,draw,1&
+        &,MPI_DOUBLE_PRECISION,0,pf_member_rank,mpi_err)
+else
+    print*,'EMPIRE VERSION ',empire_version,' NOT SUPPORTED IN gen_rand'
+    print*,'THIS IS AN ERROR. STOPPING'
+    stop '-24'
+end if
 
 if(draw .gt. epsi) then
    call UniformRandomNumbers1D(mean-ufac,mean+ufac, n,phi)

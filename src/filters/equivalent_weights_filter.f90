@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-07-17 11:09:55 pbrowne>
+!!! Time-stamp: <2015-09-09 14:17:39 pbrowne>
 !!!
 !!!    Computes the equivalent weights step in the EWPF
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -52,64 +52,28 @@ subroutine equivalent_weights_filter
   real(kind=rk), dimension(pf%count) :: e                     !e = d_i^t R^(-1) d_i
   real(kind=rk), parameter :: pi = 4.0D0*atan(1.0D0)
   logical, dimension(pf%count) :: uniform
-!  INTEGER, DIMENSION(MPI_STATUS_SIZE) :: mpi_status
-!  real(kind=rk), dimension(pf%count) :: weight_temp
-  real(kind=rk) :: ddot
-!  print*,'in equal weight filter the weights are:'
-!  print*,pf%weight
+
+  real(kind=rk) :: ddot,wtemp,betanTbetan
+  integer :: ensemble_comm
+
+  if(empire_version .eq. 1 .or. empire_version .eq. 2) then
+     ensemble_comm = pf_mpi_comm
+  elseif(empire_version .eq. 3) then
+     ensemble_comm = pf_ens_comm
+  else
+     print*,'EMPIRE VERSION ',empire_version,' NOT SUPPORTED IN proposal_filter'
+     print*,'THIS IS AN ERROR. STOPPING'
+     stop '-24'
+  end if
+
 
   call send_all_models(state_dim,pf%count,pf%psi,1)
-
-
-!!$  !store in weight_temp only those weights on this mpi thread
-!!$  weight_temp = -huge(1.0d0)
-!!$  do i = 1,pf%count
-!!$     weight_temp(i) = pf%weight(pf%particles(i))
-!!$  end do
-!!$!  print*,'temporary weight = :'
-!!$!  print*,weight_temp
-!!$
-!!$  !communicate the weights of all particles to each mpi thread
-!!$  call mpi_allgatherv(weight_temp,pf%count,mpi_double_precision,pf%weight,gblcount&
-!!$       &,gbldisp,mpi_double_precision,pf_mpi_comm,mpi_err)
-!!$
-!!$!  print*,'after allgather, pf%weight = '
-!!$!  print*,pf%weight
-!!$
-!!$
-!!$  !normalise the weights
-!!$  pf%weight = exp(-pf%weight+maxval(pf%weight))
-!!$  pf%weight = pf%weight/sum(pf%weight)
-!!$  pf%weight = -log(pf%weight)
-!!$!  print*,'weights should be normalised:'
-!!$!  print*,pf%weight
   
   !get the next observation and store it in vector y
   call get_observation_data(y,pf%timestep)
   
-  !     do particle =1,pf%count
-  !        call send_to_model(pf%psi(:,particle),particle)
-  !     enddo
-  
-  !get the model to return f(x)
-!  DO i = 1,pf%count
-!     particle = pf%particles(i)
-!     tag = 1
-!     CALL MPI_SEND(pf%psi(:,i), state_dim , MPI_DOUBLE_PRECISION, &
-!          particle-1, tag, CPL_MPI_COMM, mpi_err)
-!  END DO
-  
-  
-!  DO i = 1,pf%count
-!     particle = pf%particles(i)
-!     tag = 1
-!     CALL MPI_RECV(fpsi(:,i), state_dim, MPI_DOUBLE_PRECISION, &
-!          particle-1, tag, CPL_MPI_COMM,mpi_status, mpi_err)
-!  END DO
-
   call recv_all_models(state_dim,pf%count,fpsi)
 
-  
   call H(obs_dim,pf%count,fpsi,Hfpsi,pf%timestep)
   
   !compute c for each particle on this mpi thread
@@ -118,36 +82,27 @@ subroutine equivalent_weights_filter
      y_Hfpsin1(:,i) = y - Hfpsi(:,i)
      
      call innerHQHt_plus_R_1(y_Hfpsin1(:,i),w,pf%timestep)
+
+     if(empire_version .eq. 3) then
+        !need to perform the sum across all parts of the state vector
+        wtemp=w
+        call mpi_allreduce(wtemp,w,1,MPI_DOUBLE_PRECISION,MPI_SUM&
+             &,pf_member_comm,mpi_err)
+     end if
      
      c(i) = pf%weight(particle) + 0.5d0*w
   end do
      
-  !print*,'all models received by particle filter'
-  !  end do
-  !     print*,'allgatherv in eq'
-  !     print*,c
-  !     print*,csorted
-  !print*,gblcount
-  !print*,gbldisp
-  !print*,pf_mpi_comm
-  !print*,pf%count
-  !here we can pick somehow the 80% level etc...
-  !print*,'launching mpi_allgatherv pfrank =',pfrank
   
   !communicate c to all the mpi threads
-  call mpi_allgatherv(c,pf%count,mpi_double_precision,csorted,gblcount&
-       &,gbldisp,mpi_double_precision,pf_mpi_comm,mpi_err)
-  !     print*,'after allgatherv',mpi_err
-  !     print*,csorted
+  call mpi_allgatherv(c,pf%count,MPI_DOUBLE_PRECISION,csorted,gblcount&
+       &,gbldisp,MPI_DOUBLE_PRECISION,ensemble_comm,mpi_err)
   
   !calculate cmax
   call quicksort_d(csorted,pf%nens)
   cmax = csorted(nint(pf%keep*pf%nens))
-  !     print*,'cmax = ',cmax
-
 
   psimean = 0.0_rk
-
   
   !compute the kalman gain
   call K(y_Hfpsin1,kgain)
@@ -157,6 +112,13 @@ subroutine equivalent_weights_filter
   !compute a for each particle on this mpi thread
   do i = 1,pf%count
      a(i) = 0.5d0*ddot(obs_dim,obsvv(:,i),1,y_Hfpsin1(:,i),1)
+
+     if(empire_version .eq. 3) then
+        !need to perform the sum across all parts of the observation vector
+        wtemp=a(i)
+        call mpi_allreduce(wtemp,a(i),1,MPI_DOUBLE_PRECISION,MPI_SUM&
+             &,pf_member_comm,mpi_err)
+     end if
   end do
   
   call innerR_1(obs_dim,pf%count,y_Hfpsin1,e,pf%timestep)
@@ -170,9 +132,6 @@ subroutine equivalent_weights_filter
 
      if(alpha(i) .ne. alpha(i)) alpha(i) = 1.0d0 !ensure that
      !alpha(i) is not a NaN because of roundoff errors.
-     
-     !        print*,'i a  b alpha'
-     !        print*,i,a(i),b(i),alpha(i)
   end do
   
   
@@ -190,12 +149,19 @@ subroutine equivalent_weights_filter
                 (alpha(i)**2.0_rk - 2.0_rk*alpha(i))*a(i) + & 
                 0.5_rk*e(i)
         else
+           betanTbetan = sum(betan(:,i)*betan(:,i))
+           if(empire_version .eq. 3) then
+              !need to perform the sum across all parts of the state vector
+              wtemp=betanTbetan
+              call mpi_allreduce(wtemp,betanTbetan,1,MPI_DOUBLE_PRECISION,MPI_SUM&
+                   &,pf_member_comm,mpi_err)
+           end if
            pf%weight(particle) = pf%weight(particle) +&
                 (alpha(i)**2.0_rk - 2.0_rk*alpha(i))*a(i) + &
                 0.5_rk*e(i) &
-                + 2**(-real(state_dim,rk)/2.0_rk)*pi**(real(state_dim,rk)&
-                &/2.0_rk)*pf%nfac*pf%ufac**(-real(state_dim,rk))*((1.0_rk&
-                &-pf%efac)/pf%efac)*exp(0.5_rk*(sum(betan(:,i)*betan(:,i))))        
+                + 2**(-real(state_dim_g,rk)/2.0_rk)*pi**(real(state_dim_g,rk)&
+                &/2.0_rk)*pf%nfac*pf%ufac**(-real(state_dim_g,rk))*((1.0_rk&
+                &-pf%efac)/pf%efac)*exp(0.5_rk*(betanTbetan))        
         end if !if(uniform)
         
         !now do the following

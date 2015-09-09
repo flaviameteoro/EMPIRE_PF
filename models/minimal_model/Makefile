@@ -12,6 +12,7 @@ FCOPTS+=$(MODFLAG) $(MODLOC)
 
 OBJECTS_MODEL=minimal_model.o
 OBJECTS_MODEL_v2=minimal_model_v2.o
+OBJECTS_MODEL_v3=minimal_model_v3.o
 
 
 # let's use the special macros $@ and $^, which are the
@@ -20,11 +21,13 @@ OBJECTS_MODEL_v2=minimal_model_v2.o
 %.o: %.f90
 	$(FC) $(FCOPTS) -c -o $@ $<
 
-all: clean $(OBJECTS_MODEL) $(OBJECTS_MODEL_v2)
+all: clean $(OBJECTS_MODEL) $(OBJECTS_MODEL_v2) $(OBJECTS_MODEL_v3)
 	$(FC) $(FCOPTS) -o $(BIN)minimal_model $(OBJECTS_MODEL) $(LIB_LIST)
 	@echo 'Created file executable ' $(BIN)minimal_model
 	$(FC) $(FCOPTS) -o $(BIN)minimal_model_v2 $(OBJECTS_MODEL_v2) $(LIB_LIST)
 	@echo 'Created file executable ' $(BIN)minimal_model_v2
+	$(FC) $(FCOPTS) -o $(BIN)minimal_model_v3 $(OBJECTS_MODEL_v3) $(LIB_LIST)
+	@echo 'Created file executable ' $(BIN)minimal_model_v3
 	@rm -rf *.o
 
 clean:

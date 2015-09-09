@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-09-02 10:32:55 pbrowne>
+!!! Time-stamp: <2015-09-09 18:45:43 pbrowne>
 !!!
 !!!    Collection of subroutines to deal with i/o
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -39,7 +39,6 @@ subroutine default_get_observation_data(y,t)
   integer, intent(in) :: t
   real(kind=rk), dimension(obs_dim), intent(out) :: y
   integer :: ios
-  integer :: obs_timestep
   character(14) :: filename
 
   write(filename,'(A,i7.7)') 'obs_ts_',TSData%next_ob_timestep
@@ -165,9 +164,10 @@ subroutine output_from_pf
   end if
 
 
-
-  call matrix_pf_output(npfs-1,pf_mpi_comm,state_dim,cnt,pf%psi&
-       &,pf%timestep,TSData%is_analysis)
+  if(empire_version .ne. 3) then !empire_v3 models will be too large!!!
+     call matrix_pf_output(npfs-1,pf_mpi_comm,state_dim,cnt,pf%psi&
+          &,pf%timestep,TSData%is_analysis)
+  end if
 
 end subroutine output_from_pf
 
