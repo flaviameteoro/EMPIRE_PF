@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-04-01 22:47:50 pbrowne>
+!!! Time-stamp: <2015-09-10 12:08:22 pbrowne>
 !!!
 !!!    Program to implement 4dEnVar
 !!!    Copyright (C) 2015  Philip A. Browne
@@ -42,6 +42,16 @@ program FourDEnVar
   call flush(6)
   !> set up EMPIRE coupling
   call initialise_mpi
+
+  if(empire_version .eq. 3) then
+     print*,"I'm sorry. 4DEnVar is not yet set to with with empire"
+     print*,'version 3. This is because the optimization routines '
+     print*,'are not parallel. Stopping as an error.'
+     stop -3
+  end if
+
+  !> define output files
+  call open_emp_o(pfrank)
 
 
   call random_seed_mpi(pfrank)

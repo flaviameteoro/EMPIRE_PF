@@ -10,7 +10,7 @@ LIB_LIST=-lblas
 FCOPTS=-O3 -Wall -fimplicit-none -fbounds-check -fbacktrace
 FCOPTS+=$(MODFLAG) $(MODLOC)
 
-MYFILES=vardata.o 4dEnVar.o 4denvar_fcn.o $(OBS)model_specific.o $(OBS)sizes.o $(OBS)Rdata.o $(OBS)Qdata.o $(OBS)inner_products.o $(OBS)pf_control.o $(OBS)comms.o $(OBS)histogram.o $(OBS)data_io.o $(OBS)gen_rand.o $(OBS)random_d.o $(OBS)timestep_data.o $(OBS)matrix_pf.o $(OBS)generate_pf.o $(OBS)output_mat_tri.o
+MYFILES=$(OBS)model_specific.o $(OBS)sizes.o $(OBS)Rdata.o $(OBS)Qdata.o $(OBS)inner_products.o $(OBS)pf_control.o $(OBS)comms.o $(OBS)histogram.o $(OBS)data_io.o $(OBS)gen_rand.o $(OBS)random_d.o $(OBS)timestep_data.o $(OBS)matrix_pf.o $(OBS)generate_pf.o $(OBS)output_mat_tri.o vardata.o 4dEnVar.o 4denvar_fcn.o 
 
 
 
@@ -29,12 +29,17 @@ LBFGSFILES=../optim/Lbfgsb.3.0/lbfgsb_sub.o ../optim/Lbfgsb.3.0/lbfgs_sub.o ../o
 %.o: %.f90
 	$(FC) $(FCOPTS) -c -o $@ $<
 
-all: clean $(MYFILES)
-	cd ../../;make
-	cd ../optim/CG+;make
-	cd ../optim/Lbfgsb.3.0;make sub
+all: clean EMPIRE CG Lbfgsb $(MYFILES)
 	$(FC) $(FCOPTS) -o $(BIN)empire_4denvar $(MYFILES) $(CGFILES) $(LBFGSFILES) $(LIB_LIST)
 
+EMPIRE:
+	cd ../../;make EMPIRE
+
+CG:
+	cd ../optim/CG+;make
+
+Lbfgsb:
+	cd ../optim/Lbfgsb.3.0;make sub
 
 clean:
 	rm -rf *.o *.mod

@@ -224,7 +224,7 @@ lorenz: lorenz63 lorenz96
 linear:
 	cd models/linear;make -e
 
-4dEnVar:
+4dEnVar: 
 	cd src/4dEnVar;make -e
 
 

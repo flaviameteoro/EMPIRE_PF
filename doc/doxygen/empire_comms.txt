@@ -1,0 +1,49 @@
+/*! \page communication_methods Communication Methods
+
+EMPIRE has currently 3 different standards for communicating with models. Each method has various advantages and disadvantages. This is changed by modifying the parameter \link comms::empire_version empire_version \endlink in comms.f90.
+
+Here we list some particularities of each method, before summarising in the table below.
+
+\section Version1 EMPIRE communication version 1
+Here, the state vector is gathered onto a single model process, before being sent to EMPIRE via a single mpi_send call. EMPIRE reverses the process via a single mpi_send of the entire state vector to the single model process, where it scatters the state vector to the rest of the model processes.
+
+Advantages | Disadvantages
+-----------|--------------
+EMPIRE is launched on a single process for each ensemble member, making the coding here very simple | EMPIRE is launched on a single process, limiting the size of the state vector
+The state vector is explicitly organised | Speed may be compromised by the 2-stage mpi process
+\t | Memory is required on the master process of the model to store the whole state vector
+\t | Knowledge of the model's mpi structure is needed to perform the gather and scatter
+
+
+\section Version2 EMPIRE communication version 2
+Here, the state vector is gathered directly onto the EMPIRE process. The reverse is that EMPIRE scatters the state vector directly back to the model processes.
+
+Advantages | Disadvantages
+-----------|--------------
+EMPIRE is launched on a single process for each ensemble member, making the coding here very simple | EMPIRE is launched on a single process, limiting the size of the state vector
+Speed is reasonable due to the 1-stage mpi process | The state vector is organised by the mpi_gather process
+No extra memory in the model processes are required | \t
+
+
+\section Version3 EMPIRE communication version 3
+Here, EMPIRE has a similar parallel structure as the model. Each model process sends only its local part of the whole state vector to the corresponding EMPIRE process via an mpi_send call. EMPIRE reverses the process with a direct mpi_send of its own.
+
+Advantages | Disadvantages
+-----------|--------------
+EMPIRE is launched on multiple mpi processes per ensemble member, thus limiting the size of the model used by the size of the whole HPC machine, not the memory on one node | EMPIRE is launched on multiple mpi processes per ensemble member, hence the coding of model specific operators becomes much more complicated (if they are not simply diagonal)
+Speed is very high thanks to local communications | Not fully tested [please get in touch if you want to help here with your models :)]
+No extra memory is required in the model processes | 4DEnVar won't work as I do not currently have a parallelised piece of optimization software [please point me in the right direction for this if you know anything that might work]
+
+
+\section Comparison_versions Comparison of EMPIRE communication versions
+
+Feature | Version 1 | Version 2 | Version 3
+-------:|:---------:|:---------:|:--------:
+Number of mpi processes per ensemble member | 1 | 1 | Same as model
+Communication method: model to EMPIRE | Model gather, mpi_send | mpi_gather | mpi_send
+Communication method: EMPIRE to model | mpi_send, model scatter | mpi_scatter | mpi_send
+Efficiency (cpu-time) | fast | faster | fastest
+Model memory requirements | high | low | low
+EMPIRE memory requirements | high | high | low
+Ease of model specific implementations | easiest | easy | hard
+*/

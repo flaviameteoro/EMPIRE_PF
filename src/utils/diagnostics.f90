@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-09-09 18:30:05 pbrowne>
+!!! Time-stamp: <2015-09-10 10:42:48 pbrowne>
 !!!
 !!!    Subroutine to give output diagnositics such as rank histograms
 !!!    and trajectories
@@ -27,7 +27,7 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 !> Subroutine to give output diagnositics such as rank histograms  
-!!    and trajectories                                             
+!!    @todo test in anger with empire version 3. will probably segfault
 subroutine diagnostics
   use timestep_data
   use pf_control
