@@ -32,7 +32,7 @@ Advantages | Disadvantages
 -----------|--------------
 EMPIRE is launched on multiple mpi processes per ensemble member, thus limiting the size of the model used by the size of the whole HPC machine, not the memory on one node | EMPIRE is launched on multiple mpi processes per ensemble member, hence the coding of model specific operators becomes much more complicated (if they are not simply diagonal)
 Speed is very high thanks to local communications | Not fully tested [please get in touch if you want to help here with your models :)]
-No extra memory is required in the model processes | 4DEnVar won't work as I do not currently have a parallelised piece of optimization software [please point me in the right direction for this if you know anything that might work]
+No extra memory is required in the model processes | \t
 
 
 \section Comparison_versions Comparison of EMPIRE communication versions

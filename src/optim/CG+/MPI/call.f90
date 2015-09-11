@@ -7,7 +7,16 @@ integer :: method ! the type of nonlinear cg
 
 real(kind=kind(1.0d0)), allocatable, dimension(:) :: x0
 real(kind=kind(1.0d0)) :: epsin=0.1d0
-n = 2 !rosenbrock test function
+
+include 'mpif.h'
+integer :: mpi_err,mpi_size
+
+
+call mpi_init(mpi_err)
+call mpi_comm_size(MPI_COMM_WORLD,mpi_size,mpi_err)
+
+
+n = 1 !rosenbrock test function, one variable per process
 
 
 
@@ -24,8 +33,11 @@ end do
 
 
 
-call subroutine_cg(method,n,epsin,x0)
+call subroutine_cg(method,n,epsin,x0,MPI_COMM_WORLD,mpi_size)
 
 
 deallocate(x0)
+
+call mpi_finalize(mpi_err)
+
 end program call
