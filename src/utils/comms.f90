@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-09-09 18:23:04 pbrowne>
+!!! Time-stamp: <2015-09-14 12:08:27 pbrowne>
 !!!
 !!!    Module and subroutine to intitalise EMPIRE coupling to models
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -424,11 +424,13 @@ contains
     call mpi_comm_size(pf_ens_comm,pf_ens_size,mpi_err)
     call mpi_comm_rank(pf_ens_comm,pf_ens_rank,mpi_err)
 
-    npfs = pf_ens_size
+    
     
 
     !compute number of model processes
     mdl_procs = world_size-npfs
+    npfs = pf_ens_size
+
     print*,'npfs = ',npfs
     print*,'mdl_procs = ',mdl_procs
 
