@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-09-14 12:08:27 pbrowne>
+!!! Time-stamp: <2015-09-14 12:24:06 pbrowne>
 !!!
 !!!    Module and subroutine to intitalise EMPIRE coupling to models
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -72,7 +72,7 @@ module comms
                             !! for empire v3
   integer :: pf_member_size !< size of pf_member_comm
                             !! for empire v3
-  integer, parameter :: empire_version=3
+  integer, parameter :: empire_version=1
 
 contains
 
@@ -190,13 +190,13 @@ contains
   !> subroutine to initialise new version of empire
   subroutine initialise_mpi_v2
     use pf_control
+    use sizes
     implicit none
     include 'mpif.h'
 
     integer :: mpi_err
     integer :: world_size
     integer,parameter :: da=1
-    integer :: state_dim
     integer, parameter :: rk = kind(1.0d0)
     integer :: i
     integer :: mdl_procs

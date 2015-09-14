@@ -1,5 +1,8 @@
 #!/bin/bash
 set -o nounset
 
-cd ../examples/lorenz63
+cd ../
+make v1
+cd examples/lorenz63
+
 ./instructions.sh

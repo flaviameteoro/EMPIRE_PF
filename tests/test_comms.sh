@@ -85,6 +85,7 @@ elif [[ "$version" = "2" ]]; then
     minmdl=../bin/minimal_model_v2
     minmdlcomm=../bin/minimal_model_comms_v2
     minmdlnum=1
+    echo 3 > state_dim
 elif [[ "$version" = "3" ]]; then
     minmdl=../bin/minimal_model_v3
     minmdlcomm=../bin/minimal_model_comms_v3

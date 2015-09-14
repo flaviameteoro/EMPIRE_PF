@@ -70,8 +70,10 @@ if [[ "$top" != "tests" ]]; then
     test cd tests
 fi
 
-
-
+blue Compiling prerequisites
+cd ..
+make EMPIRE models > /dev/null 2> /dev/null
+cd -
 
 
 grep=/bin/grep
