@@ -1,0 +1,74 @@
+/*! \page citing How to Cite EMPIRE
+
+# EMPIRE itself
+
+For all applications that use these codes, please cite the following paper:
+
+PA Browne, S Wilson (2015)
+
+A simple method for integrating a complex model into an ensemble data assimilation system using MPI
+
+<http://dx.doi.org/10.1016/j.envsoft.2015.02.003>
+
+# Use of different methods within EMPIRE
+
+## Equivalent weights particle filter
+Van Leeuwen (2010)
+
+Nonlinear data assimilation in geosciences: an extremely efficient particle filter
+
+<http://doi.wiley.com/10.1002/qj.699>
+
+## Sequential importance resampling
+Gordon, Salmond and Smith (1993)
+
+Novel approach to nonlinear/non-Gaussian Bayesian state estimation
+
+<http://dx.doi.org/10.1049/ip-f-2.1993.0015>
+
+## Localised Ensemble Transform Kalman Filter
+Hunt, Kostelich and Szunyogh (2007)
+
+Efficient data assimilation for spatiotemporal chaos: A local ensemble transform Kalman filter
+
+<http://dx.doi.org/10.1016/j.physd.2006.11.008>
+
+## 4DEnVar
+Liu, Xian and Wang (2008)
+
+An Ensemble-Based Four-Dimensional Variational Data Assimilation Scheme. Part I: Technical Formulation and Preliminary Test
+
+<http://dx.doi.org/10.1175/2008MWR2312.1>
+
+# Use of different external codes within EMPIRE
+
+## CG+
+Gilbert and Nocedal (1992)
+
+Global Convergence Properties of Conjugate Gradient Methods for Optimization
+
+<http://dx.doi.org/10.1137/0802003>
+
+Software available here: <http://users.iems.northwestern.edu/~nocedal/CG+.html>
+
+
+## L-BFGS-B 
+
+Byrd, Lu and Nocedal (1995)
+
+A Limited Memory Algorithm for Bound Constrained Optimization
+
+<http://dx.doi.org/10.1137/0916069>
+
+and/or
+
+Zhu, Byrd and Nocedal (1997)
+
+L-BFGS-B: Algorithm 778: L-BFGS-B, FORTRAN routines for large scale bound constrained optimization
+
+<http://dx.doi.org/10.1145/279232.279236>
+
+Software available here: <http://users.iems.northwestern.edu/~nocedal/lbfgsb.html>
+
+
+*/

@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-07-14 14:22:25 pbrowne>
+!!! Time-stamp: <2015-09-15 15:11:25 pbrowne>
 !!!
 !!!    Module that stores information about outputting from empire
 !!!    Copyright (C) 2015  Philip A. Browne
@@ -34,15 +34,57 @@ Module output_empire
 contains
 
   !> subroutine to open the file for outputting
+  !>
+  !> in order to redirect the STDOUT used by EMPIRE, this subroutine
+  !> will read from the file 'emp_out_name'. If it exists, a string
+  !> of up to 10 characters will be read, and the STDOUT redirected
+  !> to that string appended with the MPI rank of the EMPIRE process.
+  !>
+  !> In order to suppress most of the STDOUT from EMPIRE, this path
+  !> can be set to a platform specific Null device:
+  !> - Unix: /dev/null
+  !> - MS: nul
+  !>
+  !> If you are running on any other system, please let me know what
+  !> Null Device you would like to use, and we can add a check for it
   subroutine open_emp_o(id_num)
     implicit none
     integer, intent(in) :: id_num
     character(14) :: filename
+    character(10) :: basename
     logical :: opend
+    character(3), parameter :: msnul='nul'
+    character(9), parameter :: unixnul='/dev/null'
+    character(12), parameter :: emp_out_name='emp_out_name'
+    logical :: file_exists
+    integer :: ios
     
-    !define filename appropriately
-    write(filename,'(A,i0)') 'emp.out.',id_num
+
+    inquire(file=emp_out_name,exist=file_exists)
+    if(file_exists) then
+       open(32,file=emp_out_name,iostat=ios,action='read'&
+            &,status='old',form='formatted')
+       if(ios .ne. 0) then
+          print*,'Cannot open ',emp_out_name
+          stop 'open_emp_o ERROR' 
+       end if
+       read(32,'(A)') basename
+       close(32)
+    else
+       basename = 'emp.out'
+    end if
     
+    select case(basename)
+    case(msnul)
+       filename = msnul
+    case(unixnul)
+       filename = unixnul
+    case default
+       !define filename appropriately
+       write(filename,'(A,A,i0)') trim(basename),'.',id_num
+    end select
+
+    print*,"this process' output will henceforth be directed to ",filename
 
     inquire(unit=emp_o,opened=opend)
     if(opend) then

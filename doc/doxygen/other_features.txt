@@ -1,0 +1,64 @@
+/*! \page features Other EMPIRE features
+\section gendata Generating artificial observations
+
+EMPIRE can generate artificial observations easily and quickly.
+
+Model specific operations required: \n
+ - \link h \endlink
+ - \link rhalf \endlink
+ - \link qhalf \endlink
+
+In \link pf_control::parse_pf_parameters empire.nml \endlink set the following variables:
+- \link pf_control::pf_control_type::gen_data gen_data \endlink = .true.
+
+The system then should be run with a single ensemble member and a single EMPIRE process, i.e.
+\code{.sh}
+mpirun -np 1 model : -np 1 empire
+\endcode
+
+\section Observations Observations
+To use real observations (i.e. those not generated automatically in twin experiment mode) the user must change the subroutine \link get_observation_data get_observation_data\endlink in model_specific.f90.
+
+When called, \link get_observation_data get_observation_data\endlink must return the vector of observations \f$y\f$ that corresponds to the observation on, subsequently to, the current timestep.
+
+\section detens Running a deterministic ensemble
+
+EMPIRE can simply integrate forward in time an ensemble of models.
+
+In \link pf_control::parse_pf_parameters empire.nml \endlink set the following variables:
+- \link pf_control::pf_control_type::filter filter \endlink = 'DE'
+
+\section stochens Running a stochastic ensemble
+
+EMPIRE can integrate forward in time an ensemble of models whilst adding stochastic forcing.
+
+Model specific operations required: \n
+ - \link qhalf \endlink
+
+In \link pf_control::parse_pf_parameters empire.nml \endlink set the following variables:
+- \link pf_control::pf_control_type::filter filter \endlink = 'SE'
+
+
+\section redirectingoutput Redirecting the output from EMPIRE
+This is controlled by a string in the optional file 'emp_out_name'.
+
+This feature can be used to suppress output from EMPIRE STDOUT.
+
+See \link output_empire::open_emp_o open_emp_o \endlink for more information.
+
+\section rankhistograms Outputting rank histograms
+
+This is controlled by \link pf_control::pf_control_type::use_talagrand use_talagrand \endlink in \link pf_control::parse_pf_parameters empire.nml \endlink  and for more information see \link histogram_data::load_histogram_data load_histogram_data \endlink.
+
+\section trajectories Outputting trajectories of model variables
+
+This is controlled by \link pf_control::pf_control_type::use_traj use_traj \endlink in \link pf_control::parse_pf_parameters empire.nml \endlink  and for more information see \link traj_data::setup_traj setup_traj \endlink.
+
+\section ensemble_covariances Outputting covariances of the ensemble
+
+EMPIRE has the ability to output the ensemble covariance matrices throughout the run. This is controlled by the optional namelist &mat_pf in @ref empire.nml. For more information see @ref matrix_pf::matrix_pf_data. Note however, that this will output a large matrix -- if the state dimension of the model is large, this is likely not a good thing to compute! This feature is not available with empire version 3 communications.
+
+
+
+
+*/

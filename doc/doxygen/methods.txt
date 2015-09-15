@@ -1,0 +1,86 @@
+/*! \page methods Assimilation Methods
+\section methods_filters Filters
+The filters implemented in EMPIRE can be divided into two categories, particle filters and Ensemble Kalman filters
+
+\subsection methods_pfs Particle filters
+\subsubsection SIRfilter SIR Filter (Sequential Importance Resampling) 
+See file @ref sir_filter \n
+<a href="http://dx.doi.org/10.1049/ip-f-2.1993.0015">Gordon, Salmond and Smith (1993)</a>.\n
+Model specific operations required: \n
+  - \link qhalf \endlink
+  - \link h \endlink
+  - \link solve_r \endlink \n
+The SIR filter has no parameters to be chosen. \n
+To select the SIR filter, in \link pf_control::parse_pf_parameters empire.nml \endlink set the following variables:
+   - \link pf_control::pf_control_type::filter filter \endlink = 'SI'
+\subsubsection EWPF Equivalent Weights Particle Filter 
+See files @ref proposal_filter @ref equivalent_weights_filter\n
+<a href="http://doi.wiley.com/10.1002/qj.699">Van Leeuwen (2010)</a>.\n
+Model specific operations required:
+ - \link qhalf \endlink
+ - \link q \endlink
+ - \link h \endlink
+ - \link ht \endlink
+ - \link solve_r \endlink
+ - \link solve_hqht_plus_r \endlink
+The Equivalent Weights particle filter has a number of free parameters to be chosen. \n
+   - \link pf_control::pf_control_type::nudgefac nudgefac\endlink
+   - \link pf_control::pf_control_type::nfac nfac \endlink
+   - \link pf_control::pf_control_type::ufac ufac \endlink
+   - \link pf_control::pf_control_type::keep keep \endlink \n
+To select the EWPF, in \link pf_control::parse_pf_parameters empire.nml \endlink set the following variables:
+   - \link pf_control::pf_control_type::filter filter \endlink = 'EW'
+
+\subsubsection EZPF The Zhu and Van Leeuwen Equivalent Weights Particle Filter 
+See files @ref proposal_filter @ref equivalent_weights_filter_zhu\n
+Model specific operations required:
+ - \link qhalf \endlink
+ - \link q \endlink
+ - \link h \endlink
+ - \link ht \endlink
+ - \link solve_r \endlink
+ - \link solve_rhalf \endlink
+ - \link solve_hqht_plus_r \endlink
+The Zhu Equivalent Weights particle filter has a number of free parameters to be chosen. \n
+   - \link pf_control::pf_control_type::nudgefac nudgefac\endlink \n
+To select the EZPF, in \link pf_control::parse_pf_parameters empire.nml \endlink set the following variables:
+   - \link pf_control::pf_control_type::filter filter \endlink = 'EZ'
+
+
+\subsection methods_enkfs Ensemble Kalman filters
+
+\subsubsection LETKF LETKF (The Localised Ensemble Transform Kalman Filter)
+See file  @ref letkf_analysis \n
+<a href="http://dx.doi.org/10.1016/j.physd.2006.11.008">Hunt, Kostelich and Szunyogh (2007)</a>. \n
+Model specific operations required: \n
+ - \link h \endlink
+ - \link solve_rhalf \endlink
+ - \link dist_st_ob \endlink \n
+The LETKF has a number of free parameters to be chosen. \n
+   - \link pf_control::pf_control_type::rho rho \endlink
+   - \link pf_control::pf_control_type::len len \endlink \n 
+To select the LETKF, in \link pf_control::parse_pf_parameters empire.nml \endlink set the following variables:
+   - \link pf_control::pf_control_type::filter filter \endlink = 'LE' or 'LD' with LE including model error but LD being deterministic
+
+
+\section methods_smoothers Smoothers
+
+Coming at some point in the future: LETKS (Please contact us if you want us to develop this sooner rather than later)
+
+
+\section methods_var Variational Methods
+
+\subsection fourdEnVar 4dEnVar
+
+See files @ref fourdenvar @ref fourdenvar_fcn \n
+<a href="http://dx.doi.org/10.1175/2008MWR2312.1">Liu, Xian and Wang (2008)</a>.\n
+
+Model specific operations required:
+ - \link h \endlink
+ - \link solve_r \endlink
+
+Currently there is the basic functionality to do 4dEnVar so long as EMPIRE-VADER is used for reverse communication. This is work in progress.
+
+\todo Add some stuff about how to use this.
+
+*/
