@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-09-09 18:54:50 pbrowne>
+!!! Time-stamp: <2015-09-18 14:04:12 pbrowne>
 !!!
 !!!    module to hold all the information to control the the main program
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -78,6 +78,7 @@ module pf_control
                               !< - EW -- the Equivalent Weights filter
                               !< - EZ -- the Zhu equal weights filter
                               !< particle filter
+                              !< - LS -- the L-ETKS with noise
      character(1) :: init     !< which method to initialise ensemble
                               !< currently this has a number of
                               !< options:
@@ -333,6 +334,9 @@ contains
       case('LE')
          print*,'Running the Local Ensemble Transform Kalman Filter'
          print*,'With random noise'
+      case('LS')
+         print*,'Running the Local Ensemble Transform Kalman Smoother'
+         print*,'With random noise'
       case('LD')
          print*,'Running the Local Ensemble Transform Kalman Filter'
          print*,'With NO random noise'
@@ -351,6 +355,8 @@ contains
          print*,'          with random noise'
          print*,'LD        the Local Ensemble Transform Kalman Filter'
          print*,'          without random noise'
+         print*,'LS        the Local Ensemble Transform Kalman Smoother'
+         print*,'          with random noise'
          stop
       end select
 

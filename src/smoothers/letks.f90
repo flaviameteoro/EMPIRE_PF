@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-09-18 12:14:42 pbrowne>
+!!! Time-stamp: <2015-09-18 15:40:32 pbrowne>
 !!!
 !!!    Module for doing things related to the LETKS: Local Ensemble
 !!!    Kalman Transform Smoother
@@ -29,6 +29,7 @@
 !> module for doing things related to the LETKS:
 !>
 module LETKS_data
+  implicit none
   type LETKS_local
      integer :: red_obsdim
      real(kind=kind(1.0d0)), allocatable, dimension(:,:) :: USIUT
@@ -232,6 +233,7 @@ contains
     !$OMP& PRIVATE(Ysf_red,red_obsDim,r,V,S,LWORK,WORK,INFO), &
     !$OMP& PRIVATE(dd_red,UT,d)
     do j = 1,number_gridpoints
+!              print*,'j = ',j,' Xp(j,1) = ',Xp(j,1)
        stateDim = 1
        yes = .false.
        !let us process the observations here:
@@ -311,23 +313,33 @@ contains
           call dgemv('T',r,pf%nens,1.0d0,UT,r,d(1:r),1,0.0d0&
                &,LSD(j)%Ud,1)
 
+!          print*,LSD(j)%Ud,matmul(transpose(UT),d(1:r))-LSD(j)%Ud
+!          print*,dot_product(Xa(j,:),d(1:r)) + mean_xa(j)
+!          print*,dot_product(Xp(j,:),LSD(j)%Ud)
+
 
           ! Only the first r columns of Xa are used in the following
           call dgemv('N',stateDim,r,1.0d0,Xa(j,:),stateDim,d,1,1.0d0,mean_xa(j),1)
+!          print*,'j = ',j,' mean_xa(j) = ',mean_xa(j)
 
           ! Build up analysis ensemble perturbation matrix
           do i = 1,r
              Xa(j,i) = Xa(j,i) / sqrt(1.0_rk + S(i)**2)
           end do
-          call dgemm('N','N',stateDim,pf%nens,pf%nens,1.0d0,Xa(j,:),stateDim,UT,pf%nens,0.0d0,Xp(j,:),stateDim)
+
 
           !SMOOTHER ONLY: calculate U*(S^2+I)^{-1/2}U^T
           U = transpose(UT)
           do i = 1,r
-             U(j,i) = U(j,i) / sqrt(1.0_rk + S(i)**2)
+             U(:,i) = U(:,i) / sqrt(1.0_rk + S(i)**2)
           end do
           call dgemm('N','N',pf%nens,pf%nens,pf%nens,1.0d0,U,pf%nens&
                &,UT,pf%nens,0.0d0,LSD(j)%USIUT,pf%nens)
+!          print*,'j = ',j,' XpUSLUT = ',matmul(Xp(j,:),LSD(j)%USIUT)
+
+          call dgemm('N','N',stateDim,pf%nens,pf%nens,1.0d0,Xa(j,:),stateDim,UT,pf%nens,0.0d0,Xp(j,:),stateDim)
+
+!          print*,'j = ',j,' Xp(j,:) = ',Xp(j,:)
 
           ! Put ensemble mean and perturbation matrix back together
           xa(j,:) = sqrt(real(pf%nens-1,rk))*Xp(j,:)
@@ -474,8 +486,7 @@ contains
     allocate(mean_xa(stop_var(pfrank+1)-start_var(pfrank+1)+1))
 
 
-    !set the mean to 0 as I only want to calculate perturbations
-    mean_xa = 0.0d0! mean_x(start_var(pfrank+1):stop_var(pfrank+1))
+    mean_xa = mean_x(start_var(pfrank+1):stop_var(pfrank+1))
 
     !now we have to get Xp filled with all the values from each process
     do i = 1,npfs
@@ -501,6 +512,7 @@ contains
     !$OMP& PRIVATE(stateDim,i), &
     !$OMP& PRIVATE(red_obsDim,r)
     do j = 1,number_gridpoints
+!       print*,'j = ',j,' Xp(j,1) = ',Xp(j,1)
        stateDim = 1
 
        ! count the total number of observations we shall consider for this
@@ -520,15 +532,16 @@ contains
           ! Only the first r columns of Xp are used in the following
           call dgemv('N',stateDim,pf%nens,1.0d0,Xp(j,:),stateDim,LSD(j)%Ud,1,1.0d0,mean_xa(j),1)
 
+!          print*,'j = ',j,' mean_xa(j) = ',mean_xa(j)
 
           !LOOK UP U*(S^2+I)^{-1/2}U^T, call it USIUT.
           !IT has dimension (nens,nens)
-          call dgemm('N','N',stateDim,pf%nens,pf%nens,1.0d0,Xa(j,:),stateDim,LSD(j)%USIUT,pf%nens,0.0d0,Xp(j,:),stateDim)
+          call dgemm('N','N',stateDim,pf%nens,pf%nens,1.0d0,Xp(j,:),stateDim,LSD(j)%USIUT,pf%nens,0.0d0,Xa(j,:),stateDim)
 
           ! Put ensemble mean and perturbation matrix back together
-          xa(j,:) = sqrt(real(pf%nens-1,rk))*Xp(j,:)
+          xp(j,:) = sqrt(real(pf%nens-1,rk))*Xa(j,:)
           do i = 1,pf%nens
-             xa(j,i) = mean_xa(j) + xa(j,i)
+             xa(j,i) = mean_xa(j) + xp(j,i)
           end do
 
 
@@ -561,6 +574,7 @@ contains
             mpi_err)                                         !ierror 
     end do
 
+    inc = inc-psi
 
     deallocate(mean_xa)
     deallocate(Xp)

@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-09-15 15:11:25 pbrowne>
+!!! Time-stamp: <2015-09-18 15:59:18 pbrowne>
 !!!
 !!!    Module that stores information about outputting from empire
 !!!    Copyright (C) 2015  Philip A. Browne
@@ -36,8 +36,10 @@ contains
   !> subroutine to open the file for outputting
   !>
   !> in order to redirect the STDOUT used by EMPIRE, this subroutine
-  !> will read from the file 'emp_out_name'. If it exists, a string
-  !> of up to 10 characters will be read, and the STDOUT redirected
+  !> will read from the file 'empire.nml'. If it exists, it looks for
+  !> the namelist &empire_output, which consists of a single string
+  !> up to 10 characters called 'basename' which will be read, and the
+  !> STDOUT redirected
   !> to that string appended with the MPI rank of the EMPIRE process.
   !>
   !> In order to suppress most of the STDOUT from EMPIRE, this path
@@ -55,10 +57,11 @@ contains
     logical :: opend
     character(3), parameter :: msnul='nul'
     character(9), parameter :: unixnul='/dev/null'
-    character(12), parameter :: emp_out_name='emp_out_name'
+    character(10), parameter :: emp_out_name='empire.nml'
     logical :: file_exists
     integer :: ios
     
+    namelist/empire_output/basename
 
     inquire(file=emp_out_name,exist=file_exists)
     if(file_exists) then
@@ -68,8 +71,9 @@ contains
           print*,'Cannot open ',emp_out_name
           stop 'open_emp_o ERROR' 
        end if
-       read(32,'(A)') basename
+       read(32,nml=empire_output,iostat=ios)
        close(32)
+       if(ios .ne. 0) basename ='emp.out'
     else
        basename = 'emp.out'
     end if
