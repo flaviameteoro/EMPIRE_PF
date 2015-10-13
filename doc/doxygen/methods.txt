@@ -70,6 +70,19 @@ Coming at some point in the future: LETKS (Please contact us if you want us to d
 
 \section methods_var Variational Methods
 
+\subsection threedvar 3DVar
+
+See files @ref threedvar_fcn \n
+
+Model specific operations required:
+ - \link h \endlink
+ - \link ht \endlink
+ - \link solve_b \endlink
+ - \link solve_r \endlink
+
+3DVar can be used as a filter in a sequential run. Each particle uses its current forecast as a background guess for an independent 3DVar minimization.
+
+
 \subsection fourdEnVar 4dEnVar
 
 See files @ref fourdenvar @ref fourdenvar_fcn \n

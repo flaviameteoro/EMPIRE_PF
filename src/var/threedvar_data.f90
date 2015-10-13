@@ -1,8 +1,8 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-10-13 13:33:02 pbrowne>
+!!! Time-stamp: <2015-10-13 16:07:29 pbrowne>
 !!!
-!!!    Tests program for user supplied model and observation specific routines
-!!!    Copyright (C) 2014  Philip A. Browne
+!!!    subroutine to implement 3dvar
+!!!    Copyright (C) 2015  Philip A. Browne
 !!!
 !!!    This program is free software: you can redistribute it and/or modify
 !!!    it under the terms of the GNU General Public License as published by
@@ -25,29 +25,11 @@
 !!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-!> program to run all tests of user specific functions
-!!
-
-program alltests
-  use pf_control
+!> module to store stuff for 3DVar
+module threedvar_data
   implicit none
-  
-  call set_pf_controls
-  print*,'PF: configuring model'
-  call configure_model
-
-!!$ it turns out that these tests don't make any sense for H...
-!!commenting out
-!!$  call H_tests
-
-  call R_tests
-  
-  call Q_tests
-
-  call HQHTR_tests
-  
-  call B_tests
-  
-end program alltests
+  real(kind=kind(1.0d0)), allocatable, dimension(:) :: xb !< the background
+  !< guess
+end module threedvar_data
 
 

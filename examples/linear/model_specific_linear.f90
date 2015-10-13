@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-08-25 10:30:42 pbrowne>
+!!! Time-stamp: <2015-10-13 13:20:39 pbrowne>
 !!!
 !!!    This file must be adapted to the specific model in use.
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -331,3 +331,29 @@ subroutine get_observation_data(y,t)
   call default_get_observation_data(y,t)
 end subroutine get_observation_data
 
+!> subroutine to take a full state vector x and return B^{-1}x
+!> in state space.
+!!
+!! Given \f$x\f$ compute \f$B^{-1}x\f$
+subroutine solve_b(nrhs,x,Qx)
+
+  use sizes
+  implicit none
+  integer, parameter :: rk=kind(1.0D+0)
+  integer, intent(in) :: nrhs !< the number of right hand sides
+  real(kind=rk), dimension(state_dim,nrhs), intent(in) :: x !< the
+  !!input vector
+  real(kind=rk), dimension(state_dim,nrhs), intent(out) :: Qx !< the
+  !!resulting vector where Qx \f$= B^{1/2}x\f$
+  real(kind=rk), dimension(state_dim,nrhs) :: temp
+  
+  real(kind=rk), dimension(3,3) :: binvdat
+
+  binvdat(1:3,1) = (/ 41.639551051239188,-20.302009390334526, 0.748818628880694/)
+  binvdat(1:3,2) = (/-20.302009390334526, 16.091028535138122,-0.332370273316068/)
+  binvdat(1:3,3) = (/  0.748818628880694, -0.332370273316068, 5.504775516290841/)
+
+  Qx = matmul(binvdat,x)
+
+  
+end subroutine Solve_b

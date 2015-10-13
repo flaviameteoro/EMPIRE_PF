@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-02-05 14:43:25 pbrowne>
+!!! Time-stamp: <2015-10-13 13:37:52 pbrowne>
 !!!
 !!!    Collection of subroutines to perform checks of user supplied routines
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -876,6 +876,8 @@ end subroutine Q_tests
 
 
 
+
+
 subroutine HQHTR_tests()
   !> @brief These are some tests to check that the linear solve
   !> operator is implemented correctly
@@ -960,3 +962,167 @@ write(6,*) 'TESTING (HQH^T+R)^(-1)'
 end subroutine HQHTR_tests
 
 
+subroutine b_tests()
+  !> @brief These are some tests to check that the background error
+  !> covariance matrix is implemented correctly
+  use sizes
+  use pf_control
+  implicit none
+  integer, parameter :: rk = kind(1.0d0)
+  real(kind=rk), dimension(state_dim) :: a,s,q,qt,w,e
+  real(kind=rk), dimension(state_dim,10) :: aa,ss,qq,qqt,ww,ee
+  real(kind=rk) :: dnrm2,rr
+  real(kind=rk), parameter :: pass = 1.0d-15
+  real(kind=rk), parameter :: warn = 1.0d-13
+  integer :: pfcount,i,k,l
+
+  !let us save pf%count for later
+  pfcount = pf%count
+
+
+  write(6,*) 'TESTING B'
+  write(6,*) 'TESTING B WITH SINGLE RHS'
+
+
+  !FIRST TESTS: HHT
+  !test one - zeros
+  a = 0.0d0
+  pf%count = 1
+  call Bhalf(1,a,s)
+ 
+  !s should be 0
+  rr = dnrm2(state_dim,s,1)
+  write(6,'(A)',advance='no') 'Test 1: Bhalf(0) ... '
+  if(rr .lt. pass) then
+     !passed the test
+     write(6,'(A)',advance='yes') 'passed'
+  elseif(rr .lt. warn) then
+     write(6,'(A,es24.17)',advance='yes') 'passed with warning rr = ',rr
+  else
+     write(6,'(A,es24.17)',advance='yes') 'failed with rr = ',rr
+  end if
+
+  
+  a = 1.0d0
+  s = 1.0d0
+  call Bhalf(1,s,w)
+
+  if(all(w .eq. 0.0d0)) then
+     write(6,'(A)') 'SERIOUS ERROR: Bhalf*e = 0 i.e. Bhalf is the zero&
+          & matrix'
+     stop 'MEGA FAIL'
+  end if
+
+
+
+  write(6,*) 'TESTING SOLVE B WITH SINGLE RHS'
+  
+  a = 0.0d0
+  pf%count = 1
+  call solve_b(pf%count,a,s)
+ 
+  !s should be 0
+  rr = dnrm2(state_dim,s,1)
+  write(6,'(A)',advance='no') 'Test 10: B^(-1)(0) ... '
+  if(rr .lt. pass) then
+     !passed the test
+     write(6,'(A)',advance='yes') 'passed'
+  elseif(rr .lt. warn) then
+     write(6,'(A,es24.17)',advance='yes') 'passed with warning rr = ',rr
+  else
+     write(6,'(A,es24.17)',advance='yes') 'failed with rr = ',rr
+  end if
+
+  do l = 11,13
+     if( l .eq. 11) then
+        a = 1.0d0
+        write(6,'(A)',advance='no') 'Test 11: B^(-1)[BhalfBhalf(1)] ... '
+     elseif (l .eq. 12) then
+        a = -1.0d0
+        write(6,'(A)',advance='no') 'Test 12: B^(-1)[BhalfBhalf(-1)] ... '
+     elseif (l .eq. 13) then
+        call NormalRandomNumbers1D(0.0d0,1.0d0,obs_dim,a)
+        write(6,'(A)',advance='no') 'Test 13: B^(-1)[BhalfBhalf( N(0,1) )] ... '
+     end if
+
+
+     call     Bhalf(1,a,qt)
+     call Bhalf(1,qt,q)
+     call solve_b(pf%count,q,w)
+     !w should be a
+     rr = dnrm2(state_dim,w-a,1)
+
+     
+     if(rr .lt. pass) then
+        !passed the test                                   
+        write(6,'(A)',advance='yes') 'passed'
+     elseif(rr .lt. warn) then
+        write(6,'(A,es24.17)',advance='yes') 'passed with warning rr = ',rr
+     else
+        write(6,'(A,es24.17)',advance='yes') 'failed with rr = ',rr
+     end if
+
+  end do
+
+  write(6,*) 'TESTING SOLVE B WITH MULTIPLE RHS'
+  
+  do l = 14,16
+
+  do i = 1,10
+     if( l .eq. 14) then
+        aa = 1.0d0
+        write(6,'(A)',advance='no') 'Test 14: B^(-1)[BhalfBhalf(1)] ... '
+     elseif (l .eq. 15) then
+        aa = -1.0d0
+        write(6,'(A)',advance='no') 'Test 15: B^(-1)[BhalfBhalf(-1)] ... '
+     elseif (l .eq. 16) then
+        call NormalRandomNumbers2D(0.0d0,1.0d0,state_dim,10,aa)
+        write(6,'(A)',advance='no') 'Test 16: B^(-1)[BhalfBhalf( N(0,1) )] ... '
+     end if
+
+     pf%count = i
+     call     Bhalf(i,aa(:,1:i),qqt(:,1:i))
+     call bhalf(i,qqt(:,1:i),qq(:,1:i))
+     call solve_b(pf%count,qq(:,1:i),ww(:,1:i))
+     !w should be a
+     do k = 1,i
+        rr = dnrm2(state_dim,ww(:,k)-aa(:,k),1)
+
+        if(rr .lt. pass) then
+           !passed the test
+           if(k .eq. 1 .and. i .eq. 1) then
+              write(6,'(A,i2)',advance='yes') 'passed: ',k
+           elseif(k .eq. 1) then
+              write(6,'(A,i2)',advance='no') 'passed: ',k
+           elseif(k .eq. i) then
+              write(6,'(A,i2)',advance='yes') ' ',k
+           else
+              write(6,'(A,i2)',advance='no') ' ',k
+           end if
+        elseif(rr .lt. warn) then
+
+           if(k .eq. 1 .and. i .eq. 1) then
+              write(6,'(A,i2,A,es9.2)',advance='yes') 'passed: ',k,' warn ',rr
+           elseif(k .eq. 1) then
+              write(6,'(A,i2,A,es9.2)',advance='no') 'passed: ',k,' warn ',rr
+           elseif(k .eq. i) then
+              write(6,'(A,i2,A,es9.2)',advance='yes') ' ',k,' warn ',rr
+           else
+              write(6,'(A,i2,A,es9.2)',advance='no') ' ',k,' warn ',rr
+           end if
+        else
+           !write(6,'(A)',advance='yes') ''
+           write(6,'(i2,A,es9.2)',advance='yes') k,' failed with rr = ',rr
+        end if
+
+
+     end do
+
+  end do
+  
+end do
+
+
+  pf%count = pfcount
+
+end subroutine B_tests

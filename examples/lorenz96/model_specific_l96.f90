@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-08-25 10:31:10 pbrowne>
+!!! Time-stamp: <2015-10-13 13:21:50 pbrowne>
 !!!
 !!!    This file must be adapted to the specific model in use.
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -372,3 +372,23 @@ subroutine get_observation_data(y,t)
   call default_get_observation_data(y,t)
 end subroutine get_observation_data
 
+!> subroutine to take a full state vector x and return \f$B^{-1}x\f$
+!> in state space.
+!!
+!! Given \f$x\f$ compute \f$B^{-1}}x\f$
+subroutine solve_b(nrhs,x,Qx)
+  use sizes
+  use Qdata
+  implicit none
+  integer, parameter :: rk=kind(1.0D+0)
+  integer, intent(in) :: nrhs !< the number of right hand sides
+  real(kind=rk), dimension(state_dim,nrhs), intent(in) :: x !< the
+  !!input vector
+  real(kind=rk), dimension(state_dim,nrhs), intent(out) :: qx !< the
+  !!resulting vector where Bx \f$= B^{-1}x\f$
+
+  !qx = 5.3d3*x
+  qx = x/0.2d0
+!  stop 'Bhalf not yet implemented'
+  
+end subroutine solve_b

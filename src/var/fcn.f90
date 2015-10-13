@@ -1,8 +1,8 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-10-13 13:33:02 pbrowne>
+!!! Time-stamp: <2015-10-13 16:01:51 pbrowne>
 !!!
-!!!    Tests program for user supplied model and observation specific routines
-!!!    Copyright (C) 2014  Philip A. Browne
+!!!    subroutine be called by optimization codes
+!!!    Copyright (C) 2015  Philip A. Browne
 !!!
 !!!    This program is free software: you can redistribute it and/or modify
 !!!    it under the terms of the GNU General Public License as published by
@@ -25,29 +25,24 @@
 !!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-!> program to run all tests of user specific functions
-!!
-
-program alltests
+!> This is the subroutine which the optimization routines call
+!! to get the objective function value and its gradient
+subroutine fcn( n, x, f, g )
   use pf_control
   implicit none
-  
-  call set_pf_controls
-  print*,'PF: configuring model'
-  call configure_model
+  integer,intent(in) :: n !< the dimension of the optimzation problem
+  real(kind=kind(1.0d0)), dimension(n), intent(in) :: x !< the
+  !!current optimization state
+  real(kind=kind(1.0d0)), intent(out) :: f !< the objective function value
+  real(kind=kind(1.0d0)), dimension(n), intent(out) :: g !< the
+  !!gradient of the objective function
 
-!!$ it turns out that these tests don't make any sense for H...
-!!commenting out
-!!$  call H_tests
-
-  call R_tests
-  
-  call Q_tests
-
-  call HQHTR_tests
-  
-  call B_tests
-  
-end program alltests
-
-
+  select case(pf%filter)
+  case('3D')
+     call threedvar_fcn(n,x,f,g)
+  case default
+     stop 'wrong case in fcn'
+  end select
+  print*,'function = ',f
+  print*,'gradient = ',g
+end subroutine fcn

@@ -29,9 +29,42 @@ SR_CONTS=$(current_dir)src/controllers/
 SR_USERS=$(current_dir)src/user/
 SR_TESTS=$(current_dir)src/tests/
 SR_OPERS=$(current_dir)src/operations/
-OBJSQ= timestep_data.o output_empire.o sizes.o empire_main.o Qdata.o Rdata.o equivalent_weights_filter.o comms.o gen_rand.o random_d.o proposal_filter.o histogram.o allocate_pf.o pf_control.o letks.o matrix_pf.o data_io.o model_specific.o operator_wrappers.o quicksort.o resample.o diagnostics.o perturb_particle.o update_state.o genQ.o sir_filter.o stochastic_model.o tests.o letkf_analysis.o deterministic_model.o inner_products.o trajectories.o user_perturb_particle.o generate_pf.o output_mat_tri.o equivalent_weights_filter_zhu.o lambertw.o randperm.o user_initialise_mpi.o loc_function.o phalf_etkf.o phalf.o 
+SR_4DENVAR=$(current_dir)src/4dEnVar/
+SR_VAR=$(current_dir)src/var/
+SR_CG=$(current_dir)src/optim/CG+/
+CGOPTS = $(shell echo $(FCOPTS) | sed 's/-\<[-a-zA-Z0-9]*implicit[-a-zA-Z0-9]*\>//g')
+SR_LBFGSB=$(current_dir)src/optim/Lbfgsb.3.0/
+
+CGFILES=cgsub.o cgfam.o cgsearch.o
+LBFGSFILES=lbfgsb_sub.o lbfgs_sub.o lbfgsb.o linpack.o timer.o
+
+OBJSQ= $(CGFILES) $(LBFGSFILES) timestep_data.o output_empire.o sizes.o empire_main.o Qdata.o Rdata.o equivalent_weights_filter.o comms.o var_data.o gen_rand.o random_d.o proposal_filter.o histogram.o allocate_pf.o pf_control.o letks.o matrix_pf.o data_io.o model_specific.o operator_wrappers.o quicksort.o resample.o diagnostics.o perturb_particle.o update_state.o genQ.o sir_filter.o stochastic_model.o tests.o letkf_analysis.o deterministic_model.o inner_products.o trajectories.o user_perturb_particle.o generate_pf.o output_mat_tri.o equivalent_weights_filter_zhu.o lambertw.o randperm.o user_initialise_mpi.o loc_function.o phalf_etkf.o phalf.o threedvar_data.o three_d_var_all_particles.o threedvar_fcn.o three_d_var.o fcn.o
 OBJS=$(addprefix $(OBS),$(OBJSQ))
 FCOPTS+=$(MODFLAG) $(MODLOC)
+
+$(OBS)cgsub.o: $(SR_CG)cgsub.f90
+	$(FC) $(FCOPTS) -c $(SR_CG)cgsub.f90 -o $@
+
+$(OBS)cgfam.o: $(SR_CG)cgfam.f
+	$(FC) $(CGOPTS) -c $(SR_CG)cgfam.f -o $@
+
+$(OBS)cgsearch.o: $(SR_CG)cgsearch.f
+	$(FC) $(CGOPTS) -c $(SR_CG)cgsearch.f -o $@
+
+$(OBS)lbfgsb_sub.o: $(SR_LBFGSB)lbfgsb_sub.f90
+	$(FC) $(FCOPTS) -c $(SR_LBFGSB)lbfgsb_sub.f90 -o $@
+
+$(OBS)lbfgs_sub.o: $(SR_LBFGSB)lbfgs_sub.f90
+	$(FC) $(FCOPTS) -c $(SR_LBFGSB)lbfgs_sub.f90 -o $@
+
+$(OBS)lbfgsb.o: $(SR_LBFGSB)lbfgsb.f
+	$(FC) $(FCOPTS) -c $(SR_LBFGSB)lbfgsb.f -o $@
+
+$(OBS)linpack.o: $(SR_LBFGSB)linpack.f
+	$(FC) $(FCOPTS) -c $(SR_LBFGSB)linpack.f -o $@
+
+$(OBS)timer.o: $(SR_LBFGSB)timer.f
+	$(FC) $(FCOPTS) -c $(SR_LBFGSB)timer.f -o $@
 
 $(OBS)output_mat_tri.o: $(SR_UTILS)output_mat_tri.f90
 	$(FC) $(FCOPTS) -c $(SR_UTILS)output_mat_tri.f90 -o $@
@@ -56,6 +89,24 @@ $(OBS)trajectories.o: $(SR_UTILS)trajectories.f90
 
 $(OBS)histogram.o: $(SR_UTILS)histogram.f90
 	$(FC) $(FCOPTS) -c $(SR_UTILS)histogram.f90 -o $@
+
+$(OBS)threedvar_data.o: $(SR_VAR)threedvar_data.f90
+	$(FC) $(FCOPTS) -c $(SR_VAR)threedvar_data.f90 -o $@
+
+$(OBS)threedvar_fcn.o: $(SR_VAR)threedvar_fcn.f90
+	$(FC) $(FCOPTS) -c $(SR_VAR)threedvar_fcn.f90 -o $@
+
+$(OBS)three_d_var.o: $(SR_VAR)three_d_var.f90
+	$(FC) $(FCOPTS) -c $(SR_VAR)three_d_var.f90 -o $@
+
+$(OBS)three_d_var_all_particles.o: $(SR_VAR)three_d_var_all_particles.f90
+	$(FC) $(FCOPTS) -c $(SR_VAR)three_d_var_all_particles.f90 -o $@
+
+$(OBS)var_data.o: $(SR_4DENVAR)var_data.f90
+	$(FC) $(FCOPTS) -c $(SR_4DENVAR)var_data.f90 -o $@
+
+$(OBS)fcn.o: $(SR_VAR)fcn.f90
+	$(FC) $(FCOPTS) -c $(SR_VAR)fcn.f90 -o $@
 
 $(OBS)stochastic_model.o: $(SR_FILTS)stochastic_model.f90
 	$(FC) $(FCOPTS) -c $(SR_FILTS)stochastic_model.f90 -o $@
@@ -96,7 +147,7 @@ $(OBS)model_specific.o: model_specific.f90 $(OBS)sizes.o
 $(OBS)operator_wrappers.o: $(SR_OPERS)operator_wrappers.f90 $(OBS)pf_control.o $(OBS)sizes.o
 	$(FC) $(FCOPTS) -c $(SR_OPERS)operator_wrappers.f90 -o $@
 
-$(OBS)pf_control.o: $(SR_CONTS)pf_control.f90
+$(OBS)pf_control.o: $(SR_CONTS)pf_control.f90 $(OBS)var_data.o
 	$(FC) $(FCOPTS) -c $(SR_CONTS)pf_control.f90 -o $@
 
 $(OBS)perturb_particle.o: $(SR_OPERS)perturb_particle.f90 $(OBS)sizes.o

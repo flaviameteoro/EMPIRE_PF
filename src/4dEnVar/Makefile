@@ -10,7 +10,7 @@ LIB_LIST=-lblas -llapack
 FCOPTS=-O3 -Wall -fimplicit-none -fbounds-check -fbacktrace
 FCOPTS+=$(MODFLAG) $(MODLOC)
 
-MYFILES=$(OBS)model_specific.o $(OBS)sizes.o $(OBS)Rdata.o $(OBS)Qdata.o $(OBS)inner_products.o $(OBS)pf_control.o $(OBS)comms.o $(OBS)output_empire.o $(OBS)histogram.o $(OBS)data_io.o $(OBS)gen_rand.o $(OBS)random_d.o $(OBS)timestep_data.o $(OBS)matrix_pf.o $(OBS)generate_pf.o $(OBS)output_mat_tri.o vardata.o 4dEnVar.o 4denvar_fcn.o 
+MYFILES=$(OBS)model_specific.o $(OBS)sizes.o $(OBS)Rdata.o $(OBS)Qdata.o $(OBS)inner_products.o $(OBS)pf_control.o $(OBS)comms.o $(OBS)output_empire.o $(OBS)histogram.o $(OBS)data_io.o $(OBS)gen_rand.o $(OBS)random_d.o $(OBS)timestep_data.o $(OBS)matrix_pf.o $(OBS)generate_pf.o $(OBS)output_mat_tri.o var_data.o fourdenvardata.o 4dEnVar.o 4denvar_fcn.o 
 
 
 

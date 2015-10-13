@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-09-09 13:59:13 pbrowne>
+!!! Time-stamp: <2015-10-13 14:02:27 pbrowne>
 !!!
 !!!    The main program to run EMPIRE
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -126,6 +126,8 @@ program empire
            call deterministic_model
         case('DE')
            call deterministic_model
+        case('3D')
+           call stochastic_model
         case default
            write(emp_o,*) 'Error -555: Incorrect pf%filter'
            stop -555
@@ -162,6 +164,9 @@ program empire
         call letkf_analysis
      case('DE')
         call deterministic_model
+     case('3D')
+        call stochastic_model
+        call three_d_var_all_particles
      case default
         write(emp_o,*) 'Error -556: Incorrect pf%filter'
         stop -556

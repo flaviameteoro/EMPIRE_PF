@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-08-25 10:28:49 pbrowne>
+!!! Time-stamp: <2015-10-13 12:23:33 pbrowne>
 !!!
 !!!    This file must be adapted to the specific model in use.
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -330,6 +330,24 @@ subroutine Bhalf(nrhs,x,bx)
   stop 'Bhalf not yet implemented'
   
 end subroutine Bhalf
+
+!>subroutine to take a state vector x and return v
+!!  in state space.
+!!
+!! Given \f$y\f$ find \f$v\f$ such that \f$Bv=x\f$
+subroutine solve_b(nrhs,x,v)
+  use sizes
+  implicit none
+  integer, parameter :: rk=kind(1.0D+0)
+  integer, intent(in) :: nrhs   !< the number of right hand sides
+  real(kind=rk), dimension(state_dim,nrhs), intent(in) :: x !<input vector
+  real(kind=rk), dimension(state_dim,nrhs), intent(out) :: v!<
+  !!result vector where \f$v=B^{-1}x\f$
+
+  !v = y/(0.3d0**2)
+  stop 'solve_b not yet implemented'
+  
+end subroutine solve_b
 
 !> Subroutine to read observation from a file
 !! \n

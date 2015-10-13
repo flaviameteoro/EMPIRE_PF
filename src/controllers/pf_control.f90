@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-09-18 14:04:12 pbrowne>
+!!! Time-stamp: <2015-10-13 14:03:48 pbrowne>
 !!!
 !!!    module to hold all the information to control the the main program
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -79,6 +79,7 @@ module pf_control
                               !< - EZ -- the Zhu equal weights filter
                               !< particle filter
                               !< - LS -- the L-ETKS with noise
+                              !< - 3D -- 3DVar
      character(1) :: init     !< which method to initialise ensemble
                               !< currently this has a number of
                               !< options:
@@ -172,6 +173,7 @@ contains
     !! - \link pf_control::pf_control_type::use_traj use_traj\endlink
     !! - \link pf_control::pf_control_type::use_rmse use_rmse\endlink
     subroutine parse_pf_parameters
+      use var_data
       implicit none
       integer :: ios
 
@@ -340,6 +342,10 @@ contains
       case('LD')
          print*,'Running the Local Ensemble Transform Kalman Filter'
          print*,'With NO random noise'
+      case('3d')
+         print*,'Running a stochastic ensemble and 3DVar at observatio&
+              &n times'
+         call set_var_controls
       case default
          print*,'Error: Incorrect filter type selected:', pf%filter
          print*,'Please ensure that pf%filter in pf_parameters.dat is ei&
@@ -357,10 +363,11 @@ contains
          print*,'          without random noise'
          print*,'LS        the Local Ensemble Transform Kalman Smoother'
          print*,'          with random noise'
+         print*,'3D        3DVar'
          stop
       end select
 
-
+      
       if(init .ne. '+') then
          print*,'read init = ',init
          pf%init = init
