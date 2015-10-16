@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-10-13 16:10:20 pbrowne>
+!!! Time-stamp: <2015-10-14 11:21:33 pbrowne>
 !!!
 !!!    Program to implement 3DVar
 !!!    Copyright (C) 2015  Philip A. Browne
@@ -65,5 +65,6 @@ subroutine three_d_var(x)
   end select
   
   x = vardata%x0
+  call deallocate_vardata
 
 end subroutine three_d_var

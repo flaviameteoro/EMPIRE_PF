@@ -83,4 +83,5 @@ test test_l96.sh
 test test_instructions_l63.sh
 test test_instructions_l96.sh
 
+test test_3dvar.sh
 red All tests done. Phew.

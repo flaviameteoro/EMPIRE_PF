@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-10-13 16:01:51 pbrowne>
+!!! Time-stamp: <2015-10-14 11:24:54 pbrowne>
 !!!
 !!!    subroutine be called by optimization codes
 !!!    Copyright (C) 2015  Philip A. Browne
@@ -43,6 +43,6 @@ subroutine fcn( n, x, f, g )
   case default
      stop 'wrong case in fcn'
   end select
-  print*,'function = ',f
-  print*,'gradient = ',g
+!  print*,'function = ',f
+!  print*,'gradient = ',g
 end subroutine fcn

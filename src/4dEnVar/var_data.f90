@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-10-13 15:07:23 pbrowne>
+!!! Time-stamp: <2015-10-14 11:55:42 pbrowne>
 !!!
 !!!    module to store data for variational methods
 !!!    Copyright (C) 2015  Philip A. Browne
@@ -97,11 +97,11 @@ contains
   !> subroutine to ensure vardata is ok
   subroutine set_var_controls
     !    integer :: ios
-    write(6,'(A)') 'Opening vardata.nml'
+    write(6,'(A)') 'Opening namelist file to read var_params'
 
     call parse_vardata
 
-    write(6,'(A)') 'vardata.nml successfully read to control pf code.'
+    write(6,'(A)') 'var_params successfully read from nml file to control pf code.'
 
   end subroutine set_var_controls
 
@@ -138,6 +138,7 @@ contains
   subroutine parse_vardata
     implicit none
     character(*), parameter :: filename='vardata.nml'
+    character(*), parameter :: filename2='empire.nml'
     integer :: ios
 
     character(6) :: opt_method='CG'
@@ -167,15 +168,62 @@ contains
 
 
 
-    open(32,file=filename,iostat=ios,action='read'&
-         &,status='old')
+    open(32,file=filename,iostat=ios,action='read',status='old')
     if(ios .ne. 0) then
        write(*,*) 'Cannot open ',filename
-       stop 2
+       
+       open(32,file=filename2,iostat=ios,action='read',status='old')
+       
+       if(ios .ne. 0) then
+          write(*,*) 'Cannot open ',filename2
+          write(*,*) 'var_data ERROR: no .nml file found. STOPPING.'
+          stop '-65'
+       end if
+       
+       read(32,nml=var_params,iostat=ios) 
+       if(ios .ne. 0) then
+          write(*,*) 'var_data ERROR: no var_params namelist found in &
+               &',filename,' or ',filename2,'. STOPPING.'
+          stop '-66'
+       end if
+       
+    else
+       read(32,nml=var_params,iostat=ios)
+       if(ios .ne. 0) then
+          close(32)
+          open(32,file=filename2,iostat=ios,action='read',status='old')
+          if(ios .ne. 0) then
+             write(*,*) 'var_data ERROR: no var_params namelist found &
+                  &in &              
+               &',filename,' and could not open ',filename2,'. STOPPING.'
+             stop '-67'
+          end if
+
+          read(32,nml=var_params,iostat=ios)
+          if(ios .ne. 0) then
+             write(*,*) 'var_data ERROR: no var_params namelist found in &
+                  &',filename,' or ',filename2,'. STOPPING.'
+             stop '-68'
+          end if
+       end if
     end if
-    read(32,nml=var_params) 
-    !      print*,time_obs,time_bwn_obs,nudgefac,gen_data
     close(32)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     select case (opt_method)
     case('cg')
@@ -259,7 +307,7 @@ contains
     !print*,'nens = ',nens
     !vardata%n = nens-1
     
-    vardata%n = -2
+    !vardata%n = -2
     
 
     if(total_timesteps .lt. 1) then
@@ -291,6 +339,11 @@ contains
 
   !> subroutine to deallocate space for 4denvar
   subroutine deallocate_vardata
+    if(allocated(vardata%x0)) deallocate(vardata%x0)
+    if(allocated(vardata%ny)) deallocate(vardata%ny)
+    if(allocated(vardata%nbd)) deallocate(vardata%nbd)
+    if(allocated(vardata%l)) deallocate(vardata%l)
+    if(allocated(vardata%u)) deallocate(vardata%u)
   end subroutine deallocate_vardata
 
 

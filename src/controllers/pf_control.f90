@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-10-13 14:03:48 pbrowne>
+!!! Time-stamp: <2015-10-14 10:49:08 pbrowne>
 !!!
 !!!    module to hold all the information to control the the main program
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -342,14 +342,13 @@ contains
       case('LD')
          print*,'Running the Local Ensemble Transform Kalman Filter'
          print*,'With NO random noise'
-      case('3d')
+      case('3D')
          print*,'Running a stochastic ensemble and 3DVar at observatio&
               &n times'
          call set_var_controls
       case default
          print*,'Error: Incorrect filter type selected:', pf%filter
-         print*,'Please ensure that pf%filter in pf_parameters.dat is ei&
-              &ther:'
+         print*,'Please ensure that pf%filter in empire.nml is either:'
          print*,'EW        the equivalent weights particle f&
               &ilter'
          print*,'EZ        the Zhu equal weights particle f&

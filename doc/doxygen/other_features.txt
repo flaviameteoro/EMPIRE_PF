@@ -40,8 +40,6 @@ In \link pf_control::parse_pf_parameters empire.nml \endlink set the following v
 
 
 \section redirectingoutput Redirecting the output from EMPIRE
-This is controlled by a string in the optional file 'emp_out_name'.
-
 This feature can be used to suppress output from EMPIRE STDOUT.
 
 See \link output_empire::open_emp_o open_emp_o \endlink for more information.

@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-09-11 15:35:55 pbrowne>
+!!! Time-stamp: <2015-10-16 15:32:33 pbrowne>
 !!!
 !!!    Program to implement 4dEnVar
 !!!    Copyright (C) 2015  Philip A. Browne
@@ -51,7 +51,7 @@ program FourDEnVar
   call random_seed_mpi(pfrank)
   !> read in controlling data
   call set_var_controls
-
+  vardata%n = nens-1
   !> call user specific routine for initialisation
   call configure_model
 

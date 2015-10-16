@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-09-11 15:33:26 pbrowne>
+!!! Time-stamp: <2015-10-16 15:42:22 pbrowne>
 !!!
 !!!    subroutine to provide objective function and gradient for var
 !!!    Copyright (C) 2015  Philip A. Browne

@@ -15,8 +15,8 @@ MYFILES=$(OBS)model_specific.o $(OBS)sizes.o $(OBS)Rdata.o $(OBS)Qdata.o $(OBS)i
 
 
 
-CGFILES=../optim/CG+/cgsub.o ../optim/CG+/cgfam.o ../optim/CG+/cgsearch.o
-LBFGSFILES=../optim/Lbfgsb.3.0/lbfgsb_sub.o ../optim/Lbfgsb.3.0/lbfgs_sub.o ../optim/Lbfgsb.3.0/lbfgsb.o ../optim/Lbfgsb.3.0/linpack.o ../optim/Lbfgsb.3.0/timer.o
+CGFILES=$(OBS)cgsub.o $(OBS)cgfam.o $(OBS)cgsearch.o
+LBFGSFILES=$(OBS)lbfgsb_sub.o $(OBS)lbfgs_sub.o $(OBS)lbfgsb.o $(OBS)linpack.o $(OBS)timer.o
 
 
 
