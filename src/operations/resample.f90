@@ -54,12 +54,12 @@ subroutine resample
 
   !print*,'in resample, pf%weight = ',pf%weight
 
-  if(empire_version .eq. 1 .or. empire_version .eq. 2) then
+  if(comm_version .eq. 1 .or. comm_version .eq. 2) then
      ensemble_comm = pf_mpi_comm
-  elseif(empire_version .eq. 3) then
+  elseif(comm_version .eq. 3) then
      ensemble_comm = pf_ens_comm
   else
-     print*,'EMPIRE VERSION ',empire_version,' NOT SUPPORTED IN RESAMP&
+     print*,'EMPIRE VERSION ',comm_version,' NOT SUPPORTED IN RESAMP&
           &LE'
      print*,'THIS IS AN ERROR. STOPPING'
      stop '-24'

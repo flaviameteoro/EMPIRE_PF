@@ -92,7 +92,7 @@ subroutine proposal_filter
      pweight = ddot(state_dim,Qkgain(:,k),1,kgain(:,k),1) + 2.0D0&
              &*ddot(state_dim, betan(:,k),1,kgain(:,k),1)
 
-     if(empire_version .eq. 3) then
+     if(comm_version .eq. 3) then
         !need to perform the sum across all parts of the state vector
         pweighttemp=pweight
         call mpi_allreduce(pweighttemp,pweight,1,MPI_DOUBLE_PRECISION,MPI_SUM&

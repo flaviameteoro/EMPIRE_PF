@@ -85,7 +85,7 @@ subroutine threedvar_fcn(n, x, f, g )
   ! compute the obs component of the objective function
   ! f = 0.5 (y-Hx)^T R^{-1} (y-Hx)
   ftemp = 0.5_rk*sum(y*Hx)
-  if(empire_version .eq. 3) then
+  if(comm_version .eq. 3) then
      !need to perform the sum across all parts of the obs vector
      ftemp3 = ftemp
      call mpi_allreduce(ftemp3,ftemp,1,MPI_DOUBLE_PRECISION,MPI_SUM&
@@ -108,7 +108,7 @@ subroutine threedvar_fcn(n, x, f, g )
   ! compute the background component of the objective function
   ! f = 0.5 (x-x_b)^T B^{-1} (x-x_b)
   f = 0.5_rk*sum(xtemp*g)
-  if(empire_version .eq. 3) then
+  if(comm_version .eq. 3) then
      !need to perform the sum across all parts of the obs vector
      ftemp3 = f
      call mpi_allreduce(ftemp3,f,1,MPI_DOUBLE_PRECISION,MPI_SUM&

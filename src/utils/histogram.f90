@@ -93,7 +93,7 @@ contains
     close(2)
 
 
-    if(empire_version .eq. 3) then
+    if(comm_version .eq. 3) then
 
        lowerbound = state_displacements(pf_member_rank+1)
        if(pf_member_rank .eq. pf_member_size-1) then

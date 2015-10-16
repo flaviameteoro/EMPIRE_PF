@@ -1,6 +1,6 @@
 /*! \page communication_methods Communication Methods
 
-EMPIRE has currently 3 different standards for communicating with models. Each method has various advantages and disadvantages. This is changed by modifying the parameter \link comms::empire_version empire_version \endlink in comms.f90.
+EMPIRE has currently 3 different standards for communicating with models. Each method has various advantages and disadvantages. This is changed by modifying the parameter \link comms::comm_version comm_version \endlink in comms.f90.
 
 Here we list some particularities of each method, before summarising in the table below.
 

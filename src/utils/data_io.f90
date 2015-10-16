@@ -164,7 +164,7 @@ subroutine output_from_pf
   end if
 
 
-  if(empire_version .ne. 3) then !empire_v3 models will be too large!!!
+  if(comm_version .ne. 3) then !empire_v3 models will be too large!!!
      call matrix_pf_output(npfs-1,pf_mpi_comm,state_dim,cnt,pf%psi&
           &,pf%timestep,TSData%is_analysis)
   end if

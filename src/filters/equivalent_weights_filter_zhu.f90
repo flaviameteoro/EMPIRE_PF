@@ -68,12 +68,12 @@ subroutine equivalent_weights_filter_zhu
 
 
 
-  if(empire_version .eq. 1 .or. empire_version .eq. 2) then
+  if(comm_version .eq. 1 .or. comm_version .eq. 2) then
      ensemble_comm = pf_mpi_comm
-  elseif(empire_version .eq. 3) then
+  elseif(comm_version .eq. 3) then
      ensemble_comm = pf_ens_comm
   else
-     print*,'EMPIRE VERSION ',empire_version,' NOT SUPPORTED IN propos&
+     print*,'EMPIRE VERSION ',comm_version,' NOT SUPPORTED IN propos&
           &al_filter'
      print*,'THIS IS AN ERROR. STOPPING'
      stop '-24'
@@ -124,7 +124,7 @@ subroutine equivalent_weights_filter_zhu
   xs2=2.1D0
   do i = 1,pf%count
      gammai(i) = ddot(state_dim,statev(:,i),1,statev(:,i),1)
-     if(empire_version .eq. 3) then
+     if(comm_version .eq. 3) then
         !need to perform the sum across all parts of the state vector          
         gammaitemp=gammai(i)
         call mpi_allreduce(gammaitemp,gammai(i),1,MPI_DOUBLE_PRECISION,MPI_SUM&
@@ -150,7 +150,7 @@ subroutine equivalent_weights_filter_zhu
   end do
 
   do i = 1,pf%count
-     if(empire_version .eq. 1 .or. empire_version .eq. 2) then
+     if(comm_version .eq. 1 .or. comm_version .eq. 2) then
         call random_number(randc)
      else
         if(pf_member_rank .eq. 0) then

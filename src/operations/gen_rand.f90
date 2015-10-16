@@ -99,16 +99,16 @@ logical, intent(out) :: uniform
 real(kind=kind(1.0D0)) :: draw
 integer :: mpi_err
 
-if(empire_version .eq. 1 .or. empire_version .eq. 2) then
+if(comm_version .eq. 1 .or. comm_version .eq. 2) then
    call random_number(draw)
-elseif(empire_version .eq. 3) then
+elseif(comm_version .eq. 3) then
    if(pf_member_rank .eq. 0) then
       call random_number(draw)
    end if
    call mpi_scatter(draw,1,MPI_DOUBLE_PRECISION,draw,1&
         &,MPI_DOUBLE_PRECISION,0,pf_member_rank,mpi_err)
 else
-    print*,'EMPIRE VERSION ',empire_version,' NOT SUPPORTED IN gen_rand'
+    print*,'EMPIRE VERSION ',comm_version,' NOT SUPPORTED IN gen_rand'
     print*,'THIS IS AN ERROR. STOPPING'
     stop '-24'
 end if

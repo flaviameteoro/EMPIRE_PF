@@ -88,7 +88,7 @@ ms_backup=model_specific.f90_real
 
 
 
-version=$($grep empire_version= $commsfile | cut -f2 -d=)
+version=$($grep comm_version= $commsfile | cut -f2 -d=)
 red EMPIRE VERSION detected as $version in $commsfile
 if [[ "$version" = "1" ]]; then
     minmdl=$(readlink -e ../bin/linear_empire_vader)

@@ -39,7 +39,7 @@ program minimal_empire
 
 
   print*,'RUNNING MINIMAL_EMPIRE'
-  print*,'EMPIRE COUPLING VERSION ',empire_version
+  print*,'EMPIRE COUPLING VERSION ',comm_version
 
 
   print*,'Reading state_dim from file state_dim: '

@@ -82,12 +82,12 @@ subroutine letkf_analysis
   integer :: ensemble_comm
   include 'mpif.h'
 
-  if(empire_version .eq. 1 .or. empire_version .eq. 2) then
+  if(comm_version .eq. 1 .or. comm_version .eq. 2) then
      ensemble_comm = pf_mpi_comm
-  elseif(empire_version .eq. 3) then
+  elseif(comm_version .eq. 3) then
      ensemble_comm = pf_ens_comm
   else
-     print*,'EMPIRE VERSION ',empire_version,' NOT SUPPORTED IN letkf_analysis'
+     print*,'EMPIRE VERSION ',comm_version,' NOT SUPPORTED IN letkf_analysis'
      print*,'THIS IS AN ERROR. STOPPING'
      stop '-24'
   end if
@@ -184,10 +184,10 @@ subroutine letkf_analysis
   d = y - mean_yf
   call solve_rhalf(obs_dim,1,d,dd,pf%timestep)
 
-  if(empire_version .eq. 1 .or. empire_version .eq. 2) then
+  if(comm_version .eq. 1 .or. comm_version .eq. 2) then
      dd_g = dd
      Ysf_g = Ysf
-  elseif(empire_version .eq. 3) then
+  elseif(comm_version .eq. 3) then
      call mpi_allgatherv(dd,obs_dim,MPI_DOUBLE_PRECISION,dd_g,obs_dims&
           &,obs_displacements,MPI_DOUBLE_PRECISION,pf_member_comm&
           &,mpi_err)

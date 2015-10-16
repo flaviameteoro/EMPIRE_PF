@@ -74,7 +74,7 @@ MPIRUNOPTS="--output-filename out"
 commsfile=../src/utils/comms.f90
 
 
-version=$($grep empire_version= $commsfile | cut -f2 -d=)
+version=$($grep comm_version= $commsfile | cut -f2 -d=)
 red EMPIRE VERSION detected as $version in $commsfile
 if [[ "$version" = "1" ]]; then
     minmdl=../bin/minimal_model

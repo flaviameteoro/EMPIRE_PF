@@ -56,12 +56,12 @@ subroutine equivalent_weights_filter
   real(kind=rk) :: ddot,wtemp,betanTbetan
   integer :: ensemble_comm
 
-  if(empire_version .eq. 1 .or. empire_version .eq. 2) then
+  if(comm_version .eq. 1 .or. comm_version .eq. 2) then
      ensemble_comm = pf_mpi_comm
-  elseif(empire_version .eq. 3) then
+  elseif(comm_version .eq. 3) then
      ensemble_comm = pf_ens_comm
   else
-     print*,'EMPIRE VERSION ',empire_version,' NOT SUPPORTED IN proposal_filter'
+     print*,'EMPIRE VERSION ',comm_version,' NOT SUPPORTED IN proposal_filter'
      print*,'THIS IS AN ERROR. STOPPING'
      stop '-24'
   end if
@@ -83,7 +83,7 @@ subroutine equivalent_weights_filter
      
      call innerHQHt_plus_R_1(y_Hfpsin1(:,i),w,pf%timestep)
 
-     if(empire_version .eq. 3) then
+     if(comm_version .eq. 3) then
         !need to perform the sum across all parts of the state vector
         wtemp=w
         call mpi_allreduce(wtemp,w,1,MPI_DOUBLE_PRECISION,MPI_SUM&
@@ -113,7 +113,7 @@ subroutine equivalent_weights_filter
   do i = 1,pf%count
      a(i) = 0.5d0*ddot(obs_dim,obsvv(:,i),1,y_Hfpsin1(:,i),1)
 
-     if(empire_version .eq. 3) then
+     if(comm_version .eq. 3) then
         !need to perform the sum across all parts of the observation vector
         wtemp=a(i)
         call mpi_allreduce(wtemp,a(i),1,MPI_DOUBLE_PRECISION,MPI_SUM&
@@ -150,7 +150,7 @@ subroutine equivalent_weights_filter
                 0.5_rk*e(i)
         else
            betanTbetan = sum(betan(:,i)*betan(:,i))
-           if(empire_version .eq. 3) then
+           if(comm_version .eq. 3) then
               !need to perform the sum across all parts of the state vector
               wtemp=betanTbetan
               call mpi_allreduce(wtemp,betanTbetan,1,MPI_DOUBLE_PRECISION,MPI_SUM&

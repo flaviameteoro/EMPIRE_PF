@@ -36,7 +36,7 @@ program minimal_empire_comms
   integer :: mpi_err
 
   print*,'RUNNING MINIMAL_EMPIRE_COMMS'
-  print*,'EMPIRE COUPLING VERSION ',empire_version
+  print*,'EMPIRE COUPLING VERSION ',comm_version
   !> set up EMPIRE coupling
   call initialise_mpi
 

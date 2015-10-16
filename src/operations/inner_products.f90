@@ -59,7 +59,7 @@ subroutine innerR_1(n,c,y,w,t)
      w(i) = ddot(n,y(:,i),1,v(:,i),1)
   end do
 
-  if(empire_version .eq. 3) then
+  if(comm_version .eq. 3) then
      !need to perform the sum across all parts of the observation vector
      wtemp = w
      call mpi_allreduce(wtemp,w,c,MPI_DOUBLE_PRECISION,MPI_SUM&
@@ -94,7 +94,7 @@ subroutine innerHQHt_plus_R_1(y,w,t)
   w = ddot(obs_dim,y,1,v,1)
   
 
-  if(empire_version .eq. 3) then
+  if(comm_version .eq. 3) then
      !need to perform the sum across all parts of the observation vector
      wtemp = w
      call mpi_allreduce(wtemp,w,1,MPI_DOUBLE_PRECISION,MPI_SUM&

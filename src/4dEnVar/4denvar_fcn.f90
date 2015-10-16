@@ -120,7 +120,7 @@ subroutine fourdenvar_fcn(n, v, f, g )
   !need this executed by all processes on pf_member_comm
   if(pf_ens_rank .eq. 0) then
 
-     if(empire_version .eq. 1 .or. empire_version .eq. 2) then
+     if(comm_version .eq. 1 .or. comm_version .eq. 2) then
         call fourdenvar_fcn_master(n, v, f, g,leave)
      else
 
@@ -225,12 +225,12 @@ subroutine fourdenvar_fcn_master(n,v,f,g,leave)
   integer :: ensemble_comm
 
   leave = .false.
-  if(empire_version .eq. 1 .or. empire_version .eq. 2) then
+  if(comm_version .eq. 1 .or. comm_version .eq. 2) then
      ensemble_comm = pf_mpi_comm
-  elseif(empire_version .eq. 3) then
+  elseif(comm_version .eq. 3) then
      ensemble_comm = pf_ens_comm
   else
-     print*,'error. empire_version ',empire_version,'in fourdenvar&
+     print*,'error. comm_version ',comm_version,'in fourdenvar&
           &_fcn_master'
      print*,'stopping'
   end if
@@ -246,7 +246,7 @@ subroutine fourdenvar_fcn_master(n,v,f,g,leave)
      return
   end if
 
-  if(empire_version .eq. 3) then
+  if(comm_version .eq. 3) then
      call mpi_bcast(v,n,MPI_DOUBLE_PRECISION,0,pf_member_comm,mpi_err)
   end if
 
@@ -346,7 +346,7 @@ subroutine fourdenvar_fcn_master(n,v,f,g,leave)
         !compute part of objective function corresponding
         !to the observations
         ft = sum(y*RY_HMX)
-        if(empire_version .eq. 3) then
+        if(comm_version .eq. 3) then
            temp = ft
            call mpi_reduce(temp,ft,1,MPI_DOUBLE_PRECISION,MPI_SUM&
                 &,0,pf_member_comm,mpi_err)
@@ -359,7 +359,7 @@ subroutine fourdenvar_fcn_master(n,v,f,g,leave)
            do particle = 2,cnt
 
               sumhxtRY_HMX = sum(hxt(:,particle)*RY_HMX)
-              if(empire_version .eq. 3) then
+              if(comm_version .eq. 3) then
                  !sum(hxt(:,particle),RY_HMX) needs summing
                  temp = sumhxtRY_HMX
                  call mpi_allreduce(temp,sumhxtRY_HMX,1&

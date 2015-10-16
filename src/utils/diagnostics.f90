@@ -53,7 +53,7 @@ subroutine diagnostics
         do particle = 1,pf%count
            !write(filename,'(A,i6.6,A,i5.5)') 'hist/timestep',((pf%timestep)/pf&
            !     &%time_bwn_obs) ,'particle',pf%particles(particle)
-           if(empire_version .eq. 1 .or. empire_version .eq. 2) then
+           if(comm_version .eq. 1 .or. comm_version .eq. 2) then
            write(filename,'(A,i7.7,A,i5.5)') 'hist/timestep',&
                 &pf%timestep,'particle',pf%particles(particle)
            else
@@ -85,7 +85,7 @@ subroutine diagnostics
 
                  !write(filename,'(A,i6.6,A,i5.5)') 'hist/timestep',((pf%timestep)/pf&
                  !     &%time_bwn_obs) ,'truth'
-                 if(empire_version .eq. 1 .or. empire_version .eq. 2) then
+                 if(comm_version .eq. 1 .or. comm_version .eq. 2) then
                     write(filename,'(A,i7.7,A)') 'hist/timestep',&
                          &pf%timestep,'truth'
                  else
@@ -105,7 +105,7 @@ subroutine diagnostics
 
                  do particle = 1,pf%nens
 
-                    if(empire_version .eq. 1 .or. empire_version .eq. 2) then
+                    if(comm_version .eq. 1 .or. comm_version .eq. 2) then
                        write(filename,'(A,i7.7,A,i5.5)') 'hist/timestep',&
                             &pf%timestep,'particle',pf%particles(particle)
                     else
@@ -203,7 +203,7 @@ subroutine diagnostics
         do particle = 1,pf%count
            !write(filename,'(A,i6.6,A)') 'hist/timestep',((pf%timestep)/pf&
            !     &%time_bwn_obs) ,'truth'
-           if(empire_version .eq. 1 .or. empire_version .eq. 2) then
+           if(comm_version .eq. 1 .or. comm_version .eq. 2) then
               write(filename,'(A,i7.7,A)') 'hist/timestep',pf&
                    &%timestep,'truth'
            else

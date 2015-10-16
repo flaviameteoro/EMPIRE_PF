@@ -72,7 +72,7 @@ module comms
                             !! for empire v3
   integer :: pf_member_size !< size of pf_member_comm
                             !! for empire v3
-  integer, parameter :: empire_version=1
+  integer, parameter :: comm_version=1
 
 contains
 
@@ -91,7 +91,7 @@ contains
   subroutine initialise_mpi
     implicit none
 
-    select case(empire_version)
+    select case(comm_version)
     case(0)
        call user_initialise_mpi
     case(1)
@@ -101,7 +101,7 @@ contains
     case(3)
        call initialise_mpi_v3
     case default
-       print*,'ERROR: empire_version ',empire_version,' not implemente&
+       print*,'ERROR: comm_version ',comm_version,' not implemente&
             &d.'
        print*,'STOPPING.'
        stop '-6'
@@ -125,7 +125,7 @@ contains
     integer :: pf_colour
     integer :: world_size
 
-    if(empire_version .eq. 2) then
+    if(comm_version .eq. 2) then
        call initialise_mpi_v2
        return
     end if
@@ -574,7 +574,7 @@ contains
     integer :: mpi_err
     integer :: particle
     real(kind=kind(1.0d0)), dimension(0) :: send_null
-    select case(empire_version)
+    select case(comm_version)
        case(0)
           call user_mpi_send(statedim,nrhs,x,tag)
        case(1)
@@ -618,7 +618,7 @@ contains
     integer :: mpi_err
     integer :: particle
     real(kind=kind(1.0d0)), dimension(0) :: send_null
-    select case(empire_version)
+    select case(comm_version)
     case(0)
        call user_mpi_recv(statedim,nrhs,x)
     case(1)
@@ -665,7 +665,7 @@ contains
     integer :: particle
     real(kind=kind(1.0d0)), dimension(0) :: send_null
     integer, dimension(MPI_STATUS_SIZE) :: mpi_status
-    select case(empire_version)
+    select case(comm_version)
        case(0)
           call user_mpi_irecv(statedim,nrhs,x,requests)
        case(1)
@@ -713,13 +713,13 @@ contains
     include 'mpif.h'
     integer :: mpi_err,i
 
-    if(empire_version .eq. 1 .or. empire_version .eq. 2) then
+    if(comm_version .eq. 1 .or. comm_version .eq. 2) then
        state_dim_g = state_dim
        obs_dim_g = obs_dim
        pf_ens_rank = pfrank
     end if
     
-    if(empire_version .eq. 3) then
+    if(comm_version .eq. 3) then
        if(allocated(obs_dims)) deallocate(obs_dims)
        allocate(obs_dims(pf_member_size))
        if(allocated(obs_displacements)) deallocate(obs_displacements)

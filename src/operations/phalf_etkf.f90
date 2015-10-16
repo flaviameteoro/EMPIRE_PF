@@ -74,12 +74,12 @@ subroutine phalf_etkf(nrhs,x,px)
   !first lets make something N(0,Q):
   call Qhalf(nrhs,x,Xp_loc)
 
-  if(empire_version .eq. 1 .or. empire_version .eq. 2) then
+  if(comm_version .eq. 1 .or. comm_version .eq. 2) then
      ensemble_comm = pf_mpi_comm
-  elseif(empire_version .eq. 3) then
+  elseif(comm_version .eq. 3) then
      ensemble_comm = pf_ens_comm
   else
-     print*,'EMPIRE VERSION ',empire_version,' NOT SUPPORTED IN phalf_etkf'
+     print*,'EMPIRE VERSION ',comm_version,' NOT SUPPORTED IN phalf_etkf'
      print*,'THIS IS AN ERROR. STOPPING'
      stop '-24'
   end if
@@ -148,9 +148,9 @@ subroutine phalf_etkf(nrhs,x,px)
   !PAB  d = y - mean_yf
   !PAB  call solve_rhalf(obs_dim,1,d,dd,pf%timestep)
 
-  if(empire_version .eq. 1 .or. empire_version .eq. 2) then
+  if(comm_version .eq. 1 .or. comm_version .eq. 2) then
      Ysf_g = Ysf
-  elseif(empire_version .eq. 3) then
+  elseif(comm_version .eq. 3) then
      call mpi_allgatherv(Ysf,obs_dim*pf%nens,MPI_DOUBLE_PRECISION&
           &,Ysf_g,obs_dims*pf%nens,obs_displacements*pf%nens&
           &,MPI_DOUBLE_PRECISION,pf_member_comm,mpi_err)
