@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-09-09 17:24:39 pbrowne>
+!!! Time-stamp: <2015-11-12 10:33:21 pbrowne>
 !!!
 !!!    Ensemble transform Kalman filter
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -154,8 +154,8 @@ subroutine letkf_analysis
   ! now let us compute which state variables will be analysed on each
   ! MPI process:
   do i = 1,npfs
-     start_var(i) = (i-1)*ceiling( real(state_dim,rk)/real(npfs,rk) )+1
-     stop_var(i) = min( i*ceiling(real(state_dim,rk)/real(npfs,rk)) ,state_dim)
+     start_var(i) = ((i-1)*state_dim)/npfs + 1 
+     stop_var(i) = (i*state_dim)/npfs
   end do
 
   !allocate space for Xp and Xa now that we know how many grid points we consider

@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-09-09 10:08:37 pbrowne>
+!!! Time-stamp: <2015-10-19 10:12:14 pbrowne>
 !!!
 !!!    Module that stores the dimension of observation and state spaces
 !!!    Copyright (C) 2014  Philip A. Browne
