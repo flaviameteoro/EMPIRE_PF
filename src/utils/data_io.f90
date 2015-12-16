@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-09-09 18:45:43 pbrowne>
+!!! Time-stamp: <2015-12-16 10:37:29 pbrowne>
 !!!
 !!!    Collection of subroutines to deal with i/o
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -80,6 +80,35 @@ subroutine save_observation_data(y)
 
 end subroutine save_observation_data
 
+!> Subroutine to read truth from the file written by @ref save_truth              
+!! \n                 
+!> @param[out] x The state vector
+subroutine get_truth(x)
+  use timestep_data
+  use pf_control
+  use sizes
+  implicit none
+  integer, parameter :: rk = kind(1.0D0)
+  real(kind=rk), dimension(state_dim), intent(out) :: x
+  integer :: ios
+  if(pf%timestep .eq. 0) then
+     print*,'opening pf_truth'
+     open(62,file='pf_truth',iostat=ios,action='read')
+     if(ios .ne. 0)  then
+        write(*,*) 'PARTICLE FILTER DATA ERROR!!!!! Cannot open file pf_truth'
+        write(*,*) 'Very strange that I couldnt open it. Im going to stop now.'
+        stop
+     end if
+  end if
+  read(62,*) x
+  call flush(62)
+  !if(pf%timestep .eq. pf%time_obs*pf%time_bwn_obs) then
+  if(TSdata%completed_timesteps .eq. TSdata%total_timesteps) then
+     close(62)
+     print*,'closing pf_truth'
+  end if
+end subroutine get_truth
+
 !> Subroutine to save truth to a file              
 !! \n                 
 !> @param[in] x The state vector
@@ -108,6 +137,8 @@ subroutine save_truth(x)
      print*,'closing pf_truth'
   end if
 end subroutine save_truth
+
+
 
 !>subroutine to ouput data from the filter
 subroutine output_from_pf

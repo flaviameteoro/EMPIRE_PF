@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-10-14 10:49:08 pbrowne>
+!!! Time-stamp: <2015-12-16 10:35:05 pbrowne>
 !!!
 !!!    module to hold all the information to control the the main program
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -63,7 +63,9 @@ module pf_control
      logical :: use_mean      !< switch if true outputs ensemble mean
      logical :: use_var       !< switch if true outputs ensemble variance
      logical :: use_traj      !< switch if true outputs trajectories
-     logical :: use_rmse      !< switch if true outputs Root Mean Square Errors
+     logical :: use_rmse      !< switch if true outputs Root Mean
+     !!Square Errors \n See @ref rmse for more information
+     
      integer, dimension(:,:), allocatable :: talagrand !< storage for rank histograms
      integer :: count         !< number of ensemble members associated with this MPI process
      integer,allocatable, dimension(:) :: particles !< particles associates with this MPI process
