@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-12-16 10:35:05 pbrowne>
+!!! Time-stamp: <2015-12-16 14:55:07 pbrowne>
 !!!
 !!!    module to hold all the information to control the the main program
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -36,7 +36,7 @@ module pf_control
      real(kind=kind(1.0D0)) :: nudgefac !< the nudging factor
      logical :: gen_data !< true generates synthetic obs for a twin experiment
      logical :: gen_Q    !< true attempts to build up \f$Q\f$ from
-     !<long model run
+     !<long model run. UNUSED. DOES NOTHING!
      integer :: timestep=0     !< the current timestep as the model progresses
      real(kind=kind(1.0D0)), allocatable, dimension(:,:) :: psi !< state vector of ensemble members on this mpi process
      real(kind=kind(1.0D0)), allocatable, dimension(:) :: mean !< mean state vector
@@ -65,6 +65,8 @@ module pf_control
      logical :: use_traj      !< switch if true outputs trajectories
      logical :: use_rmse      !< switch if true outputs Root Mean
      !!Square Errors \n See @ref rmse for more information
+     character(250) :: rmse_filename !< string to hold the name of
+     !< the file to output rmse to
      
      integer, dimension(:,:), allocatable :: talagrand !< storage for rank histograms
      integer :: count         !< number of ensemble members associated with this MPI process
@@ -193,7 +195,8 @@ contains
            &,use_rmse
       character(2) :: filter='++'
       character(1) :: init='+'
-
+      character(25) :: rmse_filename='rmse'
+      
       logical :: file_exists
 
       namelist/pf_params/time_obs,time_bwn_obs,&
@@ -207,7 +210,8 @@ contains
       &len,&
       &use_talagrand,use_mean,use_var,use_traj,use_rmse,&
       &filter,&
-      &init
+      &init,&
+      &rmse_filename
 
 
       gen_data = .false.
@@ -296,7 +300,21 @@ contains
 
       !logical ::
       !use_talagrand,use_mean,use_var,use_traj,use_rmse
+      
+      if(use_rmse) then
+         print*,'going to output Root mean squared errors'
+      end if
 
+      if(use_mean) then
+         print*,'going to output ensemble mean'
+      end if
+         
+
+
+      if(rmse_filename .ne. 'rmse') then
+         print*,'read rmse_filename = ',rmse_filename
+         pf%rmse_filename = rmse_filename
+      end if
 
       
       if(filter .ne. '++') then

@@ -1,0 +1,72 @@
+\documentclass{standalone}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{graphicx}
+\usepackage[usenames,dvipsnames]{xcolor}
+\usepackage{tikz}
+\usepackage{tikz-3dplot}
+\usepackage{pgfplots}
+\usetikzlibrary{positioning}
+\usetikzlibrary{plotmarks}
+\usetikzlibrary{shapes,shadows,calc,patterns}
+\usepgflibrary{arrows}
+
+
+\tikzstyle{model}=[draw, fill=NavyBlue!40, text width=5em,  
+    text centered, minimum height=2em,double copy shadow]
+
+\tikzstyle{da}=[draw, fill=ForestGreen!40, text width=5em, 
+    text centered, minimum height=2.5em,drop shadow]
+
+%\tikzstyle{ann} = [above, text width=5cm, text centered]
+
+%\tikzstyle{stack} = [rectangle split,rectangle split parts = 5,draw,text width=5cm, minimum height=2.5cm,drop shadow,fill=green!20,anchor=center]
+
+%\tikzstyle{mdl} = [sensor, text width=13cm, fill=red!20, 
+%    minimum height=10cm, rounded corners, drop shadow]
+
+\begin{document}\pgfdeclarelayer{background}
+\pgfsetlayers{background,main}
+
+\begin{tikzpicture}[>=latex]
+	\node (m1) [model] {Model 1};
+%	\draw[green] (m1.north) -- (m1.south);
+%	\draw[green] ($(m1.north west)!0.5!(m1.north)$) -- ($(m1.south west)!0.5!(m1.south)$);
+%	\draw[green] ($(m1.north east)!0.5!(m1.north)$) -- ($(m1.south east)!0.5!(m1.south)$);
+%	\node (mm1) {Model 1};
+	\node[below right of=m1] (m2) [model] {Model 2};
+	\node[below right of=m2] (m3) [model] {Model 3};
+	\node[below right of=m3] (m4) [model] {Model 4};
+	\node[below right of=m4] (m5) [model] {Model 5};
+	\node[below right of=m5] (m6) [model] {Model 6};
+	\node[below right of=m6] (m7) {$\ddots$};
+	\node[below right=0mm of m7] (mn) [model] {Model $N$};
+	\node[right=of mn |- m1] (da1) [da] {DA code 1};
+	\node[below right of=da1] (da2) [da] {DA code 2};
+	\node[below right of=da2] (da3) [da] {DA code 3};
+	\path (m1.west) edge[red,thick,<->,double,out=225,in=225,looseness=3] ($(m1.south west)!0.5!(m1.south)$);
+	\path (m2.west) edge[blue,thick,<->,double,out=225,in=225,looseness=3] ($(m2.south west)!0.5!(m2.south)$);
+	\path (m3.west) edge[ForestGreen,thick,<->,double,out=225,in=225,looseness=3] ($(m3.south west)!0.5!(m3.south)$);
+	\path (m4.west) edge[Goldenrod,thick,<->,double,out=225,in=225,looseness=3] ($(m4.south west)!0.5!(m4.south)$);
+	\path (m5.west) edge[magenta,thick,<->,double,out=225,in=225,looseness=3] ($(m5.south west)!0.5!(m5.south)$);
+	\path (m6.west) edge[Brown,thick,<->,double,out=225,in=225,looseness=3] ($(m6.south west)!0.5!(m6.south)$);
+	\path (mn.west) edge[gray,thick,<->,double,out=225,in=225,looseness=3] ($(mn.south west)!0.5!(mn.south)$);
+
+	\path (m1) edge[orange,thick,<->,double,out=30,in=160] (da1);
+	\path (m2) edge[orange,thick,<->,double,out=25,in=170] (da1);
+	\path (m3) edge[orange,thick,<->,double,out=20,in=180] (da2);
+	\path (m4) edge[orange,thick,<->,double,out=15,in=190] (da2);
+	\path (m5) edge[orange,thick,<->,double,out=10,in=200] (da3);
+	\path (m6) edge[orange,thick,<->,double,out=5,in=210] (da3);
+	\begin{pgfonlayer}{background}\path (mn) edge[orange,thick,<->,double,out=5,in=200] (da1);\end{pgfonlayer}
+%	\draw[green,thick,<->,double,out=135,in=90] (m1) -- (da1);
+%	\draw[green,thick,<->,double] (m2) -- (da1);
+%	\draw[green,thick,<->,double] (m3) -- (da2);
+%	\draw[green,thick,<->,double] (m4) -- (da2);
+%	\draw[green,thick,<->,double] (m5) -- (da3);
+%	\draw[green,thick,<->,double] (m6) -- (da3);
+%	\begin{pgfonlayer}{background}\draw[green,thick,<->,double] (mn) -- (da1);\end{pgfonlayer}
+	\path (da1) edge[cyan,thick,<->,double,out=20,in=30,looseness=2] (da2);
+	\path (da2) edge[cyan,thick,<->,double,out=20,in=30,looseness=2] (da3);
+	\path (da1) edge[cyan,thick,<->,double,out=40,in=0,looseness=2] (da3);
+\end{tikzpicture}
+\end{document}

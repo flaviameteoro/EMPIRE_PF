@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-12-16 10:37:29 pbrowne>
+!!! Time-stamp: <2015-12-16 14:43:23 pbrowne>
 !!!
 !!!    Collection of subroutines to deal with i/o
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -148,8 +148,9 @@ subroutine output_from_pf
   use sizes
   use comms
   implicit none
-  real(kind=kind(1.0D0)), dimension(state_dim) :: mean
-  integer :: ios,particle
+  include 'mpif.h'
+  real(kind=kind(1.0D0)), dimension(state_dim) :: mean,mtemp
+  integer :: ios,particle,mpi_err
   character(9) :: filename
   if(pf%timestep .eq. 0) then
      write(filename,'(A,i2.2)') 'pf_out_',pfrank
@@ -175,7 +176,7 @@ subroutine output_from_pf
 !  if(pf%timestep .eq. pf%time_obs*pf%time_bwn_obs) close(68)
   if(TSdata%completed_timesteps .eq. TSdata%total_timesteps) close(68)  
 
-  if(pf%use_mean) then
+  if(pf%use_mean .and. pf_ens_rank .eq. 0) then
      if(pf%timestep .eq. 0) then
         open(61,file='pf_mean',iostat=ios,action='write',status='replace')
         if(ios .ne. 0)  then
@@ -184,15 +185,29 @@ subroutine output_from_pf
            stop
         end if
      end if
+  end if
+
+  if(pf%use_mean .or. (pf%use_rmse .and. .not. pf%gen_data)) then
      mean = 0.0D0
-     do particle = 1,pf%nens
-        mean(:) = mean(:) + pf%psi(:,particle)*exp(-pf%weight(particle))
-     end do
+     do particle = 1,pf%count
+        !mean(:) = mean(:) + pf%psi(:,particle)*exp(-pf&
+        !     &%weight(particles(particle)))
+        mean(:) = mean(:) + pf%psi(:,particle)/real(pf%nens)
+       end do
+
+     mtemp = mean 
+     call mpi_reduce(mtemp,mean,state_dim,MPI_DOUBLE_PRECISION,MPI_SUM&
+             &,0,pf_mpi_comm,mpi_err)
+    
+  end if
+
+  if(pf%use_mean .and. pf_ens_rank .eq. 0) then
      write(61,*) mean(:)
      call flush(61)
-     !if(pf%timestep .eq. pf%time_obs*pf%time_bwn_obs) close(61)
      if(TSdata%completed_timesteps .eq. TSdata%total_timesteps) close(61)
   end if
+
+  if(pf_ens_rank .eq. 0 .and. pf%use_rmse .and. .not. pf%gen_data) call output_rmse(mean)
 
 
   if(comm_version .ne. 3) then !empire_v3 models will be too large!!!

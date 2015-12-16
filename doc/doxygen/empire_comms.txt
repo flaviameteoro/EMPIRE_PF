@@ -47,3 +47,31 @@ Model memory requirements | high | low | low
 EMPIRE memory requirements | high | high | low
 Ease of model specific implementations | easiest | easy | hard
 */
+
+
+
+
+
+
+
+
+
+/*! \page communicators EMPIRE communicators
+    On this page we descibe the MPI communicators used within the EMPIRE codes to communicate within the data assimilation processes.
+
+\section comms_v1_2 Versions 1 and 2
+
+For comms versions 1 and 2, there is only 1 communicator for this: pf_mpi_comm
+\image html version_1_and_2.svg
+\image latex version_1_and_2.pdf "pf_mpi_comm" width=10cm
+
+
+\section comms_v3 Version 3
+For comms version 3, there are 3 communicators:
+ - pf_mpi_comm: All of the DA MPI processes
+ - pf_ens_comm: The DA MPI processes associated with the ensemble at that point
+ - pf_member_comm: The DA MPI processes associated with a single ensemble member
+
+\image html version_3.svg
+\image latex version_3.pdf "version 3 communicators" width=15cm
+*/

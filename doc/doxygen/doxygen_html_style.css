@@ -1,0 +1,11 @@
+div.image img[src="version_1_and_2.svg"]{ 
+    width:500px; 
+}
+
+div.image img[src="version_3.svg"]{ 
+    width:1000px; 
+}
+
+div.image img[src="empire_diagram.svg"]{ 
+    width:800px; 
+}

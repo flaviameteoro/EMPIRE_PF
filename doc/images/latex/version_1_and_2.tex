@@ -1,0 +1,41 @@
+\documentclass[tikz,convert={outfile=\jobname.svg}]{standalone}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{graphicx}
+\usepackage[pdfborder= 0 0 0,citecolor=black,linkcolor=black,colorlinks=true,bookmarksopen=true]{hyperref}
+\usepackage[notref]{showkeys}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{xcolor}
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage{algpseudocode}
+\usepackage{tikz}
+\usetikzlibrary{positioning}
+\usepackage{tikz-3dplot}
+\usepackage{gnuplot-lua-tikz}
+\usepackage{pgfplots}
+\usepackage{authblk}
+\usepackage[pagewise]{lineno}
+\usepackage{calc}
+\usetikzlibrary{plotmarks}
+\author[1,*]{P.A. Browne}
+\affil[1]{Department of Meteorology, University of Reading, UK}
+\affil[*]{Correspondence to p.browne@reading.ac.uk}
+\title{EMPIRE comms version 1 and 2}
+\makeatletter \AtBeginDocument{ \hypersetup{pdftitle= {\@title},pdfauthor= {\@author}}} \makeatother
+
+\date{\today}
+
+
+\begin{document}
+\begin{tikzpicture}[node distance=0em]
+\node[fill=orange,draw] (0) at (0,0) {\textcolor{white}{0}};
+\node[fill=orange,draw,right = of 0] (1) {\textcolor{white}{1}};
+\node[fill=orange,draw,right = of 1] (2) {\textcolor{white}{2}};
+\node[fill=orange,draw,right = of 2] (3) {\textcolor{white}{3}};
+\node[fill=orange,draw,right = of 3] (4) {\textcolor{white}{4}};
+\node[left = of 0] (pfmpicomm) {pf\_mpi\_comm:};
+\node[below = of 2] (title) {pfrank};
+\end{tikzpicture}
+
+\end{document}

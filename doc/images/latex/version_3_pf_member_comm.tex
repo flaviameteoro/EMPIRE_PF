@@ -1,0 +1,79 @@
+\documentclass{standalone}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{graphicx}
+\usepackage[pdfborder= 0 0 0,citecolor=black,linkcolor=black,colorlinks=true,bookmarksopen=true]{hyperref}
+\usepackage[notref]{showkeys}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{xcolor}
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage{algpseudocode}
+\usepackage{tikz}
+\usetikzlibrary{positioning}
+\usetikzlibrary{colorbrewer}
+\usepackage{tikz-3dplot}
+\usepackage{gnuplot-lua-tikz}
+\usepackage{pgfplots}
+\usepackage{authblk}
+\usepackage[pagewise]{lineno}
+\usepackage{calc}
+\usetikzlibrary{plotmarks}
+\author[1,*]{P.A. Browne}
+\affil[1]{Department of Meteorology, University of Reading, UK}
+\affil[*]{Correspondence to p.browne@reading.ac.uk}
+\title{EMPIRE comms version 1 and 2}
+\makeatletter \AtBeginDocument{ \hypersetup{pdftitle= {\@title},pdfauthor= {\@author}}} \makeatother
+
+\date{\today}
+
+
+\begin{document}
+\begin{tikzpicture}[node distance=0em]
+\node[fill=Dark2-8-1,draw] (00) at (0,0) {\parbox{\widthof{16}}{0}};
+\node[fill=Dark2-8-3,draw,right = of 00] (01) {\parbox{\widthof{16}}{0}};
+\node[fill=Dark2-8-4,draw,right = of 01] (02) {\parbox{\widthof{16}}{0}};
+\node[fill=Dark2-8-5,draw,right = of 02] (03) {\parbox{\widthof{16}}{0}};
+\node[fill=Dark2-8-6,draw,right = of 03] (04) {\parbox{\widthof{16}}{0}};
+\node[fill=Dark2-8-1,draw,below= of 00] (10) {\parbox{\widthof{16}}{1}};
+\node[fill=Dark2-8-3,draw,right= of 10] (11) {\parbox{\widthof{16}}{1}};
+\node[fill=Dark2-8-4,draw,right= of 11] (12) {\parbox{\widthof{16}}{1}};
+\node[fill=Dark2-8-5,draw,right= of 12] (13) {\parbox{\widthof{16}}{1}};
+\node[fill=Dark2-8-6,draw,right= of 13] (14) {\parbox{\widthof{16}}{1}};
+\node[fill=Dark2-8-1,draw,below= of 10] (20) {\parbox{\widthof{16}}{2}};
+\node[fill=Dark2-8-3,draw,right= of 20] (21) {\parbox{\widthof{16}}{2}};
+\node[fill=Dark2-8-4,draw,right= of 21] (22) {\parbox{\widthof{16}}{2}};
+\node[fill=Dark2-8-5,draw,right= of 22] (23) {\parbox{\widthof{16}}{2}};
+\node[fill=Dark2-8-6,draw,right= of 23] (24) {\parbox{\widthof{16}}{2}};
+\node[fill=Dark2-8-1,draw,below= of 20] (30) {\parbox{\widthof{16}}{3}};
+\node[fill=Dark2-8-3,draw,right= of 30] (31) {\parbox{\widthof{16}}{3}};
+\node[fill=Dark2-8-4,draw,right= of 31] (32) {\parbox{\widthof{16}}{3}};
+\node[fill=Dark2-8-5,draw,right= of 32] (33) {\parbox{\widthof{16}}{3}};
+\node[fill=Dark2-8-6,draw,right= of 33] (34) {\parbox{\widthof{16}}{3}};
+\node[fill=Dark2-8-1,draw,below= of 30] (40) {\parbox{\widthof{16}}{4}};
+\node[fill=Dark2-8-3,draw,right= of 40] (41) {\parbox{\widthof{16}}{4}};
+\node[fill=Dark2-8-4,draw,right= of 41] (42) {\parbox{\widthof{16}}{4}};
+\node[fill=Dark2-8-5,draw,right= of 42] (43) {\parbox{\widthof{16}}{4}};
+\node[fill=Dark2-8-6,draw,right= of 43] (44) {\parbox{\widthof{16}}{4}};
+\node[fill=Dark2-8-1,draw,below= of 40] (50) {\parbox{\widthof{16}}{5}};
+\node[fill=Dark2-8-3,draw,right= of 50] (51) {\parbox{\widthof{16}}{5}};
+\node[fill=Dark2-8-4,draw,right= of 51] (52) {\parbox{\widthof{16}}{5}};
+\node[fill=Dark2-8-5,draw,right= of 52] (53) {\parbox{\widthof{16}}{5}};
+\node[fill=Dark2-8-6,draw,right= of 53] (54) {\parbox{\widthof{16}}{5}};
+\node[fill=Dark2-8-1,draw,below= of 50] (60) {\parbox{\widthof{16}}{6}};
+\node[fill=Dark2-8-3,draw,right= of 60] (61) {\parbox{\widthof{16}}{6}};
+\node[fill=Dark2-8-4,draw,right= of 61] (62) {\parbox{\widthof{16}}{6}};
+\node[fill=Dark2-8-5,draw,right= of 62] (63) {\parbox{\widthof{16}}{6}};
+\node[fill=Dark2-8-6,draw,right= of 63] (64) {\parbox{\widthof{16}}{6}};
+\node[above = of 00,rotate=-90,anchor=east] (pfmemcomm0) {pf\_member\_comm:};
+\node[above = of 01,rotate=-90,anchor=east] (pfmemcomm1) {pf\_member\_comm:};
+\node[above = of 02,rotate=-90,anchor=east] (pfmemcomm2) {pf\_member\_comm:};
+\node[above = of 03,rotate=-90,anchor=east] (pfmemcomm3) {pf\_member\_comm:};
+\node[above = of 04,rotate=-90,anchor=east] (pfmemcomm4) {pf\_member\_comm:};
+\node[below = of 62] (title) {pf\_member\_rank};
+\end{tikzpicture}
+%\caption{The rank of each process within each communicator}
+
+
+%\end{figure}
+\end{document}

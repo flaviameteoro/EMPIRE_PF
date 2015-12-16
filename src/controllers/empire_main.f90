@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-10-13 14:02:27 pbrowne>
+!!! Time-stamp: <2015-12-16 10:43:21 pbrowne>
 !!!
 !!!    The main program to run EMPIRE
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -80,7 +80,7 @@ program empire
   start_t = mpi_wtime() 
   pf%time=mpi_wtime()
 
-  if(.not. pf%gen_Q) then
+  !if(.not. pf%gen_Q) then
 
   call recv_all_models(state_dim,pf%count,pf%psi)
 
@@ -192,11 +192,11 @@ program empire
   !send the final state to the model to allow it to finish cleanly
   call send_all_models(state_dim,pf%count,pf%psi,3)
 
-  else
-
-     call genQ
-
-  end if
+  !else
+  !
+  !   call genQ
+  !
+  !end if
   end_t = mpi_wtime()
 
 

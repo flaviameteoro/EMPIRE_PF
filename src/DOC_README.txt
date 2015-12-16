@@ -1,6 +1,10 @@
 /** \mainpage EMPIRE Data Assimilation Documentation
+\image html empire_diagram.svg
+\image latex empire_diagram.pdf "" width=15cm
+
+
 \author Philip A. Browne <a href="mailto:p.browne@reading.ac.uk">p.browne@reading.ac.uk</a>
-\date Time-stamp: <2015-11-12 10:33:21 pbrowne>
+\date Time-stamp: <2015-12-16 14:24:14 pbrowne>
 
 \b Contributors
  - Mengbin Zhu - zhumengbin @ gmail.com
