@@ -56,7 +56,12 @@ This is controlled by \link pf_control::pf_control_type::use_traj use_traj \endl
 
 EMPIRE has the ability to output the ensemble covariance matrices throughout the run. This is controlled by the optional namelist &mat_pf in @ref empire.nml. For more information see @ref matrix_pf::matrix_pf_data. Note however, that this will output a large matrix -- if the state dimension of the model is large, this is likely not a good thing to compute! This feature is not available with empire version 3 communications.
 
+\section rmse Outputting Root Mean Squared Errors
 
+In a twin experiment, where EMPIRE has generated a "truth", EMPIRE can output the following:
+\f$ \sqrt{(  \frac{1}{N_x}\sum_{i=1}^{N_x}(\bar{x}_i-x^t_i)^2 )} \f$
+where
+\f$N_x\f$ is the state dimension (\link sizes::state_dim state_dim \endlink), \f$\bar{x}\f$ is the ensemble mean, \f$x^t\f$ is the truth, and \f$i\f$ is an index running over each component of the state vector.
 
-
+Note that in the case where the model has different variables, that are on different scales, this is probably not a good measure. For example, if one component of the state vector is measured in units of "apples per pie" and another is measured in "oranges per country per decade", this measure of RMSE will combine the two. Hence the latter should have much larger scale than the former, so this RMSE measure will be dominated by the errors in the components with greater variability.
 */

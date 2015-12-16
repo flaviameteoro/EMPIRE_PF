@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-09-09 17:28:31 pbrowne>
+!!! Time-stamp: <2015-12-16 10:31:37 pbrowne>
 !!!
 !!!    Routine to change an ensemble N(0,I) to N(0,P)
 !!!    Copyright (C) 2015 Philip A. Browne
@@ -120,8 +120,8 @@ subroutine phalf_etkf(nrhs,x,px)
   ! now let us compute which state variables will be analysed on each
   ! MPI process:
   do i = 1,npfs
-     start_var(i) = (i-1)*ceiling( real(state_dim,rk)/real(npfs,rk) )+1
-     stop_var(i) = min( i*ceiling(real(state_dim,rk)/real(npfs,rk)) ,state_dim)
+     start_var(i) = ((i-1)*state_dim)/npfs + 1 
+     stop_var(i) = (i*state_dim)/npfs
   end do
 
   !allocate space for Xp and Xa now that we know how many grid points we consider
