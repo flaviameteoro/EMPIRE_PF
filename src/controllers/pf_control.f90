@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-12-16 14:55:07 pbrowne>
+!!! Time-stamp: <2015-12-16 15:04:06 pbrowne>
 !!!
 !!!    module to hold all the information to control the the main program
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -176,6 +176,11 @@ contains
     !! - \link pf_control::pf_control_type::use_var use_var\endlink
     !! - \link pf_control::pf_control_type::use_traj use_traj\endlink
     !! - \link pf_control::pf_control_type::use_rmse use_rmse\endlink
+    !!
+    !! 250 Character string:
+    !! - \link pf_control::pf_control_type::rmse_filename rmse_filename\endlink
+    !!
+
     subroutine parse_pf_parameters
       use var_data
       implicit none
@@ -309,6 +314,9 @@ contains
          print*,'going to output ensemble mean'
       end if
          
+      if(use_traj) then
+         print*,'going to output trajectories'
+      end if
 
 
       if(rmse_filename .ne. 'rmse') then
