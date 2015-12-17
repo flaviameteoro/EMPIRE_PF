@@ -4,6 +4,7 @@ FCOPTS=-O3 -Wall -fimplicit-none -fbounds-check -fbacktrace
 
 BIN=../../bin/
 
+SUBDIRS := $(wildcard */.)
 
 
 all: 
@@ -11,5 +12,5 @@ all:
 	@echo 'Created file executable ' $(BIN)lorenz96
 	$(FC) $(FCOPTS) -o $(BIN)lorenz96_v2 Lorenz96_empire_v2.f90
 	@echo 'Created file executable ' $(BIN)lorenz96_v2
-
+	-for d in $(SUBDIRS); do (cd $$d; $(MAKE) -e ); done
 

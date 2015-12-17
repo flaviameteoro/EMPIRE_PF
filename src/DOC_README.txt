@@ -1,6 +1,6 @@
 /** \mainpage EMPIRE Data Assimilation Documentation
 \image html empire_diagram.svg
-\image latex empire_diagram.pdf "" width=15cm
+\date Time-stamp: <2015-12-16 15:04:06 pbrowne>
 
 
 \author Philip A. Browne <a href="mailto:p.browne@reading.ac.uk">p.browne@reading.ac.uk</a>
