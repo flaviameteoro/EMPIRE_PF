@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-12-16 15:04:06 pbrowne>
+!!! Time-stamp: <2015-12-21 14:53:35 pbrowne>
 !!!
 !!!    module to hold all the information to control the the main program
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -200,7 +200,7 @@ contains
            &,use_rmse
       character(2) :: filter='++'
       character(1) :: init='+'
-      character(25) :: rmse_filename='rmse'
+      character(250) :: rmse_filename='rmse'
       
       logical :: file_exists
 
@@ -321,9 +321,8 @@ contains
 
       if(rmse_filename .ne. 'rmse') then
          print*,'read rmse_filename = ',rmse_filename
-         pf%rmse_filename = rmse_filename
       end if
-
+      pf%rmse_filename = rmse_filename
       
       if(filter .ne. '++') then
          print*,'read filter = ',filter

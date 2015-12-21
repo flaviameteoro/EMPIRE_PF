@@ -1,10 +1,10 @@
 /** \mainpage EMPIRE Data Assimilation Documentation
 \image html empire_diagram.svg
-\date Time-stamp: <2015-12-16 15:04:06 pbrowne>
+\image latex empire_diagram.pdf "" width=15cm
 
 
 \author Philip A. Browne <a href="mailto:p.browne@reading.ac.uk">p.browne@reading.ac.uk</a>
-\date Time-stamp: <2015-12-16 14:24:14 pbrowne>
+\date Time-stamp: <2015-12-16 15:04:06 pbrowne>
 
 \b Contributors
  - Mengbin Zhu - zhumengbin @ gmail.com
@@ -18,7 +18,7 @@ For standalone downloads of the code, please visit https://bitbucket.org/pbrowne
 
 \htmlinclude src/DOC_VERSIONS.txt
 
-For the most up-to-date versions of the code, they are hosted on www.bitbucket.org and can be obtained with the following commands:
+For the most up-to-\date Time-stamp: <2015-12-16 15:04:06 pbrowne>
 \code{.sh}
 git clone https://www.bitbucket.org/pbrowne/empire-data-assimilation.git
 \endcode
@@ -87,7 +87,7 @@ The file model_specific.f90 should be editted for the specific model which you w
 
 - \link configure_model \endlink This is called early in the code and can be used to read in any data from files before subsequently using them in the below operations.
 
-- \link reconfigure_model \endlink This is called after each observation timestep. If the observation dimension changes it should be updated here, along with the number of model timesteps until the next observation
+- \link reconfigure_model \endlink This is called after each observation timestep. If the observation dimension changes it should be up\date Time-stamp: <2015-12-16 15:04:06 pbrowne>
 
 - \link h \endlink This is the observation operator
  

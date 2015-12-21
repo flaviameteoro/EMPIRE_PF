@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-12-16 10:43:21 pbrowne>
+!!! Time-stamp: <2015-12-21 15:03:33 pbrowne>
 !!!
 !!!    The main program to run EMPIRE
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -83,7 +83,6 @@ program empire
   !if(.not. pf%gen_Q) then
 
   call recv_all_models(state_dim,pf%count,pf%psi)
-
   do k = 1,pf%count
       call perturb_particle(pf%psi(:,k))
   end do
@@ -134,6 +133,7 @@ program empire
         end select
         call timestep_data_set_completed(pf%timestep)
         call flush(6)
+        if(pf%gen_data) call save_truth(pf%psi(:,1))
         if(pf%use_traj) call trajectories
         call output_from_pf
      end do

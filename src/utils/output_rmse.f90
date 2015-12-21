@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-12-16 14:58:05 pbrowne>
+!!! Time-stamp: <2015-12-21 15:01:23 pbrowne>
 !!!
 !!!    Subroutine to output RMSE
 !!!    Copyright (C) 2015 Philip A. Browne
@@ -51,9 +51,9 @@ subroutine output_rmse(mean)
 
      select case(comm_version)
      case(1)
-        write(filename,*) trim(pf%rmse_filename)
+        write(filename,'(A)') trim(pf%rmse_filename)
      case(2)
-        write(filename,*) trim(pf%rmse_filename)
+        write(filename,'(A)') trim(pf%rmse_filename)
      case(3)
         write(filename,'(A,A,i0)') trim(pf%rmse_filename),'.',pf_ens_rank
      case default    
@@ -64,7 +64,7 @@ subroutine output_rmse(mean)
      end select
 
      
-     open(55,file=filename,iostat=ios,action='write',status='replace')
+     open(55,file=trim(filename),iostat=ios,action='write',status='replace')
      if(ios .ne. 0)  then
         write(*,*) 'PARTICLE FILTER DATA ERROR!!!!! Cannot open &
              &file ',filename

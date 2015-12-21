@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-12-16 14:43:23 pbrowne>
+!!! Time-stamp: <2015-12-18 09:41:58 pbrowne>
 !!!
 !!!    Collection of subroutines to deal with i/o
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -197,7 +197,7 @@ subroutine output_from_pf
 
      mtemp = mean 
      call mpi_reduce(mtemp,mean,state_dim,MPI_DOUBLE_PRECISION,MPI_SUM&
-             &,0,pf_mpi_comm,mpi_err)
+             &,0,pf_ens_comm,mpi_err)
     
   end if
 

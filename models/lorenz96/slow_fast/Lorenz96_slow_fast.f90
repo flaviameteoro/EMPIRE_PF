@@ -40,8 +40,8 @@ program lorenz96_slow_fast
   integer :: N=40
   integer :: total_timesteps=1000
   integer :: t
-  integer :: mpi_err,mdl_id,cpl_root,cpl_mpi_comm
-  integer, dimension(MPI_STATUS_SIZE) :: mpi_status
+  ! integer :: mpi_err,mdl_id,cpl_root,cpl_mpi_comm
+  ! integer, dimension(MPI_STATUS_SIZE) :: mpi_status
   integer :: ios
   logical :: l96_exists
   
@@ -66,7 +66,7 @@ program lorenz96_slow_fast
 
 
 
-  call initialise_mpi(mdl_id,cpl_root,cpl_mpi_comm)
+!  call initialise_mpi(mdl_id,cpl_root,cpl_mpi_comm)
 
 
   allocate(x(N,3),k1(N,3),k2(N,3),k3(N,3),k4(N,3))
@@ -77,13 +77,13 @@ program lorenz96_slow_fast
   x(N/2,1) = F+0.05d0
   print*,x(:,1:2)
 
-  if(mdl_id .eq. 0) then
-     call mpi_send(x(:,1:2),N*2,MPI_DOUBLE_PRECISION,cpl_root&
-          &,1,cpl_mpi_comm,mpi_err)
-     call mpi_recv(x(:,1:2),N*2,MPI_DOUBLE_PRECISION,cpl_root&
-          &,MPI_ANY_TAG,cpl_mpi_comm,mpi_status,mpi_err)
-  end if
-2 continue
+!   if(mdl_id .eq. 0) then
+!      call mpi_send(x(:,1:2),N*2,MPI_DOUBLE_PRECISION,cpl_root&
+!           &,1,cpl_mpi_comm,mpi_err)
+!      call mpi_recv(x(:,1:2),N*2,MPI_DOUBLE_PRECISION,cpl_root&
+!           &,MPI_ANY_TAG,cpl_mpi_comm,mpi_status,mpi_err)
+!   end if
+! 2 continue
 
 
   do t = 1,total_timesteps
@@ -93,25 +93,25 @@ program lorenz96_slow_fast
      k4 = g (x +        dt * k3 , N , F ,alpha,delta,epsilon,gamma)
      x = x + dt *( k1 + 2.0D0 *( k2 + k3 ) + k4 )/6.0D0
 
-     if(mdl_id .eq. 0) then
-        call mpi_send(x(:,1:2),N*2,MPI_DOUBLE_PRECISION,cpl_root&
-             &,1,cpl_mpi_comm,mpi_err)
-        call mpi_recv(x(:,1:2),N*2,MPI_DOUBLE_PRECISION,cpl_root&
-             &,MPI_ANY_TAG,cpl_mpi_comm,mpi_status,mpi_err)
-     end if
+     ! if(mdl_id .eq. 0) then
+     !    call mpi_send(x(:,1:2),N*2,MPI_DOUBLE_PRECISION,cpl_root&
+     !         &,1,cpl_mpi_comm,mpi_err)
+     !    call mpi_recv(x(:,1:2),N*2,MPI_DOUBLE_PRECISION,cpl_root&
+     !         &,MPI_ANY_TAG,cpl_mpi_comm,mpi_status,mpi_err)
+     ! end if
      print*,x(:,1:2)
 
-     select case(mpi_status(MPI_TAG))
-     case(2)
-        go to 2
-     case(3)
-        go to 3
-     case default
-     end select
+     ! select case(mpi_status(MPI_TAG))
+     ! case(2)
+     !    go to 2
+     ! case(3)
+     !    go to 3
+     ! case default
+     ! end select
 
   end do
-3 continue
-  call mpi_finalize(mpi_err)
+!3 continue                      
+!  call mpi_finalize(mpi_err)
 
 contains
   function g (X , N, F ,alpha,delta,epsilon,gamma)

@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-05-06 10:12:57 pbrowne>
+!!! Time-stamp: <2015-12-21 14:00:28 pbrowne>
 !!!
 !!!    Collection of routines to perturb states
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -74,7 +74,7 @@ subroutine perturb_particle(x)
   case('Z')
      !no perturbation. x remains as is
   case default
-     print*,'ERROR: incorrect pf%init selected in perturb_particle'
+     print*,'ERROR: incorrect pf%init selected in perturb_particle: ',pf%init
      stop
   end select
 
