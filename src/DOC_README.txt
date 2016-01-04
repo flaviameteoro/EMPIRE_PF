@@ -4,7 +4,7 @@
 
 
 \author Philip A. Browne <a href="mailto:p.browne@reading.ac.uk">p.browne@reading.ac.uk</a>
-\date Time-stamp: <2016-01-04 18:06:44 pbrowne>
+\date Time-stamp: <2015-12-21 15:03:33 pbrowne>
 
 \b Contributors
  - Mengbin Zhu - zhumengbin @ gmail.com
@@ -18,7 +18,7 @@ For standalone downloads of the code, please visit https://bitbucket.org/pbrowne
 
 \htmlinclude src/DOC_VERSIONS.txt
 
-For the most up-to-\date Time-stamp: <2015-12-16 15:04:06 pbrowne>
+For the most up-to-date versions of the code, they are hosted on www.bitbucket.org and can be obtained with the following commands:
 \code{.sh}
 git clone https://www.bitbucket.org/pbrowne/empire-data-assimilation.git
 \endcode
