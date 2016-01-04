@@ -4,7 +4,7 @@
 
 
 \author Philip A. Browne <a href="mailto:p.browne@reading.ac.uk">p.browne@reading.ac.uk</a>
-\date Time-stamp: <2015-12-16 15:04:06 pbrowne>
+\date Time-stamp: <2016-01-04 18:06:44 pbrowne>
 
 \b Contributors
  - Mengbin Zhu - zhumengbin @ gmail.com
@@ -87,7 +87,7 @@ The file model_specific.f90 should be editted for the specific model which you w
 
 - \link configure_model \endlink This is called early in the code and can be used to read in any data from files before subsequently using them in the below operations.
 
-- \link reconfigure_model \endlink This is called after each observation timestep. If the observation dimension changes it should be up\date Time-stamp: <2015-12-16 15:04:06 pbrowne>
+- \link reconfigure_model \endlink This is called after each observation timestep. If the observation dimension changes it should be updated here, along with the number of model timesteps until the next observation
 
 - \link h \endlink This is the observation operator
  
