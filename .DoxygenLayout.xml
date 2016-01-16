@@ -23,6 +23,7 @@
     <tab type="user" visible="yes" title="Assimilation Methods" intro="" url="@ref methods"/>
     <tab type="user" visible="yes" title="Other features" intro="" url="@ref features"/>
     <tab type="user" visible="yes" title="How to cite EMPIRE" intro="" url="@ref citing"/>
+    <tab type="user" visible="yes" title="Tutorials" intro="" url="@ref tutorials"/>
 
   </navindex>
 

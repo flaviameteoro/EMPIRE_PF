@@ -1,0 +1,8 @@
+/*! \page tutorials Tutorials
+
+Here we have a list of tutorials for using EMPIRE. Hopefully this list will be expanded in the future. Please contribute to these pages to help others!
+
+- \subpage tutorial_lorenz96
+
+
+*/

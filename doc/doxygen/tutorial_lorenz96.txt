@@ -1,0 +1,385 @@
+/*! \page tutorial_lorenz96 Lorenz 96 Tutorial
+
+Author: PA Browne. Time-stamp: <2016-01-16 00:54:55 pbrowne>
+
+\section tl Description of the model
+
+\f$\frac{\mathrm{d}x_k}{\mathrm{d}t} = -x_{k-2}x_{k-1} + x_{k-1}x_{x+1} - x_k + F\f$
+
+\todo Write some actual description of this model
+
+\section tl962 Connecting the model to EMPIRE using MPI. 
+
+\todo Write some stuff about this. maybe a separate page.
+
+Fortunately, there is a model already within EMPIRE that can do all this. Build it with the command
+\code{.sh}
+make lorenz96
+\endcode
+Now you can check that a model executable was created. It will be found in the binaries folder bin/
+\code{.sh}
+ls -l bin/lorenz96
+\endcode
+
+
+\section tutorial_l96_model_specific Specification of subroutines in model_specific.f90
+Before any data assimilation can be done with the model, we must specify operators such as the observation operator H, its error covariance R, and a few others. Below, we list how we shall set these up in the file model_specific.f90, which is located in the top directory of EMPIRE.
+
+\subsection tl963 The observations
+\subsubsection tl963a Defining observation operators:
+We shall have an observation network that does not change with time.
+We are going to observe every other grid point directly.
+
+That is, 
+\f$ y = H(x) = \begin{bmatrix} x_1 \\ x_3 \\ x_5 \\ \vdots \\ x_{N-1} \end{bmatrix} \f$.
+
+
+Note that here we are using Fortran indexing (starting from 1). For simplicity, we will assume that \f$N\f$ is odd. Hence the observation operator should look as follows.
+
+\f$H\f$ is therefore a matrix in \f$\mathbb{R}^{\frac{N}{2}\times N}\f$ such that
+
+\f$H = \begin{bmatrix}
+1 & 0 &0 &0 & 0 & 0 &0 & \cdots & 0 &0 \\
+0 & 0 &1 &0 & 0 & 0 &0 & \cdots & 0 &0 \\
+0 & 0 &0 &0 & 1 & 0 &0 & \cdots & 0 &0 \\
+\vdots & \vdots &\vdots &\vdots & \vdots & \vdots &\ddots & \cdots & \vdots &\vdots \\
+0 & 0 &0 &0 & 0 & 0 &0 & \cdots & 1 &0 
+\end{bmatrix}\f$
+
+We never form this matrix, instead we simply implement H (and its transpose, HT) by selecting (inserting) the appropriate values from (to) the state vector. Note that we have to do this for an arbitrary number of state vectors.
+
+\code{.f90}
+subroutine H(obsDim,nrhs,x,hx,t)
+  use sizes  
+  implicit none
+  integer, parameter :: rk=kind(1.0D+0)
+  integer, intent(in) :: obsDim
+  integer, intent(in) :: nrhs
+  real(kind=rk), dimension(state_dim,nrhs), intent(in) :: x
+  real(kind=rk), dimension(obsDim,nrhs), intent(out) :: hx
+  integer, intent(in) :: t
+  hx(:,:) = x(1:state_dim:2,:)
+end subroutine H
+\endcode
+
+Similarly, for the transpose of this observation operator, we can write this as follows:
+
+\code{.f90}
+subroutine HT(obsDim,nrhs,y,x,t)
+  use sizes
+  implicit none
+  integer, parameter :: rk=kind(1.0D+0)
+  integer, intent(in) :: obsDim
+  integer, intent(in) :: nrhs
+  real(kind=rk), dimension(obsDim,nrhs), intent(in) :: y
+  real(kind=rk), dimension(state_dim,nrhs), intent(out) :: x
+  integer, intent(in) :: t
+  x = 0.0_rk
+  x(1:state_dim:2,:) = y(:,:)
+end subroutine HT
+\endcode
+
+\subsubsection tl963b Defining observation error covariances:
+Let us assume that we have homogeneous, uncorrelated observation errors such that \f$R = \sigma^2I\f$. For this example, \f$\sigma^2=0.1\f$. Then we can code multiplication by R in the following way:
+
+\code{.f90}
+subroutine R(obsDim,nrhs,y,Ry,t)
+  use Rdata
+  implicit none
+  integer, parameter :: rk=kind(1.0D+0)
+  integer, intent(in) :: obsDim !< the dimension of the observations
+  integer, intent(in) :: nrhs !< the number of right hand sides
+  real(kind=rk), dimension(obsDim,nrhs), intent(in) :: y !< the
+  !!input vector
+  real(kind=rk), dimension(obsDim,nrhs), intent(out) :: Ry !< the
+  integer, intent(in) :: t !< the timestep
+  Ry = y*0.1d0
+end subroutine R
+\endcode
+
+Similarly, application of \f$R^\frac{1}{2}\f$ can be done as:
+
+\code{.f90}
+subroutine Rhalf(obsDim,nrhs,y,Ry,t)
+  use Rdata
+  implicit none
+  integer, parameter :: rk=kind(1.0D+0)
+  integer, intent(in) :: obsDim !< the dimension of the observations
+  integer, intent(in) :: nrhs !< the number of right hand sides
+  real(kind=rk), dimension(obsDim,nrhs), intent(in) :: y !< the
+  real(kind=rk), dimension(obsDim,nrhs), intent(out) :: Ry !< the
+  integer, intent(in) :: t !<the timestep
+  Ry = y*sqrt(0.1d0)
+end subroutine RHALF
+\endcode
+
+We also need to have the application of \f$R^{-1}\f$ and \f$R^{-\frac{1}{2}}\f$. These can be done with the following subroutines:
+\code{.f90}
+subroutine solve_r(obsDim,nrhs,y,v,t)
+  implicit none
+  integer, parameter :: rk=kind(1.0D+0)
+  integer, intent(in) :: obsDim !< the dimension of the observations
+  integer, intent(in) :: nrhs   !< the number of right hand sides
+  real(kind=rk), dimension(obsdim,nrhs), intent(in) :: y !<
+  real(kind=rk), dimension(obsdim,nrhs), intent(out) :: v!<
+  integer, intent(in) :: t !<the timestep
+  v = y/0.1d0
+end subroutine solve_r
+\endcode
+
+\code{.f90}
+subroutine solve_rhalf(obsdim,nrhs,y,v,t)
+  implicit none
+  integer, parameter :: rk=kind(1.0D+0)
+  integer, intent(in) :: obsDim !< the dimension of the observations
+  integer, intent(in) :: nrhs !< the number of right hand sides
+  real(kind=rk), dimension(obsdim,nrhs), intent(in) :: y !<
+  real(kind=rk), dimension(obsdim,nrhs), intent(out) :: v!<
+  integer, intent(in) :: t !<the timestep
+  v = y/sqrt(0.1d0)
+end subroutine solve_rhalf
+\endcode
+
+
+\subsection tl964 Defining background error covariance matrix:
+To make an initial ensemble, we can use a background error covariance matrix, \f$B\f$. In this example, \f$B = 0.2I\f$. There are two functions of this matrix that we could need: \f$B^{\frac{1}{2}}\f$ and \f$B^{-1}\f$. These can be coded in the following ways:
+\code{.f90}
+subroutine Bhalf(nrhs,x,Qx)
+  use sizes
+  use Qdata
+  implicit none
+  integer, parameter :: rk=kind(1.0D+0)
+  integer, intent(in) :: nrhs !< the number of right hand sides
+  real(kind=rk), dimension(state_dim,nrhs), intent(in) :: x !< the
+  real(kind=rk), dimension(state_dim,nrhs), intent(out) :: qx !< the
+  qx = sqrt(0.2d0)*x
+end subroutine Bhalf
+\endcode
+\code{.f90}
+subroutine solve_b(nrhs,x,Qx)
+  use sizes
+  use Qdata
+  implicit none
+  integer, parameter :: rk=kind(1.0D+0)
+  integer, intent(in) :: nrhs !< the number of right hand sides
+  real(kind=rk), dimension(state_dim,nrhs), intent(in) :: x !< the
+  real(kind=rk), dimension(state_dim,nrhs), intent(out) :: qx !< the
+  qx = x/0.2d0
+end subroutine solve_b
+\endcode
+
+
+\subsection tl965 Defining model error covariance matrix:
+If \f$i\f$ and \f$j\f$ are two different grid points, then we define the correlation, \f$C_{ij}\f$ between the model error at grid points \f$x_i\f$ and \f$x_j\f$ to be
+
+\f$ C_{ij} =\begin{cases} 
+1 & \text{if } i=j\\
+\frac{2}{3} & \text{if } |i-j|=1 \\
+\frac{1}{6} & \text{if } |i-j|=2 \\
+0 & \text{otherwise}
+\end{cases}\f$
+
+Then, we define the model error covariance matrix \f$Q = \alpha^2 \frac{3}{2} C\f$. Hence
+
+\f$Q^{\frac{1}{2}} = \alpha\begin{bmatrix}
+1 & 0.5 & 0 & 0 & \cdots & 0 & 0.5 \\
+0.5 & 1 & 0.5 & 0 & \cdots & 0 & 0 \\
+0 & 0.5 & 1 & 0.5 & \cdots & 0 & 0 \\
+\vdots & \vdots & \ddots & \ddots & \ddots & \vdots & \vdots \\
+0 & 0 & 0 & 0 & \cdots & 1 & 0.5 \\
+0.5 & 0 & 0 & 0 & \cdots & 0.5 & 1 \\
+\end{bmatrix}\f$
+
+Thus this can be coded as:
+\code{.f90}
+subroutine Qhalf(nrhs,x,Qx)
+  use sizes
+  use Qdata
+  implicit none
+  integer, parameter :: rk=kind(1.0D+0)
+  integer, intent(in) :: nrhs !< the number of right hand sides
+  real(kind=rk), dimension(state_dim,nrhs), intent(in) :: x !< the
+  real(kind=rk), dimension(state_dim,nrhs), intent(out) :: qx !< the
+  real(kind=rk), parameter :: alpha=0.2
+  integer :: i
+  qx(1,:) = x(1,:) + 0.5d0*x(2,:) + 0.5d0*x(state_dim,:)
+  qx(2:state_dim-1,:) = 0.5d0*x(1:state_dim-2,:)+x(2:state_dim-1,:)+0.5d0*x(3:state_dim,:)
+  qx(state_dim,:) = 0.5*x(1,:) + 0.5*x(state_dim-1,:) + x(state_dim,:)
+  qx = alpha*qx
+end subroutine Qhalf
+\endcode
+For simplicity, we shall leave the operator Q as the default one. This will simply apply Qhalf twice in order to apply the Q operator.
+
+\subsection tl966 Specifying distance for localisation:
+
+For the LETKF, we have to be able to do localisation. To do so, we define a distance measure between the observations and the grid points.
+
+The model is cyclic, so we can say that all the variables lie in the interval [0,1]. To find the position of variable \f$x_{xp}\f$ we can therefore divide \f$xp\f$ by the total number of gridpoints. To find the position of observation \f$y_{yp}\f$, we note that \f$y\f$ corresponds to every other gridpoint of \f$x\f$. Hence its position in the interval [0,1] can be calculated as \f$2yp-1\f$ divided by the total number of gridpoints. The distance between these two positions is then either the distance directly within the interval [0,1], or the distance wrapping around this interval. The code implementing this is below:
+
+\code{.f90}
+subroutine dist_st_ob(xp,yp,dis,t)
+  use sizes
+  implicit none
+  integer, intent(in) :: xp
+  integer, intent(in) :: yp
+  real(kind=kind(1.0d0)), intent(out) :: dis
+  integer, intent(in) :: t 
+  integer, parameter :: rk = kind(1.0d0)
+  real(kind=rk) :: st,ob
+  st = real(xp,rk)/real(state_dim,rk)
+  ob = real((2*yp)-1,rk)/real(state_dim,rk)
+  dis = min(abs(st-ob),1.0d0-abs(st-ob))
+end subroutine dist_st_ob
+ \endcode
+
+\subsection tl967 Setting up configure model and reconfigure model for an experiment:
+
+Here we tell EMPIRE how large the model is, how many observations we have per observation time. In this experiment we are going to have observations at a fixed frequency. The total number of observations in time, and the frequency of observations will be read in at run time to the variables \c pf\%time_obs and \c pf\%time_bwn_obs, respectively. Here we also call \c timestep_data_set_total to tell EMPIRE how long the model run will be. The "sanity check" below has helped me countless times when debugging - it serves no other purpose than to help identify errors.
+
+\code{.f90}
+subroutine configure_model
+  use pf_control
+  use timestep_data
+  use sizes
+  implicit none
+  !this is for lorenz 96
+  state_dim = 40
+  obs_dim = 20
+  call timestep_data_set_total(pf%time_bwn_obs*pf%time_obs)
+  print*,'#################################'
+  print*,'######### SANITY CHECK ##########'
+  print*,'#################################'
+  print*,'## STATE DIMENSION = ',state_dim
+  print*,'##  OBS  DIMENSION = ',obs_dim
+  print*,'#################################'
+end subroutine configure_model
+\endcode
+
+In this example, the observational network is not going to change through time. Reconfigure model is called after each analysis is performed, so that the observational network can be reconfigured for the next set of observations. As the observation is going to be at the same time interval as for the last one, and the operators H and R remain constant, we this subroutine can be left blank as below. Note it cannot be removed as this will lead to a compilation error.
+
+\code{.f90}
+subroutine reconfigure_model
+end subroutine reconfigure_model
+\endcode
+
+\subsection tutorial_lorenz96_compiling Compiling the model specific changes
+We are now at a point where we can compile the code. Go to the same directory as model_specific.f90 and simply type the command
+
+\code{.sh}make\endcode
+
+Now you can check that a new \c empire executable was created. It will be found in the binaries folder bin/, run the following command and ensure that it has an up-to-date timestamp:
+\code{.sh}ls -l bin/empire\endcode
+
+\section tutorial_lorenz96_running Running the codes
+Now that we have both the model and EMPIRE compiled, we are in a position to execute the codes and therefore do some experiments. We shall do a twin experiment, where we first run the model to act as a "truth" and from which we generate observations. Then afterwards we will run an ensemble from different starting conditions and attempt to use the observations we have taken to stay close to the truth.
+
+The first step is to run the truth and generate the observations.
+
+\subsection tl968 Running the truth
+
+We have to define the runtime parameters that EMPIRE requires. These are found in the file empire.nml. 
+- we want 1 observation in time: we set this in the variable \link pf_control::pf_control_type::time_obs time_obs \endlink
+- we want the observations to occur every 4th model timestep: we set this in the variable \link pf_control::pf_control_type::time_bwn_obs time_bwn_obs \endlink
+- we need to tell EMPIRE that it should be doing a truth run and generating the data: we set the logical variable \link pf_control::pf_control_type::gen_data gen_data \endlink to be true
+- we need to tell EMPIRE how to initially perturb the model. We will do this as \f$x_t(0) = x_\text{ref}(0) + \eta\f$, where \f$\eta \sim \mathcal{N}(0,B)\f$: we set this in the variable \link pf_control::pf_control_type::init init \endlink
+
+In empire.nml, the namelist should appear as follows:
+\code{.txt}
+&pf_params
+time_obs=1,
+time_bwn_obs=4,
+gen_data=.true.,
+init='B'
+/
+\endcode
+
+Now let us move to an appropriate folder to run:
+\code{.sh}cd /path/to/where/you/want/to/run/the/code\endcode
+
+In this folder, you *must* have the empire.nml file located. Check this with an \c ls command.
+
+The model also needs a driving file. It needs to be called \c l96.nml, which is a standard Fortran namelist file. To set the parameters for the run we shall do, the l96.nml should look as follows:
+\code{.txt}
+&l96
+N=40,
+total_timesteps=4,
+F=8.0d0,
+dt=0.01
+/
+\endcode
+
+Now we want to run a single ensemble member. For this model, each ensemble member uses a single MPI process. So we must launch a total of 1 MPI processes to run the model. To output the truth, we only need a single EMPIRE process. The \c mpirun syntax for doing this is as follows:
+\code{.sh}mpirun -np 1 /path/to/model/executable : -np 1 /path/to/empire/executable\endcode
+
+Now after the code has finished (a matter of seconds), let us look for some output. Check to see the observation files have been created:
+\code{.sh}ls obs*\endcode
+There should only be one: \c obs_000001. This is going to be the observation file that we use in later.
+
+
+\subsection tl969 Running a stochastic ensemble
+Before we do the assimilation, let's get something to compare with. The comparison that we can do is against a model run where we have not done any assimilation. 
+
+We want EMPIRE to run for the same number of timesteps as before, so in empire.nml we set \link pf_control::pf_control_type::time_obs time_obs \endlink and
+ \link pf_control::pf_control_type::time_bwn_obs time_bwn_obs \endlink as we had previously. We also want to create the initial ensemble in the same way, so \link pf_control::pf_control_type::init init \endlink remains 'B'. We are no longer generating the data, so remove \link pf_control::pf_control_type::gen_data gen_data \endlink to use its default value false. Lastly, we have to tell EMPIRE to propagate the ensemble members forward stochastically without assimilating the observations. We do this by setting the filter type \link pf_control::pf_control_type::filter filter \endlink to 'SE' (Stochastic Ensemble).
+
+In empire.nml, the namelist should appear as follows:
+\code{.txt}
+&pf_params
+time_obs=1,
+time_bwn_obs=4,
+filter='SE',
+init='B'
+/
+\endcode
+
+Now we want to execute this but using more than one ensemble member. 32 ensemble members seems like a good number. As we have more than 1 ensemble member, we can use more than one EMPIRE process. Here we will use 4, and therefore each EMPIRE process will be dealing with 8 ensemble members.
+
+We run this with the \c mpirun command:
+\code{.sh}mpirun -np 32 /path/to/model/executable : -np 4 /path/to/empire/executable\endcode
+
+ 
+\subsection tl9610 Running an assimilation
+
+All that is necessary to do in order to run an assimilation is now to change \link pf_control::pf_control_type::filter filter \endlink to correspond to the method we want to use. Let us use the LETKF (as we spent so long ensuring the distance calculation for it \link tl966 earlier\endlink). 
+
+Hence modify filter in empire.nml to 'LE' so that the namelist appears as:
+\code{.txt}
+&pf_params
+time_obs=1,
+time_bwn_obs=4,
+filter='LE',
+init='B'
+/
+\endcode
+Run this the same way as you ran the stochastic ensemble with the \c mpirun command:
+\code{.sh}mpirun -np 32 /path/to/model/executable : -np 4 /path/to/empire/executable\endcode
+
+
+\section tl9611 Plotting the results
+For this we shall use python, with numpy and matplotlib
+
+The python script examples/lorenz96/tutorial_lorenz96_plot.py is able to produce some plots of trajectories from the output. Run this with the command
+\code{.sh}
+../examples/lorenz96/tutorial_lorenz96_plot.py
+\endcode
+
+If all has gone to plan, you should see a plot looking like the one below:
+\image html tutorial_lorenz96_result.png
+\image latex tutorial_lorenz96_result.png "" width=15cm
+Notice how the ensemble members from the LETKF (in red, labelled "assimilation") narrows at timestep 4. This is where the observation occurred, and you should be able to see how the LETKF has brought the ensemble closer to the true state than the stochastic ensemble.
+
+
+
+\section tutorial_lorenz96_codes Tutorial codes
+These can be found in the file \c examples/lorenz96/tutorial_lorenz96_script.sh
+\include tutorial_lorenz96_script.sh
+
+*/
+
+
+
+/*! page lorenz96coupling Lorenz 96 Tutorial: Coupling the model to EMPIRE using MPI
+
+\todo Coming soon
+
+*/
