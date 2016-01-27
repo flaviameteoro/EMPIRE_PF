@@ -67,7 +67,7 @@ program lorenz96
   allocate(x(N),k1(N),k2(N),k3(N),k4(N))
   x = F
   x(N/2) = F+0.05
-  print*,x
+
 
   if(mdl_id .eq. 0) then
      call mpi_send(x,N,MPI_DOUBLE_PRECISION,cpl_root&
@@ -76,6 +76,7 @@ program lorenz96
           &,MPI_ANY_TAG,cpl_mpi_comm,mpi_status,mpi_err)
   end if
 2 continue
+  print*,x
 
 
   do t = 1,total_timesteps

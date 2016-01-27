@@ -32,7 +32,7 @@ SR_OPERS=$(current_dir)src/operations/
 SR_4DENVAR=$(current_dir)src/4dEnVar/
 SR_VAR=$(current_dir)src/var/
 SR_CG=$(current_dir)src/optim/CG+/
-CGOPTS = $(shell echo $(FCOPTS) | sed 's/-\<[-a-zA-Z0-9]*implicit[-a-zA-Z0-9]*\>//g')
+CGOPTS = $(FCOPTS) #$(shell echo $(FCOPTS) | sed 's/-\<[-a-zA-Z0-9]*implicit[-a-zA-Z0-9]*\>//g')
 SR_LBFGSB=$(current_dir)src/optim/Lbfgsb.3.0/
 
 CGFILES_local=cgsub.o cgfam.o cgsearch.o
