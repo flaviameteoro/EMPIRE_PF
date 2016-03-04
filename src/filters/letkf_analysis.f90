@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-11-12 10:33:21 pbrowne>
+!!! Time-stamp: <2016-03-04 16:51:43 pbrowne>
 !!!
 !!!    Ensemble transform Kalman filter
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -233,7 +233,7 @@ subroutine letkf_analysis
         ! reduce the forecast ensemble to only the observations in range
         ! and scale by the distance function
         do i = 1,pf%nens
-           Ysf_red(:,i) = pack(Ysf_g(:,i),yes)*pack(scal,yes)
+           Ysf_red(:,i) = pack(Ysf_g(:,i),yes)*sqrt(pack(scal,yes))
         end do
 
         ! Compute the SVD
@@ -263,7 +263,7 @@ subroutine letkf_analysis
         ! because we shall be reusing X shortly
 
         allocate(dd_red(red_obsDim))
-        dd_red = pack(dd_g,yes)*pack(scal,yes)
+        dd_red = pack(dd_g,yes)*sqrt(pack(scal,yes))
 
         ! Only the first r elements of d are in use from here on
         call dgemv('T',red_obsDim,r,1.0d0,V,red_obsDim,dd_red,1,0.0d0,d,1)
