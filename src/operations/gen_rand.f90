@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2016-04-05 10:59:16 pbrowne>
+!!! Time-stamp: <2016-04-05 11:21:49 pbrowne>
 !!!
 !!!    Collection of subroutines to make multidimensional random arrays
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -89,9 +89,9 @@ case('ziggurat')
       phi(i) = mean+stdev*rnor()
    end do
 case default
-   write(5,*) 'EMPIRE ERROR: wrong normal_generator selected in Nor&
+   write(0,*) 'EMPIRE ERROR: wrong normal_generator selected in Nor&
         &malRandomNumbers1D'
-   write(5,*) 'EMPIRE ERROR: normal_generator = ',normal_generator&
+   write(0,*) 'EMPIRE ERROR: normal_generator = ',normal_generator&
         &,' is unknown'
    stop '-12'
 end select
@@ -128,9 +128,9 @@ case('ziggurat')
       end do
    end do
 case default
-   write(5,*) 'EMPIRE ERROR: wrong normal_generator selected in Nor&
+   write(0,*) 'EMPIRE ERROR: wrong normal_generator selected in Nor&
         &malRandomNumbers2D'
-   write(5,*) 'EMPIRE ERROR: normal_generator = ',normal_generator&
+   write(0,*) 'EMPIRE ERROR: normal_generator = ',normal_generator&
         &,' is unknown'
    stop '-12'
 end select
