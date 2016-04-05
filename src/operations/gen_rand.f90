@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-09-09 14:08:17 pbrowne>
+!!! Time-stamp: <2016-04-05 10:59:16 pbrowne>
 !!!
 !!!    Collection of subroutines to make multidimensional random arrays
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -24,6 +24,33 @@
 !!!	      RG6 6BB
 !!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+module random_number_controls
+  character(10) :: normal_generator='random_d'
+  contains
+    subroutine set_random_number_controls
+      integer :: ios
+      logical :: file_exists
+      character(14) :: empire_namelist='empire.nml'
+      
+      namelist/random_number_controls/normal_generator
+      
+      inquire(file=empire_namelist,exist=file_exists)
+      if(file_exists) then
+         open(32,file=empire_namelist,iostat=ios,action='read'&
+              &,status='old',form='formatted')
+         if(ios .ne. 0) then
+            print*,'Cannot open ',empire_namelist
+            stop 'open_emp_o ERROR' 
+         end if
+         read(32,nml=random_number_controls,iostat=ios)
+         close(32)
+         if(ios .ne. 0) normal_generator='random_d'
+      else
+         normal_generator = 'random_d'
+      end if
+    end subroutine set_random_number_controls
+end module random_number_controls
+
 !> generate one dimension of uniform random numbers 
 Subroutine UniformRandomNumbers1D(minv, maxv, n,phi)
 !use random
@@ -41,7 +68,9 @@ end Subroutine UniformRandomNumbers1D
 
 !> generate one dimension of Normal random numbers 
 Subroutine NormalRandomNumbers1D(mean,stdev,n,phi)
+use random_number_controls
 use random
+use ziggurat
 IMPLICIT NONE
 integer, parameter :: rk = kind(1.0D0)
 integer, intent(in) :: n !< @param[in] n size of output vector
@@ -50,14 +79,31 @@ real(kind=rk), INTENT(IN) :: stdev !< @param[in] stdev Standard Deviation of nor
 real(kind=rk), dimension(n), INTENT(OUT) :: phi  !<@param[out] phi n dimensional normal random numbers
 integer :: i
 
-do i = 1,n
-   phi(i) = mean+stdev*random_normal()
-end do
+select case(normal_generator)
+case('random_d')
+   do i = 1,n
+      phi(i) = mean+stdev*random_normal()
+   end do
+case('ziggurat')
+   do i = 1,n
+      phi(i) = mean+stdev*rnor()
+   end do
+case default
+   write(5,*) 'EMPIRE ERROR: wrong normal_generator selected in Nor&
+        &malRandomNumbers1D'
+   write(5,*) 'EMPIRE ERROR: normal_generator = ',normal_generator&
+        &,' is unknown'
+   stop '-12'
+end select
+
+
 
 End Subroutine NormalRandomNumbers1D
 
 !> generate two dimensional Normal random numbers
 Subroutine NormalRandomNumbers2D(mean,stdev,n,k,phi)
+use random_number_controls
+use ziggurat
 use random
 IMPLICIT NONE
 integer, parameter :: rk = kind(1.0D0)
@@ -68,11 +114,27 @@ real(kind=rk), INTENT(IN) :: stdev !< @param[in] stdev Standard Deviation of nor
 real(kind=rk), dimension(n,k), INTENT(OUT) :: phi !< @param[out] phi n,k dimensional normal random numbers                                      
 integer :: i,j
 
-do j = 1,k
-   do i = 1,n
-      phi(i,j) = mean+stdev*random_normal()
+select case(normal_generator)
+case('random_d')
+   do j = 1,k
+      do i = 1,n
+         phi(i,j) = mean+stdev*random_normal()
+      end do
    end do
-end do
+case('ziggurat')
+   do j = 1,k
+      do i = 1,n
+         phi(i,j) = mean+stdev*random_normal()
+      end do
+   end do
+case default
+   write(5,*) 'EMPIRE ERROR: wrong normal_generator selected in Nor&
+        &malRandomNumbers2D'
+   write(5,*) 'EMPIRE ERROR: normal_generator = ',normal_generator&
+        &,' is unknown'
+   stop '-12'
+end select
+
 End Subroutine NormalRandomNumbers2D
 
 
@@ -163,11 +225,15 @@ end subroutine MixtureRandomNumbers2D
 !> Subroutine to set the random seed across MPI threads
 !! @param[in] pfid The process identifier of the MPI process
 subroutine random_seed_mpi(pfid)
+  use random_number_controls
   use pf_control
+  use ziggurat
   integer, intent(in) :: pfid
 
   integer :: n
   integer, allocatable, dimension(:) :: seed
+
+  call set_random_number_controls
 
   call random_seed(SIZE=n)
   allocate(seed(n))
@@ -181,6 +247,10 @@ subroutine random_seed_mpi(pfid)
   end if
   call random_seed(PUT=seed)
   deallocate(seed)
+
+  call zigset(pfid+1)
+
+  
 
 end subroutine random_seed_mpi
 

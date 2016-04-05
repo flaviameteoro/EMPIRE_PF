@@ -38,7 +38,7 @@ SR_LBFGSB=$(current_dir)src/optim/Lbfgsb.3.0/
 CGFILES_local=cgsub.o cgfam.o cgsearch.o
 LBFGSFILES_local=lbfgsb_sub.o lbfgs_sub.o lbfgsb.o linpack.o timer.o
 
-OBJSQ= $(CGFILES_local) $(LBFGSFILES_local) timestep_data.o output_empire.o sizes.o empire_main.o Qdata.o Rdata.o equivalent_weights_filter.o comms.o var_data.o gen_rand.o random_d.o proposal_filter.o histogram.o allocate_pf.o pf_control.o letks.o matrix_pf.o data_io.o model_specific.o operator_wrappers.o quicksort.o resample.o diagnostics.o perturb_particle.o update_state.o genQ.o sir_filter.o stochastic_model.o tests.o letkf_analysis.o deterministic_model.o inner_products.o trajectories.o user_perturb_particle.o generate_pf.o output_mat_tri.o equivalent_weights_filter_zhu.o lambertw.o randperm.o user_initialise_mpi.o loc_function.o phalf_etkf.o phalf.o threedvar_data.o three_d_var_all_particles.o threedvar_fcn.o three_d_var.o fcn.o output_rmse.o
+OBJSQ= $(CGFILES_local) $(LBFGSFILES_local) timestep_data.o output_empire.o sizes.o empire_main.o Qdata.o Rdata.o equivalent_weights_filter.o comms.o var_data.o ziggurat.o gen_rand.o random_d.o proposal_filter.o histogram.o allocate_pf.o pf_control.o letks.o matrix_pf.o data_io.o model_specific.o operator_wrappers.o quicksort.o resample.o diagnostics.o perturb_particle.o update_state.o genQ.o sir_filter.o stochastic_model.o tests.o letkf_analysis.o deterministic_model.o inner_products.o trajectories.o user_perturb_particle.o generate_pf.o output_mat_tri.o equivalent_weights_filter_zhu.o lambertw.o randperm.o user_initialise_mpi.o loc_function.o phalf_etkf.o phalf.o threedvar_data.o three_d_var_all_particles.o threedvar_fcn.o three_d_var.o fcn.o output_rmse.o
 OBJS=$(addprefix $(OBS),$(OBJSQ))
 FCOPTS+=$(MODFLAG) $(MODLOC)
 
@@ -188,6 +188,9 @@ $(OBS)equivalent_weights_filter_zhu.o: $(SR_FILTS)equivalent_weights_filter_zhu.
 
 $(OBS)random_d.o: $(SR_UTILS)random_d.f90
 	$(FC) $(FCOPTS) -c $(SR_UTILS)random_d.f90 -o $@
+
+$(OBS)ziggurat.o: $(SR_UTILS)ziggurat.f90
+	$(FC) $(FCOPTS) -c $(SR_UTILS)ziggurat.f90 -o $@
 
 $(OBS)resample.o: $(SR_OPERS)resample.f90 $(OBS)pf_control.o $(OBS)random_d.o
 	$(FC) $(FCOPTS) -c $(SR_OPERS)resample.f90 -o $@
