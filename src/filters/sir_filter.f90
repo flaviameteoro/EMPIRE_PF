@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-07-17 11:15:11 pbrowne>
+!!! Time-stamp: <2016-05-18 10:32:25 pbrowne>
 !!!
 !!!    Subroutine to perform SIR filter
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -71,7 +71,7 @@ subroutine sir_filter
 
 
 
-  call H(obs_dim,pf%count,fpsi,Hfpsi,pf%timestep)
+  call H(obs_dim,pf%count,pf%psi,Hfpsi,pf%timestep)
 
   !$omp parallel do
   do k = 1,pf%count

@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2016-04-05 11:21:49 pbrowne>
+!!! Time-stamp: <2016-04-10 10:36:24 pbrowne>
 !!!
 !!!    Collection of subroutines to make multidimensional random arrays
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -45,6 +45,8 @@ module random_number_controls
          read(32,nml=random_number_controls,iostat=ios)
          close(32)
          if(ios .ne. 0) normal_generator='random_d'
+         write(6,*) 'random_number_controls: normal_generator read as: &
+              &',normal_generator
       else
          normal_generator = 'random_d'
       end if
@@ -124,7 +126,7 @@ case('random_d')
 case('ziggurat')
    do j = 1,k
       do i = 1,n
-         phi(i,j) = mean+stdev*random_normal()
+         phi(i,j) = mean+stdev*rnor()
       end do
    end do
 case default

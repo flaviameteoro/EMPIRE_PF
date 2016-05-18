@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-10-13 12:23:33 pbrowne>
+!!! Time-stamp: <2016-04-13 15:10:55 pbrowne>
 !!!
 !!!    This file must be adapted to the specific model in use.
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -36,24 +36,14 @@
 !>
 !> This is a very good place to load in data for the matrices B,Q,R,H etc
 subroutine configure_model
+  use pf_control
   use timestep_data
   use sizes
-  use Qdata
-  use Rdata
   implicit none
-  include 'mpif.h'
-  
-  real(kind=kind(1.0d0)) :: t1
-!this is for Lorenz 63
-!  state_dim=3
-!  obs_dim = 1
-
-  !this is for hadcm3
-  state_dim = 2314430
-  obs_dim = 27370
-
-  call timestep_data_set_total(72*180)
-
+  !this is for lorenz 96
+  state_dim = 40
+  obs_dim = 20
+  call timestep_data_set_total(pf%time_bwn_obs*pf%time_obs)
   print*,'#################################'
   print*,'######### SANITY CHECK ##########'
   print*,'#################################'
@@ -61,41 +51,14 @@ subroutine configure_model
   print*,'##  OBS  DIMENSION = ',obs_dim
   print*,'## TOTAL TIMESTEPS = ',TSdata%total_timesteps
   print*,'#################################'
-!  if(.not. pf%gen_Q) then
-     t1 = mpi_wtime()
-     call loadQ
-     print*,'load Q     took ',mpi_wtime()-t1,' seconds'
-     t1 = mpi_wtime()
-     call loadR
-     print*,'load R     took ',mpi_wtime()-t1,' seconds'
-     t1 = mpi_wtime()
-!     call load_HQHTR
-     print*,'load HQHTR took ',mpi_wtime()-t1,' seconds'
-     
-!  end if
 end subroutine configure_model
-
 
 !>subroutine to reset variables that may change when the observation
 !!network changes
 subroutine reconfigure_model
-!  use pf_control
-  use sizes
-  implicit none
-
-  stop 'reconfigure model not yet implemented'
-
-  !! first set how many observations there will be until the next
-  !! observation
-
-  !pf%time_bwn_obs = 
-
-  !! now reset how many observations will occur at that time
-  !obs_dim = 
-
-
-
 end subroutine reconfigure_model
+
+
 
 
 !>subroutine to take an observation vector y and return v
@@ -117,6 +80,7 @@ subroutine solve_r(obsDim,nrhs,y,v,t)
   stop 'Solve_r not yet implemented'
   
 end subroutine solve_r
+
 
 !>subroutine to take an observation vector y and return v
 !!  in observation space.
@@ -255,8 +219,7 @@ end subroutine RHALF
 !!
 !! Given \f$x\f$ compute \f$Hx\f$
 subroutine H(obsDim,nrhs,x,hx,t)
-!  use pf_control
-  use sizes
+  use sizes  
   implicit none
   integer, parameter :: rk=kind(1.0D+0)
   integer, intent(in) :: obsDim !< the dimension of the observations
@@ -278,7 +241,6 @@ end subroutine H
 !!
 !! Given \f$y\f$ compute \f$x=H^T(y)\f$
 subroutine HT(obsDim,nrhs,y,x,t)
-!  use pf_control
   use sizes
   implicit none
   integer, parameter :: rk=kind(1.0D+0)
@@ -318,6 +280,7 @@ end subroutine dist_st_ob
 !! Given \f$x\f$ compute \f$B^{\frac{1}{2}}x\f$
 subroutine Bhalf(nrhs,x,bx)
   use sizes
+  use Qdata
   implicit none
   integer, parameter :: rk=kind(1.0D+0)
   integer, intent(in) :: nrhs !< the number of right hand sides
@@ -362,7 +325,7 @@ subroutine get_observation_data(y,t)
   real(kind=rk), dimension(obs_dim), intent(out) :: y
 
 
-  !This is set up tp call the routine written which will
+  !This is set up to call the routine written which will
   !work to do twin experiments. If you want to use your own
   !observations you should implement your own method of reading
   !in the observations
