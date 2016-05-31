@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-09-18 14:23:12 pbrowne>
+!!! Time-stamp: <2016-05-31 10:29:45 pbrowne>
 !!!
 !!!    The main program to run EMPIRE
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -136,7 +136,7 @@ program empire
            call deterministic_model
         case default
            write(emp_o,*) 'Error -555: Incorrect pf%filter'
-           stop -555
+           stop '-555'
         end select
         call timestep_data_set_completed(pf%timestep)
         call flush(6)
@@ -190,7 +190,7 @@ program empire
         
      case default
         write(emp_o,*) 'Error -556: Incorrect pf%filter'
-        stop -556
+        stop '-556'
      end select
      
      call timestep_data_set_completed(pf%timestep)

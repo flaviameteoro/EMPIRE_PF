@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-09-09 11:09:57 pbrowne>
+!!! Time-stamp: <2016-05-31 10:26:17 pbrowne>
 !!!
 !!!    subroutine to simply move the model forward in time one timestep
 !!!    then add model error
@@ -70,7 +70,7 @@ subroutine stochastic_model
      if(pf%count .ne. 1 .and. pf%nens .ne. 1) then
         print*,'OBS GEN ERROR -558: PLEASE RUN WITH ONLY A SINGLE &
              &ENSEMBLE MEMBER'
-        stop -558
+        stop '-558'
      end if
 
      write(6,*) 'generating the data'

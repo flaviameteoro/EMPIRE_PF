@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-10-14 11:21:33 pbrowne>
+!!! Time-stamp: <2016-05-31 10:28:16 pbrowne>
 !!!
 !!!    Program to implement 3DVar
 !!!    Copyright (C) 2015  Philip A. Browne
@@ -61,7 +61,7 @@ subroutine three_d_var(x)
   case default
      print*,'three_d_var ERROR: vardata%opt_method incorrect. Stopping&
           &'
-     stop -78
+     stop '-78'
   end select
   
   x = vardata%x0

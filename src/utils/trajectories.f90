@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-09-09 18:43:19 pbrowne>
+!!! Time-stamp: <2016-05-31 10:27:24 pbrowne>
 !!!
 !!!    Subroutine to output trajectories of state variables
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -57,7 +57,7 @@ module traj_data
               &st'
          write(*,*) 'Please create the directory traj/ in the folder t&
               &hat you wish to run'
-         stop -559
+         stop '-559'
       end if
 
       !now we check to see that traj_list.dat exists:
@@ -68,7 +68,7 @@ module traj_data
          write(*,*) 'This file should contain a list of state variable&
               &s'
          write(*,*) 'for which you want to output trajectories'
-         stop -560
+         stop '-560'
       end if
 
       open(12,file=traj_list,action='read')
@@ -83,13 +83,13 @@ module traj_data
                  &than 0'
             print*,'                 : variable read as',trajvar(i),' &
                  &STOP.'
-            stop -561
+            stop '-561'
          elseif(trajvar(i) .gt. state_dim_g) then
             print*,'EMPIRE ERROR -562: trajectory variable ',i,' larger &
                  &than the state dimension ',state_dim_g
             print*,'                 : variable read as',trajvar(i),' &
                  &STOP.'
-            stop -562
+            stop '-562'
          end if
       end do
 

@@ -94,7 +94,7 @@ program linear
         go to 3 !end code
      else
         print*,'Linear model error: unknown MPI_TAG: ',mpi_status(MPI_TAG)
-        stop -1
+        stop '-1'
      end if
 1    continue
 
