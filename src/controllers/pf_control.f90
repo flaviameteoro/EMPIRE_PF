@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-12-21 14:53:35 pbrowne>
+!!! Time-stamp: <2016-05-31 10:19:47 pbrowne>
 !!!
 !!!    module to hold all the information to control the the main program
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -241,7 +241,7 @@ contains
             if(ios .ne. 0) stop 'Cannot open empire.nml'
          else
             print*,'ERROR: cannot find pf_parameters.dat or empire.nml'
-            stop -1
+            stop '-1'
          end if
       end if
          
@@ -359,7 +359,7 @@ contains
       case('EA')
          print*,'Running the Ensemble Adjustment Kalman Filter'
          print*,'Error: The EAKF is not implemented here yet'
-         stop -557
+         stop '-557'
       case('LE')
          print*,'Running the Local Ensemble Transform Kalman Filter'
          print*,'With random noise'
