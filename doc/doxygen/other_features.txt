@@ -64,4 +64,6 @@ where
 \f$N_x\f$ is the state dimension (\link sizes::state_dim state_dim \endlink), \f$\bar{x}\f$ is the ensemble mean, \f$x^t\f$ is the truth, and \f$i\f$ is an index running over each component of the state vector.
 
 Note that in the case where the model has different variables, that are on different scales, this is probably not a good measure. For example, if one component of the state vector is measured in units of "apples per pie" and another is measured in "oranges per country per decade", this measure of RMSE will combine the two. Hence the latter should have much larger scale than the former, so this RMSE measure will be dominated by the errors in the components with greater variability.
+
+@todo Add option to output RMSE fields and Variance fields
 */

@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2016-05-31 10:19:47 pbrowne>
+!!! Time-stamp: <2016-06-22 16:45:36 pbrowne>
 !!!
 !!!    module to hold all the information to control the the main program
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -49,7 +49,7 @@ module pf_control
                                                    !!multiply Q by
      real(kind=kind(1.0d0)) :: rho                 !< enkf inflation factor
                                                    !! so that \f$P_f =
-                                                   !! (1+\rho)P_f\f$
+                                                   !! (1+\rho)^2P_f\f$
      real(kind=kind(1.0d0)) :: len                 !< R localisation
                                                    !! length scale
      !! The entries in the observation error covariance matrix
@@ -84,6 +84,7 @@ module pf_control
                               !< particle filter
                               !< - LS -- the L-ETKS with noise
                               !< - 3D -- 3DVar
+                              !< @todo change these to a longer string
      character(1) :: init     !< which method to initialise ensemble
                               !< currently this has a number of
                               !< options:

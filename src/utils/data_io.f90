@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-12-18 09:41:58 pbrowne>
+!!! Time-stamp: <2016-06-08 10:42:08 pbrowne>
 !!!
 !!!    Collection of subroutines to deal with i/o
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -140,7 +140,8 @@ end subroutine save_truth
 
 
 
-!>subroutine to ouput data from the filter
+!>subroutine to output data from the filter
+!! @todo only output pf_out_?? if selected
 subroutine output_from_pf
   use timestep_data
   use matrix_pf
@@ -152,6 +153,7 @@ subroutine output_from_pf
   real(kind=kind(1.0D0)), dimension(state_dim) :: mean,mtemp
   integer :: ios,particle,mpi_err
   character(9) :: filename
+
   if(pf%timestep .eq. 0) then
      write(filename,'(A,i2.2)') 'pf_out_',pfrank
      open(68,file=filename,iostat=ios,action='write',status='replace')
