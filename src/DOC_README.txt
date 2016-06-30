@@ -4,10 +4,11 @@
 
 
 \author Philip A. Browne <a href="mailto:p.browne@reading.ac.uk">p.browne@reading.ac.uk</a>
-\date Time-stamp: <2016-06-22 16:45:36 pbrowne>
+\date Time-stamp: <2016-06-30 11:22:44 pbrowne>
 
 \b Contributors
  - Mengbin Zhu - zhumengbin @ gmail.com
+ - David Scott - d . scott @ ed . ac . uk - <a href="http://www.archer.ac.uk/community/eCSE/">Funded by an eCSE project</a>
 
 \section Methods EMPIRE Methods
 For a list of methods implemented in EMPIRE, please click here: \link methods \endlink
