@@ -49,8 +49,11 @@ Ease of model specific implementations | easiest | easy | hard
 */
 
 
+\section Version4 EMPIRE communication version 4
+Here the model is a directly a subroutine of EMPIRE. This may be useful for toy models. Currently this is a development task and is not fully implemented.
 
-
+\section Version5 EMPIRE communication version 5
+Here the communication is similar to that on version 2, however each instance of the model can run multiple ensemble members. This is designed specifically for use with <a href="https://en.wikipedia.org/wiki/TOMCAT/SLIMCAT">TOMCAT</a>
 
 
 
@@ -59,7 +62,7 @@ Ease of model specific implementations | easiest | easy | hard
 /*! \page communicators EMPIRE communicators
     On this page we descibe the MPI communicators used within the EMPIRE codes to communicate within the data assimilation processes.
 
-\section comms_v1_2 Versions 1 and 2
+\section comms_v1_2 Versions 1, 2 and 5
 
 For comms versions 1 and 2, there is only 1 communicator for this: pf_mpi_comm
 \image html version_1_and_2.svg
@@ -74,4 +77,8 @@ For comms version 3, there are 3 communicators:
 
 \image html version_3.svg
 \image latex version_3.pdf "version 3 communicators" width=15cm
+
+\section comms_v4 Version 4
+As yet unknown what this should look like as we are still developing it.
+
 */
