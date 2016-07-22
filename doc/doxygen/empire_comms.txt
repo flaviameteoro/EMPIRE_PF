@@ -46,7 +46,7 @@ Efficiency (cpu-time) | fast | faster | fastest
 Model memory requirements | high | low | low
 EMPIRE memory requirements | high | high | low
 Ease of model specific implementations | easiest | easy | hard
-*/
+
 
 
 \section Version4 EMPIRE communication version 4
@@ -55,7 +55,7 @@ Here the model is a directly a subroutine of EMPIRE. This may be useful for toy 
 \section Version5 EMPIRE communication version 5
 Here the communication is similar to that on version 2, however each instance of the model can run multiple ensemble members. This is designed specifically for use with <a href="https://en.wikipedia.org/wiki/TOMCAT/SLIMCAT">TOMCAT</a>
 
-
+*/
 
 
 
