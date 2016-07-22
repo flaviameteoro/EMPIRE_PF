@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-09-14 12:24:06 pbrowne>
+!!! Time-stamp: <2016-07-22 15:43:34 pbrowne>
 !!!
 !!!    Module and subroutine to intitalise EMPIRE coupling to models
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -72,8 +72,24 @@ module comms
                             !! for empire v3
   integer :: pf_member_size !< size of pf_member_comm
                             !! for empire v3
-  integer, parameter :: comm_version=1
-
+  integer, parameter :: comm_version=5 !< The style of communication
+  !! between the model and empire.
+  !! 
+  !! - 1 = MPI SEND/RECV pairs between a single model process (single
+  !! EMPIRE process per ensemble member)
+  !!
+  !! - 2 = MPI GATHERV/SCATTERV between (possibly) multiple model processes
+  !! (single EMPIRE process per ensemble member)
+  !!
+  !! - 3 = MPI SEND/RECV pairs between multiple model processes and
+  !! the same parallel process disribution in EMPIRE
+  !! 
+  !! - 4 = MODEL AS A SUBROUTINE OF EMPIRE @todo IMPLEMENT THIS
+  !! Currently not working
+  !!
+  !! - 5 = Similar to 2, but with multiple ensemble members for each
+  !! model process (TOMCAT CASE) @todo IMPLEMENT THIS
+  !! Currently not working
 contains
 
   subroutine allocate_data
@@ -100,6 +116,10 @@ contains
        call initialise_mpi_v2
     case(3)
        call initialise_mpi_v3
+    case(4)
+       call initialise_mpi_v4
+    case(5)
+       call initialise_mpi_v5
     case default
        print*,'ERROR: comm_version ',comm_version,' not implemente&
             &d.'
@@ -559,6 +579,230 @@ contains
     pf%count = cnt
     pf%nens = nens
   end subroutine initialise_mpi_v3
+
+
+  !> subroutine to initialise empire communicators when the model is
+  !! to be a subroutine itself
+  !> @todo implement this
+  subroutine initialise_mpi_v4
+
+  end subroutine initialise_mpi_v4
+
+
+  !> subroutine to initialise empire communication pattern similarly
+  !! to v2 but with multiple ensemble members per model process
+  !> @todo implement and test this
+  subroutine initialise_mpi_v5
+    use pf_control
+    use sizes
+    implicit none
+    include 'mpif.h'
+
+    integer :: mpi_err
+    integer :: world_size
+    integer, parameter :: da=1
+    integer, parameter :: rk = kind(1.0d0)
+    integer :: i,j
+    integer :: mdl_procs
+    integer :: first_ptcl
+    integer :: final_ptcl
+    integer :: tmp_cpl_comm
+    integer :: n_mdl_instances
+    integer :: nens_per_instance
+
+    call mpi_init(mpi_err)
+    call mpi_comm_rank(mpi_comm_world,world_rank,mpi_err)
+    call mpi_comm_size(mpi_comm_world,world_size,mpi_err)
+    print*,'EMPIRE:  rank = ',world_rank,' on mpi_comm_world which has size ',world_size
+
+
+    !get the number of processes per model
+    call mpi_allreduce(0,mdl_num_proc,1,MPI_INTEGER,MPI_MAX&
+         &,MPI_COMM_WORLD,mpi_err)
+
+    if(mdl_num_proc .lt. 1) then
+       print*,'EMPIRE COMMS v5 ERROR: mdl_num_proc < 1'
+       print*,'mdl_num_proc = ',mdl_num_proc
+       print*,'THIS SUGGESTS YOU HAVE NOT LINKED TO A MODEL. STOP.'
+       stop
+    else
+       print*,'mdl_num_proc = ',mdl_num_proc
+    end if
+
+    !get the number of ensemble members per model process
+    call mpi_allreduce(0,nens_per_instance,1,MPI_INTEGER,MPI_MAX&
+         &,MPI_COMM_WORLD,mpi_err)
+    if(nens_per_instance .lt. 1) then
+       print*,'EMPIRE COMMS v5 ERROR: nens_per_instance < 1'
+       print*,'nens_per_instance = ',nens_per_instance
+       print*,'THIS SUGGESTS YOU HAVE NOT LINKED TO A MODEL. STOP.'
+       stop
+    else
+       print*,'nens_per_instance = ',nens_per_instance
+    end if
+    call  flush(6)
+
+
+    !split into models and da processes. create pf_mpi_comm
+    call mpi_comm_split(MPI_COMM_WORLD,da,world_rank,pf_mpi_comm,mpi_err)
+    call mpi_comm_size(pf_mpi_comm,npfs,mpi_err)
+    call mpi_comm_rank(pf_mpi_comm,pfrank,mpi_err)
+    
+    !compute number of model processes
+    mdl_procs = world_size-npfs
+    print*,'npfs = ',npfs
+
+    print*,'mdl_procs = ',mdl_procs
+
+
+    !compute number of ensemble members
+    n_mdl_instances = mdl_procs/mdl_num_proc
+    print*,'n_mdl_instances = ',n_mdl_instances
+    
+    nens = n_mdl_instances*nens_per_instance
+    print*,'nens = ',nens
+
+
+    !compute range of particles that this mpi process communicates with
+    first_ptcl = ceiling(real(pfrank)*real(nens)/real(npfs))
+    final_ptcl = ceiling(real(pfrank+1)*real(nens)/real(npfs))-1
+    particles = (/ (i, i = first_ptcl,final_ptcl) /)
+    print*,'range of particles = ',first_ptcl,final_ptcl
+
+
+    ! count the number of particles associated with this process
+    cnt = final_ptcl-first_ptcl+1
+    if(cnt .lt. 1) then
+       print*,'EMPIRE ERROR: YOU HAVE LAUNCHED MORE EMPIRE DA PROCESSES'
+       print*,'EMPIRE ERROR: THAN MODELS. I AM REDUDANT AND STOPPING.'
+       print*,'EMPIRE ERROR: RECONSIDER HOW YOU EXECUTE NEXT TIME. xx'
+       stop
+    end if
+
+
+    !allocate a communicator for each ensemble member
+    allocate(cpl_mpi_comms(cnt))
+
+    print*,'you have got to this point:',mod(n_mdl_instances,npfs)
+
+    if(mod(n_mdl_instances,npfs) .ne. 0 ) then !number of instances
+       !of the model executable doesnt divide the number of empire
+       !processes launched. this is difficult to get an efficient
+       !splitting so let's just do this sequentially for each
+       !ensemble member...
+       j = 0
+       print*,'EMPIRE V5: SEQUENTIAL SPLITTING ON MPI_COMM_WORLD...'
+       print*,'nens = ',nens
+       print*,'first_ptcl = ',first_ptcl
+       print*,'final_ptcl = ',final_ptcl
+       do i = 0,nens-1
+          if( i .ge. first_ptcl .and. i .le. final_ptcl) then
+             !we should be in this communicator
+             j = j + 1
+             call mpi_comm_split(MPI_COMM_WORLD,1,world_size,cpl_mpi_comms(j)&
+                  &,mpi_err)
+             write(*,'(A,i3.3,A)') 'created cpl_mpi_comms(',j,')'
+          else
+             ! we should not be part of this communicator
+             call mpi_comm_split(MPI_COMM_WORLD,0,world_size,tmp_cpl_comm,mpi_err)
+             call mpi_comm_free(tmp_cpl_comm,mpi_err)
+          end if
+       end do
+       
+       
+    else !number of model executables does divide the number of
+       !empire processes: that way we can split easily...
+       
+       !first split based on pfrank
+       print*,'doing first split based on pfrank',pfrank
+       call mpi_comm_split(MPI_COMM_WORLD,pfrank,world_size,tmp_cpl_comm,mpi_err)
+       print*,'finished first split mpi_err = ',mpi_err
+       call flush(6)
+       do i = 1,cnt
+          print*,'i = ',i
+          call mpi_comm_split(tmp_cpl_comm,1,world_size,cpl_mpi_comms(i)&
+               &,mpi_err)
+          write(*,'(A,i3.3,A)') 'created cpl_mpi_comms(',i,')'
+       end do
+       call mpi_comm_free(tmp_cpl_comm,mpi_err)
+    end if
+       
+    print*,'EMPIRE: all commiunicators made'
+
+    !the rank of this mpi process each of cpl_mpi_comms(:) is the highest
+    cpl_rank = mdl_num_proc
+
+    !allocate space to get the sizes from each model process
+    allocate(state_dims(mdl_num_proc+1))
+    allocate(state_displacements(mdl_num_proc+1))
+
+   
+    !set the sizes to zero, specifically the final entry in the arrays
+    state_dims = 0
+    state_dim = 0
+
+    
+    print*,'doing a gather on cpl_mpi_comm'
+    print*,'cnt = ',cnt
+    !for each ensemble member, gather the number of variables stored
+    !on each process
+    do i = 1,cnt
+       print*,'cpl_mpi_comms(i) = ',cpl_mpi_comms(i),cpl_rank
+       call mpi_gather(state_dim,1,MPI_INTEGER,state_dims&
+            &,1,MPI_INTEGER,cpl_rank,cpl_mpi_comms(i),mpi_err)
+    end do
+    print*,'state_dims = ',state_dims
+
+    
+    !compute the relevant displacements for the gathers
+    state_displacements = 0
+    do i = 2,mdl_num_proc
+       state_displacements(i:) = state_displacements(i:) + state_dims(i-1)
+    end do
+    print*,'state_displacements = ',state_displacements
+
+    
+    !compute the total size of the state
+    state_dim = sum(state_dims)
+    print*,'total state_dim = ',state_dim
+
+
+    !compute counts and displacements of particles associated with da
+    !processes
+    allocate(gblcount(npfs))
+    allocate(gbldisp(npfs))
+
+
+    call mpi_allgather(cnt,1,MPI_INTEGER,gblcount,1,MPI_INTEGER&
+         &,pf_mpi_comm,mpi_err)
+    if(mpi_err .eq. 0) then
+       print*,'mpi_allgather successful: gblcount known on all da proc&
+            &esses'
+       print*,'gblcount = ',gblcount
+    else
+       print*,'mpi_allgather unsucessful'
+    end if
+    
+
+    gbldisp = 0
+    if(npfs .gt. 1) then
+       do i = 2,npfs
+          gbldisp(i) = gbldisp(i-1) + gblcount(i-1)
+       end do
+    end if    
+
+
+    pf%particles = particles+1
+    pf%count = cnt
+    pf%nens = nens
+  end subroutine initialise_mpi_v5
+
+
+
+
+
+
+
 
 
 
