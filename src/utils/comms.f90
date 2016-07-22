@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2016-07-22 15:43:34 pbrowne>
+!!! Time-stamp: <2016-07-22 16:20:50 pbrowne>
 !!!
 !!!    Module and subroutine to intitalise EMPIRE coupling to models
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -827,7 +827,7 @@ contains
              call mpi_send(x(:,k),stateDim,MPI_DOUBLE_PRECISION&
                   &,particle-1,tag,CPL_MPI_COMM,mpi_err)
           end do
-       case(2)
+       case(2,5)
           do k = 1,cnt
              call mpi_scatterv(x(:,k),state_dims,state_displacements&
                   &,MPI_DOUBLE_PRECISION,send_null,0,MPI_DOUBLE_PRECISION&
@@ -871,7 +871,7 @@ contains
           CALL MPI_RECV(x(:,k), stateDim, MPI_DOUBLE_PRECISION, &
                particle-1, MPI_ANY_TAG, CPL_MPI_COMM,mpi_status, mpi_err)
        END DO
-    case(2)
+    case(2,5)
        do k = 1,cnt
           call mpi_gatherv(send_null,0,MPI_DOUBLE_PRECISION,x(:,k)&
                &,state_dims,state_displacements,MPI_DOUBLE_PRECISION,cpl_rank&
@@ -918,7 +918,7 @@ contains
              CALL MPI_IRECV(x(:,k), stateDim, MPI_DOUBLE_PRECISION, &
                   particle-1, MPI_ANY_TAG, CPL_MPI_COMM,requests(k), mpi_err)
           end DO
-       case(2)
+       case(2,5)
           do k = 1,cnt
              !I DONT THINK MY VERSION OF MPI HAS THE MPI_IGATHERV
              !call mpi_igatherv(send_null,0,MPI_DOUBLE_PRECISION,x(:,k)&
@@ -957,13 +957,14 @@ contains
     include 'mpif.h'
     integer :: mpi_err,i
 
-    if(comm_version .eq. 1 .or. comm_version .eq. 2) then
+    select case(comm_version)
+    case(1,2,5)
+       
        state_dim_g = state_dim
        obs_dim_g = obs_dim
        pf_ens_rank = pfrank
-    end if
-    
-    if(comm_version .eq. 3) then
+
+    case(3)
        if(allocated(obs_dims)) deallocate(obs_dims)
        allocate(obs_dims(pf_member_size))
        if(allocated(obs_displacements)) deallocate(obs_displacements)
@@ -996,8 +997,9 @@ contains
              end do
           end if
        end if
-
-    end if
+    case default
+       print*,'EMPIRE ERROR: COMM VERSION IN VERIFY SIZES NOT IMPLEMENTED'
+    end select
 
   end subroutine verify_sizes
 
