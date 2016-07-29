@@ -65,5 +65,11 @@ where
 
 Note that in the case where the model has different variables, that are on different scales, this is probably not a good measure. For example, if one component of the state vector is measured in units of "apples per pie" and another is measured in "oranges per country per decade", this measure of RMSE will combine the two. Hence the latter should have much larger scale than the former, so this RMSE measure will be dominated by the errors in the components with greater variability.
 
-@todo Add option to output RMSE fields and Variance fields
+There is now the option to compute RMSE fields using the formula:
+\f$ f_j(t) = \sqrt{ \frac{1}{N_e}\sum_{i=1}^{N_e} x_{i,j}(t) - x^t_j(t) } \f$
+where \f$ f_j(t)\f$ is the jth component of the state at time t, \f$ x^t_j(t)\f$ is the jth component of the truth at time t, \f$x_{i,j}(t)\f$ is the jth compnonent of ensemble member i at time t and \f$N_e\f$ is the number of ensemble members.
+
+This is controlled by the option \link pf_control::pf_control_type::use_ens_rmse use_ens_emse \endlink in \link pf_control::parse_pf_parameters empire.nml \endlink.
+
+@todo Add option to output Variance fields
 */

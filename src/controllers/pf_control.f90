@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2016-07-29 16:58:46 pbrowne>
+!!! Time-stamp: <2016-07-29 17:19:10 pbrowne>
 !!!
 !!!    module to hold all the information to control the the main program
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -180,6 +180,7 @@ contains
     !! - \link pf_control::pf_control_type::use_var use_var\endlink
     !! - \link pf_control::pf_control_type::use_traj use_traj\endlink
     !! - \link pf_control::pf_control_type::use_rmse use_rmse\endlink
+    !! - \link pf_control::pf_control_type::use_ens_rmse use_ens_rmse\endlink
     !!
     !! 250 Character string:
     !! - \link pf_control::pf_control_type::rmse_filename rmse_filename\endlink
