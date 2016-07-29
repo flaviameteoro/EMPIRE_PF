@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2016-07-29 17:19:10 pbrowne>
+!!! Time-stamp: <2016-07-29 17:22:18 pbrowne>
 !!!
 !!!    module to hold all the information to control the the main program
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -66,8 +66,8 @@ module pf_control
      logical :: use_rmse      !< switch if true outputs Root Mean
      !!Square Errors \n See @ref rmse for more information
      logical :: use_ens_rmse  !< switich if true outputs the field of
-     !!root mean squared errors where \f$ rmse(j) = \sqrt(
-     !!\frac{1}{N_e}\sum_{i=1}^{N_e} (x_i(j)-x^t(j)))\f$
+     !!root mean squared errors where \f$ rmse(j) = \sqrt{
+     !!\frac{1}{N_e}\sum_{i=1}^{N_e} (x_i(j)-x^t(j))^2}\f$
      character(250) :: rmse_filename !< string to hold the name of
      !< the file to output rmse to
      
