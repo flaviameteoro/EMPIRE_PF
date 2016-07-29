@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2016-06-22 16:45:36 pbrowne>
+!!! Time-stamp: <2016-07-29 16:58:46 pbrowne>
 !!!
 !!!    module to hold all the information to control the the main program
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -65,6 +65,9 @@ module pf_control
      logical :: use_traj      !< switch if true outputs trajectories
      logical :: use_rmse      !< switch if true outputs Root Mean
      !!Square Errors \n See @ref rmse for more information
+     logical :: use_ens_rmse  !< switich if true outputs the field of
+     !!root mean squared errors where \f$ rmse(j) = \sqrt(
+     !!\frac{1}{N_e}\sum_{i=1}^{N_e} (x_i(j)-x^t(j)))\f$
      character(250) :: rmse_filename !< string to hold the name of
      !< the file to output rmse to
      
@@ -198,7 +201,7 @@ contains
       real(kind=kind(1.0d0)) :: len=-1.0d0
       real(kind=kind(1.0D0)) :: keep
       logical :: use_talagrand,use_mean,use_var,use_traj&
-           &,use_rmse
+           &,use_rmse,use_ens_rmse
       character(2) :: filter='++'
       character(1) :: init='+'
       character(250) :: rmse_filename='rmse'
@@ -214,7 +217,7 @@ contains
       &Qscale,&
       &rho,&
       &len,&
-      &use_talagrand,use_mean,use_var,use_traj,use_rmse,&
+      &use_talagrand,use_mean,use_var,use_traj,use_rmse,use_ens_rmse,&
       &filter,&
       &init,&
       &rmse_filename
@@ -227,6 +230,7 @@ contains
       use_var = .false.
       use_traj = .false.
       use_rmse = .false.
+      use_ens_rmse = .false.
 
 
       inquire(file='pf_parameters.dat',exist=file_exists)
@@ -311,6 +315,10 @@ contains
          print*,'going to output Root mean squared errors'
       end if
 
+      if(use_ens_rmse) then
+         print*,'going to output field of Root mean squared errors'
+      end if
+      
       if(use_mean) then
          print*,'going to output ensemble mean'
       end if
@@ -333,7 +341,7 @@ contains
 
       !ensure that if we are generating the data then SE is selected
       if(gen_data) then
-         pf%filter = 'SE'
+         pf%filter = 'SE'         
       end if
 
 
@@ -407,9 +415,15 @@ contains
       pf%use_var = use_var
       pf%use_traj = use_traj
       pf%use_rmse = use_rmse
-      
+      pf%use_ens_rmse = use_ens_rmse
 
-
+      !check for specific things we can't do if running the truth
+      if(pf%gen_data) then
+         pf%gen_Q = .false.
+         pf%use_talagrand=.false.
+         pf%use_rmse = .false.
+         pf%use_ens_rmse = .false.
+      end if
 
       
     end subroutine parse_pf_parameters

@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2016-05-31 10:25:17 pbrowne>
+!!! Time-stamp: <2016-07-29 14:52:24 pbrowne>
 !!!
 !!!    The main program to run EMPIRE
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -93,6 +93,7 @@ program empire
   call output_from_pf
   if(pf%gen_data) call save_truth(pf%psi(:,1))
   if(pf%use_traj) call trajectories
+  if(pf%use_ens_rmse) call output_ens_rmse
   start_t = mpi_wtime()
 
 
@@ -135,6 +136,7 @@ program empire
         call flush(6)
         if(pf%gen_data) call save_truth(pf%psi(:,1))
         if(pf%use_traj) call trajectories
+        if(pf%use_ens_rmse) call output_ens_rmse
         call output_from_pf
      end do
            
@@ -178,6 +180,7 @@ program empire
 
      if(pf%gen_data) call save_truth(pf%psi(:,1))
      if(pf%use_traj) call trajectories
+     if(pf%use_ens_rmse) call output_ens_rmse
      call output_from_pf
 
      call reconfigure_model

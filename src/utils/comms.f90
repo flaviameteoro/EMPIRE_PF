@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2016-07-22 16:20:50 pbrowne>
+!!! Time-stamp: <2016-07-29 16:40:10 pbrowne>
 !!!
 !!!    Module and subroutine to intitalise EMPIRE coupling to models
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -68,11 +68,12 @@ module comms
                             !! contains all ensemble members for that
                             !! specific part of the state vector
   integer :: pf_ens_rank    !< rank of the process on pf_ens_comm
+  integer :: pf_ens_size    !< size of pf_ens_comm for comms v3
   integer :: pf_member_rank !< rank of the process on pf_member_comm
                             !! for empire v3
   integer :: pf_member_size !< size of pf_member_comm
                             !! for empire v3
-  integer, parameter :: comm_version=5 !< The style of communication
+  integer, parameter :: comm_version=1 !< The style of communication
   !! between the model and empire.
   !! 
   !! - 1 = MPI SEND/RECV pairs between a single model process (single
@@ -393,7 +394,6 @@ contains
     integer :: tmp_cpl_colour2
     integer :: pf_member_colour
     integer :: pf_ens_colour
-    integer :: pf_ens_size
     integer :: status(MPI_STATUS_SIZE)
 
 

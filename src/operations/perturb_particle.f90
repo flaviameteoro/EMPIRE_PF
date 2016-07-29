@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-12-21 14:00:28 pbrowne>
+!!! Time-stamp: <2016-07-29 16:30:38 pbrowne>
 !!!
 !!!    Collection of routines to perturb states
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -34,7 +34,7 @@ subroutine perturb_particle(x)
   integer, parameter :: rk=kind(1.0D0)
   real(kind=rk), dimension(state_dim), intent(inout) :: x
   real(kind=rk), dimension(state_dim) :: rdom,y,kgain
-  character(14) :: filename
+  character(256) :: filename
 
   select case(pf%init)
   case('P')

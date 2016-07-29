@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2016-06-08 10:42:08 pbrowne>
+!!! Time-stamp: <2016-07-29 16:31:03 pbrowne>
 !!!
 !!!    Collection of subroutines to deal with i/o
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -227,11 +227,11 @@ subroutine save_state(state,filename)
   integer, parameter :: rk = kind(1.0d0)
   real(kind=rk), dimension(state_dim), intent(in) :: state !< the
   !!state vector
-  character(14), intent(in) :: filename !< the name of the file to
+  character(256), intent(in) :: filename !< the name of the file to
   !!save the state vector in
   integer :: ios
 
-  open(16,file=filename,iostat=ios,action='write',status='replace'&
+  open(16,file=trim(filename),iostat=ios,action='write',status='replace'&
        &,form='unformatted')
   if(ios .ne. 0)  then
      write(*,*) 'PARTICLE FILTER DATA ERROR!!!!! Cannot open file '&
@@ -253,11 +253,11 @@ subroutine get_state(state,filename)
   integer, parameter :: rk = kind(1.0d0)
   real(kind=rk), dimension(state_dim), intent(out) :: state !< the
   !!state vector
-  character(14), intent(in) :: filename!< the name of the file to 
+  character(256), intent(in) :: filename!< the name of the file to 
   !!write the state vector in
   integer :: ios
 
-  open(16,file=filename,iostat=ios,action='read',status='old',form='un&
+  open(16,file=trim(filename),iostat=ios,action='read',status='old',form='un&
        &formatted')
   if(ios .ne. 0)  then
      write(*,*) 'PARTICLE FILTER DATA ERROR!!!!! Cannot open file '&
