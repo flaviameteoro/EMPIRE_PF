@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2016-07-29 16:40:10 pbrowne>
+!!! Time-stamp: <2016-08-05 17:43:52 pbrowne>
 !!!
 !!!    Module and subroutine to intitalise EMPIRE coupling to models
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -73,7 +73,7 @@ module comms
                             !! for empire v3
   integer :: pf_member_size !< size of pf_member_comm
                             !! for empire v3
-  integer, parameter :: comm_version=1 !< The style of communication
+  integer, parameter :: comm_version=4 !< The style of communication
   !! between the model and empire.
   !! 
   !! - 1 = MPI SEND/RECV pairs between a single model process (single
@@ -585,7 +585,82 @@ contains
   !! to be a subroutine itself
   !> @todo implement this
   subroutine initialise_mpi_v4
+    use pf_control
+    use sizes
+    implicit none
+    include 'mpif.h'
 
+    integer :: mpi_err
+    integer :: world_size
+    integer, parameter :: rk = kind(1.0d0)
+    integer :: i
+    integer :: first_ptcl
+    integer :: final_ptcl
+    integer :: ios
+    logical :: file_exists
+    namelist/comms_v4/nens
+
+    
+    call mpi_init(mpi_err)
+    call mpi_comm_rank(mpi_comm_world,world_rank,mpi_err)
+    call mpi_comm_size(mpi_comm_world,world_size,mpi_err)
+    print*,'EMPIRE:  rank = ',world_rank,' on mpi_comm_world which has size ',world_size
+
+
+    npfs = world_size
+    pfrank = world_rank
+    
+    !now need to get the total number of ensemble members that will
+    !be used. let us read it in from empire.nml!
+    
+    inquire(file='pf_parameters.dat',exist=file_exists)
+    if(file_exists) then
+       open(32,file='pf_parameters.dat',iostat=ios,action='read'&
+            &,status='old')
+       if(ios .ne. 0) stop 'Cannot open pf_parameters.dat'
+    else
+       inquire(file='empire.nml',exist=file_exists)
+       if(file_exists) then
+          open(32,file='empire.nml',iostat=ios,action='read'&
+               &,status='old')
+          if(ios .ne. 0) stop 'Cannot open empire.nml'
+       else
+          print*,'ERROR: cannot find pf_parameters.dat or empire.nml'
+          stop '-1'
+       end if
+    end if
+    ! set nens to be negative as a default value
+    nens = -1
+    !now read it in
+    read(32,nml=comms_v4) 
+    close(32)
+
+    if( nens .lt. 1 ) then
+       print*,'EMPIRE ERROR: __________initialise_mpi_v4_____________'
+       print*,'EMPIRE ERROR: nens is less than 1... nens = ',nens
+       print*,'EMPIRE ERROR: please correctly specify this in empire.n&
+            &ml'
+       stop '-1'
+    end if
+
+    !compute range of particles that this mpi process communicates with
+    first_ptcl = ceiling(real(pfrank)*real(nens)/real(npfs))
+    final_ptcl = ceiling(real(pfrank+1)*real(nens)/real(npfs))-1
+    particles = (/ (i, i = first_ptcl,final_ptcl) /)
+    print*,'range of particles = ',first_ptcl,final_ptcl
+
+    !set the da communicator:
+    pf_mpi_comm = MPI_COMM_WORLD
+
+    
+    ! count the number of particles associated with this process
+    cnt = final_ptcl-first_ptcl+1
+
+    
+    pf%particles = particles+1
+    pf%count = cnt
+    pf%nens = nens
+    
   end subroutine initialise_mpi_v4
 
 
@@ -840,6 +915,11 @@ contains
              call mpi_send(x(:,k),stateDim,MPI_DOUBLE_PRECISION&
                   &,0,tag,cpl_mpi_comms(k),mpi_err)
           end do
+       case(4)
+          do k = 1,cnt
+             particle = particles(k)
+             call model_as_subroutine_start(x(:,k),particle,tag)
+          end do
        case default
           print*,'EMPIRE ERROR: THIS ISNT BACK TO THE FUTURE. empire_v&
                &ersion not yet implemented'
@@ -882,6 +962,11 @@ contains
           CALL MPI_RECV(x(:,k), stateDim, MPI_DOUBLE_PRECISION, &
                0, MPI_ANY_TAG, cpl_mpi_comms(k),mpi_status, mpi_err)
        END DO
+    case(4)
+       do k = 1,cnt
+          particle = particles(k)
+          call model_as_subroutine_return(x(:,k),particle)
+       end do
     case default
        print*,'EMPIRE ERROR: THIS ISNT BACK TO THE FUTURE PART 2. empire_v&
             &ersion not yet implemented'
@@ -942,6 +1027,15 @@ contains
              CALL MPI_IRECV(x(:,k), stateDim, MPI_DOUBLE_PRECISION, &
                   0, MPI_ANY_TAG, cpl_mpi_comms(k),requests(k), mpi_err)
           end DO
+       case(4)
+          do k = 1,cnt
+             particle = particles(k)
+             call model_as_subroutine_return(x(:,k),particle)
+             ! the following may be totally wrong and need to change
+             ! to something like the v2 case! see if it breaks if
+             ! this is ever called.
+             requests(k) = MPI_REQUEST_NULL
+          end do
        case default
           print*,'EMPIRE ERROR: THIS ISNT BACK TO THE FUTURE PART 3. empire_v&
                &ersion not yet implemented'
@@ -958,7 +1052,7 @@ contains
     integer :: mpi_err,i
 
     select case(comm_version)
-    case(1,2,5)
+    case(1,2,4,5)
        
        state_dim_g = state_dim
        obs_dim_g = obs_dim

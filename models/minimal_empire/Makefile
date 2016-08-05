@@ -10,7 +10,7 @@ LIB_LIST=-lblas
 FCOPTS=-O3 -Wall -fimplicit-none -fbounds-check -fbacktrace
 FCOPTS+=$(MODFLAG) $(MODLOC)
 
-OBJECTS_EMPIRE=minimal_empire.o $(OBS)comms.o $(OBS)pf_control.o $(OBS)sizes.o $(OBS)histogram.o $(OBS)timestep_data.o $(OBS)var_data.o
+OBJECTS_EMPIRE=minimal_empire.o $(OBS)comms.o $(OBS)pf_control.o $(OBS)sizes.o $(OBS)histogram.o $(OBS)timestep_data.o $(OBS)var_data.o $(OBS)model_as_subroutine_data.o $(OBS)model_as_subroutine_initialise.o $(OBS)model_as_subroutine_start.o $(OBS)model_as_subroutine_return.o
 
 
 

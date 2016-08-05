@@ -27,6 +27,7 @@ SR_SMOOT=$(current_dir)src/smoothers/
 SR_UTILS=$(current_dir)src/utils/
 SR_CONTS=$(current_dir)src/controllers/
 SR_USERS=$(current_dir)src/user/
+SR_USER_MDL=$(current_dir)src/user/model/
 SR_TESTS=$(current_dir)src/tests/
 SR_OPERS=$(current_dir)src/operations/
 SR_4DENVAR=$(current_dir)src/4dEnVar/
@@ -38,7 +39,7 @@ SR_LBFGSB=$(current_dir)src/optim/Lbfgsb.3.0/
 CGFILES_local=cgsub.o cgfam.o cgsearch.o
 LBFGSFILES_local=lbfgsb_sub.o lbfgs_sub.o lbfgsb.o linpack.o timer.o
 
-OBJSQ= compile_options.o $(CGFILES_local) $(LBFGSFILES_local) timestep_data.o output_empire.o sizes.o empire_main.o Qdata.o Rdata.o equivalent_weights_filter.o comms.o var_data.o ziggurat.o gen_rand.o random_d.o proposal_filter.o histogram.o allocate_pf.o pf_control.o letks.o matrix_pf.o data_io.o model_specific.o operator_wrappers.o quicksort.o resample.o diagnostics.o perturb_particle.o update_state.o genQ.o sir_filter.o stochastic_model.o tests.o letkf_analysis.o deterministic_model.o inner_products.o trajectories.o user_perturb_particle.o generate_pf.o output_mat_tri.o equivalent_weights_filter_zhu.o lambertw.o randperm.o user_initialise_mpi.o loc_function.o phalf_etkf.o phalf.o threedvar_data.o three_d_var_all_particles.o threedvar_fcn.o three_d_var.o fcn.o output_rmse.o output_ens_rmse.o
+OBJSQ= compile_options.o $(CGFILES_local) $(LBFGSFILES_local) timestep_data.o output_empire.o sizes.o empire_main.o Qdata.o Rdata.o equivalent_weights_filter.o comms.o var_data.o ziggurat.o gen_rand.o random_d.o proposal_filter.o histogram.o allocate_pf.o pf_control.o letks.o matrix_pf.o data_io.o model_specific.o operator_wrappers.o quicksort.o resample.o diagnostics.o perturb_particle.o update_state.o genQ.o sir_filter.o stochastic_model.o tests.o letkf_analysis.o deterministic_model.o inner_products.o trajectories.o user_perturb_particle.o generate_pf.o output_mat_tri.o equivalent_weights_filter_zhu.o lambertw.o randperm.o user_initialise_mpi.o loc_function.o phalf_etkf.o phalf.o threedvar_data.o three_d_var_all_particles.o threedvar_fcn.o three_d_var.o fcn.o output_rmse.o output_ens_rmse.o model_as_subroutine_data.o model_as_subroutine_return.o model_as_subroutine_start.o model_as_subroutine_initialise.o
 OBJS=$(addprefix $(OBS),$(OBJSQ))
 FCOPTS+=$(MODFLAG) $(MODLOC)
 
@@ -242,6 +243,19 @@ $(OBS)letkf_analysis.o: $(SR_FILTS)letkf_analysis.f90
 $(OBS)letks.o: $(SR_SMOOT)letks.f90
 	$(FC) $(FCOPTS) -c $(SR_SMOOT)letks.f90 -o $@
 
+
+#model as subroutine bits
+$(OBS)model_as_subroutine_data.o: $(SR_USER_MDL)model_as_subroutine_data.f90
+	$(FC) $(FCOPTS) -c $(SR_USER_MDL)model_as_subroutine_data.f90 -o $@
+
+$(OBS)model_as_subroutine_initialise.o: $(SR_USER_MDL)model_as_subroutine_initialise.f90
+	$(FC) $(FCOPTS) -c $(SR_USER_MDL)model_as_subroutine_initialise.f90 -o $@
+
+$(OBS)model_as_subroutine_start.o: $(SR_USER_MDL)model_as_subroutine_start.f90
+	$(FC) $(FCOPTS) -c $(SR_USER_MDL)model_as_subroutine_start.f90 -o $@
+
+$(OBS)model_as_subroutine_return.o: $(SR_USER_MDL)model_as_subroutine_return.f90
+	$(FC) $(FCOPTS) -c $(SR_USER_MDL)model_as_subroutine_return.f90 -o $@
 
 
 
