@@ -22,6 +22,22 @@ testp()
 	exit -1
     fi
 }
+testr()
+{
+    red The following command should break and return an error:
+    red $*
+    $*
+    if [[ $? == 0 ]]; then
+	    echo "ERROR in that command. Return code $?. Stopping tests."
+        if [[ -f empire.nml ]]; then
+            rm empire.nml
+        fi
+	    exit -1
+    else
+        red "and it did"
+    fi
+}
+
 blue()
 {
     echo -e "\033[0;34m$* ${NC}"
@@ -133,6 +149,10 @@ setens 3
 testp $MPIRUN $MPIRUNOPTS -np 2 ../bin/minimal_empire_comms
 setens 3
 testp $MPIRUN $MPIRUNOPTS -np 3 ../bin/minimal_empire_comms
+
+
+setens 1
+testr $MPIRUN $MPIRUNOPTS -np 2 ../bin/minimal_empire_comms
 
 
 if [[ -f empire.nml ]]; then

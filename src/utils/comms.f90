@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2016-08-05 17:43:52 pbrowne>
+!!! Time-stamp: <2016-08-05 18:20:00 pbrowne>
 !!!
 !!!    Module and subroutine to intitalise EMPIRE coupling to models
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -640,6 +640,13 @@ contains
        print*,'EMPIRE ERROR: nens is less than 1... nens = ',nens
        print*,'EMPIRE ERROR: please correctly specify this in empire.n&
             &ml'
+       stop '-1'
+    end if
+
+    if (npfs .gt. nens) then
+       print*,'EMPIRE ERROR: __________initialise_mpi_v4_____________'
+       print*,'EMPIRE ERROR: npfs is great than nens...'
+       print*,'EMPIRE ERROR: npfs = ',npfs,' nens = ',nens
        stop '-1'
     end if
 
