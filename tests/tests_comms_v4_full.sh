@@ -85,7 +85,14 @@ MPIRUN=/usr/bin/mpirun
 MPIRUNOPTS="--output-filename out"
 commsfile=../src/utils/comms.f90
 
-
+version=$($grep comm_version= $commsfile | cut -f2 -d= | cut -f1 -d' ')
+red EMPIRE VERSION detected as $version in $commsfile
+if [[ "$version" = "4" ]]; then
+    blue Doing the tests for EMPIRE comms version 4
+else
+    red ERROR: version not supported by these tests.
+    exit -1
+fi
 
 
 testp cd ..
