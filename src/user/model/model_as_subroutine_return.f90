@@ -38,12 +38,15 @@ subroutine model_as_subroutine_return(x,particle)
 
   if(.not. initialised) then
      !allocate the space for the data
-     first_ptcl = ceiling(real(pfrank)*real(nens)/real(npfs))+1
-     final_ptcl = ceiling(real(pfrank+1)*real(nens)/real(npfs))
+     first_ptcl = ceiling(real(pfrank)*real(nens)/real(npfs))
+     final_ptcl = ceiling(real(pfrank+1)*real(nens)/real(npfs))-1
+     print*,'first_ptcl = ',first_ptcl
+     print*,'final_ptcl = ',final_ptcl
      allocate(model_states(state_dim,first_ptcl:final_ptcl))
      do i = first_ptcl,final_ptcl
         call model_as_subroutine_initialise(model_states(:,i),i)
      end do
+     initialised=.true.
   end if
   !now return the appropriate model state
   x = model_states(:,particle)

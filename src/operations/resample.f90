@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-09-09 12:12:48 pbrowne>
+!!! Time-stamp: <2016-08-07 11:59:41 pbrowne>
 !!!
 !!!    Subroutine to perform Universal Importance Resampling
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -54,16 +54,17 @@ subroutine resample
 
   !print*,'in resample, pf%weight = ',pf%weight
 
-  if(comm_version .eq. 1 .or. comm_version .eq. 2) then
+  select case(comm_version)
+  case(1,2,4)
      ensemble_comm = pf_mpi_comm
-  elseif(comm_version .eq. 3) then
+  case(3)
      ensemble_comm = pf_ens_comm
-  else
+  case default
      print*,'EMPIRE VERSION ',comm_version,' NOT SUPPORTED IN RESAMP&
           &LE'
      print*,'THIS IS AN ERROR. STOPPING'
      stop '-24'
-  end if
+  end select
   !gather the weights onto the master processor of the particle filter
      
   call mpi_gatherv(pf%weight(gbldisp(pfrank+1)+1:gbldisp(pfrank+1)+pf%count&

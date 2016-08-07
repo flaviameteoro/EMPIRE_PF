@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2016-08-05 18:20:00 pbrowne>
+!!! Time-stamp: <2016-08-07 12:06:01 pbrowne>
 !!!
 !!!    Module and subroutine to intitalise EMPIRE coupling to models
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -663,6 +663,22 @@ contains
     ! count the number of particles associated with this process
     cnt = final_ptcl-first_ptcl+1
 
+    !compute counts and displacements of particles associated with da
+    !processes
+    allocate(gblcount(npfs))
+    allocate(gbldisp(npfs))
+
+    do i = 1,npfs
+       gblcount(i) = ceiling(real(i)*real(nens)/real(npfs)) &
+            &- ceiling(real(i-1)*real(nens)/real(npfs))
+    end do
+    
+    gbldisp = 0
+    if(npfs .gt. 1) then
+       do i = 2,npfs
+          gbldisp(i) = gbldisp(i-1) + gblcount(i-1)
+       end do
+    end if    
     
     pf%particles = particles+1
     pf%count = cnt
