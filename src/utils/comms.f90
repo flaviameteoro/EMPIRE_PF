@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2016-08-07 12:06:01 pbrowne>
+!!! Time-stamp: <2016-08-07 12:50:47 pbrowne>
 !!!
 !!!    Module and subroutine to intitalise EMPIRE coupling to models
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -28,6 +28,7 @@
 
 !> Module containing EMPIRE coupling data
 !! @todo Need to see what happens if some process has no observations
+!! in comms_v3
 module comms
   integer :: CPL_MPI_COMM !< the communicator between the empire
   !< codes and the model master nodes
@@ -73,7 +74,7 @@ module comms
                             !! for empire v3
   integer :: pf_member_size !< size of pf_member_comm
                             !! for empire v3
-  integer, parameter :: comm_version=4 !< The style of communication
+  integer, parameter :: comm_version=1 !< The style of communication
   !! between the model and empire.
   !! 
   !! - 1 = MPI SEND/RECV pairs between a single model process (single
@@ -85,12 +86,11 @@ module comms
   !! - 3 = MPI SEND/RECV pairs between multiple model processes and
   !! the same parallel process disribution in EMPIRE
   !! 
-  !! - 4 = MODEL AS A SUBROUTINE OF EMPIRE @todo IMPLEMENT THIS
-  !! Currently not working
+  !! - 4 = MODEL AS A SUBROUTINE OF EMPIRE @todo Fully document how
+  !! to specify the model_as_subroutine calls in src/user/model 
   !!
   !! - 5 = Similar to 2, but with multiple ensemble members for each
-  !! model process (TOMCAT CASE) @todo IMPLEMENT THIS
-  !! Currently not working
+  !! model process (TOMCAT CASE) 
 contains
 
   subroutine allocate_data
@@ -583,7 +583,6 @@ contains
 
   !> subroutine to initialise empire communicators when the model is
   !! to be a subroutine itself
-  !> @todo implement this
   subroutine initialise_mpi_v4
     use pf_control
     use sizes
@@ -689,7 +688,6 @@ contains
 
   !> subroutine to initialise empire communication pattern similarly
   !! to v2 but with multiple ensemble members per model process
-  !> @todo implement and test this
   subroutine initialise_mpi_v5
     use pf_control
     use sizes
