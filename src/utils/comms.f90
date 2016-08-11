@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2016-08-11 12:26:20 pbrowne>
+!!! Time-stamp: <2016-08-11 12:28:49 pbrowne>
 !!!
 !!!    Module and subroutine to intitalise EMPIRE coupling to models
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -657,7 +657,7 @@ contains
 
     !set the da communicator:
     pf_mpi_comm = MPI_COMM_WORLD
-
+    pf_ens_comm = MPI_COMM_WORLD
     
     ! count the number of particles associated with this process
     cnt = final_ptcl-first_ptcl+1
@@ -887,7 +887,7 @@ contains
        end do
     end if    
 
-
+    pf_ens_comm = pf_mpi_comm
     pf%particles = particles+1
     pf%count = cnt
     pf%nens = nens
