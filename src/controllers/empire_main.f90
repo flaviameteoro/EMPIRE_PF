@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2016-07-29 14:52:24 pbrowne>
+!!! Time-stamp: <2016-08-11 14:09:35 pbrowne>
 !!!
 !!!    The main program to run EMPIRE
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -33,7 +33,7 @@
 
 !> the main program
 !!
-program empire
+program empire_main
   use output_empire
   use timestep_data
   use comms
@@ -215,6 +215,6 @@ program empire
   
   call close_emp_o
 
-end program empire
+end program empire_main
 
 

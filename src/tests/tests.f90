@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-10-13 13:37:52 pbrowne>
+!!! Time-stamp: <2016-08-15 19:32:47 pbrowne>
 !!!
 !!!    Collection of subroutines to perform checks of user supplied routines
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -969,8 +969,8 @@ subroutine b_tests()
   use pf_control
   implicit none
   integer, parameter :: rk = kind(1.0d0)
-  real(kind=rk), dimension(state_dim) :: a,s,q,qt,w,e
-  real(kind=rk), dimension(state_dim,10) :: aa,ss,qq,qqt,ww,ee
+  real(kind=rk), dimension(state_dim) :: a,s,q,qt,w
+  real(kind=rk), dimension(state_dim,10) :: aa,qq,qqt,ww
   real(kind=rk) :: dnrm2,rr
   real(kind=rk), parameter :: pass = 1.0d-15
   real(kind=rk), parameter :: warn = 1.0d-13

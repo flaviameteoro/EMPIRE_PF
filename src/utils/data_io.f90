@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2016-07-29 16:31:03 pbrowne>
+!!! Time-stamp: <2016-08-15 19:31:28 pbrowne>
 !!!
 !!!    Collection of subroutines to deal with i/o
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -154,30 +154,34 @@ subroutine output_from_pf
   integer :: ios,particle,mpi_err
   character(9) :: filename
 
-  if(pf%timestep .eq. 0) then
-     write(filename,'(A,i2.2)') 'pf_out_',pfrank
-     open(68,file=filename,iostat=ios,action='write',status='replace')
-     if(ios .ne. 0)  then
-        write(*,*) 'PARTICLE FILTER DATA ERROR!!!!! Cannot open file pf_out'
-        write(*,*) 'Very strange that I couldnt open it. Im going to stop now.'
-        stop
-     end if
 
+  if(pf%timestep .eq. 0) then
+
+     if(pf%output_weights) then
+        write(filename,'(A,i2.2)') 'pf_out_',pfrank
+        open(68,file=filename,iostat=ios,action='write',status='replace')
+        if(ios .ne. 0)  then
+           write(*,*) 'PARTICLE FILTER DATA ERROR!!!!! Cannot open file pf_out'
+           write(*,*) 'Very strange that I couldnt open it. Im going to stop now.'
+           stop
+        end if
+     end if !end if output_weights
      call read_matrix_pf_information
   end if
-!  print*,'output: ',pf%timestep,pf%weight
-!  write(68,*) pf%timestep,pf%particles,pf%weight(:)
-  write(68,'(i6.6,A)',advance='no') pf%timestep,' '
-  do ios = 1,pf%count-1
-     write(68,'(i6.6,A,e21.15,A)',advance='no') pf%particles(ios),' ',pf&
-          &%weight(pf%particles(ios)),' '
-  end do
-  write(68,'(i6.6,A,e21.15)',advance='yes') pf%particles(pf%count),' ',pf&
-          &%weight(pf%particles(pf%count))
-  call flush(68)
-!  if(pf%timestep .eq. pf%time_obs*pf%time_bwn_obs) close(68)
-  if(TSdata%completed_timesteps .eq. TSdata%total_timesteps) close(68)  
 
+  if(pf%output_weights) then
+     write(68,'(i6.6,A)',advance='no') pf%timestep,' '
+     do ios = 1,pf%count-1
+        write(68,'(i6.6,A,e21.15,A)',advance='no') pf%particles(ios),' ',pf&
+             &%weight(pf%particles(ios)),' '
+     end do
+     write(68,'(i6.6,A,e21.15)',advance='yes') pf%particles(pf%count),' ',pf&
+          &%weight(pf%particles(pf%count))
+     call flush(68)
+
+     if(TSdata%completed_timesteps .eq. TSdata%total_timesteps) close(68)  
+  end if !end if output_weights
+     
   if(pf%use_mean .and. pf_ens_rank .eq. 0) then
      if(pf%timestep .eq. 0) then
         open(61,file='pf_mean',iostat=ios,action='write',status='replace')
@@ -216,7 +220,7 @@ subroutine output_from_pf
      call matrix_pf_output(npfs-1,pf_mpi_comm,state_dim,cnt,pf%psi&
           &,pf%timestep,TSData%is_analysis)
   end if
-
+  
 end subroutine output_from_pf
 
 !> subroutine to save the state vector to a named file

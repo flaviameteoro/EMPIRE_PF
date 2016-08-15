@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2016-07-29 17:22:18 pbrowne>
+!!! Time-stamp: <2016-08-15 19:28:34 pbrowne>
 !!!
 !!!    module to hold all the information to control the the main program
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -60,6 +60,7 @@ module pf_control
      logical :: use_talagrand !< switch if true outputs rank
      !!histograms. See \link histogram_data::load_histogram_data
      !!load_histogram_data \endlink for details.
+     logical :: output_weights      !< switch if true outputs ensemble weights
      logical :: use_mean      !< switch if true outputs ensemble mean
      logical :: use_var       !< switch if true outputs ensemble variance
      logical :: use_traj      !< switch if true outputs trajectories
@@ -181,6 +182,7 @@ contains
     !! - \link pf_control::pf_control_type::use_traj use_traj\endlink
     !! - \link pf_control::pf_control_type::use_rmse use_rmse\endlink
     !! - \link pf_control::pf_control_type::use_ens_rmse use_ens_rmse\endlink
+    !! - \link pf_control::pf_control_type::output_weights output_weights\endlink
     !!
     !! 250 Character string:
     !! - \link pf_control::pf_control_type::rmse_filename rmse_filename\endlink
@@ -202,7 +204,7 @@ contains
       real(kind=kind(1.0d0)) :: len=-1.0d0
       real(kind=kind(1.0D0)) :: keep
       logical :: use_talagrand,use_mean,use_var,use_traj&
-           &,use_rmse,use_ens_rmse
+           &,use_rmse,use_ens_rmse,output_weights
       character(2) :: filter='++'
       character(1) :: init='+'
       character(250) :: rmse_filename='rmse'
@@ -219,6 +221,7 @@ contains
       &rho,&
       &len,&
       &use_talagrand,use_mean,use_var,use_traj,use_rmse,use_ens_rmse,&
+      &output_weights,&
       &filter,&
       &init,&
       &rmse_filename
@@ -232,6 +235,7 @@ contains
       use_traj = .false.
       use_rmse = .false.
       use_ens_rmse = .false.
+      output_weights=.false.
 
 
       inquire(file='pf_parameters.dat',exist=file_exists)
@@ -323,7 +327,12 @@ contains
       if(use_mean) then
          print*,'going to output ensemble mean'
       end if
-         
+
+      if(output_weights) then
+         print*,'going to output ensemble weights'
+      end if
+
+      
       if(use_traj) then
          print*,'going to output trajectories'
       end if
@@ -417,7 +426,8 @@ contains
       pf%use_traj = use_traj
       pf%use_rmse = use_rmse
       pf%use_ens_rmse = use_ens_rmse
-
+      pf%output_weights = output_weights
+      
       !check for specific things we can't do if running the truth
       if(pf%gen_data) then
          pf%gen_Q = .false.
