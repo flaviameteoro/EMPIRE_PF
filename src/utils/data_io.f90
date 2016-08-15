@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2016-08-15 19:31:28 pbrowne>
+!!! Time-stamp: <2016-08-15 19:54:57 pbrowne>
 !!!
 !!!    Collection of subroutines to deal with i/o
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -141,7 +141,6 @@ end subroutine save_truth
 
 
 !>subroutine to output data from the filter
-!! @todo only output pf_out_?? if selected
 subroutine output_from_pf
   use timestep_data
   use matrix_pf
