@@ -44,6 +44,10 @@ This feature can be used to suppress output from EMPIRE STDOUT.
 
 See \link output_empire::open_emp_o open_emp_o \endlink for more information.
 
+\section outputweights Outputting ensemble member weights
+
+This is controlled by \link pf_control::pf_control_type::output_weights output_weights \endlink in \link pf_control::parse_pf_parameters empire.nml \endlink. By default the weights will not be output. If set to true, this will create a number of files named "pf_out_??" where ?? will refer to the rank of the empire process on pf_mpi_comm. Within that file, the timestep, particle number and the negative log of the weight will be output. Note that these weights may not be normalised.
+
 \section rankhistograms Outputting rank histograms
 
 This is controlled by \link pf_control::pf_control_type::use_talagrand use_talagrand \endlink in \link pf_control::parse_pf_parameters empire.nml \endlink  and for more information see \link histogram_data::load_histogram_data load_histogram_data \endlink.

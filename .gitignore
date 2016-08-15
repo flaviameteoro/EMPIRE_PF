@@ -6,6 +6,7 @@ obs/*.o
 obs/*.mod
 bin/*
 run/*
+rundirectory/
 *~
 */*~
 */*/*~

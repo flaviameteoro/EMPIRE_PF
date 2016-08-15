@@ -48,7 +48,7 @@ mpirun --output-filename truth -np 1 ../bin/lorenz96 : -np 1 ../bin/empire
 ls obs*
 
 #modify the empire.nml file to run a stochastic ensemble
-sed -i "s/filter.*/filter='SE'/g" empire.nml
+sed -i "s/filter.*/filter='SE',/g" empire.nml
 sed -i "/gen_data/d" empire.nml
 
 #look at the empire.nml file
@@ -61,7 +61,7 @@ sleep 10
 mpirun --output-filename stoch -np 32 ../bin/lorenz96 : -np 4 ../bin/empire
 
 #modify the empire.nml file to run the LETKF
-sed -i "s/filter.*/filter='LE'/g" empire.nml
+sed -i "s/filter.*/filter='LE',/g" empire.nml
 
 #look at the empire.nml file
 cat empire.nml
