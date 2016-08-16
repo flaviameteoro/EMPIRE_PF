@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2016-08-16 14:57:26 pbrowne>
+!!! Time-stamp: <2016-08-16 16:27:07 pbrowne>
 !!!
 !!!    Module and subroutine to intitalise EMPIRE coupling to models
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -29,7 +29,34 @@
 !> Module containing EMPIRE coupling data
 !! @todo Need to see what happens if some process has no observations
 !! in comms_v3
+!! \section comms_comm_version comm_version
+!! The integer parameter comm_version that is defined in @ref
+!! comm_version.f90 defines the style of communication pattern used
+!! between the model and empire. There are currently 5 different
+!! patterns implemented:
+!!
+!! 
+!! - 1 = MPI SEND/RECV pairs between a single model process (single
+!! EMPIRE process per ensemble member)
+!!
+!! - 2 = MPI GATHERV/SCATTERV between (possibly) multiple model processes
+!! (single EMPIRE process per ensemble member)
+!!
+!! - 3 = MPI SEND/RECV pairs between multiple model processes and
+!! the same parallel process disribution in EMPIRE
+!! 
+!! - 4 = MODEL AS A SUBROUTINE OF EMPIRE @todo Fully document how
+!! to specify the model_as_subroutine calls in src/user/model 
+!!
+!! - 5 = Similar to 2, but with multiple ensemble members for each
+!! model process (TOMCAT CASE) 
+!!
+!! For more information, see the pages @ref communication_methods and
+!! @ref communicators for more information.
+
 module comms
+  use communicator_version
+ 
   integer :: CPL_MPI_COMM !< the communicator between the empire
   !< codes and the model master nodes
   integer :: world_rank !< the rank of this process on MPI_COMM_WORLD
@@ -74,23 +101,6 @@ module comms
                             !! for empire v3
   integer :: pf_member_size !< size of pf_member_comm
                             !! for empire v3
-  integer, parameter :: comm_version=1 !< The style of communication
-  !! between the model and empire.
-  !! 
-  !! - 1 = MPI SEND/RECV pairs between a single model process (single
-  !! EMPIRE process per ensemble member)
-  !!
-  !! - 2 = MPI GATHERV/SCATTERV between (possibly) multiple model processes
-  !! (single EMPIRE process per ensemble member)
-  !!
-  !! - 3 = MPI SEND/RECV pairs between multiple model processes and
-  !! the same parallel process disribution in EMPIRE
-  !! 
-  !! - 4 = MODEL AS A SUBROUTINE OF EMPIRE @todo Fully document how
-  !! to specify the model_as_subroutine calls in src/user/model 
-  !!
-  !! - 5 = Similar to 2, but with multiple ensemble members for each
-  !! model process (TOMCAT CASE) 
 contains
 
   subroutine allocate_data

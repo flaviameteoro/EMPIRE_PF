@@ -4,7 +4,7 @@
 
 
 \author Philip A. Browne <a href="mailto:p.browne@reading.ac.uk">p.browne@reading.ac.uk</a>
-\date Time-stamp: <2016-08-16 14:20:42 pbrowne>
+\date Time-stamp: <2016-08-16 16:37:57 pbrowne>
 
 \b Contributors
  - Mengbin Zhu - zhumengbin @ gmail.com
@@ -83,6 +83,8 @@ To simply make the html version of the documentation (if pdflatex is not availab
 \section Custom Customising for specific models
 
 <em>This is where the science and all the effort should happen!!</em>
+
+First, the communication version that one wishes to use should be selected. This is done by setting the parameter \link comms::comm_version comm_version \endlink in @ref comm_version.f90 . This will define how the state vector is passed between empire and the model and how it is distributed over MPI processes. See @ref communication_methods for more details.
 
 The file model_specific.f90 should be editted for the specific model which you wish to use. This contains a number of subroutines which need to be adapted for the model and the observation network. We list these subsequently.
 

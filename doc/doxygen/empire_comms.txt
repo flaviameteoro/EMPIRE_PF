@@ -1,6 +1,6 @@
 /*! \page communication_methods Communication Methods
 
-EMPIRE has currently 3 different standards for communicating with models. Each method has various advantages and disadvantages. This is changed by modifying the parameter \link comms::comm_version comm_version \endlink in comms.f90.
+EMPIRE has currently 5 different standards for communicating with models. Each method has various advantages and disadvantages. This is changed by modifying the parameter \link comms::comm_version comm_version \endlink in comm_version.f90.
 
 Here we list some particularities of each method, before summarising in the table below.
 
@@ -50,7 +50,9 @@ Ease of model specific implementations | easiest | easy | hard
 
 
 \section Version4 EMPIRE communication version 4
-Here the model is a directly a subroutine of EMPIRE. This may be useful for toy models. Currently this is a development task and is not fully implemented.
+Here the model is a directly a subroutine of EMPIRE. This may be useful for toy models.
+
+The disadvantage of this is that, for models of any complexity, it will be next to impossible to turn them into a subroutine. However it avoids using MPI communication so should be as efficient as possible.
 
 \section Version5 EMPIRE communication version 5
 Here the communication is similar to that on version 2, however each instance of the model can run multiple ensemble members. This is designed specifically for use with <a href="https://en.wikipedia.org/wiki/TOMCAT/SLIMCAT">TOMCAT</a>
@@ -62,12 +64,14 @@ Here the communication is similar to that on version 2, however each instance of
 /*! \page communicators EMPIRE communicators
     On this page we descibe the MPI communicators used within the EMPIRE codes to communicate within the data assimilation processes.
 
-\section comms_v1_2 Versions 1, 2 and 5
+\section comms_v1_2 Versions 1, 2, 4 and 5
 
 For comms versions 1 and 2, there is only 1 communicator for this: pf_mpi_comm
 \image html version_1_and_2.svg
 \image latex version_1_and_2.pdf "pf_mpi_comm" width=10cm
 
+- pf_mpi_comm is undefined, but its size is set to 1
+- pf_ens_comm is set to pf_mpi_comm
 
 \section comms_v3 Version 3
 For comms version 3, there are 3 communicators:
@@ -77,8 +81,5 @@ For comms version 3, there are 3 communicators:
 
 \image html version_3.svg
 \image latex version_3.pdf "version 3 communicators" width=15cm
-
-\section comms_v4 Version 4
-As yet unknown what this should look like as we are still developing it.
 
 */
