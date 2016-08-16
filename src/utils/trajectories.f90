@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2016-05-31 10:27:24 pbrowne>
+!!! Time-stamp: <2016-08-16 15:38:29 pbrowne>
 !!!
 !!!    Subroutine to output trajectories of state variables
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -43,6 +43,7 @@ module traj_data
     !! and the following K integers are the index in the state
     !! dimension for which the trajectories are required.    
     subroutine setup_traj
+      use output_empire, only : unit_traj_read
       use comms
       use sizes, only : state_dim_g
       logical :: dir_e,file_e
@@ -71,13 +72,13 @@ module traj_data
          stop '-560'
       end if
 
-      open(12,file=traj_list,action='read')
-      read(12,*) trajn
+      open(unit_traj_read,file=traj_list,action='read')
+      read(unit_traj_read,*) trajn
       
       allocate(trajvar(trajn))
 
       do i = 1,trajn
-         read(12,*) trajvar(i)
+         read(unit_traj_read,*) trajvar(i)
          if(trajvar(i) .le. 0) then
             print*,'EMPIRE ERROR -561: trajectory variable ',i,' less &
                  &than 0'
@@ -93,7 +94,7 @@ module traj_data
          end if
       end do
 
-      close(12)
+      close(unit_traj_read)
 
 
       if(comm_version .eq. 3) then
@@ -142,6 +143,7 @@ end module traj_data
 !> subroutine to output trajectories
 !!
 subroutine trajectories
+  use output_empire, only : unit_traj_write
   use traj_data
   use pf_control
   use sizes
@@ -162,12 +164,12 @@ subroutine trajectories
            write(filename,'(A,i7.7,A,i5.5)') 'traj/var',trajvar(j),'particle',particle
         end if
         if(pf%timestep .eq. 0) then
-           open(41,file=filename,action='write',status='replace')
+           open(unit_traj_write,file=filename,action='write',status='replace')
         else
-           open(41,file=filename,action='write',status='old',position='append')
+           open(unit_traj_write,file=filename,action='write',status='old',position='append')
         end if
-        write(41,'(es22.15)') pf%psi(trajvar(j),i)
-        close(41)
+        write(unit_traj_write,'(es22.15)') pf%psi(trajvar(j),i)
+        close(unit_traj_write)
         
      end do
   end do

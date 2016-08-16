@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2016-05-31 10:26:17 pbrowne>
+!!! Time-stamp: <2016-08-16 15:48:17 pbrowne>
 !!!
 !!!    subroutine to simply move the model forward in time one timestep
 !!!    then add model error
@@ -31,6 +31,7 @@
 !> PAB 21-05-2013
 
 subroutine stochastic_model
+  use output_empire, only : emp_o
   use timestep_data
   use pf_control
   use Sizes
@@ -73,8 +74,8 @@ subroutine stochastic_model
         stop '-558'
      end if
 
-     write(6,*) 'generating the data'
-     call flush(6)
+     write(emp_o,*) 'generating the data'
+     call flush(emp_o)
 
      
      !get model equivalent of observations

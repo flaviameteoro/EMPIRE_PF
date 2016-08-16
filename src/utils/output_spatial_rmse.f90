@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-12-21 15:01:23 pbrowne>
+!!! Time-stamp: <2016-08-16 15:14:43 pbrowne>
 !!!
 !!!    Subroutine to output RMSE
 !!!    Copyright (C) 2015 Philip A. Browne
@@ -26,7 +26,8 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !> subroutine to output RMSEs
 !>
-subroutine output_rmse(mean)
+subroutine output_spatial_rmse(mean)
+  use output_empire, only : unit_spatial_rmse
   use pf_control
   use timestep_data
   use sizes
@@ -57,14 +58,14 @@ subroutine output_rmse(mean)
      case(3)
         write(filename,'(A,A,i0)') trim(pf%rmse_filename),'.',pf_ens_rank
      case default    
-        print*,'ERROR in output_rmse: comm_version ',comm_version,' &
+        print*,'ERROR in output_spatial_rmse: comm_version ',comm_version,' &
              &is not supported'
         print*,'Stopping'
         stop '-23'
      end select
 
      
-     open(55,file=trim(filename),iostat=ios,action='write',status='replace')
+     open(unit_spatial_rmse,file=trim(filename),iostat=ios,action='write',status='replace')
      if(ios .ne. 0)  then
         write(*,*) 'PARTICLE FILTER DATA ERROR!!!!! Cannot open &
              &file ',filename
@@ -74,7 +75,7 @@ subroutine output_rmse(mean)
      end if
   end if
   
-  write(55,'(es24.16)') rmse
+  write(unit_spatial_rmse,'(es24.16)') rmse
   
-  if(TSdata%completed_timesteps .eq. TSdata%total_timesteps) close(55)
-end subroutine output_rmse
+  if(TSdata%completed_timesteps .eq. TSdata%total_timesteps) close(unit_spatial_rmse)
+end subroutine output_spatial_rmse

@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2016-08-16 12:37:09 pbrowne>
+!!! Time-stamp: <2016-08-16 14:57:26 pbrowne>
 !!!
 !!!    Module and subroutine to intitalise EMPIRE coupling to models
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -596,6 +596,7 @@ contains
   subroutine initialise_mpi_v4
     use pf_control
     use sizes
+    use output_empire, only : unit_nml
     implicit none
     include 'mpif.h'
 
@@ -624,13 +625,13 @@ contains
     
     inquire(file='pf_parameters.dat',exist=file_exists)
     if(file_exists) then
-       open(32,file='pf_parameters.dat',iostat=ios,action='read'&
+       open(unit_nml,file='pf_parameters.dat',iostat=ios,action='read'&
             &,status='old')
        if(ios .ne. 0) stop 'Cannot open pf_parameters.dat'
     else
        inquire(file='empire.nml',exist=file_exists)
        if(file_exists) then
-          open(32,file='empire.nml',iostat=ios,action='read'&
+          open(unit_nml,file='empire.nml',iostat=ios,action='read'&
                &,status='old')
           if(ios .ne. 0) stop 'Cannot open empire.nml'
        else
@@ -641,8 +642,8 @@ contains
     ! set nens to be negative as a default value
     nens = -1
     !now read it in
-    read(32,nml=comms_v4) 
-    close(32)
+    read(unit_nml,nml=comms_v4) 
+    close(unit_nml)
 
     if( nens .lt. 1 ) then
        print*,'EMPIRE ERROR: __________initialise_mpi_v4_____________'

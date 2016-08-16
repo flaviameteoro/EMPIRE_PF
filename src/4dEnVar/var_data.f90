@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-10-14 11:55:42 pbrowne>
+!!! Time-stamp: <2016-08-16 15:44:47 pbrowne>
 !!!
 !!!    module to store data for variational methods
 !!!    Copyright (C) 2015  Philip A. Browne
@@ -96,12 +96,13 @@ module var_data
 contains
   !> subroutine to ensure vardata is ok
   subroutine set_var_controls
-    !    integer :: ios
-    write(6,'(A)') 'Opening namelist file to read var_params'
+    use output_empire, only : emp_o
+
+    write(emp_o,'(A)') 'Opening namelist file to read var_params'
 
     call parse_vardata
 
-    write(6,'(A)') 'var_params successfully read from nml file to control pf code.'
+    write(emp_o,'(A)') 'var_params successfully read from nml file to control pf code.'
 
   end subroutine set_var_controls
 
@@ -136,6 +137,7 @@ contains
   !! - \link var_data::var_control_type::opt_method opt_method\endlink
   !!
   subroutine parse_vardata
+    use output_empire, only : unit_vardata
     implicit none
     character(*), parameter :: filename='vardata.nml'
     character(*), parameter :: filename2='empire.nml'
@@ -168,11 +170,11 @@ contains
 
 
 
-    open(32,file=filename,iostat=ios,action='read',status='old')
+    open(unit_vardata,file=filename,iostat=ios,action='read',status='old')
     if(ios .ne. 0) then
        write(*,*) 'Cannot open ',filename
        
-       open(32,file=filename2,iostat=ios,action='read',status='old')
+       open(unit_vardata,file=filename2,iostat=ios,action='read',status='old')
        
        if(ios .ne. 0) then
           write(*,*) 'Cannot open ',filename2
@@ -180,7 +182,7 @@ contains
           stop '-65'
        end if
        
-       read(32,nml=var_params,iostat=ios) 
+       read(unit_vardata,nml=var_params,iostat=ios) 
        if(ios .ne. 0) then
           write(*,*) 'var_data ERROR: no var_params namelist found in &
                &',filename,' or ',filename2,'. STOPPING.'
@@ -188,10 +190,10 @@ contains
        end if
        
     else
-       read(32,nml=var_params,iostat=ios)
+       read(unit_vardata,nml=var_params,iostat=ios)
        if(ios .ne. 0) then
-          close(32)
-          open(32,file=filename2,iostat=ios,action='read',status='old')
+          close(unit_vardata)
+          open(unit_vardata,file=filename2,iostat=ios,action='read',status='old')
           if(ios .ne. 0) then
              write(*,*) 'var_data ERROR: no var_params namelist found &
                   &in &              
@@ -199,7 +201,7 @@ contains
              stop '-67'
           end if
 
-          read(32,nml=var_params,iostat=ios)
+          read(unit_vardata,nml=var_params,iostat=ios)
           if(ios .ne. 0) then
              write(*,*) 'var_data ERROR: no var_params namelist found in &
                   &',filename,' or ',filename2,'. STOPPING.'
@@ -207,7 +209,7 @@ contains
           end if
        end if
     end if
-    close(32)
+    close(unit_vardata)
 
 
 

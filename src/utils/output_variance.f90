@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2016-08-16 13:51:49 pbrowne>
+!!! Time-stamp: <2016-08-16 15:20:28 pbrowne>
 !!!
 !!!    Subroutine to output RMSE
 !!!    Copyright (C) 2015 Philip A. Browne
@@ -27,6 +27,7 @@
 !> subroutine to output ensemble variance
 !>
 subroutine output_variance(mean)
+  use output_empire, only : unit_variance
   use pf_control
   use timestep_data
   use sizes
@@ -59,7 +60,7 @@ subroutine output_variance(mean)
   
      if(pf%timestep .eq. 0) then
         write(filename,'(A,i0)') 'ensemble_variance_',pf_member_rank
-        open(56,file=trim(filename),iostat=ios,action='write',status='replace')
+        open(unit_variance,file=trim(filename),iostat=ios,action='write',status='replace')
         if(ios .ne. 0)  then
            write(*,*) 'PARTICLE FILTER DATA ERROR!!!!! Cannot open &
                 &file ',filename
@@ -69,9 +70,9 @@ subroutine output_variance(mean)
         end if
      end if
 
-     write(56,*) variance
+     write(unit_variance,*) variance
 
-     if(TSdata%completed_timesteps .eq. TSdata%total_timesteps) close(56)
+     if(TSdata%completed_timesteps .eq. TSdata%total_timesteps) close(unit_variance)
      
   end if !end if master process
 end subroutine output_variance

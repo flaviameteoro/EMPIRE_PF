@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-09-10 10:42:48 pbrowne>
+!!! Time-stamp: <2016-08-16 15:29:45 pbrowne>
 !!!
 !!!    Subroutine to give output diagnositics such as rank histograms
 !!!    and trajectories
@@ -29,6 +29,7 @@
 !> Subroutine to give output diagnositics such as rank histograms  
 !!    @todo test in anger with empire version 3. will probably segfault
 subroutine diagnostics
+  use output_empire, only : unit_hist_write,unit_hist_readt,unit_hist_readp
   use timestep_data
   use pf_control
   use sizes
@@ -60,13 +61,13 @@ subroutine diagnostics
               write(filename,'(A,i7.7,A,i5.5,A,i0)') 'hist/timestep',&
                 &pf%timestep,'particle',pf%particles(particle),'.',pf_member_rank
            end if
-           open(12,file=filename,action='write',status='replace',form='unforma&
+           open(unit_hist_write,file=filename,action='write',status='replace',form='unforma&
                 &tted',access='direct',recl=length)
 
            do i = 1,rhl_n
-              write(12,rec=i) pf%psi(rank_hist_list(i),particle)
+              write(unit_hist_write,rec=i) pf%psi(rank_hist_list(i),particle)
            end do
-           close(12)
+           close(unit_hist_write)
         end do
 
 
@@ -93,15 +94,15 @@ subroutine diagnostics
                          &pf%timestep,'truth.',pf_member_rank
                  end if
 
-                 open(12,file=filename,action='read',status='old',form='unforma&
+                 open(unit_hist_readt,file=filename,action='read',status='old',form='unforma&
                       &tted',access='direct',recl=length)
 
                  do i = 1,rhl_n
 
-                    read(12,rec=i) y(i)
+                    read(unit_hist_readt,rec=i) y(i)
 
                  end do
-                 close(12)
+                 close(unit_hist_readt)
 
                  do particle = 1,pf%nens
 
@@ -114,13 +115,12 @@ subroutine diagnostics
                             &%particles(particle),'.',pf_member_rank
                     end if
                     
-                    open(13, file=filename,action='read',status='old',form='un&
-                         &for&
-                         &matted',access='direct',recl=length)
+                    open(unit_hist_readp, file=filename,action='read',status='old',&
+                    form='unformatted',access='direct',recl=length)
                     do i = 1,rhl_n
-                       read(13,rec=i) HHpsi(i,particle)
+                       read(unit_hist_readp,rec=i) HHpsi(i,particle)
                     end do
-                    close(13)
+                    close(unit_hist_readp)
                  end do
 
 
@@ -180,11 +180,11 @@ subroutine diagnostics
            if(pfrank .eq. 0) then
               do i = 1,rhn_n
                  write(filename,'(A,i0)') 'histogram_',i
-                 open(17,file=filename,action='write',status='replace')
+                 open(unit_hist_write,file=filename,action='write',status='replace')
                  do j = 1,pf%nens+1
-                    write(17,'(i8.8)') reduced_talagrand(i,j)
+                    write(unit_hist_write,'(i8.8)') reduced_talagrand(i,j)
                  end do
-                 close(17)
+                 close(unit_hist_write)
               end do
               !now output the image
            end if
@@ -210,13 +210,13 @@ subroutine diagnostics
               write(filename,'(A,i7.7,A,i0)') 'hist/timestep',pf&
                    &%timestep,'truth.',pf_member_rank
            end if
-           open(12,file=filename,action='write',status='replace',form='unforma&
+           open(unit_hist_write,file=filename,action='write',status='replace',form='unforma&
                 &tted',access='direct',recl=length)
 
            do i = 1,rhl_n
-              write(12,rec=i) pf%psi(rank_hist_list(i),particle)
+              write(unit_hist_write,rec=i) pf%psi(rank_hist_list(i),particle)
            end do
-           close(12)
+           close(unit_hist_write)
         end do
      end if
   end if

@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2016-08-16 14:19:25 pbrowne>
+!!! Time-stamp: <2016-08-16 15:49:32 pbrowne>
 !!!
 !!!    module to hold all the information to control the the main program
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -119,21 +119,22 @@ module pf_control
   end type pf_control_type
   type(pf_control_type), save :: pf !< the derived data type holding all controlling data
 
-
+  
 contains
   !> subroutine to ensure pf_control data is ok
   subroutine set_pf_controls
-
-      write(6,'(A)') 'Opening empire namelist file:'
-
-      call parse_pf_parameters
-
-      pf%efac = 0.001/pf%nens
-      write(6,'(A)') 'empire namelist successfully read to control pf code.'
-      call flush(6)
-       
-
-    end subroutine set_pf_controls
+    use output_empire, only : emp_o
+    
+    write(emp_o,'(A)') 'Opening empire namelist file:'
+    
+    call parse_pf_parameters
+    
+    pf%efac = 0.001/pf%nens
+    write(emp_o,'(A)') 'empire namelist successfully read to control pf code.'
+    call flush(emp_o)
+    
+    
+  end subroutine set_pf_controls
 
 
     !>subroutine to read the namelist file and save it to pf datatype
@@ -191,6 +192,7 @@ contains
 
     subroutine parse_pf_parameters
       use var_data
+      use output_empire, only : unit_nml
       implicit none
       integer :: ios
 
@@ -241,13 +243,13 @@ contains
 
       inquire(file='pf_parameters.dat',exist=file_exists)
       if(file_exists) then
-         open(32,file='pf_parameters.dat',iostat=ios,action='read'&
+         open(unit_nml,file='pf_parameters.dat',iostat=ios,action='read'&
               &,status='old')
          if(ios .ne. 0) stop 'Cannot open pf_parameters.dat'
       else
          inquire(file='empire.nml',exist=file_exists)
          if(file_exists) then
-            open(32,file='empire.nml',iostat=ios,action='read'&
+            open(unit_nml,file='empire.nml',iostat=ios,action='read'&
                  &,status='old')
             if(ios .ne. 0) stop 'Cannot open empire.nml'
          else
@@ -256,8 +258,8 @@ contains
          end if
       end if
          
-      read(32,nml=pf_params) 
-      close(32)
+      read(unit_nml,nml=pf_params) 
+      close(unit_nml)
 
       if(time_obs .gt. -1) then
          print*,'read time_obs = ',time_obs

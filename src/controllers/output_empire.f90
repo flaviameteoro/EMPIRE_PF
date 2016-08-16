@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-09-18 15:59:18 pbrowne>
+!!! Time-stamp: <2016-08-16 15:37:21 pbrowne>
 !!!
 !!!    Module that stores information about outputting from empire
 !!!    Copyright (C) 2015  Philip A. Browne
@@ -30,7 +30,39 @@
 Module output_empire
   implicit none
   integer,parameter :: emp_o=6 !< the output stream number
-
+  integer,parameter :: unit_nml=10 !< the unit number for reading empire.nml
+  integer,parameter :: unit_obs=11 !< the unit number for reading and
+                                   !! writing observations
+  integer,parameter :: unit_truth=12 !< the unit number for reading
+                                     !! and writing the truth
+  integer,parameter :: unit_weight=13 !< the unit number for writing
+                                      !! the ensemble weights
+  integer,parameter :: unit_mean=14 !< the unit number for writing
+                                    !! the ensemble mean
+  integer,parameter :: unit_state=15 !< the unit number for reading
+                                     !! and writing the state
+  integer,parameter :: unit_ens_rmse=16 !< the unit number for reading
+                                        !! and writing the ensemble rmse
+  integer,parameter :: unit_mat_tri=17 !< the unit number for outputing
+                                       !! triangular matrices
+  integer,parameter :: unit_spatial_rmse=18 !< the unit number for 
+                                            !! writing the spatial rmse
+  integer,parameter :: unit_variance=19 !< the unit number for outputing
+                                        !! the ensemble variance
+  integer,parameter :: unit_hist_read=20 !< the unit number for reading
+                                         !! histogram data
+  integer,parameter :: unit_hist_write=21 !< the unit number for writing
+                                          !! histogram data
+  integer,parameter :: unit_hist_readt=22 !< the unit number for reading
+                                          !! histogram truth data
+  integer,parameter :: unit_hist_readp=23 !< the unit number for reading
+                                          !! histogram particle data
+  integer,parameter :: unit_traj_read=24 !< the unit number for reading
+                                         !! trajectory data
+  integer,parameter :: unit_traj_write=24 !< the unit number for writing
+                                          !! trajectory data
+  integer,parameter :: unit_vardata=25 !< the unit number for reading vardata
+  
 contains
 
   !> subroutine to open the file for outputting
@@ -65,14 +97,14 @@ contains
 
     inquire(file=emp_out_name,exist=file_exists)
     if(file_exists) then
-       open(32,file=emp_out_name,iostat=ios,action='read'&
+       open(unit_nml,file=emp_out_name,iostat=ios,action='read'&
             &,status='old',form='formatted')
        if(ios .ne. 0) then
           print*,'Cannot open ',emp_out_name
           stop 'open_emp_o ERROR' 
        end if
-       read(32,nml=empire_output,iostat=ios)
-       close(32)
+       read(unit_nml,nml=empire_output,iostat=ios)
+       close(unit_nml)
        if(ios .ne. 0) basename ='emp.out'
     else
        basename = 'emp.out'

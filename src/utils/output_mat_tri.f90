@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-06-17 14:38:39 pbrowne>
+!!! Time-stamp: <2016-08-16 15:13:55 pbrowne>
 !!!
 !!!    Subroutine to output triangular matrix
 !!!    Copyright (C) 2015  Philip A. Browne
@@ -27,6 +27,7 @@
 
 !> subroutine to output triangluar matrix various formats
 subroutine output_mat_tri(n,A,filename,output_type)
+  use output_empire, only : unit_mat_tri
   implicit none
   integer, parameter :: rk = kind(1.0d0)
   integer, intent(in) :: n !< number of columns of matrix A
@@ -47,7 +48,7 @@ subroutine output_mat_tri(n,A,filename,output_type)
 
 
   real(kind=rk), dimension(n*(n+1)/2) :: Aout
-  integer :: outunit=99
+  integer :: outunit=unit_mat_tri
   logical :: opend
   character(11) :: fm
   integer :: err

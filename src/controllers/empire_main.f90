@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2016-08-11 14:09:35 pbrowne>
+!!! Time-stamp: <2016-08-16 15:51:57 pbrowne>
 !!!
 !!!    The main program to run EMPIRE
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -46,8 +46,8 @@ program empire_main
   real(kind=kind(1.0d0)) :: start_t,end_t
 
 
-  write(6,'(A)') 'PF: Starting PF code'
-  call flush(6)
+  write(emp_o,'(A)') 'PF: Starting PF code'
+  call flush(emp_o)
 
 
   !> set up EMPIRE coupling
@@ -73,7 +73,7 @@ program empire_main
 
   !> ensure random seed is set across mpi processes
   call random_seed_mpi(pfrank)
-  write(6,*) 'PF: starting to receive from model'
+  write(emp_o,*) 'PF: starting to receive from model'
 
 
 
@@ -87,8 +87,8 @@ program empire_main
       call perturb_particle(pf%psi(:,k))
   end do
 
-  write(6,*) 'PF: All models received in pf couple' 
-  call flush(6)
+  write(emp_o,*) 'PF: All models received in pf couple' 
+  call flush(emp_o)
 
   call output_from_pf
   if(pf%gen_data) call save_truth(pf%psi(:,1))
@@ -101,7 +101,7 @@ program empire_main
   
   !start the timestep loop
   do j=1,pf%time_obs
-     write(6,*) 'PF: observation counter = ',j
+     write(emp_o,*) 'PF: observation counter = ',j
      call timestep_data_set_obs_times(j,pf%timestep+pf%time_bwn_obs)
      call timestep_data_set_next_ob_time(pf%timestep+pf%time_bwn_obs)
 
@@ -133,7 +133,7 @@ program empire_main
            stop '-555'
         end select
         call timestep_data_set_completed(pf%timestep)
-        call flush(6)
+        call flush(emp_o)
         if(pf%gen_data) call save_truth(pf%psi(:,1))
         if(pf%use_traj) call trajectories
         if(pf%use_ens_rmse) call output_ens_rmse
@@ -141,12 +141,12 @@ program empire_main
      end do
            
      pf%timestep = pf%timestep + 1
-     write(6,*) 'starting the observation timestep'
+     write(emp_o,*) 'starting the observation timestep'
      call timestep_data_set_current(pf%timestep)
      call timestep_data_set_do_analysis
      call timestep_data_set_tau(pf%time_bwn_obs)
 
-     call flush(6)
+     call flush(emp_o)
 
      select case(pf%filter)
      case('EW')
@@ -175,8 +175,8 @@ program empire_main
      end select
      
      call timestep_data_set_completed(pf%timestep)
-     write(6,*) 'PF: timestep = ',pf%timestep, 'after observation analysis'
-     call flush(6)
+     write(emp_o,*) 'PF: timestep = ',pf%timestep, 'after observation analysis'
+     call flush(emp_o)
 
      if(pf%gen_data) call save_truth(pf%psi(:,1))
      if(pf%use_traj) call trajectories
@@ -187,8 +187,8 @@ program empire_main
      call verify_sizes
   end do
   call diagnostics
-  write(6,*) 'PF: finished the loop - now to tidy up'
-  call flush(6)
+  write(emp_o,*) 'PF: finished the loop - now to tidy up'
+  call flush(emp_o)
 
 
 
@@ -206,12 +206,12 @@ program empire_main
   
   call deallocate_pf
 
-  write(6,*) 'PF: finished deallocate_data - off to mpi_finalize'
-  call flush(6)
+  write(emp_o,*) 'PF: finished deallocate_data - off to mpi_finalize'
+  call flush(emp_o)
 
   call MPI_Finalize(mpi_err)
-  write(*,*) 'Program couple_pf terminated successfully.'
-  write(*,*) 'Time taken in running the model = ',end_t-start_t
+  write(emp_o,*) 'Program couple_pf terminated successfully.'
+  write(emp_o,*) 'Time taken in running the model = ',end_t-start_t
   
   call close_emp_o
 

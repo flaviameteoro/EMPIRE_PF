@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2016-07-29 17:04:38 pbrowne>
+!!! Time-stamp: <2016-08-16 15:10:09 pbrowne>
 !!!
 !!!    Subroutine to output RMSE
 !!!    Copyright (C) 2015 Philip A. Browne
@@ -27,6 +27,7 @@
 !> subroutine to output RMSEs
 !>
 subroutine output_ens_rmse()
+  use output_empire, only : unit_ens_rmse
   use pf_control
   use timestep_data
   use sizes
@@ -93,7 +94,7 @@ subroutine output_ens_rmse()
   
      !mse is now the rmse that we want. Time to output it
 
-     open(16,file=trim(filename),iostat=ios,action='write',status='replace'&
+     open(unit_ens_rmse,file=trim(filename),iostat=ios,action='write',status='replace'&
           &,form='formatted')
      if(ios .ne. 0)  then
         write(*,*) 'EMPIRE ERROR: CANNOT open file ',filename
@@ -101,8 +102,8 @@ subroutine output_ens_rmse()
              & now.'
         stop '-12'
      end if
-     write(16,*) mse
-     close(16)
+     write(unit_ens_rmse,*) mse
+     close(unit_ens_rmse)
      
 
   end if

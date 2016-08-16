@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-09-09 17:14:48 pbrowne>
+!!! Time-stamp: <2016-08-16 14:58:09 pbrowne>
 !!!
 !!!    module to deal with generating and outputting pf matrix
 !!!    Copyright (C) 2015 Philip A. Browne
@@ -57,6 +57,7 @@ module matrix_pf
 contains
   !> subroutine to read namelist to control this output
   subroutine read_matrix_pf_information
+    use output_empire, only : unit_nml
     implicit none
     character(30) :: prefix
     integer :: k=0
@@ -69,13 +70,13 @@ contains
 
     inquire(file='pf_parameters.dat',exist=file_exists)
     if(file_exists) then
-       open(32,file='pf_parameters.dat',iostat=ios,action='read'&
+       open(unit_nml,file='pf_parameters.dat',iostat=ios,action='read'&
             &,status='old')
        if(ios .ne. 0) stop 'Cannot open pf_parameters.dat'
     else
        inquire(file='empire.nml',exist=file_exists)
        if(file_exists) then
-          open(32,file='empire.nml',iostat=ios,action='read'&
+          open(unit_nml,file='empire.nml',iostat=ios,action='read'&
                &,status='old')
           if(ios .ne. 0) stop 'Cannot open empire.nml'
        else
@@ -84,8 +85,8 @@ contains
        end if
     end if
 
-    read(32,nml=mat_pf,iostat=ios) 
-    close(32)
+    read(unit_nml,nml=mat_pf,iostat=ios) 
+    close(unit_nml)
 
     if(ios .ne. 0) then
        print*,'mat_pf not found in namelist file.'

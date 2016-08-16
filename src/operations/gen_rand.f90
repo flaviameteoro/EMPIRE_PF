@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2016-04-10 10:36:24 pbrowne>
+!!! Time-stamp: <2016-08-16 15:47:33 pbrowne>
 !!!
 !!!    Collection of subroutines to make multidimensional random arrays
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -28,6 +28,7 @@ module random_number_controls
   character(10) :: normal_generator='random_d'
   contains
     subroutine set_random_number_controls
+      use output_empire, only : emp_o,unit_nml
       integer :: ios
       logical :: file_exists
       character(14) :: empire_namelist='empire.nml'
@@ -36,16 +37,16 @@ module random_number_controls
       
       inquire(file=empire_namelist,exist=file_exists)
       if(file_exists) then
-         open(32,file=empire_namelist,iostat=ios,action='read'&
+         open(unit_nml,file=empire_namelist,iostat=ios,action='read'&
               &,status='old',form='formatted')
          if(ios .ne. 0) then
             print*,'Cannot open ',empire_namelist
             stop 'open_emp_o ERROR' 
          end if
-         read(32,nml=random_number_controls,iostat=ios)
-         close(32)
+         read(unit_nml,nml=random_number_controls,iostat=ios)
+         close(unit_nml)
          if(ios .ne. 0) normal_generator='random_d'
-         write(6,*) 'random_number_controls: normal_generator read as: &
+         write(emp_o,*) 'random_number_controls: normal_generator read as: &
               &',normal_generator
       else
          normal_generator = 'random_d'

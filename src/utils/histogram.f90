@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-09-09 18:45:28 pbrowne>
+!!! Time-stamp: <2016-08-16 15:22:48 pbrowne>
 !!!
 !!!    Module to control what variables are used to generate rank histograms
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -71,6 +71,7 @@ contains
   !! \endverbatim
 
   subroutine load_histogram_data
+    use output_empire, only : unit_hist_read
     use comms
     use sizes
     implicit none
@@ -79,18 +80,18 @@ contains
     integer, allocatable, dimension(:) :: tempvar
 
 !    rhn_n = 9
-    open(2,file='variables_hist.dat',action='read',status='old')
-    read(2,'(i7.7)') rhn_n
+    open(unit_hist_read,file='variables_hist.dat',action='read',status='old')
+    read(unit_hist_read,'(i7.7)') rhn_n
     allocate(rank_hist_nums(rhn_n))
     do i = 1,rhn_n
-       read(2,'(i7.7)') rank_hist_nums(i)
+       read(unit_hist_read,'(i7.7)') rank_hist_nums(i)
     end do
     rhl_n = sum(rank_hist_nums)
     allocate(rank_hist_list(rhl_n))
     do i = 1,rhl_n
-       read(2,'(i7.7)') rank_hist_list(i)
+       read(unit_hist_read,'(i7.7)') rank_hist_list(i)
     end do
-    close(2)
+    close(unit_hist_read)
 
 
     if(comm_version .eq. 3) then

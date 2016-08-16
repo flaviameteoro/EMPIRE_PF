@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2016-08-16 14:20:42 pbrowne>
+!!! Time-stamp: <2016-08-16 15:08:45 pbrowne>
 !!!
 !!!    Collection of subroutines to deal with i/o
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -31,6 +31,7 @@
 !> @param[out] y The observation
 !! @param[in] t the current timestep
 subroutine default_get_observation_data(y,t)
+  use output_empire, only : unit_obs
   use timestep_data
   use pf_control
   use sizes
@@ -43,14 +44,14 @@ subroutine default_get_observation_data(y,t)
 
   write(filename,'(A,i7.7)') 'obs_ts_',TSData%next_ob_timestep
 
-  open(67,file=filename,iostat=ios,action='read',status='old',form='unformatted')
+  open(unit_obs,file=filename,iostat=ios,action='read',status='old',form='unformatted')
   if(ios .ne. 0)  then
      write(*,*) 'PARTICLE FILTER DATA ERROR!!!!! Cannot open file ',filename
      write(*,*) 'Check it exists. I need a lie down.'
      stop
   end if
-  read(67) y
-  close(67)
+  read(unit_obs) y
+  close(unit_obs)
 end subroutine default_get_observation_data
 
 !> Subroutine to save observation to a file              
@@ -58,7 +59,7 @@ end subroutine default_get_observation_data
 !! Uses pf%timestep to determine which observation to save   
 !> @param[in] y The observation
 subroutine save_observation_data(y)
-
+  use output_empire, only : unit_obs
   use pf_control
   use sizes
   implicit none
@@ -69,14 +70,14 @@ subroutine save_observation_data(y)
 
   write(filename,'(A,i7.7)') 'obs_ts_',pf%timestep
 
-  open(67,file=filename,iostat=ios,action='write',status='replace',form='unformatted')
+  open(unit_obs,file=filename,iostat=ios,action='write',status='replace',form='unformatted')
   if(ios .ne. 0)  then
      write(*,*) 'PARTICLE FILTER DATA ERROR!!!!! Cannot open file ',filename
      write(*,*) 'Very strange that I couldnt open it. Im going to stop now.'
      stop
   end if
-  write(67) y
-  close(67)
+  write(unit_obs) y
+  close(unit_obs)
 
 end subroutine save_observation_data
 
@@ -84,6 +85,7 @@ end subroutine save_observation_data
 !! \n                 
 !> @param[out] x The state vector
 subroutine get_truth(x)
+  use output_empire, only : unit_truth
   use timestep_data
   use pf_control
   use sizes
@@ -93,18 +95,18 @@ subroutine get_truth(x)
   integer :: ios
   if(pf%timestep .eq. 0) then
      print*,'opening pf_truth'
-     open(62,file='pf_truth',iostat=ios,action='read')
+     open(unit_truth,file='pf_truth',iostat=ios,action='read')
      if(ios .ne. 0)  then
         write(*,*) 'PARTICLE FILTER DATA ERROR!!!!! Cannot open file pf_truth'
         write(*,*) 'Very strange that I couldnt open it. Im going to stop now.'
         stop
      end if
   end if
-  read(62,*) x
-  call flush(62)
+  read(unit_truth,*) x
+  call flush(unit_truth)
   !if(pf%timestep .eq. pf%time_obs*pf%time_bwn_obs) then
   if(TSdata%completed_timesteps .eq. TSdata%total_timesteps) then
-     close(62)
+     close(unit_truth)
      print*,'closing pf_truth'
   end if
 end subroutine get_truth
@@ -113,6 +115,7 @@ end subroutine get_truth
 !! \n                 
 !> @param[in] x The state vector
 subroutine save_truth(x)
+  use output_empire, only : unit_truth,unit_mean
   use timestep_data
   use pf_control
   use sizes
@@ -122,18 +125,18 @@ subroutine save_truth(x)
   integer :: ios
   if(pf%timestep .eq. 0) then
      print*,'opening pf_truth'
-     open(62,file='pf_truth',iostat=ios,action='write',status='replace')
+     open(unit_truth,file='pf_truth',iostat=ios,action='write',status='replace')
      if(ios .ne. 0)  then
         write(*,*) 'PARTICLE FILTER DATA ERROR!!!!! Cannot open file pf_truth'
         write(*,*) 'Very strange that I couldnt open it. Im going to stop now.'
         stop
      end if
   end if
-  write(62,*) x
-  call flush(62)
+  write(unit_truth,*) x
+  call flush(unit_truth)
   !if(pf%timestep .eq. pf%time_obs*pf%time_bwn_obs) then
   if(TSdata%completed_timesteps .eq. TSdata%total_timesteps) then
-     close(62)
+     close(unit_truth)
      print*,'closing pf_truth'
   end if
 end subroutine save_truth
@@ -142,6 +145,7 @@ end subroutine save_truth
 
 !>subroutine to output data from the filter
 subroutine output_from_pf
+  use output_empire, only : unit_weight,unit_mean
   use timestep_data
   use matrix_pf
   use pf_control
@@ -158,7 +162,7 @@ subroutine output_from_pf
 
      if(pf%output_weights) then
         write(filename,'(A,i2.2)') 'ensemble_weights_',pfrank
-        open(68,file=filename,iostat=ios,action='write',status='replace')
+        open(unit_weight,file=filename,iostat=ios,action='write',status='replace')
         if(ios .ne. 0)  then
            write(*,*) 'PARTICLE FILTER DATA ERROR!!!!! Cannot open file pf_out'
            write(*,*) 'Very strange that I couldnt open it. Im going to stop now.'
@@ -169,21 +173,21 @@ subroutine output_from_pf
   end if
 
   if(pf%output_weights) then
-     write(68,'(i6.6,A)',advance='no') pf%timestep,' '
+     write(unit_weight,'(i6.6,A)',advance='no') pf%timestep,' '
      do ios = 1,pf%count-1
-        write(68,'(i6.6,A,e21.15,A)',advance='no') pf%particles(ios),' ',pf&
+        write(unit_weight,'(i6.6,A,e21.15,A)',advance='no') pf%particles(ios),' ',pf&
              &%weight(pf%particles(ios)),' '
      end do
-     write(68,'(i6.6,A,e21.15)',advance='yes') pf%particles(pf%count),' ',pf&
+     write(unit_weight,'(i6.6,A,e21.15)',advance='yes') pf%particles(pf%count),' ',pf&
           &%weight(pf%particles(pf%count))
-     call flush(68)
+     call flush(unit_weight)
 
-     if(TSdata%completed_timesteps .eq. TSdata%total_timesteps) close(68)  
+     if(TSdata%completed_timesteps .eq. TSdata%total_timesteps) close(unit_weight)  
   end if !end if output_weights
      
   if(pf%use_mean .and. pf_ens_rank .eq. 0) then
      if(pf%timestep .eq. 0) then
-        open(61,file='pf_mean',iostat=ios,action='write',status='replace')
+        open(unit_mean,file='pf_mean',iostat=ios,action='write',status='replace')
         if(ios .ne. 0)  then
            write(*,*) 'PARTICLE FILTER DATA ERROR!!!!! Cannot open file pf_mean'
            write(*,*) 'Very strange that I couldnt open it. Im going to stop now.'
@@ -206,12 +210,12 @@ subroutine output_from_pf
   end if
 
   if(pf%use_mean .and. pf_ens_rank .eq. 0) then
-     write(61,*) mean(:)
-     call flush(61)
-     if(TSdata%completed_timesteps .eq. TSdata%total_timesteps) close(61)
+     write(unit_mean,*) mean(:)
+     call flush(unit_mean)
+     if(TSdata%completed_timesteps .eq. TSdata%total_timesteps) close(unit_mean)
   end if
 
-  if(pf_ens_rank .eq. 0 .and. pf%use_spatial_rmse .and. .not. pf%gen_data) call output_rmse(mean)
+  if(pf_ens_rank .eq. 0 .and. pf%use_spatial_rmse .and. .not. pf%gen_data) call output_spatial_rmse(mean)
 
   if(pf%use_mean .and. pf%use_variance) call output_variance(mean)
 
@@ -225,6 +229,7 @@ end subroutine output_from_pf
 !> subroutine to save the state vector to a named file
 !! as an unformatted fortran file
 subroutine save_state(state,filename)
+  use output_empire, only : unit_state
   use sizes
   implicit none
   integer, parameter :: rk = kind(1.0d0)
@@ -234,7 +239,7 @@ subroutine save_state(state,filename)
   !!save the state vector in
   integer :: ios
 
-  open(16,file=trim(filename),iostat=ios,action='write',status='replace'&
+  open(unit_state,file=trim(filename),iostat=ios,action='write',status='replace'&
        &,form='unformatted')
   if(ios .ne. 0)  then
      write(*,*) 'PARTICLE FILTER DATA ERROR!!!!! Cannot open file '&
@@ -243,14 +248,15 @@ subroutine save_state(state,filename)
           & now.'
      stop
   end if
-  write(16) state
-  close(16)
+  write(unit_state) state
+  close(unit_state)
 end subroutine save_state
 
 
 !> subroutine to read the state vector from a named file
 !! as an unformatted fortran file
 subroutine get_state(state,filename)
+  use output_empire, only : unit_state
   use sizes
   implicit none
   integer, parameter :: rk = kind(1.0d0)
@@ -260,7 +266,7 @@ subroutine get_state(state,filename)
   !!write the state vector in
   integer :: ios
 
-  open(16,file=trim(filename),iostat=ios,action='read',status='old',form='un&
+  open(unit_state,file=trim(filename),iostat=ios,action='read',status='old',form='un&
        &formatted')
   if(ios .ne. 0)  then
      write(*,*) 'PARTICLE FILTER DATA ERROR!!!!! Cannot open file '&
@@ -269,6 +275,6 @@ subroutine get_state(state,filename)
           & now.'
      stop
   end if
-  read(16) state
-  close(16)
+  read(unit_state) state
+  close(unit_state)
 end subroutine get_state
