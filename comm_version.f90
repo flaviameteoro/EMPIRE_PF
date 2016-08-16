@@ -1,9 +1,9 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2016-08-16 16:53:47 pbrowne>
+!!! Time-stamp: <2016-08-16 17:26:10 pbrowne>
 !!!
 !!!    Module to store the variable comm_version that the user wishes
 !!!    to use
-!!!    Copyright (C) 2015  Philip A. Browne
+!!!    Copyright (C) 2016  Philip A. Browne
 !!!
 !!!    This program is free software: you can redistribute it and/or modify
 !!!    it under the terms of the GNU General Public License as published by
