@@ -83,7 +83,7 @@ grep=/bin/grep
 dir=`pwd`
 MPIRUN=/usr/bin/mpirun
 MPIRUNOPTS="--output-filename out"
-commsfile=../src/utils/comms.f90
+commsfile=../src/comm_version.f90
 
 version=$($grep comm_version= $commsfile | cut -f2 -d= | cut -f1 -d' ')
 red EMPIRE VERSION detected as $version in $commsfile

@@ -44,7 +44,7 @@ purple()
 NC='\033[0m'
 dir=`pwd`
 grep=/bin/grep
-commsfile=../src/utils/comms.f90
+commsfile=../src/comm_version.f90
 
 
 
@@ -53,7 +53,7 @@ echo "Moving to empire base directory"
 test cd ../
 
 
-for version in {1..3}; do
+for version in {5..1..1}; do
     echo "Changing to empire version $version"
     test make v$version
 

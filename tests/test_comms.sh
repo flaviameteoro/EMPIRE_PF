@@ -71,7 +71,7 @@ dir=`pwd`
 MPIRUN=/usr/bin/mpirun
 MPIRUNOPTS="--output-filename out"
 
-commsfile=../src/utils/comms.f90
+commsfile=../src/comm_version.f90
 
 
 version=$($grep comm_version= $commsfile | cut -f2 -d=)
