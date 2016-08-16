@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2016-08-16 16:31:49 pbrowne>
+!!! Time-stamp: <2016-08-16 16:53:47 pbrowne>
 !!!
 !!!    Module to store the variable comm_version that the user wishes
 !!!    to use
@@ -38,7 +38,7 @@
 !> This file is not tracked by git, so any changes that the user
 !> makes here will not be updated by a *git pull* command
 module communicator_version
-  integer, parameter :: comm_version = 1
+  integer, parameter :: comm_version=1
   !< \memberof comms
   !< The style of communication
   !! between the model and empire.

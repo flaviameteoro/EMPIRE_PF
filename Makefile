@@ -337,10 +337,17 @@ minimal:
 	cd models/minimal_model_comms;make -e
 
 v1:
-	sed -i 's/comm_version=.*/comm_version=1/1' src/utils/comms.f90
+	sed -i 's/comm_version=.*/comm_version=1/1' comm_version.f90
 
 v2:
-	sed -i 's/comm_version=.*/comm_version=2/1' src/utils/comms.f90
+	sed -i 's/comm_version=.*/comm_version=2/1' comm_version.f90
 
 v3:
-	sed -i 's/comm_version=.*/comm_version=3/1' src/utils/comms.f90
+	sed -i 's/comm_version=.*/comm_version=3/1' comm_version.f90
+
+v4:
+	sed -i 's/comm_version=.*/comm_version=4/1' comm_version.f90
+
+v5:
+	sed -i 's/comm_version=.*/comm_version=5/1' comm_version.f90
+
