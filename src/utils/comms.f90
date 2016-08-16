@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2016-08-11 12:28:49 pbrowne>
+!!! Time-stamp: <2016-08-16 12:37:09 pbrowne>
 !!!
 !!!    Module and subroutine to intitalise EMPIRE coupling to models
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -205,6 +205,10 @@ contains
     PRINT*,'PF_rank = ',pfrank,' and I own particles ',pf%particles
 
     pf_ens_comm=pf_mpi_comm
+    pf_ens_size=npfs
+    pf_ens_rank=pfrank
+    pf_member_rank=0
+    pf_member_size=1
   end subroutine initialise_mpi_v1
 
 
@@ -368,6 +372,12 @@ contains
 
 
     pf_ens_comm=pf_mpi_comm
+    pf_ens_size=npfs
+    pf_ens_rank=pfrank
+    pf_member_rank=0
+    pf_member_size=1
+
+    
     pf%particles = particles+1
     pf%count = cnt
     pf%nens = nens
@@ -658,6 +668,11 @@ contains
     !set the da communicator:
     pf_mpi_comm = MPI_COMM_WORLD
     pf_ens_comm = MPI_COMM_WORLD
+    pf_ens_size=npfs
+    pf_ens_rank=pfrank
+
+    pf_member_rank=0
+    pf_member_size=1
     
     ! count the number of particles associated with this process
     cnt = final_ptcl-first_ptcl+1
@@ -888,6 +903,12 @@ contains
     end if    
 
     pf_ens_comm = pf_mpi_comm
+    pf_ens_size=npfs
+    pf_ens_rank=pfrank
+
+    pf_member_rank=0
+    pf_member_size=1
+    
     pf%particles = particles+1
     pf%count = cnt
     pf%nens = nens

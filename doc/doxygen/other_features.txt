@@ -46,7 +46,7 @@ See \link output_empire::open_emp_o open_emp_o \endlink for more information.
 
 \section outputweights Outputting ensemble member weights
 
-This is controlled by \link pf_control::pf_control_type::output_weights output_weights \endlink in \link pf_control::parse_pf_parameters empire.nml \endlink. By default the weights will not be output. If set to true, this will create a number of files named "pf_out_??" where ?? will refer to the rank of the empire process on pf_mpi_comm. Within that file, the timestep, particle number and the negative log of the weight will be output. Note that these weights may not be normalised.
+This is controlled by \link pf_control::pf_control_type::output_weights output_weights \endlink in \link pf_control::parse_pf_parameters empire.nml \endlink. By default the weights will not be output. If set to true, this will create a number of files named "ensemble_weights_??" where ?? will refer to the rank of the empire process on pf_mpi_comm. Within that file, the timestep, particle number and the negative log of the weight will be output. Note that these weights may not be normalised.
 
 \section rankhistograms Outputting rank histograms
 
@@ -56,9 +56,27 @@ This is controlled by \link pf_control::pf_control_type::use_talagrand use_talag
 
 This is controlled by \link pf_control::pf_control_type::use_traj use_traj \endlink in \link pf_control::parse_pf_parameters empire.nml \endlink  and for more information see \link traj_data::setup_traj setup_traj \endlink.
 
+\section ensemble_mean Outputting mean of the ensemble
+
+EMPIRE has the ability to output the mean of the ensemble in each dimension. For each dimension of the state vector \f$j\f$, the ensemble mean \f$\bar{x}_j\f$ is defined as
+
+\f$
+\bar{x}_j := \frac{1}{N_e}\sum_{i=1}^{N_e} x_{i,j}
+\f$
+where \f$x_{i,j}\f$ is the jth component of ensemble member i and \f$N_e\f$ is the number of ensemble members. To use this feature, set \link pf_control::pf_control_type::use_mean use_mean \endlink = true in \link pf_control::parse_pf_parameters empire.nml\endlink.
+
 \section ensemble_covariances Outputting covariances of the ensemble
 
 EMPIRE has the ability to output the ensemble covariance matrices throughout the run. This is controlled by the optional namelist &mat_pf in @ref empire.nml. For more information see @ref matrix_pf::matrix_pf_data. Note however, that this will output a large matrix -- if the state dimension of the model is large, this is likely not a good thing to compute! This feature is not available with empire version 3 communications.
+
+\section ensemble_variances Outputting variances of the ensemble
+
+EMPIRE has the ability to output the variance in the ensemble in each dimension. For each dimension of the state vector \f$j\f$, the ensemble variance \f$\sigma_j^2\f$ is defined as
+
+\f$
+\sigma_j^2 := \frac{1}{N_e-1}\sum_{i=1}^{N_e} (x_{i,j} - \bar{x}_j)^2
+\f$
+Note that this is the sample variance. To use this feature, set \link pf_control::pf_control_type::use_variance use_variance \endlink = true in \link pf_control::parse_pf_parameters empire.nml\endlink.
 
 \section rmse Outputting Root Mean Squared Errors
 
@@ -67,7 +85,7 @@ In a twin experiment, where EMPIRE has generated a "truth", EMPIRE can output th
 where
 \f$N_x\f$ is the state dimension (\link sizes::state_dim state_dim \endlink), \f$\bar{x}\f$ is the ensemble mean, \f$x^t\f$ is the truth, and \f$i\f$ is an index running over each component of the state vector.
 
-Note that in the case where the model has different variables, that are on different scales, this is probably not a good measure. For example, if one component of the state vector is measured in units of "apples per pie" and another is measured in "oranges per country per decade", this measure of RMSE will combine the two. Hence the latter should have much larger scale than the former, so this RMSE measure will be dominated by the errors in the components with greater variability.
+Note that in the case where the model has different variables, that are on different scales, this is probably not a good measure. For example, if one component of the state vector is measured in units of "apples per pie" and another is measured in "oranges per country per decade", this measure of RMSE will combine the two. Hence the latter should have much larger scale than the former, so this RMSE measure will be dominated by the errors in the components with greater variability. To use this feature, set \link pf_control::pf_control_type::use_spatial_rmse use_spatial_rmse \endlink = true in \link pf_control::parse_pf_parameters empire.nml\endlink.
 
 There is now the option to compute RMSE fields using the formula:
 \f$ f_j(t) = \sqrt{ \frac{1}{N_e}\sum_{i=1}^{N_e} (x_{i,j}(t) - x^t_j(t))^2 } \f$
@@ -75,5 +93,4 @@ where \f$ f_j(t)\f$ is the jth component of the state at time t, \f$ x^t_j(t)\f$
 
 This is controlled by the option \link pf_control::pf_control_type::use_ens_rmse use_ens_emse \endlink in \link pf_control::parse_pf_parameters empire.nml \endlink.
 
-@todo Add option to output Variance fields
 */

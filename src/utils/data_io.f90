@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2016-08-15 19:54:57 pbrowne>
+!!! Time-stamp: <2016-08-16 14:20:42 pbrowne>
 !!!
 !!!    Collection of subroutines to deal with i/o
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -151,13 +151,13 @@ subroutine output_from_pf
   include 'mpif.h'
   real(kind=kind(1.0D0)), dimension(state_dim) :: mean,mtemp
   integer :: ios,particle,mpi_err
-  character(9) :: filename
+  character(20) :: filename
 
 
   if(pf%timestep .eq. 0) then
 
      if(pf%output_weights) then
-        write(filename,'(A,i2.2)') 'pf_out_',pfrank
+        write(filename,'(A,i2.2)') 'ensemble_weights_',pfrank
         open(68,file=filename,iostat=ios,action='write',status='replace')
         if(ios .ne. 0)  then
            write(*,*) 'PARTICLE FILTER DATA ERROR!!!!! Cannot open file pf_out'
@@ -192,17 +192,16 @@ subroutine output_from_pf
      end if
   end if
 
-  if(pf%use_mean .or. (pf%use_rmse .and. .not. pf%gen_data)) then
-     mean = 0.0D0
+  if(pf%use_mean .or. (pf%use_spatial_rmse .and. .not. pf%gen_data)) then
+     mtemp = 0.0D0
      do particle = 1,pf%count
         !mean(:) = mean(:) + pf%psi(:,particle)*exp(-pf&
         !     &%weight(particles(particle)))
-        mean(:) = mean(:) + pf%psi(:,particle)/real(pf%nens)
-       end do
+        mtemp(:) = mtemp(:) + pf%psi(:,particle)/real(pf%nens)
+     end do
 
-     mtemp = mean 
-     call mpi_reduce(mtemp,mean,state_dim,MPI_DOUBLE_PRECISION,MPI_SUM&
-             &,0,pf_ens_comm,mpi_err)
+     call mpi_allreduce(mtemp,mean,state_dim,MPI_DOUBLE_PRECISION,MPI_SUM&
+             &,pf_ens_comm,mpi_err)
     
   end if
 
@@ -212,8 +211,9 @@ subroutine output_from_pf
      if(TSdata%completed_timesteps .eq. TSdata%total_timesteps) close(61)
   end if
 
-  if(pf_ens_rank .eq. 0 .and. pf%use_rmse .and. .not. pf%gen_data) call output_rmse(mean)
+  if(pf_ens_rank .eq. 0 .and. pf%use_spatial_rmse .and. .not. pf%gen_data) call output_rmse(mean)
 
+  if(pf%use_mean .and. pf%use_variance) call output_variance(mean)
 
   if(comm_version .ne. 3) then !empire_v3 models will be too large!!!
      call matrix_pf_output(npfs-1,pf_mpi_comm,state_dim,cnt,pf%psi&

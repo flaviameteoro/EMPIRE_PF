@@ -15,7 +15,7 @@ LIB_LIST = $(BLAS)
 
 all :  lbfgsb_90_1 lbfgsb_90_2 lbfgsb_90_3 sub
 
-OBS = lbfgsb_sub.o lbfgs_sub.o lbfgsb.o linpack.o timer.o call.o objective_function.o objective_gradient.o fcn.o
+MYFILES = lbfgsb_sub.o lbfgs_sub.o lbfgsb.o linpack.o timer.o call.o objective_function.o objective_gradient.o fcn.o
 
 %.o: %.f
 	$(FC) $(FFLAGS) -c -o $@ $<
@@ -23,8 +23,8 @@ OBS = lbfgsb_sub.o lbfgs_sub.o lbfgsb.o linpack.o timer.o call.o objective_funct
 %.o: %.f90
 	$(FC) $(FFLAGS) -c -o $@ $<
 
-sub: $(OBS)
-	$(FC) $(OBS) $(FFLAGS) -o subroutine_lbfgs $(LIB_LIST)
+sub: $(MYFILES)
+	$(FC) $(MYFILES) $(FFLAGS) -o subroutine_lbfgs $(LIB_LIST)
 
 lbfgsb_90_1 : $(DRIVER1_90) $(LBFGSB) $(LINPACK) $(TIMER)
 	$(FC) $(FFLAGS) $(DRIVER1_90) $(LBFGSB) $(LINPACK) $(TIMER) -o x.lbfgsb_90_1 $(LIB_LIST)

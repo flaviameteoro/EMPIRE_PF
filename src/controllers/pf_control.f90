@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2016-08-15 19:28:34 pbrowne>
+!!! Time-stamp: <2016-08-16 14:19:25 pbrowne>
 !!!
 !!!    module to hold all the information to control the the main program
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -62,9 +62,9 @@ module pf_control
      !!load_histogram_data \endlink for details.
      logical :: output_weights      !< switch if true outputs ensemble weights
      logical :: use_mean      !< switch if true outputs ensemble mean
-     logical :: use_var       !< switch if true outputs ensemble variance
+     logical :: use_variance  !< switch if true outputs ensemble variance
      logical :: use_traj      !< switch if true outputs trajectories
-     logical :: use_rmse      !< switch if true outputs Root Mean
+     logical :: use_spatial_rmse      !< switch if true outputs Root Mean
      !!Square Errors \n See @ref rmse for more information
      logical :: use_ens_rmse  !< switich if true outputs the field of
      !!root mean squared errors where \f$ rmse(j) = \sqrt{
@@ -178,9 +178,10 @@ contains
     !! - \link pf_control::pf_control_type::gen_q gen_Q\endlink
     !! - \link pf_control::pf_control_type::gen_data gen_data\endlink
     !! - \link pf_control::pf_control_type::use_talagrand use_talagrand\endlink
-    !! - \link pf_control::pf_control_type::use_var use_var\endlink
+    !! - \link pf_control::pf_control_type::use_mean use_mean\endlink
+    !! - \link pf_control::pf_control_type::use_variance use_variance\endlink
     !! - \link pf_control::pf_control_type::use_traj use_traj\endlink
-    !! - \link pf_control::pf_control_type::use_rmse use_rmse\endlink
+    !! - \link pf_control::pf_control_type::use_spatial_rmse use_spatial_rmse\endlink
     !! - \link pf_control::pf_control_type::use_ens_rmse use_ens_rmse\endlink
     !! - \link pf_control::pf_control_type::output_weights output_weights\endlink
     !!
@@ -203,8 +204,8 @@ contains
       real(kind=kind(1.0D0)) :: rho=0.0d0
       real(kind=kind(1.0d0)) :: len=-1.0d0
       real(kind=kind(1.0D0)) :: keep
-      logical :: use_talagrand,use_mean,use_var,use_traj&
-           &,use_rmse,use_ens_rmse,output_weights
+      logical :: use_talagrand,use_mean,use_variance,use_traj&
+           &,use_spatial_rmse,use_ens_rmse,output_weights
       character(2) :: filter='++'
       character(1) :: init='+'
       character(250) :: rmse_filename='rmse'
@@ -220,7 +221,7 @@ contains
       &Qscale,&
       &rho,&
       &len,&
-      &use_talagrand,use_mean,use_var,use_traj,use_rmse,use_ens_rmse,&
+      &use_talagrand,use_mean,use_variance,use_traj,use_spatial_rmse,use_ens_rmse,&
       &output_weights,&
       &filter,&
       &init,&
@@ -231,9 +232,9 @@ contains
       gen_Q = .false.
       use_talagrand = .false.
       use_mean = .false.
-      use_var = .false.
+      use_variance = .false.
       use_traj = .false.
-      use_rmse = .false.
+      use_spatial_rmse = .false.
       use_ens_rmse = .false.
       output_weights=.false.
 
@@ -314,10 +315,10 @@ contains
 
 
       !logical ::
-      !use_talagrand,use_mean,use_var,use_traj,use_rmse
+      !use_talagrand,use_mean,use_variance,use_traj,use_spatial_rmse
       
-      if(use_rmse) then
-         print*,'going to output Root mean squared errors'
+      if(use_spatial_rmse) then
+         print*,'going to output spatial Root mean squared errors'
       end if
 
       if(use_ens_rmse) then
@@ -328,10 +329,13 @@ contains
          print*,'going to output ensemble mean'
       end if
 
+      if(use_variance) then
+         print*,'going to output ensemble variance'
+      end if
+      
       if(output_weights) then
          print*,'going to output ensemble weights'
       end if
-
       
       if(use_traj) then
          print*,'going to output trajectories'
@@ -422,9 +426,9 @@ contains
       pf%gen_Q = gen_Q
       pf%use_talagrand = use_talagrand
       pf%use_mean = use_mean
-      pf%use_var = use_var
+      pf%use_variance = use_variance
       pf%use_traj = use_traj
-      pf%use_rmse = use_rmse
+      pf%use_spatial_rmse = use_spatial_rmse
       pf%use_ens_rmse = use_ens_rmse
       pf%output_weights = output_weights
       
@@ -432,7 +436,7 @@ contains
       if(pf%gen_data) then
          pf%gen_Q = .false.
          pf%use_talagrand=.false.
-         pf%use_rmse = .false.
+         pf%use_spatial_rmse = .false.
          pf%use_ens_rmse = .false.
       end if
 
