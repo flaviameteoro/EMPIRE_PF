@@ -70,7 +70,7 @@ For comms versions 1 and 2, there is only 1 communicator for this: pf_mpi_comm
 \image html version_1_and_2.svg
 \image latex version_1_and_2.pdf "pf_mpi_comm" width=10cm
 
-- pf_mpi_comm is undefined, but its size is set to 1
+- pf_member_comm is undefined, but its size is set to 1
 - pf_ens_comm is set to pf_mpi_comm
 
 \section comms_v3 Version 3
