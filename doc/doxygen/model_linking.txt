@@ -5,7 +5,7 @@ In this page we briefly describe the steps needed to link a model to EMPIRE. Thi
 \section model_compilation Compiling the model
 This may sound obvious but it typically is the most time consuming part of the whole process: be able to compile the model and run it in a configuration you want.
 
-When you are running EMPIRE this will be in an ensemble so it might be that you are running on a different (bigger) machine than you previously ran your model. It is crutial that you are able to compile the model correctly and that the output you get is what you expect. We recommend that you are able to do this before you attempt any changes relating to setting up a connection to EMPIRE.
+When you are running EMPIRE this will be in an ensemble so it might be that you are running on a different (bigger) machine than you previously ran your model. It is crucial that you are able to compile the model correctly and that the output you get is what you expect. We recommend that you are able to do this before you attempt any changes relating to setting up a connection to EMPIRE.
 
 \section model_compilation2 Changing the compiler
 
@@ -38,7 +38,7 @@ Further you will want to have the particle identifier available when the output 
 \section model_output Modifying the model output files
 You have now turned a single model executable into an ensemble of models. You need to make sure that the output from the different models goes into separate places. To do this, you can use the particle identifier (which is simply an integer) from the previous section to rename each output file.
 
-Typically this is done most easily by appending/prepending the output file names with this paricle identifier.
+Typically this is done most easily by appending/prepending the output file names with this particle identifier.
 
 \section model_connection Adding the connections to EMPIRE
 This happens in two places:
