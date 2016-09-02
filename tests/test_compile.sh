@@ -60,7 +60,7 @@ for version in {5..1..1}; do
     test make clean
 
     echo "Compiling all codes"
-    test make all
+    test make -s all
 
     red Compilation of empire codes for version $version successful
 done
