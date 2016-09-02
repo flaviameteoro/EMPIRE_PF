@@ -50,8 +50,7 @@ commsfile=../src/comm_version.f90
 
 
 echo "Moving to empire base directory"
-test cd ../
-
+test cd $(git rev-parse --show-toplevel)
 
 for version in {5..1..1}; do
     echo "Changing to empire version $version"
