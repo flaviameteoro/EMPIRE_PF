@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2016-08-16 15:10:09 pbrowne>
+!!! Time-stamp: <2016-09-02 16:22:37 pbrowne>
 !!!
 !!!    Subroutine to output RMSE
 !!!    Copyright (C) 2015 Philip A. Browne
@@ -42,7 +42,6 @@ subroutine output_ens_rmse()
   integer :: ensemble_comm,comm_root,mpi_err,rank
   
   character(256) :: filename
-  character(11) :: fileformat='formatted'
   
   call get_truth(truth)
 

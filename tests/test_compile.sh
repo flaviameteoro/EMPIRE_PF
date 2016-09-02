@@ -62,7 +62,7 @@ for version in {5..1..1}; do
     echo "Compiling all codes"
     test make -s all
 
-    red Compilation of empire codes for version $version successful
+    red Compilation of empire codes for communicator version $version successful
 done
 
 purple All compilation of codes completed successfully.
