@@ -7,4 +7,5 @@ set -o errexit
 cd $(git rev-parse --show-toplevel)
 
 #run the compilation tests
-./tests/test_compile.sh
+make all
+#./tests/test_compile.sh
