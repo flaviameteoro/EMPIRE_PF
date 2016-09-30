@@ -93,4 +93,9 @@ where \f$ f_j(t)\f$ is the jth component of the state at time t, \f$ x^t_j(t)\f$
 
 This is controlled by the option \link pf_control::pf_control_type::use_ens_rmse use_ens_emse \endlink in \link pf_control::parse_pf_parameters empire.nml \endlink.
 
+\section forecast Outputting the entire forecast ensemble
+The entire forecase ensemble can be output by setting the logical variable \link pf_control::pf_control_type::output_forecast output_forecast \endlink to be \c .true. in \link pf_control::parse_pf_parameters empire.nml\endlink.
+
+Where the forecast ensemble is output is controlled by the string \link pf_control::pf_control_type::output_path output_path \endlink in \link pf_control::parse_pf_parameters empire.nml\endlink. The default is \c forecast/.
+
 */

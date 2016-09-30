@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2016-08-16 14:58:09 pbrowne>
+!!! Time-stamp: <2016-09-30 12:29:18 pbrowne>
 !!!
 !!!    module to deal with generating and outputting pf matrix
 !!!    Copyright (C) 2015 Philip A. Browne
@@ -46,7 +46,9 @@ module matrix_pf
                               !! \n
                               !! Negative values will be formatted.
                               !! \n
-                              !! Positive values will be unformatted.
+     !! Positive values will be unformatted.
+     !! \n
+     !! See http://www.netlib.org/lapack/explore-html/db/d37/dtfttp_8f.html for details of the storage stucture formats
 
   end type matrix_pf_data
   type(matrix_pf_data), save :: matpf !< module holding data for

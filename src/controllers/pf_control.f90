@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2016-09-30 12:06:34 pbrowne>
+!!! Time-stamp: <2016-09-30 12:24:29 pbrowne>
 !!!
 !!!    module to hold all the information to control the the main program
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -75,7 +75,7 @@ module pf_control
      character(250) :: rmse_filename !< string to hold the name of
      !< the file to output rmse to
      character(250) :: forecast_path !< string to hold the path to
-     !!output the forecase ensemble
+     !!output the forecast ensemble
      
      integer, dimension(:,:), allocatable :: talagrand !< storage for rank histograms
      integer :: count         !< number of ensemble members associated with this MPI process
