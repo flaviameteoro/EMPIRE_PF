@@ -39,7 +39,7 @@ SR_LBFGSB=$(current_dir)src/optim/Lbfgsb.3.0/
 CGFILES_local=cgsub.o cgfam.o cgsearch.o
 LBFGSFILES_local=lbfgsb_sub.o lbfgs_sub.o lbfgsb.o linpack.o timer.o
 
-OBJSQ= compile_options.o $(CGFILES_local) $(LBFGSFILES_local) comm_version.o timestep_data.o output_empire.o sizes.o empire_main.o Bdata.o Qdata.o Rdata.o equivalent_weights_filter.o comms.o var_data.o ziggurat.o gen_rand.o random_d.o proposal_filter.o histogram.o allocate_pf.o pf_control.o letks.o matrix_pf.o data_io.o model_specific.o operator_wrappers.o quicksort.o resample.o diagnostics.o perturb_particle.o update_state.o genQ.o sir_filter.o stochastic_model.o tests.o letkf_analysis.o deterministic_model.o inner_products.o trajectories.o user_perturb_particle.o generate_pf.o output_mat_tri.o equivalent_weights_filter_zhu.o lambertw.o randperm.o user_initialise_mpi.o loc_function.o phalf_etkf.o phalf.o threedvar_data.o three_d_var_all_particles.o threedvar_fcn.o three_d_var.o fcn.o output_spatial_rmse.o output_variance.o output_ens_rmse.o model_as_subroutine_data.o model_as_subroutine_return.o model_as_subroutine_start.o model_as_subroutine_initialise.o
+OBJSQ= compile_options.o $(CGFILES_local) $(LBFGSFILES_local) comm_version.o timestep_data.o output_empire.o sizes.o empire_main.o Bdata.o Qdata.o Rdata.o equivalent_weights_filter.o comms.o var_data.o ziggurat.o gen_rand.o random_d.o proposal_filter.o histogram.o allocate_pf.o pf_control.o letks.o matrix_pf.o data_io.o model_specific.o operator_wrappers.o quicksort.o resample.o diagnostics.o perturb_particle.o update_state.o genQ.o sir_filter.o stochastic_model.o tests.o letkf_analysis.o deterministic_model.o inner_products.o trajectories.o user_perturb_particle.o generate_pf.o output_mat_tri.o equivalent_weights_filter_zhu.o lambertw.o randperm.o user_initialise_mpi.o loc_function.o phalf_etkf.o phalf.o threedvar_data.o three_d_var_all_particles.o threedvar_fcn.o three_d_var.o fcn.o output_spatial_rmse.o output_variance.o output_forecast.o output_ens_rmse.o model_as_subroutine_data.o model_as_subroutine_return.o model_as_subroutine_start.o model_as_subroutine_initialise.o
 OBJS=$(addprefix $(OBS),$(OBJSQ))
 FCOPTS+=$(MODFLAG) $(MODLOC)
 
@@ -75,6 +75,9 @@ $(OBS)output_spatial_rmse.o: $(SR_UTILS)output_spatial_rmse.f90
 
 $(OBS)output_variance.o: $(SR_UTILS)output_variance.f90
 	$(FC) $(FCOPTS) -c $(SR_UTILS)output_variance.f90 -o $@
+
+$(OBS)output_forecast.o: $(SR_UTILS)output_forecast.f90
+	$(FC) $(FCOPTS) -c $(SR_UTILS)output_forecast.f90 -o $@
 
 $(OBS)output_ens_rmse.o: $(SR_UTILS)output_ens_rmse.f90
 	$(FC) $(FCOPTS) -c $(SR_UTILS)output_ens_rmse.f90 -o $@

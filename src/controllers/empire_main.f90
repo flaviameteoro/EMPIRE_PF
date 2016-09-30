@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2016-08-16 15:51:57 pbrowne>
+!!! Time-stamp: <2016-09-30 12:07:59 pbrowne>
 !!!
 !!!    The main program to run EMPIRE
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -137,6 +137,7 @@ program empire_main
         if(pf%gen_data) call save_truth(pf%psi(:,1))
         if(pf%use_traj) call trajectories
         if(pf%use_ens_rmse) call output_ens_rmse
+        if(pf%output_forecast) call output_forecast
         call output_from_pf
      end do
            
@@ -157,17 +158,21 @@ program empire_main
         call sir_filter
      case('SE')
         call stochastic_model
+        if(pf%output_forecast) call output_forecast
         call diagnostics
      case('LE')
         call stochastic_model
+        if(pf%output_forecast) call output_forecast
         call letkf_analysis
      case('LD')
         call deterministic_model
+        if(pf%output_forecast) call output_forecast
         call letkf_analysis
      case('DE')
         call deterministic_model
      case('3D')
         call stochastic_model
+        if(pf%output_forecast) call output_forecast
         call three_d_var_all_particles
      case default
         write(emp_o,*) 'Error -556: Incorrect pf%filter'

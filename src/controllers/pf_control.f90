@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2016-08-16 15:49:32 pbrowne>
+!!! Time-stamp: <2016-09-30 12:06:34 pbrowne>
 !!!
 !!!    module to hold all the information to control the the main program
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -60,7 +60,10 @@ module pf_control
      logical :: use_talagrand !< switch if true outputs rank
      !!histograms. See \link histogram_data::load_histogram_data
      !!load_histogram_data \endlink for details.
-     logical :: output_weights      !< switch if true outputs ensemble weights
+     logical :: output_weights      !< switch if true outputs
+     !!ensemble weights
+     logical :: output_forecast      !< switch if true outputs
+     !!the entire forecast ensemble
      logical :: use_mean      !< switch if true outputs ensemble mean
      logical :: use_variance  !< switch if true outputs ensemble variance
      logical :: use_traj      !< switch if true outputs trajectories
@@ -71,6 +74,8 @@ module pf_control
      !!\frac{1}{N_e}\sum_{i=1}^{N_e} (x_i(j)-x^t(j))^2}\f$
      character(250) :: rmse_filename !< string to hold the name of
      !< the file to output rmse to
+     character(250) :: forecast_path !< string to hold the path to
+     !!output the forecase ensemble
      
      integer, dimension(:,:), allocatable :: talagrand !< storage for rank histograms
      integer :: count         !< number of ensemble members associated with this MPI process
@@ -183,11 +188,13 @@ contains
     !! - \link pf_control::pf_control_type::use_variance use_variance\endlink
     !! - \link pf_control::pf_control_type::use_traj use_traj\endlink
     !! - \link pf_control::pf_control_type::use_spatial_rmse use_spatial_rmse\endlink
+    !! - \link pf_control::pf_control_type::output_forecast output_forecast\endlink
     !! - \link pf_control::pf_control_type::use_ens_rmse use_ens_rmse\endlink
     !! - \link pf_control::pf_control_type::output_weights output_weights\endlink
     !!
     !! 250 Character string:
-    !! - \link pf_control::pf_control_type::rmse_filename rmse_filename\endlink
+  !! - \link pf_control::pf_control_type::rmse_filename rmse_filename\endlink
+      !! - \link pf_control::pf_control_type::forecast_path forecast_path\endlink
     !!
 
     subroutine parse_pf_parameters
@@ -207,10 +214,11 @@ contains
       real(kind=kind(1.0d0)) :: len=-1.0d0
       real(kind=kind(1.0D0)) :: keep
       logical :: use_talagrand,use_mean,use_variance,use_traj&
-           &,use_spatial_rmse,use_ens_rmse,output_weights
+           &,use_spatial_rmse,use_ens_rmse,output_weights,output_forecast
       character(2) :: filter='++'
       character(1) :: init='+'
       character(250) :: rmse_filename='rmse'
+      character(250) :: forecast_path='forecast/'
       
       logical :: file_exists
 
@@ -225,9 +233,11 @@ contains
       &len,&
       &use_talagrand,use_mean,use_variance,use_traj,use_spatial_rmse,use_ens_rmse,&
       &output_weights,&
+      &output_forecast,&
       &filter,&
       &init,&
-      &rmse_filename
+      &rmse_filename,&
+      &forecast_path
 
 
       gen_data = .false.
@@ -239,6 +249,7 @@ contains
       use_spatial_rmse = .false.
       use_ens_rmse = .false.
       output_weights=.false.
+      output_forecast=.false.
 
 
       inquire(file='pf_parameters.dat',exist=file_exists)
@@ -338,6 +349,11 @@ contains
       if(output_weights) then
          print*,'going to output ensemble weights'
       end if
+
+      if(output_forecast) then
+         print*,'going to output ensemble forecasts'
+      end if
+
       
       if(use_traj) then
          print*,'going to output trajectories'
@@ -348,6 +364,12 @@ contains
          print*,'read rmse_filename = ',rmse_filename
       end if
       pf%rmse_filename = rmse_filename
+
+      if(forecast_path .ne. 'forecast/') then
+         print*,'read forecast_path = ',forecast_path
+      end if
+      pf%forecast_path = forecast_path
+      
       
       if(filter .ne. '++') then
          print*,'read filter = ',filter
@@ -433,6 +455,7 @@ contains
       pf%use_spatial_rmse = use_spatial_rmse
       pf%use_ens_rmse = use_ens_rmse
       pf%output_weights = output_weights
+      pf%output_forecast = output_forecast
       
       !check for specific things we can't do if running the truth
       if(pf%gen_data) then
@@ -440,6 +463,7 @@ contains
          pf%use_talagrand=.false.
          pf%use_spatial_rmse = .false.
          pf%use_ens_rmse = .false.
+         pf%output_forecast = .false.
       end if
 
       
