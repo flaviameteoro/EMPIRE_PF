@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2016-08-16 15:08:45 pbrowne>
+!!! Time-stamp: <2016-10-17 11:59:34 pbrowne>
 !!!
 !!!    Collection of subroutines to deal with i/o
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -229,7 +229,7 @@ end subroutine output_from_pf
 !> subroutine to save the state vector to a named file
 !! as an unformatted fortran file
 subroutine save_state(state,filename)
-  use output_empire, only : unit_state
+  use output_empire, only : unit_state,emp_e
   use sizes
   implicit none
   integer, parameter :: rk = kind(1.0d0)
@@ -242,11 +242,11 @@ subroutine save_state(state,filename)
   open(unit_state,file=trim(filename),iostat=ios,action='write',status='replace'&
        &,form='unformatted')
   if(ios .ne. 0)  then
-     write(*,*) 'PARTICLE FILTER DATA ERROR!!!!! Cannot open file '&
+     write(emp_e,*) 'PARTICLE FILTER DATA ERROR!!!!! Cannot open file '&
           &,filename
-     write(*,*) 'Very strange that I couldnt open it. Im going to stop&
+     write(emp_e,*) 'Very strange that I couldnt open it. Im going to stop&
           & now.'
-     stop
+     stop 'EMPIRE ERROR in SAVE_STATE'
   end if
   write(unit_state) state
   close(unit_state)

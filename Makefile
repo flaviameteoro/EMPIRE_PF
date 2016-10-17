@@ -334,7 +334,10 @@ FORCE:
 
 
 clean:
-	rm -f obs/* bin/*
+	rm -f obs/*
+
+veryclean: clean
+	rm -f bin/*
 
 minimal:
 	cd models/minimal_empire;make -e
@@ -357,3 +360,11 @@ v4:
 v5:
 	sed -i 's/comm_version=.*/comm_version=5/1' comm_version.f90
 
+linear_identity: clean v1 linear
+	cp model_specific.f90 model_specific.f90_backup
+	cp examples/linear_identity/model_specific_linear_identity.f90 model_specific.f90
+	-mv $(BIN)empire $(BIN)empire_temp
+	make EMPIRE
+	mv $(BIN)empire $(BIN)empire_linear_identity
+	-mv $(BIN)empire_temp $(BIN)empire
+	mv model_specific.f90_backup model_specific.f90

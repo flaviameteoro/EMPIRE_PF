@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2016-09-30 12:21:34 pbrowne>
+!!! Time-stamp: <2016-10-17 12:00:23 pbrowne>
 !!!
 !!!    Subroutine to output RMSE
 !!!    Copyright (C) 2015 Philip A. Browne
@@ -37,7 +37,7 @@ subroutine output_forecast
 
   do i = 1,pf%count
      particle = pf%particles(i)
-     write(filename,'(A,I0,A,I0)') pf%forecast_path,pf%timestep,'_'&
+     write(filename,'(A,I0,A,I0)') trim(pf%forecast_path),pf%timestep,'_'&
           &,particle
      call save_state(pf%psi(:,i),filename)
   end do

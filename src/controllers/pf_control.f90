@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2016-09-30 12:24:29 pbrowne>
+!!! Time-stamp: <2016-10-17 12:16:57 pbrowne>
 !!!
 !!!    module to hold all the information to control the the main program
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -199,7 +199,7 @@ contains
 
     subroutine parse_pf_parameters
       use var_data
-      use output_empire, only : unit_nml
+      use output_empire, only : unit_nml,emp_e
       implicit none
       integer :: ios
 
@@ -256,7 +256,10 @@ contains
       if(file_exists) then
          open(unit_nml,file='pf_parameters.dat',iostat=ios,action='read'&
               &,status='old')
-         if(ios .ne. 0) stop 'Cannot open pf_parameters.dat'
+         if(ios .ne. 0) then
+            write(emp_e,*) 'Cannot open pf_parameters.dat'
+            stop
+         end if
       else
          inquire(file='empire.nml',exist=file_exists)
          if(file_exists) then
@@ -264,7 +267,7 @@ contains
                  &,status='old')
             if(ios .ne. 0) stop 'Cannot open empire.nml'
          else
-            print*,'ERROR: cannot find pf_parameters.dat or empire.nml'
+            write(emp_e,*) 'ERROR: cannot find pf_parameters.dat or empire.nml'
             stop '-1'
          end if
       end if
@@ -405,7 +408,7 @@ contains
          print*,'For LETKF without random noise set filter="LD"'
       case('EA')
          print*,'Running the Ensemble Adjustment Kalman Filter'
-         print*,'Error: The EAKF is not implemented here yet'
+         write(emp_e,*) 'Error: The EAKF is not implemented here yet'
          stop '-557'
       case('LE')
          print*,'Running the Local Ensemble Transform Kalman Filter'
@@ -421,22 +424,22 @@ contains
               &n times'
          call set_var_controls
       case default
-         print*,'Error: Incorrect filter type selected:', pf%filter
-         print*,'Please ensure that pf%filter in empire.nml is either:'
-         print*,'EW        the equivalent weights particle f&
+         write(emp_e,*) 'Error: Incorrect filter type selected:', pf%filter
+         write(emp_e,*) 'Please ensure that pf%filter in empire.nml is either:'
+         write(emp_e,*) 'EW        the equivalent weights particle f&
               &ilter'
-         print*,'EZ        the Zhu equal weights particle f&
+         write(emp_e,*) 'EZ        the Zhu equal weights particle f&
               &ilter'
-         print*,'SE        a stochastic ensemble'
-         print*,'DE        a deterministic ensemble'
-         print*,'SI        the SIR particle filter'
-         print*,'LE        the Local Ensemble Transform Kalman Filter'
-         print*,'          with random noise'
-         print*,'LD        the Local Ensemble Transform Kalman Filter'
-         print*,'          without random noise'
-         print*,'LS        the Local Ensemble Transform Kalman Smoother'
-         print*,'          with random noise'
-         print*,'3D        3DVar'
+         write(emp_e,*) 'SE        a stochastic ensemble'
+         write(emp_e,*) 'DE        a deterministic ensemble'
+         write(emp_e,*) 'SI        the SIR particle filter'
+         write(emp_e,*) 'LE        the Local Ensemble Transform Kalman Filter'
+         write(emp_e,*) '          with random noise'
+         write(emp_e,*) 'LD        the Local Ensemble Transform Kalman Filter'
+         write(emp_e,*) '          without random noise'
+         write(emp_e,*) 'LS        the Local Ensemble Transform Kalman Smoother'
+         write(emp_e,*) '          with random noise'
+         write(emp_e,*) '3D        3DVar'
          stop
       end select
 

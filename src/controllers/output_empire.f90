@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2016-08-16 15:37:21 pbrowne>
+!!! Time-stamp: <2016-10-17 12:19:06 pbrowne>
 !!!
 !!!    Module that stores information about outputting from empire
 !!!    Copyright (C) 2015  Philip A. Browne
@@ -27,9 +27,12 @@
 
 !> @brief Module that stores the information about the outputting
 !! from empire
+!! @todo make stop codes appear on the empire error unit
 Module output_empire
+  use, intrinsic :: iso_fortran_env, only : stderr=>error_unit,stdout=>output_unit
   implicit none
-  integer,parameter :: emp_o=6 !< the output stream number
+  integer,parameter :: emp_e=stderr !< the error stream number
+  integer,parameter :: emp_o=stdout !< the output stream number
   integer,parameter :: unit_nml=10 !< the unit number for reading empire.nml
   integer,parameter :: unit_obs=11 !< the unit number for reading and
                                    !! writing observations
@@ -129,13 +132,22 @@ contains
 
     open(emp_o,file=filename,action='write',status='replace'&
          &,form='formatted')
-        
+
+    inquire(unit=emp_e,opened=opend)
+    if(opend) then
+       close(emp_e)
+    end if
+    write(filename,'(A,i0)') 'emp.err.',id_num
+    open(emp_e,file=filename,action='write',status='replace'&
+         &,form='formatted')
+    
   end subroutine open_emp_o
 
 
   !> subroutine to close the output file
   subroutine close_emp_o()
     close(emp_o)
+    close(emp_e)
   end subroutine close_emp_o
 End Module Output_empire
 
