@@ -10,7 +10,7 @@ LIB_LIST=-lblas
 FCOPTS=-O3 -Wall -fimplicit-none -fbounds-check -fbacktrace
 FCOPTS+=$(MODFLAG) $(MODLOC)
 
-OBJECTS_EMPIRE=minimal_empire.o $(OBS)comms.o $(OBS)pf_control.o $(OBS)sizes.o $(OBS)histogram.o $(OBS)timestep_data.o $(OBS)var_data.o $(OBS)model_as_subroutine_data.o $(OBS)model_as_subroutine_initialise.o $(OBS)model_as_subroutine_start.o $(OBS)model_as_subroutine_return.o
+OBJECTS_EMPIRE=minimal_empire.o $(OBS)output_empire.o $(OBS)comms.o $(OBS)pf_control.o $(OBS)sizes.o $(OBS)histogram.o $(OBS)timestep_data.o $(OBS)var_data.o $(OBS)model_as_subroutine_data.o $(OBS)model_as_subroutine_initialise.o $(OBS)model_as_subroutine_start.o $(OBS)model_as_subroutine_return.o
 
 
 
@@ -18,6 +18,8 @@ OBJECTS_EMPIRE=minimal_empire.o $(OBS)comms.o $(OBS)pf_control.o $(OBS)sizes.o $
 # left and right sides of the :, respectively, 
 # to make the overall compilation rule more general
 %.o: %.f90
+	@echo "FC = " $(FC)
+	@echo "FCOPTS = " $(FCOPTS)
 	$(FC) $(FCOPTS) -c -o $@ $<
 
 all: clean $(OBJECTS_EMPIRE)

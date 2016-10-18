@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2016-08-16 15:14:43 pbrowne>
+!!! Time-stamp: <2016-10-18 15:36:02 pbrowne>
 !!!
 !!!    Subroutine to output RMSE
 !!!    Copyright (C) 2015 Philip A. Browne
@@ -27,7 +27,7 @@
 !> subroutine to output RMSEs
 !>
 subroutine output_spatial_rmse(mean)
-  use output_empire, only : unit_spatial_rmse
+  use output_empire, only : unit_spatial_rmse,emp_e
   use pf_control
   use timestep_data
   use sizes
@@ -58,18 +58,18 @@ subroutine output_spatial_rmse(mean)
      case(3)
         write(filename,'(A,A,i0)') trim(pf%rmse_filename),'.',pf_ens_rank
      case default    
-        print*,'ERROR in output_spatial_rmse: comm_version ',comm_version,' &
+        write(emp_e,*) 'ERROR in output_spatial_rmse: comm_version ',comm_version,' &
              &is not supported'
-        print*,'Stopping'
+        write(emp_e,*) 'Stopping'
         stop '-23'
      end select
 
      
      open(unit_spatial_rmse,file=trim(filename),iostat=ios,action='write',status='replace')
      if(ios .ne. 0)  then
-        write(*,*) 'PARTICLE FILTER DATA ERROR!!!!! Cannot open &
+        write(emp_e,*) 'PARTICLE FILTER DATA ERROR!!!!! Cannot open &
              &file ',filename
-        write(*,*) 'Very strange that I couldnt open it. Im goin&
+        write(emp_e,*) 'Very strange that I couldnt open it. Im goin&
              &g to stop now.'
         stop
      end if

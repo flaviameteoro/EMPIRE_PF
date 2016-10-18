@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2016-08-16 15:44:47 pbrowne>
+!!! Time-stamp: <2016-10-18 14:56:12 pbrowne>
 !!!
 !!!    module to store data for variational methods
 !!!    Copyright (C) 2015  Philip A. Browne
@@ -137,7 +137,7 @@ contains
   !! - \link var_data::var_control_type::opt_method opt_method\endlink
   !!
   subroutine parse_vardata
-    use output_empire, only : unit_vardata
+    use output_empire, only : unit_vardata,emp_e
     implicit none
     character(*), parameter :: filename='vardata.nml'
     character(*), parameter :: filename2='empire.nml'
@@ -177,14 +177,14 @@ contains
        open(unit_vardata,file=filename2,iostat=ios,action='read',status='old')
        
        if(ios .ne. 0) then
-          write(*,*) 'Cannot open ',filename2
-          write(*,*) 'var_data ERROR: no .nml file found. STOPPING.'
+          write(emp_e,*) 'Cannot open ',filename2
+          write(emp_e,*) 'var_data ERROR: no .nml file found. STOPPING.'
           stop '-65'
        end if
        
        read(unit_vardata,nml=var_params,iostat=ios) 
        if(ios .ne. 0) then
-          write(*,*) 'var_data ERROR: no var_params namelist found in &
+          write(emp_e,*) 'var_data ERROR: no var_params namelist found in &
                &',filename,' or ',filename2,'. STOPPING.'
           stop '-66'
        end if
@@ -195,7 +195,7 @@ contains
           close(unit_vardata)
           open(unit_vardata,file=filename2,iostat=ios,action='read',status='old')
           if(ios .ne. 0) then
-             write(*,*) 'var_data ERROR: no var_params namelist found &
+             write(emp_e,*) 'var_data ERROR: no var_params namelist found &
                   &in &              
                &',filename,' and could not open ',filename2,'. STOPPING.'
              stop '-67'
@@ -203,7 +203,7 @@ contains
 
           read(unit_vardata,nml=var_params,iostat=ios)
           if(ios .ne. 0) then
-             write(*,*) 'var_data ERROR: no var_params namelist found in &
+             write(emp_e,*) 'var_data ERROR: no var_params namelist found in &
                   &',filename,' or ',filename2,'. STOPPING.'
              stop '-68'
           end if
@@ -238,22 +238,22 @@ contains
        write(*,*) 'VAR_DATA: Bound constrained L-BFGS Method selected'
        vardata%opt_method = opt_method
     case default
-       write(*,*) 'VAR_DATA ERROR: opt_method in ',filename,' incorrect&
+       write(emp_e,*) 'VAR_DATA ERROR: opt_method in ',filename,' incorrect&
             &ly given as ',opt_method
-       write(*,*) 'VAR_DATA ERROR: Correct inputs are:'
-       write(*,*) 'VAR_DATA ERROR: cg'
-       write(*,*) 'VAR_DATA ERROR: lbfgs'
-       write(*,*) 'VAR_DATA ERROR: lbfgsb'
+       write(emp_e,*) 'VAR_DATA ERROR: Correct inputs are:'
+       write(emp_e,*) 'VAR_DATA ERROR: cg'
+       write(emp_e,*) 'VAR_DATA ERROR: lbfgs'
+       write(emp_e,*) 'VAR_DATA ERROR: lbfgsb'
        stop 3
     end select
 
     if(cg_method .lt. 1 .or. cg_method .gt. 3) then
-       write(*,*) 'VAR_DATA ERROR: cg_method in ',filename, ' incorrect&
+       write(emp_e,*) 'VAR_DATA ERROR: cg_method in ',filename, ' incorrect&
             &ly given as ',cg_method
-       write(*,*) 'VAR_DATA ERROR: Correct inputs are:'
-       write(*,*) 'VAR_DATA ERROR: 1  FLETCHER-REEVES '
-       write(*,*) 'VAR_DATA ERROR: 2  POLAK-RIBIERE (DEFAULT)'
-       write(*,*) 'VAR_DATA ERROR: 3  POSITIVE POLAK-RIBIERE ( BETA=MAX{BETA,0} )'
+       write(emp_e,*) 'VAR_DATA ERROR: Correct inputs are:'
+       write(emp_e,*) 'VAR_DATA ERROR: 1  FLETCHER-REEVES '
+       write(emp_e,*) 'VAR_DATA ERROR: 2  POLAK-RIBIERE (DEFAULT)'
+       write(emp_e,*) 'VAR_DATA ERROR: 3  POSITIVE POLAK-RIBIERE ( BETA=MAX{BETA,0} )'
        stop 4
     else
        vardata%cg_method = cg_method
@@ -273,8 +273,8 @@ contains
 
     if(cg_eps .ne. 1.0d-5) then
        if(cg_eps .lt. 0.0d0) then
-          write(*,*) 'VAR_DATA ERROR: cg_eps read as negative: ',cg_eps
-          write(*,*) 'VAR_DATA ERROR: Please make cg_eps positive (small).'
+          write(emp_e,*) 'VAR_DATA ERROR: cg_eps read as negative: ',cg_eps
+          write(emp_e,*) 'VAR_DATA ERROR: Please make cg_eps positive (small).'
           stop 5
        elseif(cg_eps .ge. 0.5d0) then
           write(*,*) 'VAR_DATA WARNING: cg_eps read as "large": '&
@@ -313,7 +313,7 @@ contains
     
 
     if(total_timesteps .lt. 1) then
-       write(*,*) 'VAR_DATA ERROR: total_timesteps < 1'
+       write(emp_e,*) 'VAR_DATA ERROR: total_timesteps < 1'
        stop 6
     else
        vardata%total_timesteps = total_timesteps

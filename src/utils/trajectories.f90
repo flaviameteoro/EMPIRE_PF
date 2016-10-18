@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2016-08-16 15:38:29 pbrowne>
+!!! Time-stamp: <2016-10-18 15:40:19 pbrowne>
 !!!
 !!!    Subroutine to output trajectories of state variables
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -43,7 +43,7 @@ module traj_data
     !! and the following K integers are the index in the state
     !! dimension for which the trajectories are required.    
     subroutine setup_traj
-      use output_empire, only : unit_traj_read
+      use output_empire, only : unit_traj_read,emp_e
       use comms
       use sizes, only : state_dim_g
       logical :: dir_e,file_e
@@ -54,9 +54,9 @@ module traj_data
       ! a trick to be sure traj is a dir
       inquire( file="./traj/.", exist=dir_e )
       if ( .not. dir_e ) then
-         write(*,*) 'EMPIRE ERROR -559: ./traj/ directory does not exi&
+         write(emp_e,*) 'EMPIRE ERROR -559: ./traj/ directory does not exi&
               &st'
-         write(*,*) 'Please create the directory traj/ in the folder t&
+         write(emp_e,*) 'Please create the directory traj/ in the folder t&
               &hat you wish to run'
          stop '-559'
       end if
@@ -64,11 +64,11 @@ module traj_data
       !now we check to see that traj_list.dat exists:
       inquire( file=traj_list, exist=file_e )
       if ( .not. file_e ) then
-         write(*,*) 'EMPIRE ERROR -560: file ',traj_list,' does not exi&
+         write(emp_e,*) 'EMPIRE ERROR -560: file ',traj_list,' does not exi&
               &st'
-         write(*,*) 'This file should contain a list of state variable&
+         write(emp_e,*) 'This file should contain a list of state variable&
               &s'
-         write(*,*) 'for which you want to output trajectories'
+         write(emp_e,*) 'for which you want to output trajectories'
          stop '-560'
       end if
 
@@ -80,15 +80,15 @@ module traj_data
       do i = 1,trajn
          read(unit_traj_read,*) trajvar(i)
          if(trajvar(i) .le. 0) then
-            print*,'EMPIRE ERROR -561: trajectory variable ',i,' less &
+            write(emp_e,*) 'EMPIRE ERROR -561: trajectory variable ',i,' less &
                  &than 0'
-            print*,'                 : variable read as',trajvar(i),' &
+            write(emp_e,*) '                 : variable read as',trajvar(i),' &
                  &STOP.'
             stop '-561'
          elseif(trajvar(i) .gt. state_dim_g) then
-            print*,'EMPIRE ERROR -562: trajectory variable ',i,' larger &
+            write(emp_e,*) 'EMPIRE ERROR -562: trajectory variable ',i,' larger &
                  &than the state dimension ',state_dim_g
-            print*,'                 : variable read as',trajvar(i),' &
+            write(emp_e,*) '                 : variable read as',trajvar(i),' &
                  &STOP.'
             stop '-562'
          end if

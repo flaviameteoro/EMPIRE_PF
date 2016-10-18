@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2016-09-30 12:07:59 pbrowne>
+!!! Time-stamp: <2016-10-18 14:59:45 pbrowne>
 !!!
 !!!    The main program to run EMPIRE
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -129,7 +129,7 @@ program empire_main
         case('3D')
            call stochastic_model
         case default
-           write(emp_o,*) 'Error -555: Incorrect pf%filter'
+           write(emp_e,*) 'Error -555: Incorrect pf%filter'
            stop '-555'
         end select
         call timestep_data_set_completed(pf%timestep)
@@ -175,7 +175,7 @@ program empire_main
         if(pf%output_forecast) call output_forecast
         call three_d_var_all_particles
      case default
-        write(emp_o,*) 'Error -556: Incorrect pf%filter'
+        write(emp_e,*) 'Error -556: Incorrect pf%filter'
         stop '-556'
      end select
      

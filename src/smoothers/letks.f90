@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-09-18 15:40:32 pbrowne>
+!!! Time-stamp: <2016-10-18 15:16:41 pbrowne>
 !!!
 !!!    Module for doing things related to the LETKS: Local Ensemble
 !!!    Kalman Transform Smoother
@@ -52,6 +52,7 @@ contains
   !! increments can subsquently be computed
   !> @todo update to allow for non-diagonal R matrices to be used. 
   subroutine LETKS_filter_stage
+    use output_empire, only : emp_e
     use comms
     use pf_control
     use sizes
@@ -110,8 +111,8 @@ contains
     elseif(comm_version .eq. 3) then
        ensemble_comm = pf_ens_comm
     else
-       print*,'EMPIRE VERSION ',comm_version,' NOT SUPPORTED IN letkf_analysis'
-       print*,'THIS IS AN ERROR. STOPPING'
+       write(emp_e,*) 'EMPIRE VERSION ',comm_version,' NOT SUPPORTED IN letks_filter_state'
+       write(emp_e,*) 'THIS IS AN ERROR. STOPPING'
        stop '-24'
     end if
 
@@ -284,8 +285,11 @@ contains
 
           call dgesvd('S','A',red_obsDim,pf%nens,Ysf_red,red_obsDim,S,V,red_obsDim,UT,pf%nens,WORK,LWORK,INFO)
           if(INFO .ne. 0) then
-             print*,'SVD failed with INFO = ',INFO
-             print*,'FYI WORK(1) = ',WORK(1)
+             write(emp_e,*) 'EMPIRE ERROR in letks_filter_stage with t&
+                  &he SVD'
+             write(emp_e,*) 'SVD failed with INFO = ',INFO
+             write(emp_e,*) 'FYI WORK(1) = ',WORK(1)
+             write(emp_e,*) 'STOPPING'
              stop
           end if
           deallocate(WORK)
@@ -392,6 +396,7 @@ contains
 
   !> subroutine to compute the LETKS increments
   subroutine LETKS_increment(psi,inc)
+    use output_empire, only : emp_e
     use comms
     use pf_control
     use sizes
@@ -437,8 +442,8 @@ contains
     elseif(comm_version .eq. 3) then
        ensemble_comm = pf_ens_comm
     else
-       print*,'EMPIRE VERSION ',comm_version,' NOT SUPPORTED IN letks_increment'
-       print*,'THIS IS AN ERROR. STOPPING'
+       write(emp_e,*) 'EMPIRE VERSION ',comm_version,' NOT SUPPORTED IN letks_increment'
+       write(emp_e,*) 'THIS IS AN ERROR. STOPPING'
        stop '-24'
     end if
 

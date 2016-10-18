@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-07-14 10:56:54 pbrowne>
+!!! Time-stamp: <2016-10-18 15:24:16 pbrowne>
 !!!
 !!!    subroutine to compute a localisation weighting based on distance
 !!!    Copyright (C) 2015 Philip A. Browne
@@ -29,6 +29,7 @@
 !> subroutine to compute a localisation weighting based on a distance
 !! @todo include multiple localisation functions such as Gaspari-Cohn ones
 subroutine loc_function(loctype,dis,scal,inc)
+  use output_empire, only : emp_e
   use pf_control
   implicit none
   integer, parameter :: rk = kind(1.0d0)
@@ -51,7 +52,7 @@ subroutine loc_function(loctype,dis,scal,inc)
         inc = .false.
      end if
   case default
-     print*,'EMP: ERROR: loctype not supported in subroutine loc_funct&
+     write(emp_e,*) 'EMP: ERROR: loctype not supported in subroutine loc_funct&
           &ion'
      stop '-1'
   end select

@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2016-09-30 12:29:18 pbrowne>
+!!! Time-stamp: <2016-10-18 15:31:47 pbrowne>
 !!!
 !!!    module to deal with generating and outputting pf matrix
 !!!    Copyright (C) 2015 Philip A. Browne
@@ -59,7 +59,7 @@ module matrix_pf
 contains
   !> subroutine to read namelist to control this output
   subroutine read_matrix_pf_information
-    use output_empire, only : unit_nml
+    use output_empire, only : unit_nml,emp_e
     implicit none
     character(30) :: prefix
     integer :: k=0
@@ -74,15 +74,21 @@ contains
     if(file_exists) then
        open(unit_nml,file='pf_parameters.dat',iostat=ios,action='read'&
             &,status='old')
-       if(ios .ne. 0) stop 'Cannot open pf_parameters.dat'
+       if(ios .ne. 0) then
+          write(emp_e,*) 'Cannot open pf_parameters.dat'
+          stop
+       end if
     else
        inquire(file='empire.nml',exist=file_exists)
        if(file_exists) then
           open(unit_nml,file='empire.nml',iostat=ios,action='read'&
                &,status='old')
-          if(ios .ne. 0) stop 'Cannot open empire.nml'
+          if(ios .ne. 0) then
+             write(emp_e,*) 'Cannot open empire.nml'
+             stop
+          end if
        else
-          print*,'ERROR: cannot find pf_parameters.dat or empire.nml'
+          write(emp_e,*) 'ERROR: cannot find pf_parameters.dat or empire.nml'
           stop '-1'
        end if
     end if
@@ -103,9 +109,9 @@ contains
        if(k.gt.0) then
           matpf%k=k
        else
-          print*,'ERROR: k in matrix_pf_data read in less than 1'
-          print*,'ERROR: k should be a natural number'
-          print*,'STOPPING'
+          write(emp_e,*) 'ERROR: k in matrix_pf_data read in less than 1'
+          write(emp_e,*) 'ERROR: k should be a natural number'
+          write(emp_e,*) 'STOPPING'
           stop '-1'
        end if
     end if

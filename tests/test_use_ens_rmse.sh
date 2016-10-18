@@ -44,7 +44,7 @@ purple()
 NC='\033[0m'
 dir=`pwd`
 grep=/bin/grep
-commsfile=../src/comm_version.f90
+commsfile=../comm_version.f90
 
 
 

@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2016-08-16 15:13:55 pbrowne>
+!!! Time-stamp: <2016-10-18 15:35:01 pbrowne>
 !!!
 !!!    Subroutine to output triangular matrix
 !!!    Copyright (C) 2015  Philip A. Browne
@@ -27,7 +27,7 @@
 
 !> subroutine to output triangluar matrix various formats
 subroutine output_mat_tri(n,A,filename,output_type)
-  use output_empire, only : unit_mat_tri
+  use output_empire, only : unit_mat_tri,emp_e
   implicit none
   integer, parameter :: rk = kind(1.0d0)
   integer, intent(in) :: n !< number of columns of matrix A
@@ -54,7 +54,7 @@ subroutine output_mat_tri(n,A,filename,output_type)
   integer :: err
 
   if(output_type .eq. 0) then
-     write(*,*) 'Error in output_mat_tri. output_type = 0&
+     write(emp_e,*) 'Error in output_mat_tri. output_type = 0&
           & unsupported. Stopping.'
      stop '-4'
   elseif(output_type .gt. 0) then
@@ -83,8 +83,8 @@ subroutine output_mat_tri(n,A,filename,output_type)
   case(2) ! rectangular full packed format (TF)
      Aout = A
   case default
-     write(*,*) 'Error in output_mat_tri, unsupported output_type'
-     write(*,*) 'output_type=',output_type,'. Stopping'
+     write(emp_e,*) 'Error in output_mat_tri, unsupported output_type'
+     write(emp_e,*) 'output_type=',output_type,'. Stopping'
      stop '-4'
   end select
 

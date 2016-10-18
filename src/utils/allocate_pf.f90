@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-09-09 18:53:42 pbrowne>
+!!! Time-stamp: <2016-10-18 15:34:20 pbrowne>
 !!!
 !!!    Subroutine to allocate space for the filtering code
 !!!    Copyright (C) 2015  Philip A. Browne
@@ -26,19 +26,29 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !> subroutine to allocate space for the filtering code        
 subroutine allocate_pf
+  use output_empire, only : emp_e
   use pf_control
   use sizes
   use histogram_data
   integer :: st
   allocate(pf%weight(pf%nens),stat=st)
-  if(st .ne. 0) stop 'Error in allocating pf%weight'
+  if(st .ne. 0) then
+     write(emp_e,*) 'Error in allocating pf%weight'
+     stop
+  end if
   pf%weight = -log(1.0D0/pf%nens)
   allocate(pf%psi(state_dim,pf%count),stat=st)
-  if(st .ne. 0) stop 'Error in allocating pf%psi'
+  if(st .ne. 0) then
+     write(emp_e,*) 'Error in allocating pf%psi'
+     stop
+  end if
   
   if(pf%use_talagrand) then
      allocate(pf%talagrand(rhn_n,pf%nens+1),stat=st)
-     if(st .ne. 0) stop 'Error in allocating pf%talagrand'
+     if(st .ne. 0) then
+        write(emp_e,*) 'Error in allocating pf%talagrand'
+        stop
+     end if
      pf%talagrand = 0
   end if
   

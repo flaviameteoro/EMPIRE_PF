@@ -71,7 +71,7 @@ dir=`pwd`
 MPIRUN=/usr/bin/mpirun
 MPIRUNOPTS="--output-filename out"
 
-commsfile=../src/comm_version.f90
+commsfile=../comm_version.f90
 
 
 version=$($grep comm_version= $commsfile | cut -f2 -d=)
@@ -100,6 +100,8 @@ fi
 echo "Moving to empire base directory"
 test cd ../
 
+echo "Cleaning"
+test make clean > /dev/null
 
 echo "Making empire codes"
 test make > /dev/null

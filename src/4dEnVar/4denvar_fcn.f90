@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-10-16 15:42:22 pbrowne>
+!!! Time-stamp: <2016-10-18 14:58:46 pbrowne>
 !!!
 !!!    subroutine to provide objective function and gradient for var
 !!!    Copyright (C) 2015  Philip A. Browne
@@ -196,6 +196,7 @@ end subroutine convert_control_to_state
 
 
 subroutine fourdenvar_fcn_master(n,v,f,g,leave)
+  use output_empire, only : emp_e
   use comms
   use var_data
   use fourdenvardata
@@ -230,9 +231,10 @@ subroutine fourdenvar_fcn_master(n,v,f,g,leave)
   elseif(comm_version .eq. 3) then
      ensemble_comm = pf_ens_comm
   else
-     print*,'error. comm_version ',comm_version,'in fourdenvar&
+     write(emp_e,*) 'error. comm_version ',comm_version,'in fourdenvar&
           &_fcn_master'
-     print*,'stopping'
+     write(emp_e,*) 'stopping'
+     stop
   end if
 
 
@@ -400,6 +402,7 @@ subroutine fourdenvar_fcn_master(n,v,f,g,leave)
 end subroutine fourdenvar_fcn_master
 
 subroutine fourdenvar_fcn_slave(n,v,leave)
+  use output_empire, only : emp_e
   use comms
   use var_data
   use fourdenvardata
@@ -515,7 +518,7 @@ subroutine fourdenvar_fcn_slave(n,v,leave)
   elseif(message .eq. 0) then
      leave = .true. !leave this function
   else !this shouldnt happen so is an error
-     print*,'4DEnVar ERROR: mpi_bcast had unknown integer&
+     write(emp_e,*) '4DEnVar ERROR: mpi_bcast had unknown integer&
           & value',message
      stop 9
   end if

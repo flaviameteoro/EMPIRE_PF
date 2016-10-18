@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-10-14 11:24:54 pbrowne>
+!!! Time-stamp: <2016-10-18 15:39:18 pbrowne>
 !!!
 !!!    subroutine be called by optimization codes
 !!!    Copyright (C) 2015  Philip A. Browne
@@ -28,6 +28,7 @@
 !> This is the subroutine which the optimization routines call
 !! to get the objective function value and its gradient
 subroutine fcn( n, x, f, g )
+  use output_empire, only : emp_e
   use pf_control
   implicit none
   integer,intent(in) :: n !< the dimension of the optimzation problem
@@ -41,7 +42,8 @@ subroutine fcn( n, x, f, g )
   case('3D')
      call threedvar_fcn(n,x,f,g)
   case default
-     stop 'wrong case in fcn'
+     write(emp_e,*) 'wrong case in fcn'
+     stop
   end select
 !  print*,'function = ',f
 !  print*,'gradient = ',g

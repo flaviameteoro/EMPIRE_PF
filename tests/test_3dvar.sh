@@ -82,7 +82,7 @@ grep=/bin/grep
 dir=`pwd`
 MPIRUN=/usr/bin/mpirun
 MPIRUNOPTS="--output-filename out"
-commsfile=../src/comm_version.f90
+commsfile=../comm_version.f90
 ms_backup=model_specific.f90_real
 
 

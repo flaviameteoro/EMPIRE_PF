@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2016-08-16 15:29:45 pbrowne>
+!!! Time-stamp: <2016-10-18 15:36:44 pbrowne>
 !!!
 !!!    Subroutine to give output diagnositics such as rank histograms
 !!!    and trajectories
@@ -29,7 +29,8 @@
 !> Subroutine to give output diagnositics such as rank histograms  
 !!    @todo test in anger with empire version 3. will probably segfault
 subroutine diagnostics
-  use output_empire, only : unit_hist_write,unit_hist_readt,unit_hist_readp
+  use output_empire, only : unit_hist_write,unit_hist_readt&
+       &,unit_hist_readp,emp_e
   use timestep_data
   use pf_control
   use sizes
@@ -158,9 +159,10 @@ subroutine diagnostics
                           pf%talagrand(j,pf%nens+1) = pf&
                                &%talagrand(j,pf%nens+1) + 1
                        else
-                          stop 'There was an error in the calculation of the p&
+                          write(emp_e,*) 'There was an error in the calculation of the p&
                                &lacement &
                                &in the rank histogram. Bums.'
+                          stop
                        end if
                     end if
 

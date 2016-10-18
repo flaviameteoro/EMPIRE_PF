@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-09-09 14:12:43 pbrowne>
+!!! Time-stamp: <2016-10-18 15:03:15 pbrowne>
 !!!
 !!!    Computes the equal weights step in the New Schem Equal Weights Particle Filter
 !!!    Copyright (C) 2015  Mengbin Zhu
@@ -30,6 +30,7 @@
 !! structure of code loosely based on original equivalent weights
 !! scheme @ref equivalent_weights_filter
 subroutine equivalent_weights_filter_zhu
+  use output_empire, only : emp_e
   use timestep_data
   use pf_control
   use sizes
@@ -73,9 +74,9 @@ subroutine equivalent_weights_filter_zhu
   elseif(comm_version .eq. 3) then
      ensemble_comm = pf_ens_comm
   else
-     print*,'EMPIRE VERSION ',comm_version,' NOT SUPPORTED IN propos&
+     write(emp_e,*) 'EMPIRE VERSION ',comm_version,' NOT SUPPORTED IN propos&
           &al_filter'
-     print*,'THIS IS AN ERROR. STOPPING'
+     write(emp_e,*) 'THIS IS AN ERROR. STOPPING'
      stop '-24'
   end if
 

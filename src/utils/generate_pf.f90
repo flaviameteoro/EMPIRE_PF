@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2016-09-30 12:29:22 pbrowne>
+!!! Time-stamp: <2016-10-18 15:37:32 pbrowne>
 !!!
 !!!    Subroutine to generate Pf matrix given ensemble members on a communicator
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -29,6 +29,7 @@
 !> subroutine to generate Pf matrix given ensemble members on a
 !> communicator
 subroutine generate_pf(stateDim,cnt,comm,x,pf)
+  use output_empire, only : emp_e
   implicit none
   include 'mpif.h'
   integer, parameter :: rk = kind(1.0d0)
@@ -56,7 +57,7 @@ subroutine generate_pf(stateDim,cnt,comm,x,pf)
   ! get the total number of ensemble members used:
   call mpi_allreduce(cnt,m,1,MPI_INTEGER,MPI_SUM,comm,mpi_err)
   if(mpi_err .ne. MPI_SUCCESS) then
-     print*,'ERROR in generate_pf: mpi_allreduce 1 failed with flag ',mpi_err
+     write(emp_e,*) 'ERROR in generate_pf: mpi_allreduce 1 failed with flag ',mpi_err
      stop
   end if
   
@@ -65,7 +66,7 @@ subroutine generate_pf(stateDim,cnt,comm,x,pf)
   call mpi_allreduce(xp(:,1),mean,stateDim,MPI_DOUBLE_PRECISION&
        &,MPI_SUM,comm,mpi_err)
   if(mpi_err .ne. MPI_SUCCESS) then
-     print*,'ERROR in generate_pf: mpi_allreduce 2 failed with flag ',mpi_err
+     write(emp_e,*) 'ERROR in generate_pf: mpi_allreduce 2 failed with flag ',mpi_err
      stop
   end if
   ! use BLAS to perform mean = mean/real(m,rk)
@@ -95,7 +96,7 @@ subroutine generate_pf(stateDim,cnt,comm,x,pf)
   call mpi_allreduce(MPI_IN_PLACE,Pf,stateDim*(stateDim+1)/2,MPI_DOUBLE_PRECISION&
        &,MPI_SUM,comm,mpi_err)
   if(mpi_err .ne. MPI_SUCCESS) then
-     print*,'ERROR in generate_pf: mpi_allreduce 3 failed with flag ',mpi_err
+     write(emp_e,*) 'ERROR in generate_pf: mpi_allreduce 3 failed with flag ',mpi_err
      stop
   end if
   

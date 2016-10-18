@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2016-08-16 15:48:17 pbrowne>
+!!! Time-stamp: <2016-10-18 15:03:36 pbrowne>
 !!!
 !!!    subroutine to simply move the model forward in time one timestep
 !!!    then add model error
@@ -31,7 +31,7 @@
 !> PAB 21-05-2013
 
 subroutine stochastic_model
-  use output_empire, only : emp_o
+  use output_empire, only : emp_o,emp_e
   use timestep_data
   use pf_control
   use Sizes
@@ -69,7 +69,7 @@ subroutine stochastic_model
 
   if(pf%gen_data .and. TSData%do_analysis) then
      if(pf%count .ne. 1 .and. pf%nens .ne. 1) then
-        print*,'OBS GEN ERROR -558: PLEASE RUN WITH ONLY A SINGLE &
+        write(emp_e,*) 'OBS GEN ERROR -558: PLEASE RUN WITH ONLY A SINGLE &
              &ENSEMBLE MEMBER'
         stop '-558'
      end if

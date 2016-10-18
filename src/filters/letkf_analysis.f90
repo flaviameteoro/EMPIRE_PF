@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2016-03-04 16:51:43 pbrowne>
+!!! Time-stamp: <2016-10-18 15:07:40 pbrowne>
 !!!
 !!!    Ensemble transform Kalman filter
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -30,6 +30,7 @@
 !>
 !> @todo update to allow for non-diagonal R matrices to be used. 
 subroutine letkf_analysis
+  use output_empire, only : emp_e
   use timestep_data
   use comms
   use pf_control
@@ -87,8 +88,8 @@ subroutine letkf_analysis
   elseif(comm_version .eq. 3) then
      ensemble_comm = pf_ens_comm
   else
-     print*,'EMPIRE VERSION ',comm_version,' NOT SUPPORTED IN letkf_analysis'
-     print*,'THIS IS AN ERROR. STOPPING'
+     write(emp_e,*) 'EMPIRE VERSION ',comm_version,' NOT SUPPORTED IN letkf_analysis'
+     write(emp_e,*) 'THIS IS AN ERROR. STOPPING'
      stop '-24'
   end if
 
@@ -246,8 +247,10 @@ subroutine letkf_analysis
 
         call dgesvd('S','A',red_obsDim,pf%nens,Ysf_red,red_obsDim,S,V,red_obsDim,UT,pf%nens,WORK,LWORK,INFO)
         if(INFO .ne. 0) then
-           print*,'SVD failed with INFO = ',INFO
-           print*,'FYI WORK(1) = ',WORK(1)
+           write(emp_e,*) 'EMPIRE ERROR IN LETKF WITH THE SVD'
+           write(emp_e,*) 'SVD failed with INFO = ',INFO
+           write(emp_e,*) 'FYI WORK(1) = ',WORK(1)
+           write(emp_e,*) 'STOPPING'
            stop
         end if
         deallocate(WORK)

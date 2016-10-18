@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2016-08-07 11:59:41 pbrowne>
+!!! Time-stamp: <2016-10-18 15:12:58 pbrowne>
 !!!
 !!!    Subroutine to perform Universal Importance Resampling
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -31,7 +31,7 @@ subroutine resample
   !and returns pf%phi which has been resampled with completely equal weights
 
 
-
+  use output_empire, only : emp_e
   use pf_control
   use random
   use sizes
@@ -60,9 +60,9 @@ subroutine resample
   case(3)
      ensemble_comm = pf_ens_comm
   case default
-     print*,'EMPIRE VERSION ',comm_version,' NOT SUPPORTED IN RESAMP&
+     write(emp_e,*) 'EMPIRE VERSION ',comm_version,' NOT SUPPORTED IN RESAMP&
           &LE'
-     print*,'THIS IS AN ERROR. STOPPING'
+     write(emp_e,*) 'THIS IS AN ERROR. STOPPING'
      stop '-24'
   end select
   !gather the weights onto the master processor of the particle filter
@@ -81,8 +81,9 @@ subroutine resample
      if(.not. all(pf%weight .eq. pf%weight)) then
         do i = 1,pf%nens
            if(pf%weight(i) .ne. pf%weight(i)) then
-              print*,'Particle ',i,' has weight ',pf%weight(i)
-              print*,'stopping now'
+              write(emp_e,*) 'EMPIRE ERROR in resample.f90'
+              write(emp_e,*) 'Particle ',i,' has weight ',pf%weight(i)
+              write(emp_e,*) 'stopping now'
            end if
         end do
         stop

@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2016-07-29 16:30:38 pbrowne>
+!!! Time-stamp: <2016-10-18 15:12:04 pbrowne>
 !!!
 !!!    Collection of routines to perturb states
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -28,6 +28,7 @@
 !> Subroutine to perturb state vector 
 !! governed by the \link pf_control::pf_control_type::init init\endlink option
 subroutine perturb_particle(x)
+  use output_empire, only : emp_e
   use sizes
   use comms
   use pf_control
@@ -74,7 +75,7 @@ subroutine perturb_particle(x)
   case('Z')
      !no perturbation. x remains as is
   case default
-     print*,'ERROR: incorrect pf%init selected in perturb_particle: ',pf%init
+     write(emp_e,*) 'ERROR: incorrect pf%init selected in perturb_particle: ',pf%init
      stop
   end select
 

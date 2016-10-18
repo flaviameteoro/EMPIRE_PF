@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2016-08-16 15:47:33 pbrowne>
+!!! Time-stamp: <2016-10-18 15:09:55 pbrowne>
 !!!
 !!!    Collection of subroutines to make multidimensional random arrays
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -28,7 +28,7 @@ module random_number_controls
   character(10) :: normal_generator='random_d'
   contains
     subroutine set_random_number_controls
-      use output_empire, only : emp_o,unit_nml
+      use output_empire, only : emp_o,unit_nml,emp_e
       integer :: ios
       logical :: file_exists
       character(14) :: empire_namelist='empire.nml'
@@ -40,8 +40,9 @@ module random_number_controls
          open(unit_nml,file=empire_namelist,iostat=ios,action='read'&
               &,status='old',form='formatted')
          if(ios .ne. 0) then
-            print*,'Cannot open ',empire_namelist
-            stop 'open_emp_o ERROR' 
+            write(emp_e,*) 'Cannot open ',empire_namelist
+            write(emp_e,*) 'open_emp_o ERROR'
+            stop
          end if
          read(unit_nml,nml=random_number_controls,iostat=ios)
          close(unit_nml)
@@ -71,6 +72,7 @@ end Subroutine UniformRandomNumbers1D
 
 !> generate one dimension of Normal random numbers 
 Subroutine NormalRandomNumbers1D(mean,stdev,n,phi)
+  use output_empire, only : emp_e
 use random_number_controls
 use random
 use ziggurat
@@ -92,9 +94,9 @@ case('ziggurat')
       phi(i) = mean+stdev*rnor()
    end do
 case default
-   write(0,*) 'EMPIRE ERROR: wrong normal_generator selected in Nor&
+   write(emp_e,*) 'EMPIRE ERROR: wrong normal_generator selected in Nor&
         &malRandomNumbers1D'
-   write(0,*) 'EMPIRE ERROR: normal_generator = ',normal_generator&
+   write(emp_e,*) 'EMPIRE ERROR: normal_generator = ',normal_generator&
         &,' is unknown'
    stop '-12'
 end select
@@ -105,6 +107,7 @@ End Subroutine NormalRandomNumbers1D
 
 !> generate two dimensional Normal random numbers
 Subroutine NormalRandomNumbers2D(mean,stdev,n,k,phi)
+  use output_empire, only : emp_e
 use random_number_controls
 use ziggurat
 use random
@@ -131,9 +134,9 @@ case('ziggurat')
       end do
    end do
 case default
-   write(0,*) 'EMPIRE ERROR: wrong normal_generator selected in Nor&
+   write(emp_e,*) 'EMPIRE ERROR: wrong normal_generator selected in Nor&
         &malRandomNumbers2D'
-   write(0,*) 'EMPIRE ERROR: normal_generator = ',normal_generator&
+   write(emp_e,*) 'EMPIRE ERROR: normal_generator = ',normal_generator&
         &,' is unknown'
    stop '-12'
 end select

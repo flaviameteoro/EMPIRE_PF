@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-09-02 10:27:09 pbrowne>
+!!! Time-stamp: <2016-10-18 15:00:41 pbrowne>
 !!!
 !!!    Module that stores information about timestepping
 !!!    Copyright (C) 2015  Philip A. Browne
@@ -58,13 +58,14 @@ Module timestep_data
   contains
     !> subroutine to allocate space for obs_times array
     subroutine timestep_data_allocate_obs_times(n)
+      use output_empire, only : emp_e
       implicit none
       integer, intent(in) :: n
       integer :: st
       allocate(TSData%obs_times(n),stat=st)
       if(st .ne. 0) then
-         print*,'ERROR: allocation of obs_times in timestep data'
-         print*,'ERROR: STOPPING.'
+         write(emp_e,*) 'ERROR: allocation of obs_times in timestep data'
+         write(emp_e,*) 'ERROR: STOPPING.'
          stop '-7'
       end if
       TSData%obs_times = -1

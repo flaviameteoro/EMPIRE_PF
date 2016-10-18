@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2016-05-31 10:28:16 pbrowne>
+!!! Time-stamp: <2016-10-18 15:39:57 pbrowne>
 !!!
 !!!    Program to implement 3DVar
 !!!    Copyright (C) 2015  Philip A. Browne
@@ -27,6 +27,7 @@
 
 !> @todo make work with empire version 3
 subroutine three_d_var(x)
+  use output_empire, only : emp_e
   use threedvar_data
   use sizes
   use var_data
@@ -59,8 +60,7 @@ subroutine three_d_var(x)
           vardata%x0,vardata%nbd,vardata%l,vardata%u)
      
   case default
-     print*,'three_d_var ERROR: vardata%opt_method incorrect. Stopping&
-          &'
+     write(emp_e,*) 'three_d_var ERROR: vardata%opt_method incorrect. Stopping'
      stop '-78'
   end select
   

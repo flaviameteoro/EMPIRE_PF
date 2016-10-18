@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-09-09 11:05:33 pbrowne>
+!!! Time-stamp: <2016-10-18 15:05:01 pbrowne>
 !!!
 !!!    subroutine to simply move the model forward in time one timestep
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -31,6 +31,7 @@
 !> PAB 21-05-2013
 
 subroutine deterministic_model
+  use output_empire, only : emp_e
   use pf_control
   use Sizes
   use comms
@@ -45,8 +46,9 @@ subroutine deterministic_model
 
   if(nan_check) then
      if(.not. all(pf%psi .eq. pf%psi)) then
-        stop 'NaN detected in deterministic_model before mpi_send to m&
-             &odel'
+        write(emp_e,*)  'NaN detected in deterministic_model before mp&
+             &i_send to model'
+        stop
      end if
   end if
 
@@ -56,8 +58,9 @@ subroutine deterministic_model
 
   if(nan_check) then
      if(.not. all(pf%psi .eq. pf%psi)) then
-        stop 'NaN detected in deterministic_model after mpi_recv from &
+        write(emp_e,*)  'NaN detected in deterministic_model after mpi_recv from &
              &model'
+        stop
      end if
   end if
 

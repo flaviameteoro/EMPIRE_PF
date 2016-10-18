@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-09-09 14:17:39 pbrowne>
+!!! Time-stamp: <2016-10-18 15:06:05 pbrowne>
 !!!
 !!!    Computes the equivalent weights step in the EWPF
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -27,6 +27,7 @@
 !> subroutine to do the equivalent weights step
 !!
 subroutine equivalent_weights_filter
+  use output_empire, only : emp_e
   use timestep_data
   use pf_control
   use sizes
@@ -61,8 +62,9 @@ subroutine equivalent_weights_filter
   elseif(comm_version .eq. 3) then
      ensemble_comm = pf_ens_comm
   else
-     print*,'EMPIRE VERSION ',comm_version,' NOT SUPPORTED IN proposal_filter'
-     print*,'THIS IS AN ERROR. STOPPING'
+     write(emp_e,*) 'EMPIRE VERSION ',comm_version,' NOT SUPPORTED IN &
+          &equivalent_weights_filter'
+     write(emp_e,*) 'THIS IS AN ERROR. STOPPING'
      stop '-24'
   end if
 

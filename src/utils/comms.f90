@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2016-08-16 16:27:07 pbrowne>
+!!! Time-stamp: <2016-10-18 15:29:44 pbrowne>
 !!!
 !!!    Module and subroutine to intitalise EMPIRE coupling to models
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -55,6 +55,7 @@
 !! @ref communicators for more information.
 
 module comms
+  use output_empire, only : emp_e
   use communicator_version
  
   integer :: CPL_MPI_COMM !< the communicator between the empire
@@ -132,9 +133,9 @@ contains
     case(5)
        call initialise_mpi_v5
     case default
-       print*,'ERROR: comm_version ',comm_version,' not implemente&
+       write(emp_e,*) 'ERROR: comm_version ',comm_version,' not implemente&
             &d.'
-       print*,'STOPPING.'
+       write(emp_e,*) 'STOPPING.'
        stop '-6'
     end select
 
@@ -251,9 +252,9 @@ contains
          &,MPI_COMM_WORLD,mpi_err)
 
     if(mdl_num_proc .lt. 1) then
-       print*,'EMPIRE COMMS v2 ERROR: mdl_num_proc < 1'
-       print*,'mdl_num_proc = ',mdl_num_proc
-       print*,'THIS SUGGESTS YOU HAVE NOT LINKED TO A MODEL. STOP.'
+       write(emp_e,*) 'EMPIRE COMMS v2 ERROR: mdl_num_proc < 1'
+       write(emp_e,*) 'mdl_num_proc = ',mdl_num_proc
+       write(emp_e,*) 'THIS SUGGESTS YOU HAVE NOT LINKED TO A MODEL. STOP.'
        stop
     else
        print*,'mdl_num_proc = ',mdl_num_proc
@@ -292,9 +293,9 @@ contains
     ! count the number of particles associated with this process
     cnt = final_ptcl-first_ptcl+1
     if(cnt .lt. 1) then
-       print*,'EMPIRE ERROR: YOU HAVE LAUNCHED MORE EMPIRE DA PROCESSES'
-       print*,'EMPIRE ERROR: THAN MODELS. I AM REDUDANT AND STOPPING.'
-       print*,'EMPIRE ERROR: RECONSIDER HOW YOU EXECUTE NEXT TIME. xx'
+       write(emp_e,*) 'EMPIRE ERROR: YOU HAVE LAUNCHED MORE EMPIRE DA PROCESSES'
+       write(emp_e,*) 'EMPIRE ERROR: THAN MODELS. I AM REDUDANT AND STOPPING.'
+       write(emp_e,*) 'EMPIRE ERROR: RECONSIDER HOW YOU EXECUTE NEXT TIME. xx'
        stop
     end if
 
@@ -428,9 +429,9 @@ contains
          &,MPI_COMM_WORLD,mpi_err)
 
     if(mdl_num_proc .lt. 1) then
-       print*,'EMPIRE COMMS v3 ERROR: mdl_num_proc < 1'
-       print*,'mdl_num_proc = ',mdl_num_proc
-       print*,'THIS SUGGESTS YOU HAVE NOT LINKED TO A MODEL. STOP.'
+       write(emp_e,*) 'EMPIRE COMMS v3 ERROR: mdl_num_proc < 1'
+       write(emp_e,*) 'mdl_num_proc = ',mdl_num_proc
+       write(emp_e,*) 'THIS SUGGESTS YOU HAVE NOT LINKED TO A MODEL. STOP.'
        stop
     else
        print*,'mdl_num_proc = ',mdl_num_proc
@@ -490,9 +491,9 @@ contains
     ! count the number of particles associated with this process
     cnt = final_ptcl-first_ptcl+1
     if(cnt .lt. 1) then
-       print*,'EMPIRE ERROR: YOU HAVE LAUNCHED MORE EMPIRE DA PROCESSES'
-       print*,'EMPIRE ERROR: THAN MODELS. I AM REDUDANT AND STOPPING.'
-       print*,'EMPIRE ERROR: RECONSIDER HOW YOU EXECUTE NEXT TIME. xx'
+       write(emp_e,*) 'EMPIRE ERROR: YOU HAVE LAUNCHED MORE EMPIRE DA PROCESSES'
+       write(emp_e,*) 'EMPIRE ERROR: THAN MODELS. I AM REDUDANT AND STOPPING.'
+       write(emp_e,*) 'EMPIRE ERROR: RECONSIDER HOW YOU EXECUTE NEXT TIME. xx'
        stop
     end if
 
@@ -637,15 +638,21 @@ contains
     if(file_exists) then
        open(unit_nml,file='pf_parameters.dat',iostat=ios,action='read'&
             &,status='old')
-       if(ios .ne. 0) stop 'Cannot open pf_parameters.dat'
+       if(ios .ne. 0) then
+          write(emp_e,*) 'Cannot open pf_parameters.dat'
+          stop
+       end if
     else
        inquire(file='empire.nml',exist=file_exists)
        if(file_exists) then
           open(unit_nml,file='empire.nml',iostat=ios,action='read'&
                &,status='old')
-          if(ios .ne. 0) stop 'Cannot open empire.nml'
+          if(ios .ne. 0) then
+             write(emp_e,*) 'Cannot open empire.nml'
+             stop
+          end if
        else
-          print*,'ERROR: cannot find pf_parameters.dat or empire.nml'
+          write(emp_e,*) 'ERROR: cannot find pf_parameters.dat or empire.nml'
           stop '-1'
        end if
     end if
@@ -656,17 +663,17 @@ contains
     close(unit_nml)
 
     if( nens .lt. 1 ) then
-       print*,'EMPIRE ERROR: __________initialise_mpi_v4_____________'
-       print*,'EMPIRE ERROR: nens is less than 1... nens = ',nens
-       print*,'EMPIRE ERROR: please correctly specify this in empire.n&
+       write(emp_e,*) 'EMPIRE ERROR: __________initialise_mpi_v4_____________'
+       write(emp_e,*) 'EMPIRE ERROR: nens is less than 1... nens = ',nens
+       write(emp_e,*) 'EMPIRE ERROR: please correctly specify this in empire.n&
             &ml'
        stop '-1'
     end if
 
     if (npfs .gt. nens) then
-       print*,'EMPIRE ERROR: __________initialise_mpi_v4_____________'
-       print*,'EMPIRE ERROR: npfs is great than nens...'
-       print*,'EMPIRE ERROR: npfs = ',npfs,' nens = ',nens
+       write(emp_e,*) 'EMPIRE ERROR: __________initialise_mpi_v4_____________'
+       write(emp_e,*) 'EMPIRE ERROR: npfs is great than nens...'
+       write(emp_e,*) 'EMPIRE ERROR: npfs = ',npfs,' nens = ',nens
        stop '-1'
     end if
 
@@ -743,9 +750,9 @@ contains
          &,MPI_COMM_WORLD,mpi_err)
 
     if(mdl_num_proc .lt. 1) then
-       print*,'EMPIRE COMMS v5 ERROR: mdl_num_proc < 1'
-       print*,'mdl_num_proc = ',mdl_num_proc
-       print*,'THIS SUGGESTS YOU HAVE NOT LINKED TO A MODEL. STOP.'
+       write(emp_e,*) 'EMPIRE COMMS v5 ERROR: mdl_num_proc < 1'
+       write(emp_e,*) 'mdl_num_proc = ',mdl_num_proc
+       write(emp_e,*) 'THIS SUGGESTS YOU HAVE NOT LINKED TO A MODEL. STOP.'
        stop
     else
        print*,'mdl_num_proc = ',mdl_num_proc
@@ -755,9 +762,9 @@ contains
     call mpi_allreduce(0,nens_per_instance,1,MPI_INTEGER,MPI_MAX&
          &,MPI_COMM_WORLD,mpi_err)
     if(nens_per_instance .lt. 1) then
-       print*,'EMPIRE COMMS v5 ERROR: nens_per_instance < 1'
-       print*,'nens_per_instance = ',nens_per_instance
-       print*,'THIS SUGGESTS YOU HAVE NOT LINKED TO A MODEL. STOP.'
+       write(emp_e,*) 'EMPIRE COMMS v5 ERROR: nens_per_instance < 1'
+       write(emp_e,*) 'nens_per_instance = ',nens_per_instance
+       write(emp_e,*) 'THIS SUGGESTS YOU HAVE NOT LINKED TO A MODEL. STOP.'
        stop
     else
        print*,'nens_per_instance = ',nens_per_instance
@@ -795,9 +802,9 @@ contains
     ! count the number of particles associated with this process
     cnt = final_ptcl-first_ptcl+1
     if(cnt .lt. 1) then
-       print*,'EMPIRE ERROR: YOU HAVE LAUNCHED MORE EMPIRE DA PROCESSES'
-       print*,'EMPIRE ERROR: THAN MODELS. I AM REDUDANT AND STOPPING.'
-       print*,'EMPIRE ERROR: RECONSIDER HOW YOU EXECUTE NEXT TIME. xx'
+       write(emp_e,*) 'EMPIRE ERROR: YOU HAVE LAUNCHED MORE EMPIRE DA PROCESSES'
+       write(emp_e,*) 'EMPIRE ERROR: THAN MODELS. I AM REDUDANT AND STOPPING.'
+       write(emp_e,*) 'EMPIRE ERROR: RECONSIDER HOW YOU EXECUTE NEXT TIME. xx'
        stop
     end if
 
@@ -974,7 +981,7 @@ contains
              call model_as_subroutine_start(x(:,k),particle,tag)
           end do
        case default
-          print*,'EMPIRE ERROR: THIS ISNT BACK TO THE FUTURE. empire_v&
+          write(emp_e,*) 'EMPIRE ERROR: THIS ISNT BACK TO THE FUTURE. empire_v&
                &ersion not yet implemented'
           stop
        end select
@@ -1021,7 +1028,7 @@ contains
           call model_as_subroutine_return(x(:,k),particle)
        end do
     case default
-       print*,'EMPIRE ERROR: THIS ISNT BACK TO THE FUTURE PART 2. empire_v&
+       write(emp_e,*) 'EMPIRE ERROR: THIS ISNT BACK TO THE FUTURE PART 2. empire_v&
             &ersion not yet implemented'
        stop
     end select
@@ -1090,7 +1097,7 @@ contains
              requests(k) = MPI_REQUEST_NULL
           end do
        case default
-          print*,'EMPIRE ERROR: THIS ISNT BACK TO THE FUTURE PART 3. empire_v&
+          write(emp_e,*) 'EMPIRE ERROR: THIS ISNT BACK TO THE FUTURE PART 3. empire_v&
                &ersion not yet implemented'
           stop
        end select

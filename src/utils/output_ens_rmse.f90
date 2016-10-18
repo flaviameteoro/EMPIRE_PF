@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2016-09-02 16:22:37 pbrowne>
+!!! Time-stamp: <2016-10-18 15:32:38 pbrowne>
 !!!
 !!!    Subroutine to output RMSE
 !!!    Copyright (C) 2015 Philip A. Browne
@@ -27,7 +27,7 @@
 !> subroutine to output RMSEs
 !>
 subroutine output_ens_rmse()
-  use output_empire, only : unit_ens_rmse
+  use output_empire, only : unit_ens_rmse,emp_e
   use pf_control
   use timestep_data
   use sizes
@@ -76,9 +76,9 @@ subroutine output_ens_rmse()
      write(filename,'(A,A,A,i7.7,A,i0)') 'ens_',trim(pf%rmse_filename),'_'&
           &,pf%timestep,'.',pf_ens_rank     
   case default
-     print*,'EMPIRE ERROR: output_ens_rmse comm_version'
-     print*,'EMPIRE ERROR: comm_version',comm_version
-     print*,'EMPIRE ERROR: is currently not supported. STOPPING'
+     write(emp_e,*) 'EMPIRE ERROR: output_ens_rmse comm_version'
+     write(emp_e,*) 'EMPIRE ERROR: comm_version',comm_version
+     write(emp_e,*) 'EMPIRE ERROR: is currently not supported. STOPPING'
      stop '-9'
   end select
   
@@ -96,8 +96,8 @@ subroutine output_ens_rmse()
      open(unit_ens_rmse,file=trim(filename),iostat=ios,action='write',status='replace'&
           &,form='formatted')
      if(ios .ne. 0)  then
-        write(*,*) 'EMPIRE ERROR: CANNOT open file ',filename
-        write(*,*) 'Very strange that I couldnt open it. Im going to stop&
+        write(emp_e,*) 'EMPIRE ERROR: CANNOT open file ',filename
+        write(emp_e,*) 'Very strange that I couldnt open it. Im going to stop&
              & now.'
         stop '-12'
      end if

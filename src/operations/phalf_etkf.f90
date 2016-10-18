@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-12-16 10:31:37 pbrowne>
+!!! Time-stamp: <2016-10-18 15:11:38 pbrowne>
 !!!
 !!!    Routine to change an ensemble N(0,I) to N(0,P)
 !!!    Copyright (C) 2015 Philip A. Browne
@@ -28,6 +28,7 @@
 
 !> Subroutine to go from N(0,Q) to N(0,P)
 subroutine phalf_etkf(nrhs,x,px)
+  use output_empire, only : emp_e
   use pf_control
   use sizes
   use comms
@@ -79,8 +80,8 @@ subroutine phalf_etkf(nrhs,x,px)
   elseif(comm_version .eq. 3) then
      ensemble_comm = pf_ens_comm
   else
-     print*,'EMPIRE VERSION ',comm_version,' NOT SUPPORTED IN phalf_etkf'
-     print*,'THIS IS AN ERROR. STOPPING'
+     write(emp_e,*) 'EMPIRE VERSION ',comm_version,' NOT SUPPORTED IN phalf_etkf'
+     write(emp_e,*) 'THIS IS AN ERROR. STOPPING'
      stop '-24'
   end if
 
@@ -189,8 +190,10 @@ subroutine phalf_etkf(nrhs,x,px)
 
      call dgesvd('S','A',red_obsDim,pf%nens,Ysf_red,red_obsDim,S,V,red_obsDim,UT,pf%nens,WORK,LWORK,INFO)
      if(INFO .ne. 0) then
-        print*,'SVD failed with INFO = ',INFO
-        print*,'FYI WORK(1) = ',WORK(1)
+        write(emp_e,*) 'EMPIRE ERROR in phalf_etkf.f90 with the SVD'
+        write(emp_e,*) 'SVD failed with INFO = ',INFO
+        write(emp_e,*) 'FYI WORK(1) = ',WORK(1)
+        write(emp_e,*) 'STOPPING'
         stop
      end if
      deallocate(WORK)
