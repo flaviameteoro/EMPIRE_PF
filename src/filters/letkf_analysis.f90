@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2016-10-18 15:07:40 pbrowne>
+!!! Time-stamp: <2016-10-20 10:42:49 pbrowne>
 !!!
 !!!    Ensemble transform Kalman filter
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -40,7 +40,7 @@ subroutine letkf_analysis
 
   !!> Forecast ensemble on entry, analysis ensemble on exit
   !real(kind=rk), dimension(stateDimension,N), intent(inout) :: x
-  real(kind=rk), dimension(state_dim,pf%count) :: x_loc
+  real(kind=rk), dimension(state_dim,pf%count) :: x_p
 
   !> The observation
   real(kind=rk), dimension(obs_dim) :: y
@@ -56,7 +56,7 @@ subroutine letkf_analysis
   ! Miscellaneous local variables
   real(kind=rk), dimension(state_dim) :: mean_x
   real(kind=rk), dimension(:), allocatable :: mean_xa
-  real(kind=rk), dimension(state_dim,pf%count) :: Xp_loc
+  real(kind=rk), dimension(state_dim,pf%count) :: Xp_p
   !real(kind=rk), dimension(stateDimension,N) :: Xp
   real(kind=rk), dimension(:,:), allocatable :: Xp
   real(kind=rk), dimension(:,:), allocatable :: Xa
@@ -64,7 +64,7 @@ subroutine letkf_analysis
   real(kind=rk), dimension(obs_dim_g) :: dd_g
   real(kind=rk), dimension(obs_dim,pf%nens) :: yf,Ysf
   real(kind=rk), dimension(obs_dim_g,pf%nens) :: Ysf_g
-  real(kind=rk), dimension(obs_dim,pf%count) :: yf_loc
+  real(kind=rk), dimension(obs_dim,pf%count) :: yf_p
   integer :: i,j,number_gridpoints
 
   !variables for localisation
@@ -112,18 +112,18 @@ subroutine letkf_analysis
   ! compute the ensemble perturbation matrix for those ensemble members
   ! stored on this local mpi process
   do i = 1,pf%count
-     Xp_loc(:,i) = pf%psi(:,i) - mean_x
+     Xp_p(:,i) = pf%psi(:,i) - mean_x
   end do
 
   ! inflate the ensemble perturbation matrix
-  Xp_loc = (1.0_rk + pf%rho) * Xp_loc
-  ! store the local state vectors back in x_loc
+  Xp_p = (1.0_rk + pf%rho) * Xp_p
+  ! store the local state vectors back in x_p
   do i = 1,pf%count
-     x_loc(:,i) = mean_x + Xp_loc(:,i)
+     x_p(:,i) = mean_x + Xp_p(:,i)
   end do
 
   ! make the local ensemble perturbation matrix the correct scale
-  Xp_loc = Xp_loc/sqrt(real(pf%nens-1,rk))
+  Xp_p = Xp_p/sqrt(real(pf%nens-1,rk))
 
   ! Calculate forecast observations, split into mean and ensemble
   ! perturbation matrix, scale perturbations by inverse square root of
@@ -131,12 +131,12 @@ subroutine letkf_analysis
 
   ! first apply observation operator only to local state vectors
   ! on this mpi process
-  call H(obs_dim,pf%count,x_loc,yf_loc,pf%timestep)
+  call H(obs_dim,pf%count,x_p,yf_p,pf%timestep)
 
 
-  ! as yf_loc should be much smaller than x_loc, send this to mpi processes
-  ! need to send round all yf_loc and store in yf on all processes
-  call mpi_allgatherv(yf_loc,pf%count*obs_dim,MPI_DOUBLE_PRECISION,yf&
+  ! as yf_p should be much smaller than x_p, send this to mpi processes
+  ! need to send round all yf_p and store in yf on all processes
+  call mpi_allgatherv(yf_p,pf%count*obs_dim,MPI_DOUBLE_PRECISION,yf&
        &,gblcount*obs_dim,gbldisp*obs_dim,MPI_DOUBLE_PRECISION&
        &,ensemble_comm,mpi_err)
 
@@ -169,7 +169,7 @@ subroutine letkf_analysis
   do i = 1,npfs
      number_gridpoints = stop_var(i)-start_var(i)+1
 
-     call mpi_gatherv(Xp_loc(start_var(i):stop_var(i),:),& !sendbuf
+     call mpi_gatherv(Xp_p(start_var(i):stop_var(i),:),& !sendbuf
           pf%count*number_gridpoints,&                     !sendcount
           MPI_DOUBLE_PRECISION,&                           !sendtype
           Xp,&                                             !recvbuf
