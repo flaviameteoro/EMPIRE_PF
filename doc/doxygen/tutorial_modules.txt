@@ -1,0 +1,168 @@
+/*! \page tutorial_modules Storing operators and data in modules - a tutorial
+
+Author: PA Browne. Time-stamp: <2016-10-21 17:34:35 pbrowne>
+
+\section mtmotivation Motivation
+
+The operators used for a specific model and observation network may be complex. Specifically we are thinking of \f$H, B, Q\f$ and \f$R\f$.
+
+It would therefore be useful to either load or compute these operators once, before the timestep process begins and the operators are called possibly a large number of times.
+
+EMPIRE has the capacity to do just this, and in this tutorial we shall show how this can be achieved.
+
+\section mtdatafiles Location of template modules
+
+There are a number of "template" modules that can assist the user in storing their operators and data. These are known to EMPIRE and are compiled before model_specific.f90 so that they may be accessed from within any subroutine contained in model_specific.f90.
+
+They can be found in the directory \link src/user src/user/ \endlink. They include
+- src/user/Rdata.f90 - a place to store data for \f$R\f$ and \f$H\f$
+- src/user/Bdata.f90 - a place to store data for \f$B\f$
+- src/user/Qdata.f90 - a place to store data for \f$Q\f$
+
+Within each of these files is a module, called \link rdata Rdata\endlink, \link bdata Bdata\endlink and \link qdata Qdata\endlink respectively. Each of these has its own "load*" subroutine. This is the place to put any setup of the operators.
+
+\section mtbdescription Description of an example B matrix
+
+For simplicity, let us assume that the background error covariance matrix, \f$B\f$, is diagonal with different entries in each of its diagonal components.
+
+\f$B = \begin{bmatrix}
+b_{11}^2 & 0 & 0 & \cdots & 0  \\
+0 & b_{22}^2 & 0 & \cdots & 0  \\
+0 & 0 & b_{33}^2 & \cdots & 0  \\
+\vdots &\vdots &\vdots &\ddots & \vdots  \\
+0  &0 &0  & \cdots & b_{nn}^2  
+\end{bmatrix}\f$
+
+Note that it is very easy to get variances and standard deviations mixed up - with the notation above, it is clear to see that \f$b_{ii}\f$ is a standard deviation and \f$b_{ii}^2\f$ is a variance.
+
+With this definition of \f$B\f$ it is very easy to write down its (matrix) squareroot:
+
+\f$B^{1/2} = \begin{bmatrix}
+b_{11} & 0 & 0 & \cdots & 0  \\
+0 & b_{22} & 0 & \cdots & 0  \\
+0 & 0 & b_{33} & \cdots & 0  \\
+\vdots &\vdots &\vdots &\ddots & \vdots  \\
+0  &0 &0  & \cdots & b_{nn}  
+\end{bmatrix}\f$
+
+As \f$B^{1/2}\f$ is a very sparse matrix, we shall not store all the zeros. We shall implicitly realise that it all off-diagonal entries are zero and store only the diagonal values.
+
+\section mtbdatadescription Description of the module
+
+All the data for each operator that you wish to store and have access to elsewhere should come between the <tt>implicit none</tt> and the <tt>contains</tt> statements in the module.
+
+So in this case, the following lines
+\code{.f90}
+module Bdata
+    implicit none
+contains
+\endcode
+would become, after declaring an array to store the diagonal entries of \f$B^{1/2}\f$
+\code{.f90}
+module Bdata
+    implicit none
+    real(kind=kind(1.0d0)), dimension(:), allocatable :: diagBhalf
+contains
+\endcode
+
+At this stage, the dimensions of the state vector may not be set, hence \c diagBhalf is of unknown size. We do know, however, that we wish this to be a 1-dimensional array.
+
+\section mtloadbdescription Description of the loading subroutine
+
+Below is an example of a loadB subroutine which we will talk through subsequently.
+
+\code{.f90}
+subroutine loadB
+    use sizes
+    implicit none
+    integer :: i
+    open(2,file='Bhalfdata.txt',action='read',status='old')
+    do i = 1,state_dim
+        read(2,*) diagBhalf(i)
+    end do
+    close(2)
+end subroutine loadB
+\endcode
+
+So what is each line doing?
+\code{.f90}use sizes\endcode
+We need to know how large the matrix is, hence we get this data from the \link sizes sizes \endlink module.
+\code{.f90}implicit none\endcode Simply good practice with Fortran - this means we must declare all the variables we use.
+\code{.f90}integer :: i\endcode Declare an integer \c i to be used as a counter.
+\code{.f90}open(2,file='Bhalfdata.txt',action='read',status='old')\endcode
+Here we are assuming that wherever EMPIRE is executed, we will have a file called \c Bhalfdata.txt. On line \f$i\f$ of this file will be \f$b_{ii}\f$.
+\code{.f90}do i = 1,state_dim\endcode Now loop over each of the diagonal entries of the matrix
+\code{.f90}read(2,*) diagBhalf(i)\endcode Read from the input file the value that is in the txt file and store it in the correct entry in the array \c diagBhalf
+\code{.f90}close(2)\endcode Close the input file.
+
+\section mtcalling Calling the loadB subroutine
+Now that the mechanism for reading in the data from a file has been written, we must make sure this is called. To do so, you should add a line in \link configure_model configure_model \endlink to do this.
+
+\code{.f90}
+subroutine configure_model
+  use pf_control
+  use timestep_data
+  use sizes
+  use Bdata  !THIS IS AN ADDITIONAL LINE TO USE BDATA MODULE
+  implicit none
+  state_dim = 40
+  obs_dim = 20
+  call timestep_data_set_total(pf%time_bwn_obs*pf%time_obs)
+  print*,'#################################'
+  print*,'######### SANITY CHECK ##########'
+  print*,'#################################'
+  print*,'## STATE DIMENSION = ',state_dim
+  print*,'##  OBS  DIMENSION = ',obs_dim
+  print*,'## TOTAL TIMESTEPS = ',TSdata%total_timesteps
+  print*,'#################################'
+  call loadB !THIS IS AN ADDITIONAL LINE TO USE BDATA MODULE
+end subroutine configure_model
+\endcode
+
+It is important that the call to loadb happens after state_dim is set, as its value is used within loadb.
+
+
+\section mtuse Using the data that has been read in
+
+Firstly, let's discuss the algorithm we shall use to implement \f$B^{1/2}x\f$, for some input vector \f$x\f$.
+
+Mathematically, let us write this as, given \f$\mathbf{x}\f$, compute \f$\mathbf{u} = B^{1/2}\mathbf{x}\f$.
+
+\f$\mathbf{u}_i = \sum_j B^{1/2}_{i,j} \mathbf{x}_j  = \sum_j b_{ij} \mathbf{x}_j\f$.
+
+Now as \f$B^{1/2}\f$ is diagonal, this sum reduces so that
+
+\f$\mathbf{u}_i = b_{ii} \mathbf{x}_i\f$.
+
+Hence we can do an "component wise" multiplication within the code.
+
+We need to access \link bdata Bdata \endlink within the \link bhalf subroutine bhalf \endlink. To do so, we put a
+<tt>use Bdata</tt>
+statement before the
+<tt>implicit none</tt>
+statement of \link bhalf subroutine bhalf \endlink.
+
+The subroutine would therefore look something like the following:
+
+\code{.f90}
+subroutine Bhalf(nrhs,x,bx)
+    use Bdata
+    use sizes
+    implicit none
+    integer, parameter :: rk=kind(1.0D+0)
+    integer, intent(in) :: nrhs
+    real(kind=rk), dimension(state_dim,nrhs), intent(in) :: x
+    real(kind=rk), dimension(state_dim,nrhs), intent(out) :: bx
+    integer :: i
+    do i = 1,nrhs
+        bx(:,i) = diagBhalf*x(:,i)
+    end do
+end subroutine Bhalf
+\endcode
+
+This way we have access to the array \c diagBhalf that we stored in Bdata, and we implement mulitplication by \f$B^{1/2}\f$ by a component-wise multiplication of the arrays for each different vector that we are provided.
+
+Similar things can be done for other operators.
+
+*/
+
