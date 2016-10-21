@@ -1,6 +1,6 @@
 /*! \page tutorial_modules Storing operators and data in modules - a tutorial
 
-Author: PA Browne. Time-stamp: <2016-10-21 17:46:26 pbrowne>
+Author: PA Browne. Time-stamp: <2016-10-21 17:47:45 pbrowne>
 
 \section mtmotivation Motivation
 
@@ -90,7 +90,7 @@ So what is each line doing?
 We need to know how large the matrix is, hence we get this data from the \link sizes sizes \endlink module.
 \code{.f90}implicit none\endcode Simply good practice with Fortran - this means we must declare all the variables we use.
 \code{.f90}integer :: i\endcode Declare an integer \c i to be used as a counter.
-\ocde{.f90}allocate(diagBhalf(state_dim))\endcode We need to allocate the correct amount of space for \c diagBhalf. The size of the system is stored in the sizes module, in the variable state_dim. Hence this line sets aside the correct amount of memory to store the data for the matrix.
+\code{.f90}allocate(diagBhalf(state_dim))\endcode We need to allocate the correct amount of space for \c diagBhalf. The size of the system is stored in the sizes module, in the variable state_dim. Hence this line sets aside the correct amount of memory to store the data for the matrix.
 \code{.f90}open(2,file='Bhalfdata.txt',action='read',status='old')\endcode
 Here we are assuming that wherever EMPIRE is executed, we will have a file called \c Bhalfdata.txt. On line \f$i\f$ of this file will be \f$b_{ii}\f$.
 \code{.f90}do i = 1,state_dim\endcode Now loop over each of the diagonal entries of the matrix
