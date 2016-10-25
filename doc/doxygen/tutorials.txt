@@ -6,4 +6,6 @@ Here we have a list of tutorials for using EMPIRE. Hopefully this list will be e
 
 - \subpage tutorial_modules
 
+- \subpage tutorial_petsc
+
 */
