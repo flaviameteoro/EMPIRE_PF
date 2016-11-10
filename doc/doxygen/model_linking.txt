@@ -52,7 +52,7 @@ EMPIRE has a \link fourdenvar_fcn 4DEnVar \endlink method which required the mod
 
 This is controlled in a reverse communication type manner with the reverse communication flag stored in the MPI_TAG coming from EMPIRE. To make this work, you should investigate how simple it is to reset the model to time 0. This should include the forcing that the model receives (i.e. ensure the model knows that time has gone back to the start).
 
-This is relatively undocumented as we are looking for users with a model who wish to use this method to help us refine the necessary input formats.
+This is relatively undocumented as we are looking for users with a model who wish to use this method to help us refine the necessary input formats. Please do get in touch.
 
 However, examples containing what to do based on the MPI_TAG can be found in \ref models/linear.
 
