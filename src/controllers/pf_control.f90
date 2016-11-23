@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2016-10-17 12:16:57 pbrowne>
+!!! Time-stamp: <2016-11-23 11:47:49 pbrowne>
 !!!
 !!!    module to hold all the information to control the the main program
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -76,6 +76,22 @@ module pf_control
      !< the file to output rmse to
      character(250) :: forecast_path !< string to hold the path to
      !!output the forecast ensemble
+     character(50) :: relaxation_type !< string to hold the type of
+     !! relaxation profile to use with the nudging or the equivalent
+     !! weights particle filter
+     !!
+     !! currently the options are:
+     !! - 'zero_linear'
+     !! - 'power_law'
+     !! - 'exponential'
+     !! - 'constant'
+     !! - 'user'
+     !!
+     !! for more details see \link relaxation_profile \endlink
+     real(kind=kind(1.0d0)) :: relaxation_freetime !< pseudotime for
+     !! which no nugding is applied to the relaxation
+     real(kind=kind(1.0d0)) :: power_law_p !< exponent in a
+     !! relaxation power law
      
      integer, dimension(:,:), allocatable :: talagrand !< storage for rank histograms
      integer :: count         !< number of ensemble members associated with this MPI process
@@ -219,6 +235,9 @@ contains
       character(1) :: init='+'
       character(250) :: rmse_filename='rmse'
       character(250) :: forecast_path='forecast/'
+      character(50) :: relaxation_type='zero_linear'
+      real(kind=kind(1.0d0)) :: power_law_p=1.0d0
+      real(kind=kind(1.0d0)) :: relaxation_freetime=0.6d0
       
       logical :: file_exists
 
@@ -237,7 +256,8 @@ contains
       &filter,&
       &init,&
       &rmse_filename,&
-      &forecast_path
+      &forecast_path,&
+      &relaxation_type,power_law_p,relaxation_freetime
 
 
       gen_data = .false.
@@ -329,7 +349,28 @@ contains
          pf%len = len
       end if
 
+      if(relaxation_type .ne. 'zero_linear') then
+         print*,'read relaxation_type = ',relaxation_type
+         pf%relaxation_type = relaxation_type
+      else
+         pf%relaxation_type = relaxation_type
+      end if
 
+      if(relaxation_freetime .ne. 0.6d0) then
+         print*,'read relaxation_freetime = ',relaxation_freetime
+         pf%relaxation_freetime = relaxation_freetime
+      else
+         pf%relaxation_freetime = relaxation_freetime
+      end if
+
+      if(power_law_p .ne. 1.0d0) then
+         print*,'read power_law_p = ',power_law_p
+         pf%power_law_p = power_law_p
+      else
+         pf%power_law_p = power_law_p
+      end if
+
+      
       !logical ::
       !use_talagrand,use_mean,use_variance,use_traj,use_spatial_rmse
       

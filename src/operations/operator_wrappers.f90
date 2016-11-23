@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2015-07-16 17:08:39 pbrowne>
+!!! Time-stamp: <2016-11-23 11:07:26 pbrowne>
 !!!
 !!!    Collection of combinations of other subroutines
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -125,30 +125,31 @@ subroutine Bprime(y,x,QHtR_1y,normaln,betan)
   real(kind=rk) :: t
   real(kind=rk), dimension(7) :: ti
   logical, parameter :: time = .false.
+  logical :: zero
   include 'mpif.h'
   if(time) t = mpi_wtime()
   freetime = 0.6_rk
 
   tau = real(TSData%tau,rk)/real(pf%time_bwn_obs,rk)
 
-  !this is the atmosphere section
-  if(tau .le. freetime) then
+  call relaxation_profile(tau,p,zero)
+  
+  !this is when the nudging term is zero
+  if(zero) then
      x = 0.0_rk
      if(time) ti(1:3) = mpi_wtime()
      QHtR_1y = 0.0_rk
      if(time) ti(4) = mpi_wtime()
      call Qhalf(pf%count,normaln,betan)
      if(time) ti(5:7) = mpi_wtime()
-  else
+  else !this is when the nudging term is nonzero
 
      call solve_r(obs_dim,pf%count,y,R_1y,pf%timestep)
      if(time) ti(1) = mpi_wtime()
      call HT(obs_dim,pf%count,R_1y,HtR_1y,pf%timestep)
      if(time) ti(2) = mpi_wtime()
-     !comment out Qhalf to make this subroutine Bprime  
-     !   call Qhalf(HtR_1y,QHtR_1y)
-
-     p = pf%nudgefac*(tau-freetime)/(1.0d0-freetime)
+     
+     !p = pf%nudgefac*(tau-freetime)/(1.0d0-freetime)
 
      x = p*HtR_1y
      if(time) ti(3) = mpi_wtime()
@@ -176,7 +177,7 @@ subroutine Bprime(y,x,QHtR_1y,normaln,betan)
      print*,'Bprime times =',ti
      print*,'_______'
   end if
-  !print*,'Bprime = ',dnrm2(state_dim,x,1),dnrm2(state_dim,QHtR_1y,1)
+
 
 end subroutine Bprime
 

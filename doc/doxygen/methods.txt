@@ -11,6 +11,8 @@ Model specific operations required: \n
   - \link h \endlink
   - \link solve_r \endlink \n
 The SIR filter has no parameters to be chosen. \n
+
+
 To select the SIR filter, in \link pf_control::parse_pf_parameters empire.nml \endlink set the following variables:
    - \link pf_control::pf_control_type::filter filter \endlink = 'SI'
 \subsubsection EWPF Equivalent Weights Particle Filter 
@@ -23,11 +25,17 @@ Model specific operations required:
  - \link ht \endlink
  - \link solve_r \endlink
  - \link solve_hqht_plus_r \endlink
+
 The Equivalent Weights particle filter has a number of free parameters to be chosen. \n
    - \link pf_control::pf_control_type::nudgefac nudgefac\endlink
    - \link pf_control::pf_control_type::nfac nfac \endlink
    - \link pf_control::pf_control_type::ufac ufac \endlink
-   - \link pf_control::pf_control_type::keep keep \endlink \n
+   - \link pf_control::pf_control_type::keep keep \endlink
+   - \link pf_control::pf_control_type::relaxation_type relaxation_type \endlink
+   - \link pf_control::pf_control_type::relaxation_freetime relaxation_freetime \endlink
+   - (Possibly) \link pf_control::pf_control_type::power_law_p power_law_p \endlink \n
+   
+
 To select the EWPF, in \link pf_control::parse_pf_parameters empire.nml \endlink set the following variables:
    - \link pf_control::pf_control_type::filter filter \endlink = 'EW'
 
@@ -41,8 +49,14 @@ Model specific operations required:
  - \link solve_r \endlink
  - \link solve_rhalf \endlink
  - \link solve_hqht_plus_r \endlink
+
 The Zhu Equivalent Weights particle filter has a number of free parameters to be chosen. \n
-   - \link pf_control::pf_control_type::nudgefac nudgefac\endlink \n
+   - \link pf_control::pf_control_type::nudgefac nudgefac\endlink
+   - \link pf_control::pf_control_type::relaxation_type relaxation_type \endlink
+   - \link pf_control::pf_control_type::relaxation_freetime relaxation_freetime \endlink
+   - (Possibly) \link pf_control::pf_control_type::power_law_p power_law_p \endlink \n
+
+
 To select the EZPF, in \link pf_control::parse_pf_parameters empire.nml \endlink set the following variables:
    - \link pf_control::pf_control_type::filter filter \endlink = 'EZ'
 
@@ -56,9 +70,13 @@ Model specific operations required: \n
  - \link h \endlink
  - \link solve_rhalf \endlink
  - \link dist_st_ob \endlink \n
+
+
 The LETKF has a number of free parameters to be chosen. \n
    - \link pf_control::pf_control_type::rho rho \endlink
    - \link pf_control::pf_control_type::len len \endlink \n 
+
+
 To select the LETKF, in \link pf_control::parse_pf_parameters empire.nml \endlink set the following variables:
    - \link pf_control::pf_control_type::filter filter \endlink = 'LE' or 'LD' with LE including model error but LD being deterministic
 
