@@ -110,8 +110,23 @@ Model specific operations required:
  - \link h \endlink
  - \link solve_r \endlink
 
-Currently there is the basic functionality to do 4dEnVar so long as EMPIRE-VADER is used for reverse communication. This is work in progress.
+Currently there is the basic functionality to do 4dEnVar so long as the optional reverse communication is used. This is work in progress.
 
-\todo Add some stuff about how to use this.
+\todo Finish the following description.
+
+The following is a stream of consciousness about how to use 4dEnVar.
+
+Firstly note that 4dEnVar is built into a different executable: \c empire-4denvar. Make sure to launch that along with the models.
+
+In order to solve the 4DEnVar problem, we have one ensemble member representing the desired analysis, and the others representing the perturbations. Hence to use N ensemble members to calculate the gradient, one must launch the code with N+1 ensemble members in total.
+
+The main program, FourDEnVar is located in src/4dEnVar/4dEnVar.f90.
+
+The first thing it does is read from vardata.nml or empire.nml a namelist called \c var_params, that contains the options for the optimization method. 
+ See var_data::parse_vardata for information on this.
+
+The next important thing to specify is the observation window, specifically when and how many observations there will be throughout the window. This is currently done with the hard-coded var_data::read_observation_numbers subroutine. What is needed is for the array vardata\%ny to contain a list of the number of observations at each timestep throughout the window. As an example, suppose the observation window was 10 timesteps long, and we had 8 observations at timestep 3, 2 observations at timestep 5 and 43 observations at timestep 9, then the array vardata\%ny should contain the numbers [0 0 8 0 2 0 0 0 43 0]. How this is implemented should probably change. This isn't done well as we have had no users who have contacted us saying they wish to use this method - hence we do not know what format would work best for them. Please get in touch if you want to use it!
+
+\todo Put in a form of localisation into 4DEnVar
 
 */
