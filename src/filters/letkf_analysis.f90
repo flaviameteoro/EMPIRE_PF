@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2016-10-20 10:42:49 pbrowne>
+!!! Time-stamp: <2016-12-08 11:28:35 pbrowne>
 !!!
 !!!    Ensemble transform Kalman filter
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -298,7 +298,7 @@ subroutine letkf_analysis
      else !if there are no observations near, the analysis is
         ! just the forecast
         do i = 1,pf%nens
-           xa(j,i) =  mean_xa(j) + xp(j,i)
+           xa(j,i) =  mean_xa(j) + xp(j,i)*sqrt(real(pf%nens-1,rk))
         end do
 
      end if
