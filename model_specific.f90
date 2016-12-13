@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!!! Time-stamp: <2016-04-13 15:10:55 pbrowne>
+!!! Time-stamp: <2015-10-13 13:21:50 pbrowne>
 !!!
 !!!    This file must be adapted to the specific model in use.
 !!!    Copyright (C) 2014  Philip A. Browne
@@ -27,35 +27,73 @@
 
 !> subroutine called initially to set up details and data
 !> for model specific functions
-!>
-!> By the end of this subroutine, the following must be set:
-!> - \link sizes::state_dim state_dim \endlink in @ref sizes
-!> - \link sizes::obs_dim obs_dim \endlink in @ref sizes for the
-!>   first observation 
-!> - \link total_timesteps \endlink in @ref timestep_data
-!>
-!> This is a very good place to load in data for the matrices B,Q,R,H etc
 subroutine configure_model
   use pf_control
   use timestep_data
   use sizes
+  use Qdata
+  use Rdata
   implicit none
+  include 'mpif.h'
+  
+  real(kind=kind(1.0d0)) :: t1
+!this is for Lorenz 63
+!  state_dim=3
+!  obs_dim = 1
+
+  !this is for hadcm3
+!  state_dim = 2314430
+!  obs_dim = 27370
+
   !this is for lorenz 96
-  state_dim = 40
-  obs_dim = 20
+  state_dim = 20
+  obs_dim = state_dim/4
+
   call timestep_data_set_total(pf%time_bwn_obs*pf%time_obs)
+
   print*,'#################################'
   print*,'######### SANITY CHECK ##########'
   print*,'#################################'
   print*,'## STATE DIMENSION = ',state_dim
   print*,'##  OBS  DIMENSION = ',obs_dim
-  print*,'## TOTAL TIMESTEPS = ',TSdata%total_timesteps
   print*,'#################################'
+  if(.not. pf%gen_Q) then
+     t1 = mpi_wtime()
+!     call loadQ
+     print*,'load Q     took ',mpi_wtime()-t1,' seconds'
+     t1 = mpi_wtime()
+!     call loadR
+     print*,'load R     took ',mpi_wtime()-t1,' seconds'
+     t1 = mpi_wtime()
+!     call load_HQHTR
+     print*,'load HQHTR took ',mpi_wtime()-t1,' seconds'
+     
+  end if
 end subroutine configure_model
 
 !>subroutine to reset variables that may change when the observation
 !!network changes
 subroutine reconfigure_model
+  use pf_control
+  use sizes
+  implicit none
+
+  ! IN THIS EXAMPLES WE SHALL KEEP THE OBSERVATIONS AT FIXED
+  ! TIME INTERVALS AND THE SAME NUMBER EACH TIME.
+
+  !stop 'reconfigure model not yet implemented'
+
+  !! first set how many observations there will be until the next
+  !! observation
+
+  pf%time_bwn_obs = pf%time_bwn_obs
+
+
+  !! now reset how many observations will occur at that time
+  obs_dim =  obs_dim
+
+
+
 end subroutine reconfigure_model
 
 
@@ -77,10 +115,10 @@ subroutine solve_r(obsDim,nrhs,y,v,t)
   integer, intent(in) :: t !<the timestep
 
   !v = y/(0.3d0**2)
-  stop 'Solve_r not yet implemented'
+!  stop 'Solve_r not yet implemented'
+  v = y/0.1d0
   
 end subroutine solve_r
-
 
 !>subroutine to take an observation vector y and return v
 !!  in observation space.
@@ -98,7 +136,8 @@ subroutine solve_rhalf(obsdim,nrhs,y,v,t)
   integer, intent(in) :: t !<the timestep
 
   !v = y/(0.3d0**2)
-  stop 'Solve_r_half not yet implemented'
+  v = y/sqrt(0.1d0)
+!  stop 'Solve_r_half not yet implemented'
   
 end subroutine solve_rhalf
 
@@ -119,8 +158,10 @@ subroutine solve_hqht_plus_r(obsdim,y,v,t)
   
 
   !v = y/(5.3d3**2+0.3d0**2)
-  stop 'solve_hqht_plus_r not yet implemented'
-
+!  stop 'solve_hqht_plus_r not yet implemented'
+ 
+  v = y/(0.2d0 + 0.1d0)
+ 
 
 end subroutine solve_hqht_plus_r
 
@@ -165,7 +206,8 @@ subroutine Qhalf(nrhs,x,Qx)
   !!resulting vector where Qx \f$= Q^{\frac{1}{2}}x\f$
 
   !qx = 5.3d3*x
-  stop 'Qhalf not yet implemented'
+  qx = sqrt(0.2d0)*x
+!  stop 'Qhalf not yet implemented'
   
 end subroutine Qhalf
 
@@ -185,8 +227,8 @@ subroutine R(obsDim,nrhs,y,Ry,t)
   !!resulting vectors where Ry \f$= Ry\f$
   integer, intent(in) :: t !< the timestep
 
-
-  stop 'R not yet implemented'
+  Ry = y*0.1d0
+!  stop 'R not yet implemented'
   !Ry = 0.3d0**2*y
 
 end subroutine R
@@ -208,7 +250,8 @@ subroutine Rhalf(obsDim,nrhs,y,Ry,t)
   integer, intent(in) :: t !<the timestep
 
 
-  stop 'Rhalf not yet implemented'
+  Ry = y*sqrt(0.1d0)
+!  stop 'Rhalf not yet implemented'
   !Ry = 0.3d0*y
 
 end subroutine RHALF
@@ -219,7 +262,8 @@ end subroutine RHALF
 !!
 !! Given \f$x\f$ compute \f$Hx\f$
 subroutine H(obsDim,nrhs,x,hx,t)
-  use sizes  
+  use pf_control
+  use sizes
   implicit none
   integer, parameter :: rk=kind(1.0D+0)
   integer, intent(in) :: obsDim !< the dimension of the observations
@@ -231,7 +275,9 @@ subroutine H(obsDim,nrhs,x,hx,t)
   integer, intent(in) :: t !< the timestep
 
 
-  stop 'H not yet implemented'
+  hx(:,:) = x(1:state_dim:4,:)
+!hx = x
+!  stop 'H not yet implemented'
   !hx(:,:) = x(539617:566986,:)
 
 end subroutine H
@@ -241,6 +287,7 @@ end subroutine H
 !!
 !! Given \f$y\f$ compute \f$x=H^T(y)\f$
 subroutine HT(obsDim,nrhs,y,x,t)
+  use pf_control
   use sizes
   implicit none
   integer, parameter :: rk=kind(1.0D+0)
@@ -252,9 +299,10 @@ subroutine HT(obsDim,nrhs,y,x,t)
   !!resulting vector in state space where x \f$= H^Ty\f$
   integer, intent(in) :: t !< the timestep
 
-  stop 'HT not yet implemented'
-  !x = 0.0_rk
-  !x(539617:566986,:) = y(:,:)
+!  stop 'HT not yet implemented'
+  x = 0.0_rk
+  x(1:state_dim:4,:) = y(:,:)
+!  x = y
 
 end subroutine HT
 
@@ -270,7 +318,16 @@ subroutine dist_st_ob(xp,yp,dis,t)
   real(kind=kind(1.0d0)), intent(out) :: dis !<the distance between
                                              !!x(xp) and y(yp)
   integer, intent(in) :: t  !<the current time index for observations
-  stop 'dist not yet implemented'
+!  stop 'dist not yet implemented'
+  integer, parameter :: rk = kind(1.0d0)
+  real(kind=rk) :: st,ob
+  st = real(xp,rk)/real(state_dim,rk)
+!  ob = real(2*yp-1,rk)/real(state_dim,rk) !alternately observed
+!  ob = real(yp,rk)/real(state_dim,rk) !all observed
+!  ob = real(yp,rk)/real(state_dim,rk) !first half
+   ob = real(4*yp-3,rk)/real(state_dim,rk) !every 4 observed 
+  dis = min(abs(st-ob),1.0d0-abs(st-ob))
+  
 end subroutine dist_st_ob
 
 
@@ -278,7 +335,7 @@ end subroutine dist_st_ob
 !> in state space.
 !!
 !! Given \f$x\f$ compute \f$B^{\frac{1}{2}}x\f$
-subroutine Bhalf(nrhs,x,bx)
+subroutine Bhalf(nrhs,x,Qx)
   use sizes
   use Qdata
   implicit none
@@ -286,36 +343,20 @@ subroutine Bhalf(nrhs,x,bx)
   integer, intent(in) :: nrhs !< the number of right hand sides
   real(kind=rk), dimension(state_dim,nrhs), intent(in) :: x !< the
   !!input vector
-  real(kind=rk), dimension(state_dim,nrhs), intent(out) :: bx !< the
-  !!resulting vector where bx \f$= B^{\frac{1}{2}}x\f$
+  real(kind=rk), dimension(state_dim,nrhs), intent(out) :: qx !< the
+  !!resulting vector where Bx \f$= B^{\frac{1}{2}}x\f$
 
   !qx = 5.3d3*x
-  stop 'Bhalf not yet implemented'
+  qx = sqrt(0.2d0)*x
+!  stop 'Bhalf not yet implemented'
   
 end subroutine Bhalf
 
-!>subroutine to take a state vector x and return v
-!!  in state space.
-!!
-!! Given \f$y\f$ find \f$v\f$ such that \f$Bv=x\f$
-subroutine solve_b(nrhs,x,v)
-  use sizes
-  implicit none
-  integer, parameter :: rk=kind(1.0D+0)
-  integer, intent(in) :: nrhs   !< the number of right hand sides
-  real(kind=rk), dimension(state_dim,nrhs), intent(in) :: x !<input vector
-  real(kind=rk), dimension(state_dim,nrhs), intent(out) :: v!<
-  !!result vector where \f$v=B^{-1}x\f$
 
-  !v = y/(0.3d0**2)
-  stop 'solve_b not yet implemented'
-  
-end subroutine solve_b
-
-!> Subroutine to read observation from a file
-!! \n
-!> @param[out] y The observation
-!! @param[in] t the current timestep
+!> Subroutine to read observation from a file              
+!! \n              
+!> @param[out] y The observation              
+!! @param[in] t the current timestep              
 subroutine get_observation_data(y,t)
 
   use sizes
@@ -325,11 +366,30 @@ subroutine get_observation_data(y,t)
   real(kind=rk), dimension(obs_dim), intent(out) :: y
 
 
-  !This is set up to call the routine written which will
-  !work to do twin experiments. If you want to use your own
-  !observations you should implement your own method of reading
-  !in the observations
+  !This is set up tp call the routine written which will              
+  !work to do twin experiments. If you want to use your own  
+  !observations you should implement your own method of reading      
+  !in the observations              
   call default_get_observation_data(y,t)
 end subroutine get_observation_data
 
+!> subroutine to take a full state vector x and return \f$B^{-1}x\f$
+!> in state space.
+!!
+!! Given \f$x\f$ compute \f$B^{-1}}x\f$
+subroutine solve_b(nrhs,x,Qx)
+  use sizes
+  use Qdata
+  implicit none
+  integer, parameter :: rk=kind(1.0D+0)
+  integer, intent(in) :: nrhs !< the number of right hand sides
+  real(kind=rk), dimension(state_dim,nrhs), intent(in) :: x !< the
+  !!input vector
+  real(kind=rk), dimension(state_dim,nrhs), intent(out) :: qx !< the
+  !!resulting vector where Bx \f$= B^{-1}x\f$
 
+  !qx = 5.3d3*x
+  qx = x/0.2d0
+!  stop 'Bhalf not yet implemented'
+  
+end subroutine solve_b
